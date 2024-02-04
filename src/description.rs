@@ -1,8 +1,9 @@
+use std::collections::HashMap;
+
+use bitflags::bitflags;
 use serde::de::value::StrDeserializer;
 use serde::Deserialize;
 use serde::Deserializer;
-use std::collections::HashMap;
-use std::collections::HashSet;
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize)]
@@ -196,35 +197,36 @@ pub enum InsnFeatureSet {
     XS,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Hash, Deserialize)]
-#[allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
-pub enum InsnFlag {
-    HAS_ADVSIMD_SCALAR_SIZE,
-    HAS_ADVSIMV_GPRSIZE_IN_Q,
-    HAS_ADVSIMV_VEC_IN_Q,
-    HAS_ALIAS,
-    HAS_FPTYPE_FIELD,
-    HAS_LDS_SIZE_IN_BIT_22,
-    HAS_LSE_SZ_FIELD,
-    HAS_NARROW,
-    HAS_N_FIELD,
-    HAS_OPCODE_DEPENDENT_FIELD_1,
-    HAS_OPCODE_DEPENDENT_FIELD_2,
-    HAS_OPCODE_DEPENDENT_FIELD_3,
-    HAS_OPCODE_DEPENDENT_FIELD_4,
-    HAS_OPCODE_DEPENDENT_FIELD_5,
-    HAS_OPCODE_DEPENDENT_FIELD_6,
-    HAS_OPCODE_DEPENDENT_FIELD_7,
-    HAS_RCPC3_SIZE,
-    HAS_SF_FIELD,
-    HAS_SIZE,
-    HAS_SIZEQ_FIELD,
-    HAS_SPEC_DECODE_RULES,
-    IS_ALIAS,
-    IS_COND,
-    IS_SYS_READ,
-    IS_SYS_WRITE,
-    RESTRICTED_NEXT_INSN_SET,
+bitflags! {
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, PartialOrd, Ord, Deserialize)]
+    pub struct InsnFlags :u32 {
+        const HAS_ADVSIMD_SCALAR_SIZE = 1 << 0;
+        const HAS_ADVSIMV_GPRSIZE_IN_Q = 1 << 1;
+        const HAS_ADVSIMV_VEC_IN_Q = 1 << 2;
+        const HAS_ALIAS = 1 << 3;
+        const HAS_FPTYPE_FIELD = 1 << 4;
+        const HAS_LDS_SIZE_IN_BIT_22 = 1 << 5;
+        const HAS_LSE_SZ_FIELD = 1 << 6;
+        const HAS_NARROW = 1 << 7;
+        const HAS_N_FIELD = 1 << 8;
+        const HAS_OPCODE_DEPENDENT_FIELD_1 = 1 << 9;
+        const HAS_OPCODE_DEPENDENT_FIELD_2 = 1 << 10;
+        const HAS_OPCODE_DEPENDENT_FIELD_3 = 1 << 11;
+        const HAS_OPCODE_DEPENDENT_FIELD_4 = 1 << 12;
+        const HAS_OPCODE_DEPENDENT_FIELD_5 = 1 << 13;
+        const HAS_OPCODE_DEPENDENT_FIELD_6 = 1 << 14;
+        const HAS_OPCODE_DEPENDENT_FIELD_7 = 1 << 15;
+        const HAS_RCPC3_SIZE = 1 << 16;
+        const HAS_SF_FIELD = 1 << 17;
+        const HAS_SIZE = 1 << 18;
+        const HAS_SIZEQ_FIELD = 1 << 19;
+        const HAS_SPEC_DECODE_RULES = 1 << 20;
+        const IS_ALIAS = 1 << 21;
+        const IS_COND = 1 << 22;
+        const IS_SYS_READ = 1 << 23;
+        const IS_SYS_WRITE = 1 << 24;
+        const RESTRICTED_NEXT_INSN_SET = 1 << 25;
+    }
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, Deserialize)]
@@ -825,6 +827,6 @@ pub struct Instruction {
     pub class: InsnClass,
     pub feature_set: InsnFeatureSet,
     pub operands: HashMap<InsnOperandKind, InsnOperand>,
-    pub flags: HashSet<InsnFlag>,
+    pub flags: InsnFlags,
     pub index: u32,
 }

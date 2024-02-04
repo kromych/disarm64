@@ -4,7 +4,7 @@ use std::rc::Rc;
 
 use serde::Deserialize;
 
-use crate::description::InsnFlag;
+use crate::description::InsnFlags;
 use crate::description::Instruction;
 use crate::DecisionNode;
 use crate::Insn;
@@ -77,7 +77,7 @@ fn parse() -> std::io::Result<()> {
         let opcode = insn.opcode;
         let mask = insn.mask;
 
-        if insn.flags.contains(&InsnFlag::IS_ALIAS) {
+        if insn.flags.contains(InsnFlags::IS_ALIAS) {
             continue;
         }
 
