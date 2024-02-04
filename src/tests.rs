@@ -1,10 +1,13 @@
 #![cfg(test)]
 
+use std::rc::Rc;
+
+use serde::Deserialize;
+
+use crate::description::InsnFlag;
 use crate::description::Instruction;
 use crate::DecisionNode;
 use crate::Insn;
-use serde::Deserialize;
-use std::rc::Rc;
 
 #[test]
 fn it_works() {
@@ -68,7 +71,22 @@ fn parse() -> std::io::Result<()> {
     let data = std::fs::read_to_string("./aarch64.json")?;
     let data = serde_json::from_str::<Instructions>(&data)?;
 
-    print!("{:#x?}", data.0[0]);
+    println!("{:#x?}", data.0[0]);
+
+    for insn in data.0 {
+        let opcode = insn.opcode;
+        let mask = insn.mask;
+
+        if insn.flags.contains(&InsnFlag::IS_ALIAS) {
+            continue;
+        }
+
+        // If opcode == opcode & mask, then additional_dont_care == 0 and opcode & !mask == 0
+        let additional_dont_care = opcode ^ (mask & opcode); // == opcode & !mask
+        assert_eq!(additional_dont_care, 0);
+
+        assert_ne!(mask, 0);
+    }
 
     Ok(())
 }
