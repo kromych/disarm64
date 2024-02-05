@@ -6,7 +6,7 @@ use clap::Parser;
 use insn_def::description::{InsnClass, Instruction};
 use insn_def::description::{InsnFeatureSet, InsnFlags};
 
-#[derive(Parser, Default, Debug)]
+#[derive(Parser, Debug)]
 /// This tool generates an instruction decoder from a JSON description of the ISA.
 struct CommandLine {
     /// A JSON file with the description of the instruction set architecture.
@@ -23,12 +23,37 @@ struct CommandLine {
     /// Case-insensitive, ignored if not provided.
     #[clap(short = 'm', long, value_delimiter = ',', num_args = 1..)]
     mnemonic: Option<Vec<String>>,
+    /// Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity.
+    #[clap(short, action = clap::ArgAction::Count)]
+    verbosity: u8,
+}
+
+fn init_logging(opt: &CommandLine) {
+    // Maybe:
+    // /// Log level.
+    // #[clap(long, default_value = "info")]
+    // log: log::LevelFilter,
+
+    // From the env variable:
+    // env_logger::Builder::from_env().init();
+
+    env_logger::builder()
+        .format_timestamp_millis()
+        .filter(
+            None,
+            match opt.verbosity {
+                0 => log::LevelFilter::Info,
+                1 => log::LevelFilter::Debug,
+                _ => log::LevelFilter::Trace,
+            },
+        )
+        .init();
 }
 
 fn main() -> anyhow::Result<()> {
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
-
     let opt = CommandLine::parse();
+
+    init_logging(&opt);
 
     let filter_feature_sets = HashSet::from_iter(opt.feature_sets.unwrap_or_default());
     let filter_insn_class = HashSet::from_iter(opt.insn_class.unwrap_or_default());
