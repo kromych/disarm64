@@ -77,7 +77,7 @@ fn parse_insn_description(
     let mut i = 0;
 
     loop {
-        if i >= insns.len() - 1 {
+        if i >= insns.len() {
             break;
         }
 
