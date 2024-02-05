@@ -7,16 +7,20 @@ use insn_def::description::{InsnClass, Instruction};
 use insn_def::description::{InsnFeatureSet, InsnFlags};
 
 #[derive(Parser, Default, Debug)]
+/// This tool generates an instruction decoder from a JSON description of the ISA.
 struct CommandLine {
-    /// A JSON file with instruction descriptions
+    /// A JSON file with the description of the instruction set architecture.
     description_json: PathBuf,
-    /// Include filter for feature sets, e.g. "v8,simd". Ignored if not provided.
+    /// Include filter for feature sets, e.g. "v8,simd".
+    /// Case-insensitive, ignored if not provided.
     #[clap(short = 'f', long, value_delimiter = ',', num_args = 1..)]
     feature_sets: Option<Vec<InsnFeatureSet>>,
-    /// Include filter for instruction classes, e.g. "addsub_imm,system,exception". Ignored if not provided.
+    /// Include filter for instruction classes, e.g. "addsub_imm,ldst_pos,exception".
+    /// Case-insensitive, ignored if not provided.
     #[clap(short = 'c', long, value_delimiter = ',', num_args = 1..)]
     insn_class: Option<Vec<InsnClass>>,
-    /// Include filter for mnemonics, e.g. "adc,ldp,ldst_pos". Ignored if not provided.
+    /// Include filter for mnemonics, e.g. "adc,ldp".
+    /// Case-insensitive, ignored if not provided.
     #[clap(short = 'm', long, value_delimiter = ',', num_args = 1..)]
     mnemonic: Option<Vec<String>>,
 }
