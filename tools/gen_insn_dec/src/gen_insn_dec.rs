@@ -1,11 +1,13 @@
 use clap::Parser;
+use decision_tree::build_decision_tree;
 use insn_def::description::Insn;
 use insn_def::description::InsnClass;
 use insn_def::description::InsnFeatureSet;
 use insn_def::description::InsnFlags;
 use std::collections::HashSet;
 use std::path::PathBuf;
-use std::rc::Rc;
+
+mod decision_tree;
 
 #[derive(Parser, Debug)]
 /// This tool generates an instruction decoder from a JSON description of the ISA.
@@ -59,12 +61,14 @@ fn main() -> anyhow::Result<()> {
     let filter_feature_sets = HashSet::from_iter(opt.feature_sets.unwrap_or_default());
     let filter_insn_class = HashSet::from_iter(opt.insn_class.unwrap_or_default());
     let filter_mnemonic = HashSet::from_iter(opt.mnemonic.unwrap_or_default());
-    parse_insn_description(
+    let insns = parse_insn_description(
         opt.description_json,
         filter_feature_sets,
         filter_insn_class,
         filter_mnemonic,
     )?;
+
+    let _decision_tree = build_decision_tree(insns.as_slice());
 
     Ok(())
 }
@@ -74,7 +78,7 @@ fn parse_insn_description(
     feature_sets_filter: HashSet<InsnFeatureSet>,
     insn_class_filter: HashSet<InsnClass>,
     mnemonic_filter: HashSet<String>,
-) -> anyhow::Result<Vec<Rc<Insn>>> {
+) -> anyhow::Result<Vec<Insn>> {
     log::info!("Loading {path:?}");
 
     if !feature_sets_filter.is_empty() {
@@ -135,7 +139,7 @@ fn parse_insn_description(
             insn_classes.insert(&insn.class);
             insn_feature_sets.insert(&insn.feature_set);
 
-            filtered_insns.push(Rc::new(insn.clone()));
+            filtered_insns.push(insn.clone());
         } else {
             log::trace!("Skipping {insn:x?}");
         }
