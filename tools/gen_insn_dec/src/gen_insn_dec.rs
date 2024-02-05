@@ -6,6 +6,7 @@ use insn_def::description::InsnFeatureSet;
 use insn_def::description::InsnFlags;
 use std::collections::HashSet;
 use std::path::PathBuf;
+use std::rc::Rc;
 
 mod decision_tree;
 
@@ -78,7 +79,7 @@ fn parse_insn_description(
     feature_sets_filter: HashSet<InsnFeatureSet>,
     insn_class_filter: HashSet<InsnClass>,
     mnemonic_filter: HashSet<String>,
-) -> anyhow::Result<Vec<Insn>> {
+) -> anyhow::Result<Vec<Rc<Insn>>> {
     log::info!("Loading {path:?}");
 
     if !feature_sets_filter.is_empty() {
@@ -139,7 +140,7 @@ fn parse_insn_description(
             insn_classes.insert(&insn.class);
             insn_feature_sets.insert(&insn.feature_set);
 
-            filtered_insns.push(insn.clone());
+            filtered_insns.push(Rc::new(insn.clone()));
         } else {
             log::trace!("Skipping {insn:x?}");
         }

@@ -2,23 +2,29 @@ use insn_def::description::Insn;
 use std::ops::Shl;
 use std::rc::Rc;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+pub struct LeafNode {
+    mask: u32,
+    insn: Rc<Insn>,
+}
+
+#[derive(Debug, Clone)]
 pub enum DecisionTreeNode {
     Leaf {
-        insns: Vec<Insn>,
+        insns: Vec<LeafNode>,
     },
     Branch {
         decision_bit: u32,
-        zero: Box<DecisionTree>,
-        one: Box<DecisionTree>,
+        zero: DecisionTree,
+        one: DecisionTree,
     },
 }
 
-pub type DecisionTree = Option<DecisionTreeNode>;
+pub type DecisionTree = Option<Box<DecisionTreeNode>>;
 
 fn build_decision_tree_recursive(
     decision_tree: &mut DecisionTree,
-    insns: &[Insn],
+    insns: &mut [LeafNode],
     depth: &mut usize,
 ) {
     *depth += 1;
@@ -27,9 +33,9 @@ fn build_decision_tree_recursive(
     log::trace!("{} instructions", insns.len());
 
     if insns.len() == 1 {
-        *decision_tree = Some(DecisionTreeNode::Leaf {
+        *decision_tree = Some(Box::new(DecisionTreeNode::Leaf {
             insns: insns.to_vec(),
-        });
+        }));
         *depth -= 1;
         log::debug!("One instruction at depth {}", depth);
         return;
@@ -44,9 +50,9 @@ fn build_decision_tree_recursive(
         log::debug!("mask: {:x}", mask);
 
         if mask == 0 {
-            *decision_tree = Some(DecisionTreeNode::Leaf {
+            *decision_tree = Some(Box::new(DecisionTreeNode::Leaf {
                 insns: insns.to_vec(),
-            });
+            }));
             break;
         }
 
@@ -59,15 +65,14 @@ fn build_decision_tree_recursive(
         // Split the instructions into two groups based on the decision bit.
         let mut zero = Vec::new();
         let mut one = Vec::new();
-        for insn in insns.as_slice() {
-            let mut insn = insn.clone();
-
+        for node in insns.as_slice() {
+            let mut node = node.clone();
             // Clear the decision bit.
-            insn.mask &= !insn_mask;
-            if insn.opcode & insn_mask == 0 {
-                zero.push(insn);
+            node.mask &= !insn_mask;
+            if node.insn.opcode & insn_mask == 0 {
+                zero.push(node);
             } else {
-                one.push(insn);
+                one.push(node);
             }
         }
         log::debug!("zero: {}, one: {}", zero.len(), one.len());
@@ -84,14 +89,14 @@ fn build_decision_tree_recursive(
 
         let mut zero_tree = None;
         let mut one_tree = None;
-        build_decision_tree_recursive(&mut zero_tree, &zero, depth);
-        build_decision_tree_recursive(&mut one_tree, &one, depth);
+        build_decision_tree_recursive(&mut zero_tree, zero.as_mut_slice(), depth);
+        build_decision_tree_recursive(&mut one_tree, one.as_mut_slice(), depth);
 
-        *decision_tree = Some(DecisionTreeNode::Branch {
+        *decision_tree = Some(Box::new(DecisionTreeNode::Branch {
             decision_bit,
-            zero: Box::new(zero_tree),
-            one: Box::new(one_tree),
-        });
+            zero: zero_tree,
+            one: one_tree,
+        }));
         break;
     }
 
@@ -99,11 +104,19 @@ fn build_decision_tree_recursive(
     log::debug!("Decision tree built at depth {}", depth);
 }
 
-pub fn build_decision_tree(insns: &[Insn]) -> Rc<DecisionTree> {
+pub fn build_decision_tree(insns: &[Rc<Insn>]) -> DecisionTree {
     let mut decision_tree = None;
     let mut depth = 0;
 
-    build_decision_tree_recursive(&mut decision_tree, insns, &mut depth);
+    let mut insns = insns
+        .iter()
+        .map(|insn| LeafNode {
+            insn: insn.clone(),
+            mask: insn.mask,
+        })
+        .collect::<Vec<_>>();
 
-    Rc::new(decision_tree)
+    build_decision_tree_recursive(&mut decision_tree, insns.as_mut_slice(), &mut depth);
+
+    decision_tree
 }
