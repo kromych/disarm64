@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::str::FromStr;
 
 use bitflags::bitflags;
 use serde::de::value::StrDeserializer;
@@ -127,7 +128,143 @@ pub enum InsnClass {
     THE,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Deserialize)]
+impl FromStr for InsnClass {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let s = s.to_uppercase();
+        let s = s.as_str();
+        match s {
+            "AARCH64_MISC" => Ok(InsnClass::AARCH64_MISC),
+            "ADDSUB_CARRY" => Ok(InsnClass::ADDSUB_CARRY),
+            "ADDSUB_EXT" => Ok(InsnClass::ADDSUB_EXT),
+            "ADDSUB_IMM" => Ok(InsnClass::ADDSUB_IMM),
+            "ADDSUB_SHIFT" => Ok(InsnClass::ADDSUB_SHIFT),
+            "ASIMDALL" => Ok(InsnClass::ASIMDALL),
+            "ASIMDDIFF" => Ok(InsnClass::ASIMDDIFF),
+            "ASIMDELEM" => Ok(InsnClass::ASIMDELEM),
+            "ASIMDEXT" => Ok(InsnClass::ASIMDEXT),
+            "ASIMDIMM" => Ok(InsnClass::ASIMDIMM),
+            "ASIMDINS" => Ok(InsnClass::ASIMDINS),
+            "ASIMDMISC" => Ok(InsnClass::ASIMDMISC),
+            "ASIMDPERM" => Ok(InsnClass::ASIMDPERM),
+            "ASIMDSAME" => Ok(InsnClass::ASIMDSAME),
+            "ASIMDSHF" => Ok(InsnClass::ASIMDSHF),
+            "ASIMDTBL" => Ok(InsnClass::ASIMDTBL),
+            "ASISDDIFF" => Ok(InsnClass::ASISDDIFF),
+            "ASISDELEM" => Ok(InsnClass::ASISDELEM),
+            "ASISDLSE" => Ok(InsnClass::ASISDLSE),
+            "ASISDLSEP" => Ok(InsnClass::ASISDLSEP),
+            "ASISDLSO" => Ok(InsnClass::ASISDLSO),
+            "ASISDLSOP" => Ok(InsnClass::ASISDLSOP),
+            "ASISDMISC" => Ok(InsnClass::ASISDMISC),
+            "ASISDONE" => Ok(InsnClass::ASISDONE),
+            "ASISDPAIR" => Ok(InsnClass::ASISDPAIR),
+            "ASISDSAME" => Ok(InsnClass::ASISDSAME),
+            "ASISDSHF" => Ok(InsnClass::ASISDSHF),
+            "BFLOAT16" => Ok(InsnClass::BFLOAT16),
+            "BITFIELD" => Ok(InsnClass::BITFIELD),
+            "BRANCH_IMM" => Ok(InsnClass::BRANCH_IMM),
+            "BRANCH_REG" => Ok(InsnClass::BRANCH_REG),
+            "COMPBRANCH" => Ok(InsnClass::COMPBRANCH),
+            "CONDBRANCH" => Ok(InsnClass::CONDBRANCH),
+            "CONDCMP_IMM" => Ok(InsnClass::CONDCMP_IMM),
+            "CONDCMP_REG" => Ok(InsnClass::CONDCMP_REG),
+            "CONDSEL" => Ok(InsnClass::CONDSEL),
+            "CRYPTOAES" => Ok(InsnClass::CRYPTOAES),
+            "CRYPTOSHA2" => Ok(InsnClass::CRYPTOSHA2),
+            "CRYPTOSHA3" => Ok(InsnClass::CRYPTOSHA3),
+            "CRYPTOSM3" => Ok(InsnClass::CRYPTOSM3),
+            "CRYPTOSM4" => Ok(InsnClass::CRYPTOSM4),
+            "CSSC" => Ok(InsnClass::CSSC),
+            "DOTPRODUCT" => Ok(InsnClass::DOTPRODUCT),
+            "DP_1SRC" => Ok(InsnClass::DP_1SRC),
+            "DP_2SRC" => Ok(InsnClass::DP_2SRC),
+            "DP_3SRC" => Ok(InsnClass::DP_3SRC),
+            "EXCEPTION" => Ok(InsnClass::EXCEPTION),
+            "EXTRACT" => Ok(InsnClass::EXTRACT),
+            "FLOAT2FIX" => Ok(InsnClass::FLOAT2FIX),
+            "FLOAT2INT" => Ok(InsnClass::FLOAT2INT),
+            "FLOATCCMP" => Ok(InsnClass::FLOATCCMP),
+            "FLOATCMP" => Ok(InsnClass::FLOATCMP),
+            "FLOATDP1" => Ok(InsnClass::FLOATDP1),
+            "FLOATDP2" => Ok(InsnClass::FLOATDP2),
+            "FLOATDP3" => Ok(InsnClass::FLOATDP3),
+            "FLOATIMM" => Ok(InsnClass::FLOATIMM),
+            "FLOATSEL" => Ok(InsnClass::FLOATSEL),
+            "GCS" => Ok(InsnClass::GCS),
+            "IC_SYSTEM" => Ok(InsnClass::IC_SYSTEM),
+            "LDST_IMM10" => Ok(InsnClass::LDST_IMM10),
+            "LDST_IMM9" => Ok(InsnClass::LDST_IMM9),
+            "LDST_POS" => Ok(InsnClass::LDST_POS),
+            "LDST_REGOFF" => Ok(InsnClass::LDST_REGOFF),
+            "LDST_UNPRIV" => Ok(InsnClass::LDST_UNPRIV),
+            "LDST_UNSCALED" => Ok(InsnClass::LDST_UNSCALED),
+            "LDSTEXCL" => Ok(InsnClass::LDSTEXCL),
+            "LDSTNAPAIR_OFFS" => Ok(InsnClass::LDSTNAPAIR_OFFS),
+            "LDSTPAIR_INDEXED" => Ok(InsnClass::LDSTPAIR_INDEXED),
+            "LDSTPAIR_OFF" => Ok(InsnClass::LDSTPAIR_OFF),
+            "LOADLIT" => Ok(InsnClass::LOADLIT),
+            "LOG_IMM" => Ok(InsnClass::LOG_IMM),
+            "LOG_SHIFT" => Ok(InsnClass::LOG_SHIFT),
+            "LSE_ATOMIC" => Ok(InsnClass::LSE_ATOMIC),
+            "LSE128_ATOMIC" => Ok(InsnClass::LSE128_ATOMIC),
+            "MOVEWIDE" => Ok(InsnClass::MOVEWIDE),
+            "PCRELADDR" => Ok(InsnClass::PCRELADDR),
+            "RCPC3" => Ok(InsnClass::RCPC3),
+            "SME_FP_SD" => Ok(InsnClass::SME_FP_SD),
+            "SME_INT_SD" => Ok(InsnClass::SME_INT_SD),
+            "SME_LDR" => Ok(InsnClass::SME_LDR),
+            "SME_MISC" => Ok(InsnClass::SME_MISC),
+            "SME_MOV" => Ok(InsnClass::SME_MOV),
+            "SME_PSEL" => Ok(InsnClass::SME_PSEL),
+            "SME_SHIFT" => Ok(InsnClass::SME_SHIFT),
+            "SME_SIZE_12_BHS" => Ok(InsnClass::SME_SIZE_12_BHS),
+            "SME_SIZE_12_HS" => Ok(InsnClass::SME_SIZE_12_HS),
+            "SME_SIZE_22_HSD" => Ok(InsnClass::SME_SIZE_22_HSD),
+            "SME_SIZE_22" => Ok(InsnClass::SME_SIZE_22),
+            "SME_START" => Ok(InsnClass::SME_START),
+            "SME_STOP" => Ok(InsnClass::SME_STOP),
+            "SME_STR" => Ok(InsnClass::SME_STR),
+            "SME_SZ_23" => Ok(InsnClass::SME_SZ_23),
+            "SME2_MOV" => Ok(InsnClass::SME2_MOV),
+            "SME2_MOVAZ" => Ok(InsnClass::SME2_MOVAZ),
+            "SVE_CPY" => Ok(InsnClass::SVE_CPY),
+            "SVE_INDEX" => Ok(InsnClass::SVE_INDEX),
+            "SVE_INDEX1" => Ok(InsnClass::SVE_INDEX1),
+            "SVE_LIMM" => Ok(InsnClass::SVE_LIMM),
+            "SVE_MISC" => Ok(InsnClass::SVE_MISC),
+            "SVE_MOVPRFX" => Ok(InsnClass::SVE_MOVPRFX),
+            "SVE_PRED_ZM" => Ok(InsnClass::SVE_PRED_ZM),
+            "SVE_SHIFT_PRED" => Ok(InsnClass::SVE_SHIFT_PRED),
+            "SVE_SHIFT_TSZ_BHSD" => Ok(InsnClass::SVE_SHIFT_TSZ_BHSD),
+            "SVE_SHIFT_TSZ_HSD" => Ok(InsnClass::SVE_SHIFT_TSZ_HSD),
+            "SVE_SHIFT_UNPRED" => Ok(InsnClass::SVE_SHIFT_UNPRED),
+            "SVE_SIZE_13" => Ok(InsnClass::SVE_SIZE_13),
+            "SVE_SIZE_BH" => Ok(InsnClass::SVE_SIZE_BH),
+            "SVE_SIZE_BHS" => Ok(InsnClass::SVE_SIZE_BHS),
+            "SVE_SIZE_BHSD" => Ok(InsnClass::SVE_SIZE_BHSD),
+            "SVE_SIZE_HSD" => Ok(InsnClass::SVE_SIZE_HSD),
+            "SVE_SIZE_HSD2" => Ok(InsnClass::SVE_SIZE_HSD2),
+            "SVE_SIZE_SD" => Ok(InsnClass::SVE_SIZE_SD),
+            "SVE_SIZE_SD2" => Ok(InsnClass::SVE_SIZE_SD2),
+            "SVE_SIZE_TSZ_BHS" => Ok(InsnClass::SVE_SIZE_TSZ_BHS),
+            "SVE2_URQVS" => Ok(InsnClass::SVE2_URQVS),
+            "TESTBRANCH" => Ok(InsnClass::TESTBRANCH),
+            "THE" => Ok(InsnClass::THE),
+
+            _ => Err("invalid value for instruction class"),
+        }
+    }
+}
+
+impl std::fmt::Display for InsnClass {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Deserialize)]
 #[allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
 pub enum InsnFeatureSet {
     AES,
@@ -195,6 +332,90 @@ pub enum InsnFeatureSet {
     V8R,
     WFXT,
     XS,
+}
+
+impl FromStr for InsnFeatureSet {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let s = s.to_uppercase();
+        let s = s.as_str();
+        match s {
+            "AES" => Ok(InsnFeatureSet::AES),
+            "B16B16" => Ok(InsnFeatureSet::B16B16),
+            "BFLOAT16" => Ok(InsnFeatureSet::BFLOAT16),
+            "BFLOAT16_SVE" => Ok(InsnFeatureSet::BFLOAT16_SVE),
+            "CHK" => Ok(InsnFeatureSet::CHK),
+            "COMPNUM" => Ok(InsnFeatureSet::COMPNUM),
+            "CRC" => Ok(InsnFeatureSet::CRC),
+            "CSSC" => Ok(InsnFeatureSet::CSSC),
+            "D128" => Ok(InsnFeatureSet::D128),
+            "D128_THE" => Ok(InsnFeatureSet::D128_THE),
+            "DOTPROD" => Ok(InsnFeatureSet::DOTPROD),
+            "F32MM_SVE" => Ok(InsnFeatureSet::F32MM_SVE),
+            "F64MM_SVE" => Ok(InsnFeatureSet::F64MM_SVE),
+            "FLAGM" => Ok(InsnFeatureSet::FLAGM),
+            "FLAGMANIP" => Ok(InsnFeatureSet::FLAGMANIP),
+            "FP" => Ok(InsnFeatureSet::FP),
+            "FP_16_V8_2A" => Ok(InsnFeatureSet::FP_16_V8_2A),
+            "FP_F16" => Ok(InsnFeatureSet::FP_F16),
+            "FRINTTS" => Ok(InsnFeatureSet::FRINTTS),
+            "GCS" => Ok(InsnFeatureSet::GCS),
+            "HBC" => Ok(InsnFeatureSet::HBC),
+            "I8MM" => Ok(InsnFeatureSet::I8MM),
+            "I8MM_SVE" => Ok(InsnFeatureSet::I8MM_SVE),
+            "ITE" => Ok(InsnFeatureSet::ITE),
+            "JSCVT" => Ok(InsnFeatureSet::JSCVT),
+            "LOR" => Ok(InsnFeatureSet::LOR),
+            "LS64" => Ok(InsnFeatureSet::LS64),
+            "LSE" => Ok(InsnFeatureSet::LSE),
+            "LSE128" => Ok(InsnFeatureSet::LSE128),
+            "MEMTAG" => Ok(InsnFeatureSet::MEMTAG),
+            "MOPS" => Ok(InsnFeatureSet::MOPS),
+            "MOPS_MEMTAG" => Ok(InsnFeatureSet::MOPS_MEMTAG),
+            "PAC" => Ok(InsnFeatureSet::PAC),
+            "PREDRES" => Ok(InsnFeatureSet::PREDRES),
+            "PREDRES2" => Ok(InsnFeatureSet::PREDRES2),
+            "RCPC" => Ok(InsnFeatureSet::RCPC),
+            "RCPC2" => Ok(InsnFeatureSet::RCPC2),
+            "RCPC3" => Ok(InsnFeatureSet::RCPC3),
+            "RDMA" => Ok(InsnFeatureSet::RDMA),
+            "SB" => Ok(InsnFeatureSet::SB),
+            "SHA2" => Ok(InsnFeatureSet::SHA2),
+            "SHA3" => Ok(InsnFeatureSet::SHA3),
+            "SIMD" => Ok(InsnFeatureSet::SIMD),
+            "SIMD_F16" => Ok(InsnFeatureSet::SIMD_F16),
+            "SM4" => Ok(InsnFeatureSet::SM4),
+            "SME" => Ok(InsnFeatureSet::SME),
+            "SME2" => Ok(InsnFeatureSet::SME2),
+            "SME2P1" => Ok(InsnFeatureSet::SME2P1),
+            "SME2_F64F64" => Ok(InsnFeatureSet::SME2_F64F64),
+            "SME2_I16I64" => Ok(InsnFeatureSet::SME2_I16I64),
+            "SME_F64F64" => Ok(InsnFeatureSet::SME_F64F64),
+            "SME_I16I64" => Ok(InsnFeatureSet::SME_I16I64),
+            "SVE" => Ok(InsnFeatureSet::SVE),
+            "SVE2" => Ok(InsnFeatureSet::SVE2),
+            "SVE2AES" => Ok(InsnFeatureSet::SVE2AES),
+            "SVE2BITPERM" => Ok(InsnFeatureSet::SVE2BITPERM),
+            "SVE2P1" => Ok(InsnFeatureSet::SVE2P1),
+            "SVE2SHA3" => Ok(InsnFeatureSet::SVE2SHA3),
+            "SVE2SM4" => Ok(InsnFeatureSet::SVE2SM4),
+            "THE" => Ok(InsnFeatureSet::THE),
+            "TME" => Ok(InsnFeatureSet::TME),
+            "V8" => Ok(InsnFeatureSet::V8),
+            "V8R" => Ok(InsnFeatureSet::V8R),
+            "WFXT" => Ok(InsnFeatureSet::WFXT),
+            "XS" => Ok(InsnFeatureSet::XS),
+
+            _ => Err("invalid value for instruction feature set"),
+        }
+    }
+}
+
+impl std::fmt::Display for InsnFeatureSet {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
 }
 
 bitflags! {
@@ -535,7 +756,7 @@ pub enum InsnOperandKind {
 }
 
 #[allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
-#[derive(Debug, PartialEq, Eq, Clone, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize)]
 pub enum InsnOperandClass {
     ADDRESS,
     COND,
@@ -555,7 +776,7 @@ pub enum InsnOperandClass {
 }
 
 #[allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
-#[derive(Debug, PartialEq, Eq, Clone, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize)]
 pub enum InsnOperandQualifier {
     imm_0_15,
     imm_0_31,
@@ -591,7 +812,7 @@ pub enum InsnOperandQualifier {
 }
 
 #[allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
-#[derive(Debug, PartialEq, Eq, Clone, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Hash, Deserialize)]
 pub enum InsnBitField {
     b40,
     b5,
@@ -753,7 +974,7 @@ where
     u32::from_str_radix(without_prefix, 16).map_err(serde::de::Error::custom)
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Deserialize)]
 pub struct BitfieldSpec {
     pub bitfield: InsnBitField,
     pub lsb: u8,
@@ -809,7 +1030,7 @@ where
         .collect()
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
 pub struct InsnOperand {
     pub class: InsnOperandClass,
     pub qualifiers: Vec<InsnOperandQualifier>,
@@ -817,7 +1038,7 @@ pub struct InsnOperand {
     pub bit_fields: Vec<BitfieldSpec>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Deserialize)]
 pub struct Instruction {
     pub mnemonic: String,
     #[serde(deserialize_with = "deser_hex")]

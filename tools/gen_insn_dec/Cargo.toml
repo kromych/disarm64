@@ -1,0 +1,17 @@
+[package]
+name = "gen_insn_dec"
+edition = "2021"
+
+[[bin]]
+name = "gen_insn_dec"
+path = "src/gen_insn_dec.rs"
+
+[dependencies]
+insn_def.workspace = true
+
+anyhow.workspace = true
+clap.workspace = true
+log.workspace = true
+env_logger.workspace = true
+serde.workspace = true
+serde_json.workspace = true

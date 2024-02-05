@@ -1,10 +1,17 @@
-[package]
-name = "insn_tree"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+resolver = "2"
+members = [
+    "support/insn_def",
+    "tools/gen_insn_dec"
+]
 
-[dependencies]
+[workspace.dependencies]
+insn_def = { path = "support/insn_def" }
+
+anyhow = "1"
 bitflags = { version = "2.4", features = ["serde"] }
+clap = { version = "4", features = ["derive"] }
+log = "0.4"
+env_logger = "0.11"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-

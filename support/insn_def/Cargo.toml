@@ -1,0 +1,11 @@
+[package]
+name = "insn_def"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+bitflags.workspace = true
+serde.workspace = true
+serde_json.workspace = true

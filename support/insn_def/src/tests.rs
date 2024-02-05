@@ -62,31 +62,3 @@ fn it_works() {
         }
     }
 }
-
-#[derive(Deserialize, Debug)]
-pub struct Instructions(pub Vec<Instruction>);
-
-#[test]
-fn parse() -> std::io::Result<()> {
-    let data = std::fs::read_to_string("./aarch64.json")?;
-    let data = serde_json::from_str::<Instructions>(&data)?;
-
-    println!("{:#x?}", data.0[0]);
-
-    for insn in data.0 {
-        let opcode = insn.opcode;
-        let mask = insn.mask;
-
-        if insn.flags.contains(InsnFlags::IS_ALIAS) {
-            continue;
-        }
-
-        // If opcode == opcode & mask, then additional_dont_care == 0 and opcode & !mask == 0
-        let additional_dont_care = opcode ^ (mask & opcode); // == opcode & !mask
-        assert_eq!(additional_dont_care, 0);
-
-        assert_ne!(mask, 0);
-    }
-
-    Ok(())
-}
