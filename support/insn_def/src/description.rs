@@ -6,8 +6,11 @@ use serde::de::value::StrDeserializer;
 use serde::Deserialize;
 use serde::Deserializer;
 
+use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
+
 #[allow(non_camel_case_types)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, EnumIter, Deserialize)]
 pub enum InsnClass {
     AARCH64_MISC,
     ADDSUB_CARRY,
@@ -129,7 +132,7 @@ pub enum InsnClass {
 }
 
 impl FromStr for InsnClass {
-    type Err = &'static str;
+    type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.to_uppercase();
@@ -253,7 +256,13 @@ impl FromStr for InsnClass {
             "TESTBRANCH" => Ok(InsnClass::TESTBRANCH),
             "THE" => Ok(InsnClass::THE),
 
-            _ => Err("invalid value for instruction class"),
+            _ => {
+                let mut names = Vec::new();
+                for i in InsnClass::iter() {
+                    names.push(i);
+                }
+                Err(format!("expected a subset of {names:?}"))
+            }
         }
     }
 }
@@ -264,7 +273,7 @@ impl std::fmt::Display for InsnClass {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Hash, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, EnumIter, Deserialize)]
 #[allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
 pub enum InsnFeatureSet {
     AES,
@@ -335,7 +344,7 @@ pub enum InsnFeatureSet {
 }
 
 impl FromStr for InsnFeatureSet {
-    type Err = &'static str;
+    type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.to_uppercase();
@@ -407,7 +416,13 @@ impl FromStr for InsnFeatureSet {
             "WFXT" => Ok(InsnFeatureSet::WFXT),
             "XS" => Ok(InsnFeatureSet::XS),
 
-            _ => Err("invalid value for instruction feature set"),
+            _ => {
+                let mut names = Vec::new();
+                for i in InsnFeatureSet::iter() {
+                    names.push(i);
+                }
+                Err(format!("expected a subset of {names:?}"))
+            }
         }
     }
 }
