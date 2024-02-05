@@ -4,8 +4,8 @@ use std::rc::Rc;
 
 use serde::Deserialize;
 
+use crate::description::Insn;
 use crate::description::InsnFlags;
-use crate::description::Instruction;
 use crate::DecisionNode;
 use crate::Insn;
 

@@ -1,11 +1,9 @@
-use std::collections::HashMap;
-use std::str::FromStr;
-
 use bitflags::bitflags;
 use serde::de::value::StrDeserializer;
 use serde::Deserialize;
 use serde::Deserializer;
-
+use std::collections::HashMap;
+use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
@@ -1054,7 +1052,7 @@ pub struct InsnOperand {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Deserialize)]
-pub struct Instruction {
+pub struct Insn {
     pub mnemonic: String,
     #[serde(deserialize_with = "deser_hex")]
     pub opcode: u32,

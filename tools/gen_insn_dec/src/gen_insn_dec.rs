@@ -1,10 +1,11 @@
+use clap::Parser;
+use insn_def::description::Insn;
+use insn_def::description::InsnClass;
+use insn_def::description::InsnFeatureSet;
+use insn_def::description::InsnFlags;
 use std::collections::HashSet;
 use std::path::PathBuf;
-
-use clap::Parser;
-
-use insn_def::description::{InsnClass, Instruction};
-use insn_def::description::{InsnFeatureSet, InsnFlags};
+use std::rc::Rc;
 
 #[derive(Parser, Debug)]
 /// This tool generates an instruction decoder from a JSON description of the ISA.
@@ -73,7 +74,7 @@ fn parse_insn_description(
     feature_sets_filter: HashSet<InsnFeatureSet>,
     insn_class_filter: HashSet<InsnClass>,
     mnemonic_filter: HashSet<String>,
-) -> anyhow::Result<Vec<Instruction>> {
+) -> anyhow::Result<Vec<Rc<Insn>>> {
     log::info!("Loading {path:?}");
 
     if !feature_sets_filter.is_empty() {
@@ -93,7 +94,7 @@ fn parse_insn_description(
     }
 
     let data = std::fs::read_to_string(path)?;
-    let insns = serde_json::from_str::<Vec<Instruction>>(&data)?;
+    let insns = serde_json::from_str::<Vec<Insn>>(&data)?;
     let mut filtered_insns = Vec::new();
 
     let mut aliases = 0;
@@ -134,7 +135,7 @@ fn parse_insn_description(
             insn_classes.insert(&insn.class);
             insn_feature_sets.insert(&insn.feature_set);
 
-            filtered_insns.push(insn.clone());
+            filtered_insns.push(Rc::new(insn.clone()));
         } else {
             log::trace!("Skipping {insn:x?}");
         }
