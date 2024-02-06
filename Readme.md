@@ -15,12 +15,15 @@ The ISA description is read from a JSON file (there is an example in the repo:
 [aarch64.json](./aarch64.json), more than `3,000` instructions to play with), and
 the algorithms assume a fixed length 32-bit encoding.
 
-## Using the tool
+## Using the generator
+
+### Available options
 
 ```sh
 cargo run -- --help
-    Finished dev [unoptimized + debuginfo] target(s) in 0.01s
-     Running `target/debug/gen_insn_dec --help`
+```
+
+```txt
 This tool generates an instruction decoder from a JSON description of the ISA
 
 Usage: gen_insn_dec [OPTIONS] <DESCRIPTION_JSON>
@@ -35,6 +38,21 @@ Options:
   -v...                                 Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity
   -h, --help                            Print help
 
+```
+
+### Instruction classes and feature sets
+
+To learn about the classes and feature sets available in the description of the ISA,
+please run
+
+```sh
+cargo run -- ./aarch64.json -c -
+```
+
+or
+
+```sh
+cargo run -- ./aarch64.json -f -
 ```
 
 ## Examples
