@@ -35,6 +35,7 @@ Options:
   -f, --feature-sets <FEATURE_SETS>...  Include filter for feature sets, e.g. "v8,simd". Case-insensitive, ignored if not provided
   -c, --insn-class <INSN_CLASS>...      Include filter for instruction classes, e.g. "addsub_imm,ldst_pos,exception". Case-insensitive, ignored if not provided
   -m, --mnemonic <MNEMONIC>...          Include filter for mnemonics, e.g. "adc,ldp". Case-insensitive, ignored if not provided
+  -g, --graphviz <GRAPHVIZ>             Output the decision tree to a Graphviz DOT file
   -v...                                 Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity
   -h, --help                            Print help
 
@@ -56,6 +57,34 @@ cargo run -- ./aarch64.json -f -
 ```
 
 ## Examples
+
+### Visualizing the decision trees
+
+```sh
+cargo run -- ./aarch64.json -c exception -g dt-exception.dot
+cargo run -- ./aarch64.json -f v8 -g dt-v8.dot
+cargo run -- ./aarch64.json -c ic_system -g dt-system.dot
+```
+
+and then (assuming [Graphviz](https://graphviz.org/) tools are installed):
+
+```sh
+dot -Tpng dt-exception.dot -o dt-exception.png 
+dot -Tpng dt-v8.dot -o dt-v8.png 
+dot -Tpng dt-system.dot -o dt-system.png 
+```
+
+to render the [`dot`](https://graphviz.org/doc/info/lang.html) file into a `png`
+image. The numbers in the circles show the bit to check; in the rectangles, there
+are instructions and opcodes to check against.
+
+Examples:
+
+- exception instructions: [dt-exception.png](./img/dt-exception.png)
+- V8 instructions (no SIMD, no aliases): [dt-v8.png](./img/dt-v8.png)
+- system instructions: [dt-system.png](./img/dt-system.png)
+
+### Debug output
 
 ```sh
 cargo run -- ./aarch64.json -c ldst_pos -m ldr -v

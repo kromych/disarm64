@@ -29,6 +29,9 @@ struct CommandLine {
     /// Case-insensitive, ignored if not provided.
     #[clap(short = 'm', long, value_delimiter = ',', num_args = 1..)]
     mnemonic: Option<Vec<String>>,
+    /// Output the decision tree to a Graphviz DOT file.
+    #[clap(short, long)]
+    graphviz: Option<PathBuf>,
     /// Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity.
     #[clap(short, action = clap::ArgAction::Count)]
     verbosity: u8,
@@ -73,7 +76,12 @@ fn main() -> anyhow::Result<()> {
         filter_mnemonic,
     )?;
 
-    let _decision_tree = build_decision_tree(insns.as_slice());
+    let decision_tree = build_decision_tree(insns.as_slice());
+    if let Some(graphviz) = opt.graphviz {
+        log::info!("Writing decision tree to {graphviz:?}");
+        let mut f = std::fs::File::create(graphviz)?;
+        decision_tree::decistion_tree_to_graphviz_dot(&decision_tree, &mut f)?;
+    }
 
     Ok(())
 }
