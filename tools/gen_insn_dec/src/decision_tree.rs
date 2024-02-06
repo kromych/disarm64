@@ -1,6 +1,7 @@
-use insn_def::description::Insn;
 use std::ops::Shl;
 use std::rc::Rc;
+
+use insn_def::description::Insn;
 
 #[derive(Debug, Clone)]
 pub struct LeafNode {
@@ -32,6 +33,12 @@ fn build_decision_tree_recursive(
     log::debug!("Building decision tree at depth {}", depth);
     log::trace!("{} instructions", insns.len());
 
+    if insns.is_empty() {
+        *depth -= 1;
+        log::debug!("No instructions at depth {}", depth);
+        return;
+    }
+
     if insns.len() == 1 {
         *decision_tree = Some(Box::new(DecisionTreeNode::Leaf {
             insns: insns.to_vec(),
@@ -43,13 +50,15 @@ fn build_decision_tree_recursive(
 
     let mut insns = Vec::from_iter(insns.iter().cloned());
     loop {
-        let mask = insns
+        // Find the common bits in the mask for all instructions.
+        let acc_mask = insns
             .as_slice()
             .iter()
             .fold(!0u32, |acc, insn| acc & insn.mask);
-        log::debug!("mask: {:x}", mask);
+        log::debug!("mask: {:x}", acc_mask);
 
-        if mask == 0 {
+        // No common bits, will match one instruction at a time.
+        if acc_mask == 0 {
             *decision_tree = Some(Box::new(DecisionTreeNode::Leaf {
                 insns: insns.to_vec(),
             }));
@@ -57,10 +66,10 @@ fn build_decision_tree_recursive(
         }
 
         // Find the rightmost bit that is not zero in the mask.
-        let decision_bit = mask.trailing_zeros();
-        let insn_mask = 1u32.shl(decision_bit);
+        let decision_bit = acc_mask.trailing_zeros();
+        let decision_mask = 1u32.shl(decision_bit);
         log::debug!("decision bit: {}", decision_bit);
-        log::debug!("insn mask: {:x}", insn_mask);
+        log::debug!("decision mask: {:x}", decision_mask);
 
         // Split the instructions into two groups based on the decision bit.
         let mut zero = Vec::new();
@@ -68,8 +77,8 @@ fn build_decision_tree_recursive(
         for node in insns.as_slice() {
             let mut node = node.clone();
             // Clear the decision bit.
-            node.mask &= !insn_mask;
-            if node.insn.opcode & insn_mask == 0 {
+            node.mask &= !decision_mask;
+            if node.insn.opcode & decision_mask == 0 {
                 zero.push(node);
             } else {
                 one.push(node);
@@ -77,8 +86,9 @@ fn build_decision_tree_recursive(
         }
         log::debug!("zero: {}, one: {}", zero.len(), one.len());
 
-        // If one of the groups is empty, we can't split further.
-        // We'll try to split on the next bit.
+        // If one of the groups is empty, all instructions have the decision bit set
+        // or cleared. The loop above removed it from the mask, repeat the attempt to
+        // split at the next bit.
         if zero.is_empty() {
             insns = one;
             continue;

@@ -1,12 +1,14 @@
+use std::collections::HashSet;
+use std::path::PathBuf;
+use std::rc::Rc;
+
 use clap::Parser;
+
 use decision_tree::build_decision_tree;
 use insn_def::description::Insn;
 use insn_def::description::InsnClass;
 use insn_def::description::InsnFeatureSet;
 use insn_def::description::InsnFlags;
-use std::collections::HashSet;
-use std::path::PathBuf;
-use std::rc::Rc;
 
 mod decision_tree;
 
@@ -42,7 +44,9 @@ fn init_logging(opt: &CommandLine) {
     // env_logger::Builder::from_env().init();
 
     env_logger::builder()
-        .format_timestamp_millis()
+        .format_timestamp(None)
+        .format_module_path(false)
+        .format_target(false)
         .filter(
             None,
             match opt.verbosity {
