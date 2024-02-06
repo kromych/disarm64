@@ -1,3 +1,10 @@
 /target
 .idea
 .vscode
+*.dot
+*.pdf
+*.png
+*.jpg
+*.svg
+*.log
+.DS_Store
