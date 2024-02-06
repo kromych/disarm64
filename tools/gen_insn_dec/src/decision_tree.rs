@@ -25,7 +25,7 @@ pub type DecisionTree = Option<Box<DecisionTreeNode>>;
 
 fn build_decision_tree_recursive(
     decision_tree: &mut DecisionTree,
-    insns: &mut [LeafNode],
+    insns: &[LeafNode],
     depth: &mut usize,
 ) {
     *depth += 1;
@@ -118,7 +118,7 @@ pub fn build_decision_tree(insns: &[Rc<Insn>]) -> DecisionTree {
     let mut decision_tree = None;
     let mut depth = 0;
 
-    let mut insns = insns
+    let insns = insns
         .iter()
         .map(|insn| LeafNode {
             insn: insn.clone(),
@@ -126,7 +126,9 @@ pub fn build_decision_tree(insns: &[Rc<Insn>]) -> DecisionTree {
         })
         .collect::<Vec<_>>();
 
-    build_decision_tree_recursive(&mut decision_tree, insns.as_mut_slice(), &mut depth);
+    build_decision_tree_recursive(&mut decision_tree, insns.as_slice(), &mut depth);
+
+    log::info!("Decision tree generated");
 
     decision_tree
 }
