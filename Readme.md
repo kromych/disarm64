@@ -64,6 +64,7 @@ cargo run -- ./aarch64.json -f -
 cargo run -- ./aarch64.json -c exception -g dt-exception.dot
 cargo run -- ./aarch64.json -f v8 -g dt-v8.dot
 cargo run -- ./aarch64.json -c ic_system -g dt-system.dot
+cargo run -- ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -g dt-ldst.dot 
 ```
 
 and then (assuming [Graphviz](https://graphviz.org/) tools are installed):
@@ -72,17 +73,19 @@ and then (assuming [Graphviz](https://graphviz.org/) tools are installed):
 dot -Tpng dt-exception.dot -o dt-exception.png 
 dot -Tpng dt-v8.dot -o dt-v8.png 
 dot -Tpng dt-system.dot -o dt-system.png 
+dot -Tpng dt-ldst.dot -o dt-ldst.png 
 ```
 
 to render the [`dot`](https://graphviz.org/doc/info/lang.html) file into a `png`
 image. The numbers in the circles show the bit to check; in the rectangles, there
 are instructions and opcodes to check against.
 
-Examples:
+Examples (Aarch64):
 
 - exception instructions: [dt-exception.png](./img/dt-exception.png)
 - V8 instructions (no SIMD, no aliases): [dt-v8.png](./img/dt-v8.png)
 - system instructions: [dt-system.png](./img/dt-system.png)
+- V8 load and store instructions: [dt-ldst.png](./img/dt-ldst.png)
 
 ### Debug output
 
