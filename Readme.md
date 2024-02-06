@@ -17,8 +17,8 @@ the algorithms assume a fixed length 32-bit encoding.
 
 ## Using the tool
 
-```
-cargo run -- --help                                                                                                                                                                                                                                             ─╯
+```sh
+cargo run -- --help
     Finished dev [unoptimized + debuginfo] target(s) in 0.01s
      Running `target/debug/gen_insn_dec --help`
 This tool generates an instruction decoder from a JSON description of the ISA
@@ -39,12 +39,11 @@ Options:
 
 ## Examples
 
-```
-cargo run -- ./aarch64.json -c ldst_pos -m ldr -v 
-```
-
+```sh
+cargo run -- ./aarch64.json -c ldst_pos -m ldr -v
 ```
 
+```log
 [INFO ] Loading "./aarch64.json"
 [INFO ] Including instructions from all feature sets
 [INFO ] Including instructions from classes {LDST_POS}
