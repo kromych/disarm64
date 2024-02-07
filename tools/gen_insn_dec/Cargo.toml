@@ -11,6 +11,7 @@ insn_def.workspace = true
 
 anyhow.workspace = true
 clap.workspace = true
+clap-num.workspace = true
 log.workspace = true
 env_logger.workspace = true
 serde.workspace = true

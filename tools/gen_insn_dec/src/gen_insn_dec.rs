@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use std::rc::Rc;
 
 use clap::Parser;
-
+use clap_num::maybe_hex;
 use decision_tree::build_decision_tree;
 use insn_def::description::Insn;
 use insn_def::description::InsnClass;
@@ -11,6 +11,7 @@ use insn_def::description::InsnFeatureSet;
 use insn_def::description::InsnFlags;
 
 mod decision_tree;
+mod decoder;
 
 #[derive(Parser, Debug)]
 /// This tool generates an instruction decoder from a JSON description of the ISA.
@@ -32,6 +33,12 @@ struct CommandLine {
     /// Output the decision tree to a Graphviz DOT file.
     #[clap(short, long)]
     graphviz: Option<PathBuf>,
+    /// Output the decision tree to a Rust file.
+    #[clap(short, long)]
+    rust: Option<PathBuf>,
+    /// An instruction to decode (hex 32-bit).
+    #[clap(short, long, value_parser=maybe_hex::<u32>)]
+    insn: Option<u32>,
     /// Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity.
     #[clap(short, action = clap::ArgAction::Count)]
     verbosity: u8,
@@ -78,9 +85,21 @@ fn main() -> anyhow::Result<()> {
 
     let decision_tree = build_decision_tree(insns.as_slice());
     if let Some(graphviz) = opt.graphviz {
-        log::info!("Writing decision tree to {graphviz:?}");
+        log::info!("Writing decision tree to a Graphviz dot file {graphviz:?}");
         let mut f = std::fs::File::create(graphviz)?;
         decision_tree::decistion_tree_to_graphviz_dot(&decision_tree, &mut f)?;
+    }
+
+    if let Some(rust) = opt.rust {
+        log::info!("Writing decision tree to a Rust file {rust:?}");
+        let mut f = std::fs::File::create(rust)?;
+        decision_tree::decision_tree_to_rust(&decision_tree, &mut f)?;
+    }
+
+    if let Some(insn) = opt.insn {
+        log::info!("Decoding instruction {insn:x?}");
+        let insn = decoder::decode(insn);
+        log::info!("Decoded instruction: {:?}", insn);
     }
 
     Ok(())

@@ -134,6 +134,73 @@ pub fn build_decision_tree(insns: &[Rc<Insn>]) -> DecisionTree {
     decision_tree
 }
 
+pub fn decision_tree_to_rust(
+    decision_tree: &DecisionTree,
+    f: &mut impl Write,
+) -> anyhow::Result<()> {
+    fn decision_tree_to_rust_recursive(
+        decision_tree: &DecisionTree,
+        f: &mut impl Write,
+        indent: usize,
+    ) -> anyhow::Result<()> {
+        if decision_tree.is_none() {
+            return Ok(());
+        }
+
+        match decision_tree.as_ref().unwrap().as_ref() {
+            DecisionTreeNode::Leaf { insns } => {
+                for insn in insns {
+                    if insn.insn.mask == !0 {
+                        writeln!(
+                            f,
+                            "{}if insn == {:#x} {{ return Some(\"{}_{:08x}\"); }}",
+                            "  ".repeat(indent),
+                            insn.insn.opcode,
+                            insn.insn.mnemonic,
+                            insn.insn.opcode
+                        )?;
+                    } else {
+                        writeln!(
+                            f,
+                            "{}if insn & {:#08x} == {:#08x} {{ return Some(\"{}_{:08x}\"); }}",
+                            "  ".repeat(indent),
+                            insn.insn.mask,
+                            insn.insn.opcode,
+                            insn.insn.mnemonic,
+                            insn.insn.opcode
+                        )?;
+                    }
+                }
+            }
+            DecisionTreeNode::Branch {
+                decision_bit,
+                zero,
+                one,
+            } => {
+                writeln!(
+                    f,
+                    "{}if insn >> {decision_bit} & 1 == 0 {{",
+                    "  ".repeat(indent),
+                )?;
+                decision_tree_to_rust_recursive(zero, f, indent + 1)?;
+                writeln!(f, "{}}} else {{", "  ".repeat(indent))?;
+                decision_tree_to_rust_recursive(one, f, indent + 1)?;
+                writeln!(f, "{}}}", "  ".repeat(indent))?;
+            }
+        }
+
+        Ok(())
+    }
+
+    writeln!(f, "#[allow(clippy::collapsible_else_if)]")?;
+    writeln!(f, "pub fn decode(insn: u32) -> Option<&'static str> {{")?;
+    decision_tree_to_rust_recursive(decision_tree, f, 2)?;
+    writeln!(f, "  None")?;
+    writeln!(f, "}}")?;
+
+    Ok(())
+}
+
 pub fn decistion_tree_to_graphviz_dot(
     decision_tree: &DecisionTree,
     f: &mut impl Write,
