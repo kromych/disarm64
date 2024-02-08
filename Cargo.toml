@@ -9,6 +9,7 @@ members = [
 insn_def = { path = "support/insn_def" }
 
 anyhow = "1"
+bitfield-struct = "0.5"
 bitflags = { version = "2.4", features = ["serde"] }
 clap = { version = "4", features = ["derive"] }
 clap-num = "1"

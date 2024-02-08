@@ -72,6 +72,13 @@ fn main() -> anyhow::Result<()> {
     let opt = CommandLine::parse();
 
     init_logging(&opt);
+    if let Some(insn) = opt.insn {
+        log::info!("Decoding instruction {insn:x?}");
+        let insn = decoder::decode(insn);
+        log::info!("Decoded instruction: {:?}", insn);
+
+        return Ok(());
+    }
 
     let filter_feature_sets = HashSet::from_iter(opt.feature_sets.unwrap_or_default());
     let filter_insn_class = HashSet::from_iter(opt.insn_class.unwrap_or_default());
@@ -94,12 +101,6 @@ fn main() -> anyhow::Result<()> {
         log::info!("Writing decision tree to a Rust file {rust:?}");
         let mut f = std::fs::File::create(rust)?;
         decision_tree::decision_tree_to_rust(&decision_tree, &mut f)?;
-    }
-
-    if let Some(insn) = opt.insn {
-        log::info!("Decoding instruction {insn:x?}");
-        let insn = decoder::decode(insn);
-        log::info!("Decoded instruction: {:?}", insn);
     }
 
     Ok(())

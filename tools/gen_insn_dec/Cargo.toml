@@ -10,6 +10,7 @@ path = "src/gen_insn_dec.rs"
 insn_def.workspace = true
 
 anyhow.workspace = true
+bitfield-struct.workspace = true
 clap.workspace = true
 clap-num.workspace = true
 log.workspace = true
