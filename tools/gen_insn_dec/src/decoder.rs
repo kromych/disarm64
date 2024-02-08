@@ -288,7 +288,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                 if insn >> 22 & 1 == 0 {
                                     if insn >> 23 & 1 == 0 {
                                         if insn >> 30 & 1 == 0 {
-                                            if insn >> 0 & 1 == 0 {
+                                            if insn & 1 == 0 {
                                                 if insn >> 13 & 1 == 0 {
                                                     if insn >> 14 & 1 == 0 {
                                                         if insn >> 15 & 1 == 0 {
@@ -424,7 +424,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                 } else {
                                     if insn >> 23 & 1 == 0 {
                                         if insn >> 30 & 1 == 0 {
-                                            if insn >> 0 & 1 == 0 {
+                                            if insn & 1 == 0 {
                                                 if insn >> 13 & 1 == 0 {
                                                     if insn >> 14 & 1 == 0 {
                                                         if insn >> 15 & 1 == 0 {
@@ -551,7 +551,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                             if insn >> 22 & 1 == 0 {
                                 if insn >> 23 & 1 == 0 {
                                     if insn >> 30 & 1 == 0 {
-                                        if insn >> 0 & 1 == 0 {
+                                        if insn & 1 == 0 {
                                             if insn >> 13 & 1 == 0 {
                                                 if insn >> 14 & 1 == 0 {
                                                     if insn >> 15 & 1 == 0 {
@@ -675,7 +675,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                             } else {
                                 if insn >> 23 & 1 == 0 {
                                     if insn >> 30 & 1 == 0 {
-                                        if insn >> 0 & 1 == 0 {
+                                        if insn & 1 == 0 {
                                             if insn >> 13 & 1 == 0 {
                                                 if insn >> 14 & 1 == 0 {
                                                     if insn >> 15 & 1 == 0 {
@@ -2744,7 +2744,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                             } else {
                                                 if insn >> 10 & 1 == 0 {
                                                     if insn >> 11 & 1 == 0 {
-                                                        if insn >> 0 & 1 == 0 {
+                                                        if insn & 1 == 0 {
                                                             if insn >> 12 & 1 == 0 {
                                                                 if insn & 0xff20fc01 == 0xc120c000 {
                                                                     return Some("fclamp_c120c000");
@@ -2793,7 +2793,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                 } else {
                                                     if insn >> 11 & 1 == 0 {
                                                         if insn >> 12 & 1 == 0 {
-                                                            if insn >> 0 & 1 == 0 {
+                                                            if insn & 1 == 0 {
                                                                 if insn & 0xff20fc01 == 0xc120c400 {
                                                                     return Some("sclamp_c120c400");
                                                                 }
@@ -2804,7 +2804,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                             }
                                                         } else {
                                                             if insn >> 22 & 1 == 0 {
-                                                                if insn >> 0 & 1 == 0 {
+                                                                if insn & 1 == 0 {
                                                                     if insn & 0xffe0fc01
                                                                         == 0xc120d400
                                                                     {
@@ -2853,7 +2853,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                         }
                                                     } else {
                                                         if insn >> 12 & 1 == 0 {
-                                                            if insn >> 0 & 1 == 0 {
+                                                            if insn & 1 == 0 {
                                                                 if insn & 0xff20fc03 == 0xc120cc00 {
                                                                     return Some("sclamp_c120cc00");
                                                                 }
@@ -2897,7 +2897,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                 if insn >> 11 & 1 == 0 {
                                                     if insn >> 12 & 1 == 0 {
                                                         if insn >> 14 & 1 == 0 {
-                                                            if insn >> 0 & 1 == 0 {
+                                                            if insn & 1 == 0 {
                                                                 if insn >> 5 & 1 == 0 {
                                                                     if insn >> 8 & 1 == 0 {
                                                                         if insn & 0xff30ffe1
@@ -2940,7 +2940,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                             if insn & 0xff30ffe1
                                                                                 == 0xc120a220
                                                                             {
-                                                                                return Some("srshl_c120a220");
+                                                                                return Some ("srshl_c120a220") ;
                                                                             }
                                                                         }
                                                                     } else {
@@ -2986,7 +2986,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                             if insn & 0xff30ffe1
                                                                                 == 0xc120a221
                                                                             {
-                                                                                return Some("urshl_c120a221");
+                                                                                return Some ("urshl_c120a221") ;
                                                                             }
                                                                         }
                                                                     } else {
@@ -3009,17 +3009,17 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                                 if insn >> 22 & 1
                                                                                     == 0
                                                                                 {
-                                                                                    if insn & 0xfffffc20 == 0xc120e000 { return Some("fcvt_c120e000"); }
+                                                                                    if insn & 0xfffffc20 == 0xc120e000 { return Some ("fcvt_c120e000") ; }
                                                                                 } else {
-                                                                                    if insn & 0xfffffc20 == 0xc160e000 { return Some("bfcvt_c160e000"); }
+                                                                                    if insn & 0xfffffc20 == 0xc160e000 { return Some ("bfcvt_c160e000") ; }
                                                                                 }
                                                                             } else {
                                                                                 if insn >> 20 & 1
                                                                                     == 0
                                                                                 {
-                                                                                    if insn & 0xfffffc21 == 0xc1a8e000 { return Some("frintn_c1a8e000"); }
+                                                                                    if insn & 0xfffffc21 == 0xc1a8e000 { return Some ("frintn_c1a8e000") ; }
                                                                                 } else {
-                                                                                    if insn & 0xfffffc63 == 0xc1b8e000 { return Some("frintn_c1b8e000"); }
+                                                                                    if insn & 0xfffffc63 == 0xc1b8e000 { return Some ("frintn_c1b8e000") ; }
                                                                                 }
                                                                             }
                                                                         } else {
@@ -3027,13 +3027,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                                 if insn & 0xfffffc21
                                                                                     == 0xc1ace000
                                                                                 {
-                                                                                    return Some("frinta_c1ace000");
+                                                                                    return Some ("frinta_c1ace000") ;
                                                                                 }
                                                                             } else {
                                                                                 if insn & 0xfffffc63
                                                                                     == 0xc1bce000
                                                                                 {
-                                                                                    return Some("frinta_c1bce000");
+                                                                                    return Some ("frinta_c1bce000") ;
                                                                                 }
                                                                             }
                                                                         }
@@ -3043,17 +3043,17 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                                 if insn >> 20 & 1
                                                                                     == 0
                                                                                 {
-                                                                                    if insn & 0xfffffc21 == 0xc122e000 { return Some("scvtf_c122e000"); }
+                                                                                    if insn & 0xfffffc21 == 0xc122e000 { return Some ("scvtf_c122e000") ; }
                                                                                 } else {
-                                                                                    if insn & 0xfffffc63 == 0xc132e000 { return Some("scvtf_c132e000"); }
+                                                                                    if insn & 0xfffffc63 == 0xc132e000 { return Some ("scvtf_c132e000") ; }
                                                                                 }
                                                                             } else {
                                                                                 if insn >> 20 & 1
                                                                                     == 0
                                                                                 {
-                                                                                    if insn & 0xfffffc21 == 0xc1aae000 { return Some("frintm_c1aae000"); }
+                                                                                    if insn & 0xfffffc21 == 0xc1aae000 { return Some ("frintm_c1aae000") ; }
                                                                                 } else {
-                                                                                    if insn & 0xfffffc63 == 0xc1bae000 { return Some("frintm_c1bae000"); }
+                                                                                    if insn & 0xfffffc63 == 0xc1bae000 { return Some ("frintm_c1bae000") ; }
                                                                                 }
                                                                             }
                                                                         } else {
@@ -3061,13 +3061,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                                 if insn & 0xff3ffc63
                                                                                     == 0xc136e000
                                                                                 {
-                                                                                    return Some("zip_c136e000");
+                                                                                    return Some ("zip_c136e000") ;
                                                                                 }
                                                                             } else {
                                                                                 if insn & 0xff3ffc63
                                                                                     == 0xc136e002
                                                                                 {
-                                                                                    return Some("uzp_c136e002");
+                                                                                    return Some ("uzp_c136e002") ;
                                                                                 }
                                                                             }
                                                                         }
@@ -3078,13 +3078,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                             if insn & 0xfffffc20
                                                                                 == 0xc120e020
                                                                             {
-                                                                                return Some("fcvtn_c120e020");
+                                                                                return Some ("fcvtn_c120e020") ;
                                                                             }
                                                                         } else {
                                                                             if insn & 0xfffffc20
                                                                                 == 0xc160e020
                                                                             {
-                                                                                return Some("bfcvtn_c160e020");
+                                                                                return Some ("bfcvtn_c160e020") ;
                                                                             }
                                                                         }
                                                                     } else {
@@ -3092,20 +3092,20 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                             if insn & 0xfffffc21
                                                                                 == 0xc122e020
                                                                             {
-                                                                                return Some("ucvtf_c122e020");
+                                                                                return Some ("ucvtf_c122e020") ;
                                                                             }
                                                                         } else {
                                                                             if insn & 0xfffffc63
                                                                                 == 0xc132e020
                                                                             {
-                                                                                return Some("ucvtf_c132e020");
+                                                                                return Some ("ucvtf_c132e020") ;
                                                                             }
                                                                         }
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn >> 17 & 1 == 0 {
-                                                                    if insn >> 0 & 1 == 0 {
+                                                                    if insn & 1 == 0 {
                                                                         if insn >> 18 & 1 == 0 {
                                                                             if insn >> 5 & 1 == 0 {
                                                                                 if insn >> 19 & 1
@@ -3115,27 +3115,27 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                                         & 1
                                                                                         == 0
                                                                                     {
-                                                                                        if insn & 0xfffffc21 == 0xc121e000 { return Some("fcvtzs_c121e000"); }
+                                                                                        if insn & 0xfffffc21 == 0xc121e000 { return Some ("fcvtzs_c121e000") ; }
                                                                                     } else {
-                                                                                        if insn & 0xfffffc63 == 0xc131e000 { return Some("fcvtzs_c131e000"); }
+                                                                                        if insn & 0xfffffc63 == 0xc131e000 { return Some ("fcvtzs_c131e000") ; }
                                                                                     }
                                                                                 } else {
                                                                                     if insn >> 20
                                                                                         & 1
                                                                                         == 0
                                                                                     {
-                                                                                        if insn & 0xfffffc21 == 0xc1a9e000 { return Some("frintp_c1a9e000"); }
+                                                                                        if insn & 0xfffffc21 == 0xc1a9e000 { return Some ("frintp_c1a9e000") ; }
                                                                                     } else {
-                                                                                        if insn & 0xfffffc63 == 0xc1b9e000 { return Some("frintp_c1b9e000"); }
+                                                                                        if insn & 0xfffffc63 == 0xc1b9e000 { return Some ("frintp_c1b9e000") ; }
                                                                                     }
                                                                                 }
                                                                             } else {
                                                                                 if insn >> 20 & 1
                                                                                     == 0
                                                                                 {
-                                                                                    if insn & 0xfffffc21 == 0xc121e020 { return Some("fcvtzu_c121e020"); }
+                                                                                    if insn & 0xfffffc21 == 0xc121e020 { return Some ("fcvtzu_c121e020") ; }
                                                                                 } else {
-                                                                                    if insn & 0xfffffc63 == 0xc131e020 { return Some("fcvtzu_c131e020"); }
+                                                                                    if insn & 0xfffffc63 == 0xc131e020 { return Some ("fcvtzu_c131e020") ; }
                                                                                 }
                                                                             }
                                                                         } else {
@@ -3143,13 +3143,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                                 if insn & 0xff3ffc01
                                                                                     == 0xc125e000
                                                                                 {
-                                                                                    return Some("sunpk_c125e000");
+                                                                                    return Some ("sunpk_c125e000") ;
                                                                                 }
                                                                             } else {
                                                                                 if insn & 0xff3ffc23
                                                                                     == 0xc135e000
                                                                                 {
-                                                                                    return Some("sunpk_c135e000");
+                                                                                    return Some ("sunpk_c135e000") ;
                                                                                 }
                                                                             }
                                                                         }
@@ -3158,13 +3158,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                             if insn & 0xff3ffc01
                                                                                 == 0xc125e001
                                                                             {
-                                                                                return Some("uunpk_c125e001");
+                                                                                return Some ("uunpk_c125e001") ;
                                                                             }
                                                                         } else {
                                                                             if insn & 0xff3ffc23
                                                                                 == 0xc135e001
                                                                             {
-                                                                                return Some("uunpk_c135e001");
+                                                                                return Some ("uunpk_c135e001") ;
                                                                             }
                                                                         }
                                                                     }
@@ -3175,9 +3175,9 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                                 if insn >> 22 & 1
                                                                                     == 0
                                                                                 {
-                                                                                    if insn & 0xfffffc20 == 0xc123e000 { return Some("sqcvt_c123e000"); }
+                                                                                    if insn & 0xfffffc20 == 0xc123e000 { return Some ("sqcvt_c123e000") ; }
                                                                                 } else {
-                                                                                    if insn & 0xfffffc20 == 0xc163e000 { return Some("sqcvtu_c163e000"); }
+                                                                                    if insn & 0xfffffc20 == 0xc163e000 { return Some ("sqcvtu_c163e000") ; }
                                                                                 }
                                                                             } else {
                                                                                 if insn >> 6 & 1
@@ -3187,18 +3187,18 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                                         & 1
                                                                                         == 0
                                                                                     {
-                                                                                        if insn & 0xff7ffc60 == 0xc133e000 { return Some("sqcvt_c133e000"); }
+                                                                                        if insn & 0xff7ffc60 == 0xc133e000 { return Some ("sqcvt_c133e000") ; }
                                                                                     } else {
-                                                                                        if insn & 0xff7ffc60 == 0xc173e000 { return Some("sqcvtu_c173e000"); }
+                                                                                        if insn & 0xff7ffc60 == 0xc173e000 { return Some ("sqcvtu_c173e000") ; }
                                                                                     }
                                                                                 } else {
                                                                                     if insn >> 22
                                                                                         & 1
                                                                                         == 0
                                                                                     {
-                                                                                        if insn & 0xff7ffc60 == 0xc133e040 { return Some("sqcvtn_c133e040"); }
+                                                                                        if insn & 0xff7ffc60 == 0xc133e040 { return Some ("sqcvtn_c133e040") ; }
                                                                                     } else {
-                                                                                        if insn & 0xff7ffc60 == 0xc173e040 { return Some("sqcvtun_c173e040"); }
+                                                                                        if insn & 0xff7ffc60 == 0xc173e040 { return Some ("sqcvtun_c173e040") ; }
                                                                                     }
                                                                                 }
                                                                             }
@@ -3207,13 +3207,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                                 if insn & 0xfffffc63
                                                                                     == 0xc137e000
                                                                                 {
-                                                                                    return Some("zip_c137e000");
+                                                                                    return Some ("zip_c137e000") ;
                                                                                 }
                                                                             } else {
                                                                                 if insn & 0xfffffc63
                                                                                     == 0xc137e002
                                                                                 {
-                                                                                    return Some("uzp_c137e002");
+                                                                                    return Some ("uzp_c137e002") ;
                                                                                 }
                                                                             }
                                                                         }
@@ -3222,20 +3222,20 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                             if insn & 0xfffffc20
                                                                                 == 0xc123e020
                                                                             {
-                                                                                return Some("uqcvt_c123e020");
+                                                                                return Some ("uqcvt_c123e020") ;
                                                                             }
                                                                         } else {
                                                                             if insn >> 6 & 1 == 0 {
                                                                                 if insn & 0xff7ffc60
                                                                                     == 0xc133e020
                                                                                 {
-                                                                                    return Some("uqcvt_c133e020");
+                                                                                    return Some ("uqcvt_c133e020") ;
                                                                                 }
                                                                             } else {
                                                                                 if insn & 0xff7ffc60
                                                                                     == 0xc133e060
                                                                                 {
-                                                                                    return Some("uqcvtn_c133e060");
+                                                                                    return Some ("uqcvtn_c133e060") ;
                                                                                 }
                                                                             }
                                                                         }
@@ -3244,7 +3244,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                             }
                                                         }
                                                     } else {
-                                                        if insn >> 0 & 1 == 0 {
+                                                        if insn & 1 == 0 {
                                                             if insn >> 5 & 1 == 0 {
                                                                 if insn >> 8 & 1 == 0 {
                                                                     if insn & 0xff21ffe1
@@ -3343,7 +3343,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                         }
                                                     }
                                                 } else {
-                                                    if insn >> 0 & 1 == 0 {
+                                                    if insn & 1 == 0 {
                                                         if insn >> 5 & 1 == 0 {
                                                             if insn >> 8 & 1 == 0 {
                                                                 if insn >> 12 & 1 == 0 {
@@ -4594,13 +4594,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                         if insn & 0xffe0fc00
                                                                             == 0x38e04000
                                                                         {
-                                                                            return Some("ldsmaxalb_38e04000");
+                                                                            return Some ("ldsmaxalb_38e04000") ;
                                                                         }
                                                                     } else {
                                                                         if insn & 0xffe0fc00
                                                                             == 0x78e04000
                                                                         {
-                                                                            return Some("ldsmaxalh_78e04000");
+                                                                            return Some ("ldsmaxalh_78e04000") ;
                                                                         }
                                                                     }
                                                                 } else {
@@ -5256,13 +5256,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                         if insn & 0xffe0fc00
                                                                             == 0x38e05000
                                                                         {
-                                                                            return Some("ldsminalb_38e05000");
+                                                                            return Some ("ldsminalb_38e05000") ;
                                                                         }
                                                                     } else {
                                                                         if insn & 0xffe0fc00
                                                                             == 0x78e05000
                                                                         {
-                                                                            return Some("ldsminalh_78e05000");
+                                                                            return Some ("ldsminalh_78e05000") ;
                                                                         }
                                                                     }
                                                                 } else {
@@ -11685,13 +11685,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                                 if insn & 0xff3ffc00
                                                                                     == 0x5203800
                                                                                 {
-                                                                                    return Some("dup_05203800");
+                                                                                    return Some ("dup_05203800") ;
                                                                                 }
                                                                             } else {
                                                                                 if insn & 0xff3ffc00
                                                                                     == 0x5303800
                                                                                 {
-                                                                                    return Some("sunpklo_05303800");
+                                                                                    return Some ("sunpklo_05303800") ;
                                                                                 }
                                                                             }
                                                                         } else {
@@ -13634,7 +13634,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                             }
                                                         } else {
                                                             if insn >> 13 & 1 == 0 {
-                                                                if insn >> 0 & 1 == 0 {
+                                                                if insn & 1 == 0 {
                                                                     if insn & 0xff20fc11
                                                                         == 0x25205010
                                                                     {
@@ -13674,7 +13674,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                             }
                                                         } else {
                                                             if insn >> 13 & 1 == 0 {
-                                                                if insn >> 0 & 1 == 0 {
+                                                                if insn & 1 == 0 {
                                                                     if insn & 0xff20fc11
                                                                         == 0x25205810
                                                                     {
@@ -13716,7 +13716,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                             }
                                                         } else {
                                                             if insn >> 13 & 1 == 0 {
-                                                                if insn >> 0 & 1 == 0 {
+                                                                if insn & 1 == 0 {
                                                                     if insn & 0xff20fc11
                                                                         == 0x25205410
                                                                     {
@@ -13755,7 +13755,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                 }
                                                             }
                                                         } else {
-                                                            if insn >> 0 & 1 == 0 {
+                                                            if insn & 1 == 0 {
                                                                 if insn & 0xff20fc11 == 0x25205c10 {
                                                                     return Some(
                                                                         "whilelo_25205c10",
@@ -14486,13 +14486,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                             if insn & 0xffffe000
                                                                                 == 0x6554a000
                                                                             {
-                                                                                return Some("scvtf_6554a000");
+                                                                                return Some ("scvtf_6554a000") ;
                                                                             }
                                                                         } else {
                                                                             if insn & 0xffffe000
                                                                                 == 0x65d4a000
                                                                             {
-                                                                                return Some("scvtf_65d4a000");
+                                                                                return Some ("scvtf_65d4a000") ;
                                                                             }
                                                                         }
                                                                     }
@@ -14640,13 +14640,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                             if insn & 0xffffe000
                                                                                 == 0x655ca000
                                                                             {
-                                                                                return Some("fcvtzs_655ca000");
+                                                                                return Some ("fcvtzs_655ca000") ;
                                                                             }
                                                                         } else {
                                                                             if insn & 0xffffe000
                                                                                 == 0x65dca000
                                                                             {
-                                                                                return Some("fcvtzs_65dca000");
+                                                                                return Some ("fcvtzs_65dca000") ;
                                                                             }
                                                                         }
                                                                     }
@@ -14664,13 +14664,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                             if insn & 0xffffe000
                                                                                 == 0x655ea000
                                                                             {
-                                                                                return Some("fcvtzs_655ea000");
+                                                                                return Some ("fcvtzs_655ea000") ;
                                                                             }
                                                                         } else {
                                                                             if insn & 0xffffe000
                                                                                 == 0x65dea000
                                                                             {
-                                                                                return Some("fcvtzs_65dea000");
+                                                                                return Some ("fcvtzs_65dea000") ;
                                                                             }
                                                                         }
                                                                     }
@@ -14780,13 +14780,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                             if insn & 0xffffe000
                                                                                 == 0x655da000
                                                                             {
-                                                                                return Some("fcvtzu_655da000");
+                                                                                return Some ("fcvtzu_655da000") ;
                                                                             }
                                                                         } else {
                                                                             if insn & 0xffffe000
                                                                                 == 0x65dda000
                                                                             {
-                                                                                return Some("fcvtzu_65dda000");
+                                                                                return Some ("fcvtzu_65dda000") ;
                                                                             }
                                                                         }
                                                                     }
@@ -14962,13 +14962,13 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                                                             if insn & 0xff3ffe00
                                                                                 == 0x25288000
                                                                             {
-                                                                                return Some("sqincp_25288000");
+                                                                                return Some ("sqincp_25288000") ;
                                                                             }
                                                                         } else {
                                                                             if insn & 0xfffffe1f
                                                                                 == 0x25289000
                                                                             {
-                                                                                return Some("wrffr_25289000");
+                                                                                return Some ("wrffr_25289000") ;
                                                                             }
                                                                         }
                                                                     } else {
@@ -15408,7 +15408,7 @@ pub fn decode(insn: u32) -> Option<&'static str> {
                                             return Some("b.c_54000000");
                                         }
                                     } else {
-                                        if insn >> 0 & 1 == 0 {
+                                        if insn & 1 == 0 {
                                             if insn >> 1 & 1 == 0 {
                                                 if insn >> 21 & 1 == 0 {
                                                     if insn & 0xffe0001f == 0xd4400000 {

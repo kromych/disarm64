@@ -2,6 +2,8 @@ use std::ops::Shl;
 use std::rc::Rc;
 
 use insn_def::description::Insn;
+use proc_macro2::TokenStream;
+use quote::quote;
 use std::io::Write;
 
 #[derive(Debug, Clone)]
@@ -137,68 +139,75 @@ pub fn build_decision_tree(insns: &[Rc<Insn>]) -> DecisionTree {
 pub fn decision_tree_to_rust(
     decision_tree: &DecisionTree,
     f: &mut impl Write,
-) -> anyhow::Result<()> {
-    fn decision_tree_to_rust_recursive(
-        decision_tree: &DecisionTree,
-        f: &mut impl Write,
-        indent: usize,
-    ) -> anyhow::Result<()> {
+) -> std::io::Result<()> {
+    fn decision_tree_to_rust_recursive(decision_tree: &DecisionTree) -> TokenStream {
         if decision_tree.is_none() {
-            return Ok(());
+            return quote! {};
         }
 
         match decision_tree.as_ref().unwrap().as_ref() {
             DecisionTreeNode::Leaf { insns } => {
+                let mut tokens = quote! {};
                 for insn in insns {
+                    let opcode_hex: TokenStream =
+                        format!("{:#08x}", insn.insn.opcode).parse().unwrap();
+                    let mask_hex: TokenStream = format!("{:#08x}", insn.insn.mask).parse().unwrap();
+                    let menemonic = format!("{}_{:08x}", insn.insn.mnemonic, insn.insn.opcode);
+
                     if insn.insn.mask == !0 {
-                        writeln!(
-                            f,
-                            "{}if insn == {:#x} {{ return Some(\"{}_{:08x}\"); }}",
-                            "  ".repeat(indent),
-                            insn.insn.opcode,
-                            insn.insn.mnemonic,
-                            insn.insn.opcode
-                        )?;
+                        tokens.extend(quote! {
+                            if insn == #opcode_hex {
+                                return Some(#menemonic);
+                            }
+                        });
                     } else {
-                        writeln!(
-                            f,
-                            "{}if insn & {:#08x} == {:#08x} {{ return Some(\"{}_{:08x}\"); }}",
-                            "  ".repeat(indent),
-                            insn.insn.mask,
-                            insn.insn.opcode,
-                            insn.insn.mnemonic,
-                            insn.insn.opcode
-                        )?;
+                        tokens.extend(quote! {
+                            if insn & #mask_hex == #opcode_hex {
+                                return Some(#menemonic);
+                            }
+                        });
                     }
                 }
+
+                tokens
             }
             DecisionTreeNode::Branch {
                 decision_bit,
                 zero,
                 one,
             } => {
-                writeln!(
-                    f,
-                    "{}if insn >> {decision_bit} & 1 == 0 {{",
-                    "  ".repeat(indent),
-                )?;
-                decision_tree_to_rust_recursive(zero, f, indent + 1)?;
-                writeln!(f, "{}}} else {{", "  ".repeat(indent))?;
-                decision_tree_to_rust_recursive(one, f, indent + 1)?;
-                writeln!(f, "{}}}", "  ".repeat(indent))?;
+                let zero_branch = decision_tree_to_rust_recursive(zero);
+                let one_branch = decision_tree_to_rust_recursive(one);
+                let decision_bit_lit = proc_macro2::Literal::u32_unsuffixed(*decision_bit);
+
+                let condition = if *decision_bit == 0 {
+                    quote! {insn & 1 == 0}
+                } else {
+                    quote! {insn >> #decision_bit_lit & 1 == 0}
+                };
+                quote! {
+                    if #condition {
+                        #zero_branch
+                    } else {
+                        #one_branch
+                    }
+                }
             }
         }
-
-        Ok(())
     }
 
-    writeln!(f, "#[allow(clippy::collapsible_else_if)]")?;
-    writeln!(f, "pub fn decode(insn: u32) -> Option<&'static str> {{")?;
-    decision_tree_to_rust_recursive(decision_tree, f, 2)?;
-    writeln!(f, "  None")?;
-    writeln!(f, "}}")?;
-
-    Ok(())
+    let decoder = decision_tree_to_rust_recursive(decision_tree);
+    writeln!(
+        f,
+        "{}",
+        quote! {
+            #[allow(clippy::collapsible_else_if)]
+            pub fn decode(insn: u32) -> Option<&'static str> {
+                #decoder
+                None
+            }
+        }
+    )
 }
 
 pub fn decistion_tree_to_graphviz_dot(

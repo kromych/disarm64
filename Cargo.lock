@@ -168,6 +168,8 @@ dependencies = [
  "env_logger",
  "insn_def",
  "log",
+ "proc-macro2",
+ "quote",
  "serde",
  "serde_json",
 ]
