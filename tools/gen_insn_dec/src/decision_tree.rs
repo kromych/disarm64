@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::ops::Shl;
 use std::rc::Rc;
 
@@ -264,15 +265,16 @@ pub fn decision_tree_to_rust(
         }
         opcode_to_used_name.insert(insn.opcode, opcode_struct_name.clone());
 
-        let mut bit_fields = Vec::new();
+        let mut bit_fields = HashSet::new();
         for (_kind, operand) in insn.operands.iter() {
             for bf in operand.bit_fields.iter() {
                 let bf_name = format!("{:?}", bf.bitfield).to_lowercase();
                 let lsb = bf.lsb;
                 let width = bf.width;
-                bit_fields.push((bf_name, lsb, width));
+                bit_fields.insert((bf_name, lsb, width));
             }
         }
+        let mut bit_fields = Vec::from_iter(bit_fields);
         bit_fields.sort_by_key(|bf| bf.1);
         let mut opcode_fields = bit_fields.clone();
 
