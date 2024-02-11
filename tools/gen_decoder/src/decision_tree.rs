@@ -1,13 +1,14 @@
+use std::collections::HashMap;
 use std::collections::HashSet;
+use std::io::Write;
 use std::ops::Shl;
 use std::rc::Rc;
 
-use insn_def::description::Insn;
 use proc_macro2::TokenStream;
 use quote::format_ident;
 use quote::quote;
-use std::collections::HashMap;
-use std::io::Write;
+
+use insn_def::description::Insn;
 
 #[derive(Debug, Clone)]
 pub struct LeafNode {
@@ -208,15 +209,11 @@ pub fn decision_tree_to_rust(
             } => {
                 let zero_branch = decision_tree_to_rust_recursive(zero, opcode_to_used_name);
                 let one_branch = decision_tree_to_rust_recursive(one, opcode_to_used_name);
-                let decision_bit_lit = proc_macro2::Literal::u32_unsuffixed(*decision_bit);
+                let decision_mask_lit: TokenStream =
+                    format!("{:#08x}", 1 << *decision_bit).parse().unwrap();
 
-                let condition = if *decision_bit == 0 {
-                    quote! {insn & 1 == 0}
-                } else {
-                    quote! {insn >> #decision_bit_lit & 1 == 0}
-                };
                 quote! {
-                    if #condition {
+                    if insn & #decision_mask_lit == 0 {
                         #zero_branch
                     } else {
                         #one_branch
@@ -241,16 +238,16 @@ pub fn decision_tree_to_rust(
         let mut opcode_struct_name = opcode_struct_name.replace('.', "_");
         let base_opcode_struct_name = opcode_struct_name.clone();
         {
-            for (kind, _operand) in insn.operands.iter() {
-                opcode_struct_name.push_str(&format!("_{:?}", kind));
+            for operand in insn.operands.iter() {
+                opcode_struct_name.push_str(&format!("_{:?}", operand.kind));
             }
 
             if !used_names.contains(&opcode_struct_name) {
                 used_names.insert(opcode_struct_name.clone());
             } else {
                 opcode_struct_name = base_opcode_struct_name.clone();
-                for (kind, operand) in insn.operands.iter() {
-                    opcode_struct_name.push_str(&format!("_{:?}", kind));
+                for operand in insn.operands.iter() {
+                    opcode_struct_name.push_str(&format!("_{:?}", operand.kind));
                     if !operand.qualifiers.is_empty() {
                         opcode_struct_name.push_str(&format!("_{:?}", operand.qualifiers[0]));
                     }
@@ -266,7 +263,7 @@ pub fn decision_tree_to_rust(
         opcode_to_used_name.insert(insn.opcode, opcode_struct_name.clone());
 
         let mut bit_fields = HashSet::new();
-        for (_kind, operand) in insn.operands.iter() {
+        for operand in insn.operands.iter() {
             for bf in operand.bit_fields.iter() {
                 let bf_name = format!("{:?}", bf.bitfield).to_lowercase();
                 let lsb = bf.lsb;

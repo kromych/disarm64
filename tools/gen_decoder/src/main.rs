@@ -4,6 +4,7 @@ use std::rc::Rc;
 
 use clap::Parser;
 use clap_num::maybe_hex;
+
 use decision_tree::build_decision_tree;
 use insn_def::description::Insn;
 use insn_def::description::InsnClass;
@@ -11,7 +12,6 @@ use insn_def::description::InsnFeatureSet;
 use insn_def::description::InsnFlags;
 
 mod decision_tree;
-mod decoder;
 
 #[derive(Parser, Debug)]
 /// This tool generates an instruction decoder from a JSON description of the ISA.
@@ -37,7 +37,7 @@ struct CommandLine {
     #[clap(short, long)]
     rust: Option<PathBuf>,
     /// An instruction to decode (hex 32-bit).
-    #[clap(short, long, value_parser=maybe_hex::<u32>)]
+    #[clap(short, long, value_parser = maybe_hex::< u32 >)]
     insn: Option<u32>,
     /// Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity.
     #[clap(short, action = clap::ArgAction::Count)]
@@ -72,13 +72,6 @@ fn main() -> anyhow::Result<()> {
     let opt = CommandLine::parse();
 
     init_logging(&opt);
-    if let Some(insn) = opt.insn {
-        log::info!("Decoding instruction {insn:x?}");
-        let insn = decoder::decode(insn);
-        log::info!("Decoded instruction: {:?}", insn);
-
-        return Ok(());
-    }
 
     let filter_feature_sets = HashSet::from_iter(opt.feature_sets.unwrap_or_default());
     let filter_insn_class = HashSet::from_iter(opt.insn_class.unwrap_or_default());

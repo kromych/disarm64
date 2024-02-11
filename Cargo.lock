@@ -147,6 +147,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
 
 [[package]]
+name = "disarm64"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bitfield-struct",
+ "clap",
+ "clap-num",
+ "env_logger",
+ "log",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "env_filter"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -170,7 +186,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "gen_insn_dec"
+name = "gen_decoder"
 version = "0.0.0"
 dependencies = [
  "anyhow",

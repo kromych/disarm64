@@ -1,9 +1,9 @@
+use std::str::FromStr;
+
 use bitflags::bitflags;
 use serde::de::value::StrDeserializer;
 use serde::Deserialize;
 use serde::Deserializer;
-use std::collections::HashMap;
-use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
@@ -1045,6 +1045,7 @@ where
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
 pub struct InsnOperand {
+    pub kind: InsnOperandKind,
     pub class: InsnOperandClass,
     pub qualifiers: Vec<InsnOperandQualifier>,
     #[serde(deserialize_with = "deser_bitfield_spec_vec")]
@@ -1060,7 +1061,7 @@ pub struct Insn {
     pub mask: u32,
     pub class: InsnClass,
     pub feature_set: InsnFeatureSet,
-    pub operands: HashMap<InsnOperandKind, InsnOperand>,
+    pub operands: Vec<InsnOperand>,
     pub flags: InsnFlags,
     pub index: u32,
 }

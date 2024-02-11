@@ -2,7 +2,8 @@
 resolver = "2"
 members = [
     "support/insn_def",
-    "tools/gen_insn_dec"
+    "tools/disarm64",
+    "tools/gen_decoder"
 ]
 
 [workspace.dependencies]
