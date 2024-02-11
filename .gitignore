@@ -9,3 +9,5 @@ junk/
 *.svg
 *.log
 .DS_Store
+*.bin
+*.elf

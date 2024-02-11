@@ -12,5 +12,6 @@ anyhow.workspace = true
 bitfield-struct.workspace = true
 clap.workspace = true
 clap-num.workspace = true
+goblin.workspace = true
 log.workspace = true
 env_logger.workspace = true
