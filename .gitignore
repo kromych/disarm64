@@ -1,6 +1,7 @@
 /target
 .idea
 .vscode
+junk/
 *.dot
 *.pdf
 *.png
