@@ -16,69 +16,98 @@ use std::io::Write;
 use std::rc::Rc;
 use strum::IntoEnumIterator;
 
-fn decision_tree_to_rust_recursive(
-    decision_tree: &DecisionTree,
-    opcode_to_used_name: &HashMap<u32, String>,
-) -> TokenStream {
-    if decision_tree.is_none() {
-        return quote! {};
-    }
+fn write_prelude(_decision_tree: &DecisionTree, f: &mut impl Write) -> std::io::Result<()> {
+    let insn_class = InsnClass::iter()
+        .map(|x| format_ident!("{x:?}"))
+        .collect::<Vec<_>>();
+    let insn_feature_set = InsnFeatureSet::iter()
+        .map(|x| format_ident!("{x:?}"))
+        .collect::<Vec<_>>();
+    let insn_operand_kind = InsnOperandKind::iter()
+        .map(|x| format_ident!("{x:?}"))
+        .collect::<Vec<_>>();
+    let insn_operand_class = InsnOperandClass::iter()
+        .map(|x| format_ident!("{x:?}"))
+        .collect::<Vec<_>>();
+    let insn_operand_qualifier = InsnOperandQualifier::iter()
+        .map(|x| format_ident!("{x:?}"))
+        .collect::<Vec<_>>();
+    let insn_bit_field = InsnBitField::iter()
+        .map(|x| format_ident!("{x:?}"))
+        .collect::<Vec<_>>();
 
-    match decision_tree.as_ref().unwrap().as_ref() {
-        DecisionTreeNode::Leaf { insns } => {
-            let mut tokens = quote! {};
-            for insn in insns {
-                let opcode_hex: TokenStream = format!("{:#08x}", insn.insn.opcode).parse().unwrap();
-                let mask_hex: TokenStream = format!("{:#08x}", insn.insn.mask).parse().unwrap();
-                let opcode_type: TokenStream = format!(
-                    "Opcode::{}({}::from(insn))",
-                    opcode_to_used_name[&insn.insn.opcode], opcode_to_used_name[&insn.insn.opcode]
-                )
-                .parse()
-                .unwrap();
+    writeln!(
+        f,
+        "{}",
+        quote! {
+            #![allow(non_snake_case, non_camel_case_types)]
+            #![allow(clippy::collapsible_else_if)]
+            #![allow(clippy::upper_case_acronyms)]
+            #![allow(dead_code)]
 
-                if insn.insn.mask == !0 {
-                    tokens.extend(quote! {
-                        if insn == #opcode_hex {
-                            return Some(#opcode_type);
-                        }
-                    });
-                } else {
-                    tokens.extend(quote! {
-                        if insn & #mask_hex == #opcode_hex {
-                            return Some(#opcode_type);
-                        }
-                    });
-                }
+            use bitfield_struct::bitfield;
+
+            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
+            pub enum InsnClass {
+                #(#insn_class,)*
+            }
+            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
+            pub enum InsnFeatureSet {
+                #(#insn_feature_set,)*
+            }
+            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
+            pub enum InsnOperandKind {
+                #(#insn_operand_kind,)*
+            }
+            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
+            pub enum InsnOperandClass {
+                #(#insn_operand_class,)*
+            }
+            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
+            pub enum InsnOperandQualifier {
+                #(#insn_operand_qualifier,)*
+            }
+            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
+            pub enum InsnBitField {
+                #(#insn_bit_field,)*
             }
 
-            tokens
-        }
-        DecisionTreeNode::Branch {
-            decision_bit,
-            zero,
-            one,
-        } => {
-            let zero_branch = decision_tree_to_rust_recursive(zero, opcode_to_used_name);
-            let one_branch = decision_tree_to_rust_recursive(one, opcode_to_used_name);
-            let decision_mask_lit: TokenStream =
-                format!("{:#08x}", 1 << *decision_bit).parse().unwrap();
+            #[derive(Debug, Copy, Clone, Eq, PartialEq)]
+            pub struct BitfieldSpec {
+                pub bitfield: InsnBitField,
+                pub lsb: u8,
+                pub width: u8,
+            }
 
-            quote! {
-                if insn & #decision_mask_lit == 0 {
-                    #zero_branch
-                } else {
-                    #one_branch
-                }
+            #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+            pub struct InsnOperand {
+                pub kind: InsnOperandKind,
+                pub class: InsnOperandClass,
+                pub qualifiers: &'static [InsnOperandQualifier],
+                pub bit_fields: &'static [BitfieldSpec],
+            }
+
+            #[derive(Debug, Copy, Clone, Eq, PartialEq)]
+            pub struct Insn {
+                pub mnemonic: &'static str,
+                pub opcode: u32,
+                pub mask: u32,
+                pub class: InsnClass,
+                pub feature_set: InsnFeatureSet,
+                pub operands: &'static [InsnOperand],
+            }
+
+            pub trait InsnOpcode {
+                const DETAILS: &'static Insn;
             }
         }
-    }
+    )
 }
 
-pub fn decision_tree_to_rust(
+fn write_insn_structs(
     decision_tree: &DecisionTree,
     f: &mut impl Write,
-) -> std::io::Result<()> {
+) -> std::io::Result<HashMap<u32, String>> {
     fn collect_insns_recursive(decision_tree: &DecisionTree, insns: &mut Vec<Rc<Insn>>) {
         if decision_tree.is_none() {
             return;
@@ -187,6 +216,8 @@ pub fn decision_tree_to_rust(
         let opcode_hex: TokenStream = format!("{:#08x}", insn.opcode).parse().unwrap();
         let mask_hex: TokenStream = format!("{:#08x}", insn.mask).parse().unwrap();
         let mnemonic = insn.mnemonic.as_str();
+        let feature_set = format_ident!("{}", insn.feature_set.to_string());
+        let class = format_ident!("{}", insn.class.to_string());
         struct_definitions.extend(quote! {
             #[bitfield(u32)]
             #[derive(PartialEq, Eq)]
@@ -195,15 +226,18 @@ pub fn decision_tree_to_rust(
             }
 
             impl #opcode_struct_name {
-                const OPCODE: u32 = #opcode_hex;
-                const MASK: u32 = #mask_hex;
-                const MNEMONIC: &'static str = #mnemonic;
+                const DETAILS: Insn = Insn {
+                    mnemonic: #mnemonic,
+                    opcode: #opcode_hex,
+                    mask: #mask_hex,
+                    class: InsnClass::#class,
+                    feature_set: InsnFeatureSet::#feature_set,
+                    operands: &[],
+                };
             }
 
             impl InsnOpcode for #opcode_struct_name {
-                const OPCODE: u32 = #opcode_struct_name::OPCODE;
-                const MASK: u32 = #opcode_struct_name::MASK;
-                const MNEMONIC: &'static str = #opcode_struct_name::MNEMONIC;
+                const DETAILS: &'static Insn = &#opcode_struct_name::DETAILS;
             }
         });
     }
@@ -214,93 +248,10 @@ pub fn decision_tree_to_rust(
         .collect::<Vec<_>>();
     used_names.sort();
 
-    let insn_class = InsnClass::iter()
-        .map(|x| format_ident!("{x:?}"))
-        .collect::<Vec<_>>();
-    let insn_feature_set = InsnFeatureSet::iter()
-        .map(|x| format_ident!("{x:?}"))
-        .collect::<Vec<_>>();
-    let insn_operand_kind = InsnOperandKind::iter()
-        .map(|x| format_ident!("{x:?}"))
-        .collect::<Vec<_>>();
-    let insn_operand_class = InsnOperandClass::iter()
-        .map(|x| format_ident!("{x:?}"))
-        .collect::<Vec<_>>();
-    let insn_operand_qualifier = InsnOperandQualifier::iter()
-        .map(|x| format_ident!("{x:?}"))
-        .collect::<Vec<_>>();
-    let insn_bit_field = InsnBitField::iter()
-        .map(|x| format_ident!("{x:?}"))
-        .collect::<Vec<_>>();
-
-    let decoder = decision_tree_to_rust_recursive(decision_tree, &opcode_to_used_name);
     writeln!(
         f,
         "{}",
         quote! {
-            #![allow(non_snake_case, non_camel_case_types)]
-            #![allow(clippy::collapsible_else_if)]
-            #![allow(clippy::upper_case_acronyms)]
-            #![allow(dead_code)]
-
-            use bitfield_struct::bitfield;
-
-            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-            pub enum InsnClass {
-                #(#insn_class,)*
-            }
-            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-            pub enum InsnFeatureSet {
-                #(#insn_feature_set,)*
-            }
-            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-            pub enum InsnOperandKind {
-                #(#insn_operand_kind,)*
-            }
-            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-            pub enum InsnOperandClass {
-                #(#insn_operand_class,)*
-            }
-            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-            pub enum InsnOperandQualifier {
-                #(#insn_operand_qualifier,)*
-            }
-            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-            pub enum InsnBitField {
-                #(#insn_bit_field,)*
-            }
-
-            #[derive(Debug, Copy, Clone, Copy, Eq, PartialEq)]
-            pub struct BitfieldSpec {
-                pub bitfield: InsnBitField,
-                pub lsb: u8,
-                pub width: u8,
-            }
-
-            #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-            pub struct InsnOperand {
-                pub kind: InsnOperandKind,
-                pub class: InsnOperandClass,
-                pub qualifiers: &'static [InsnOperandQualifier],
-                pub bit_fields: &'static [BitfieldSpec],
-            }
-
-            #[derive(Debug, Copy, Clone, Eq, PartialEq)]
-            pub struct Insn {
-                pub mnemonic: &'static str,
-                pub opcode: u32,
-                pub mask: u32,
-                pub class: InsnClass,
-                pub feature_set: InsnFeatureSet,
-                pub operands: &'static [InsnOperand],
-            }
-
-            pub trait InsnOpcode {
-                const OPCODE: u32;
-                const MASK: u32;
-                const MNEMONIC: &'static str;
-            }
-
             #struct_definitions
 
             #[derive(Debug, PartialEq, Eq, Copy, Clone)]
@@ -309,7 +260,83 @@ pub fn decision_tree_to_rust(
                     #used_names(#used_names),
                 )*
             }
+        }
+    )?;
 
+    Ok(opcode_to_used_name)
+}
+
+fn decision_tree_to_rust_recursive(
+    decision_tree: &DecisionTree,
+    opcode_to_used_name: &HashMap<u32, String>,
+) -> TokenStream {
+    if decision_tree.is_none() {
+        return quote! {};
+    }
+
+    match decision_tree.as_ref().unwrap().as_ref() {
+        DecisionTreeNode::Leaf { insns } => {
+            let mut tokens = quote! {};
+            for insn in insns {
+                let opcode_hex: TokenStream = format!("{:#08x}", insn.insn.opcode).parse().unwrap();
+                let mask_hex: TokenStream = format!("{:#08x}", insn.insn.mask).parse().unwrap();
+                let opcode_type: TokenStream = format!(
+                    "Opcode::{}({}::from(insn))",
+                    opcode_to_used_name[&insn.insn.opcode], opcode_to_used_name[&insn.insn.opcode]
+                )
+                .parse()
+                .unwrap();
+
+                if insn.insn.mask == !0 {
+                    tokens.extend(quote! {
+                        if insn == #opcode_hex {
+                            return Some(#opcode_type);
+                        }
+                    });
+                } else {
+                    tokens.extend(quote! {
+                        if insn & #mask_hex == #opcode_hex {
+                            return Some(#opcode_type);
+                        }
+                    });
+                }
+            }
+
+            tokens
+        }
+        DecisionTreeNode::Branch {
+            decision_bit,
+            zero,
+            one,
+        } => {
+            let zero_branch = decision_tree_to_rust_recursive(zero, opcode_to_used_name);
+            let one_branch = decision_tree_to_rust_recursive(one, opcode_to_used_name);
+            let decision_mask_lit: TokenStream =
+                format!("{:#08x}", 1 << *decision_bit).parse().unwrap();
+
+            quote! {
+                if insn & #decision_mask_lit == 0 {
+                    #zero_branch
+                } else {
+                    #one_branch
+                }
+            }
+        }
+    }
+}
+
+pub fn decision_tree_to_rust(
+    decision_tree: &DecisionTree,
+    f: &mut impl Write,
+) -> std::io::Result<()> {
+    write_prelude(decision_tree, f)?;
+    let opcode_to_used_name = write_insn_structs(decision_tree, f)?;
+    let decoder = decision_tree_to_rust_recursive(decision_tree, &opcode_to_used_name);
+
+    writeln!(
+        f,
+        "{}",
+        quote! {
             pub fn decode(insn: u32) -> Option<Opcode> {
                 #decoder
                 None
