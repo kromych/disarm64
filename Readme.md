@@ -36,6 +36,7 @@ Options:
   -c, --insn-class <INSN_CLASS>...      Include filter for instruction classes, e.g. "addsub_imm,ldst_pos,exception". Case-insensitive, ignored if not provided
   -m, --mnemonic <MNEMONIC>...          Include filter for mnemonics, e.g. "adc,ldp". Case-insensitive, ignored if not provided
   -g, --graphviz <GRAPHVIZ>             Output the decision tree to a Graphviz DOT file
+  -r, --rs-file <RS_FILE>               Generate the decoder implemented in Rust
   -v...                                 Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity
   -h, --help                            Print help
 
@@ -47,24 +48,51 @@ To learn about the classes and feature sets available in the description of the 
 please run
 
 ```sh
-cargo run -- ./aarch64.json -c -
+cargo run -- --bin gen_decoder ./aarch64.json -c -
 ```
 
 or
 
 ```sh
-cargo run -- ./aarch64.json -f -
+cargo run -- --bin gen_decoder ./aarch64.json -f -
 ```
 
 ## Examples
 
+### Generating decoder implemented in Rust
+
+For the entire known instruction set:
+
+```sh
+cargo run --release --bin gen_decoder -- ./aarch64.json -r decoder.rs
+```
+
+If only a subset of the whole instruction set needs to de decoded, use the filter(s)
+appropriately. For example, to generate a decoder for the V8 load/store instructions, do:
+
+```sh
+cargo run -- --bin gen_decoder ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -r decoder.rs
+```
+
+To use the decoder:
+
+```sh
+cargo run --release --bin disarm64 -- -i 0x1a000001
+```
+
+```log
+[INFO ] Decoding 0x1a000001
+[INFO ] Decoded instruction: ADC_Rd_Rn_Rm(ADC_Rd_Rn_Rm { rd: 1, rn: 0, rm: 0 })
+[INFO ] Details: Insn { mnemonic: "adc", opcode: 1a000000, mask: 7fe0fc00, class: ADDSUB_CARRY, feature_set: V8, operands: [] }
+```
+
 ### Visualizing the decision trees
 
 ```sh
-cargo run -- ./aarch64.json -c exception -g dt-exception.dot
-cargo run -- ./aarch64.json -f v8 -g dt-v8.dot
-cargo run -- ./aarch64.json -c ic_system -g dt-system.dot
-cargo run -- ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -g dt-ldst.dot 
+cargo run -- --bin gen_decoder ./aarch64.json -c exception -g dt-exception.dot
+cargo run -- --bin gen_decoder ./aarch64.json -f v8 -g dt-v8.dot
+cargo run -- --bin gen_decoder ./aarch64.json -c ic_system -g dt-system.dot
+cargo run -- --bin gen_decoder ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -g dt-ldst.dot 
 ```
 
 and then (assuming [Graphviz](https://graphviz.org/) tools are installed):

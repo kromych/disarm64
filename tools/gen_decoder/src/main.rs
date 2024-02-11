@@ -1,5 +1,4 @@
 use clap::Parser;
-use clap_num::maybe_hex;
 use decision_tree::build_decision_tree;
 use description::Insn;
 use description::InsnClass;
@@ -37,12 +36,9 @@ struct CommandLine {
     /// Output the decision tree to a Graphviz DOT file.
     #[clap(short, long)]
     graphviz: Option<PathBuf>,
-    /// Output the decision tree to a Rust file.
+    /// Generate the decoder implemented in Rust.
     #[clap(short, long)]
-    rust: Option<PathBuf>,
-    /// An instruction to decode (hex 32-bit).
-    #[clap(short, long, value_parser = maybe_hex::< u32 >)]
-    insn: Option<u32>,
+    rs_file: Option<PathBuf>,
     /// Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity.
     #[clap(short, action = clap::ArgAction::Count)]
     verbosity: u8,
@@ -94,7 +90,7 @@ fn main() -> anyhow::Result<()> {
         decistion_tree_to_graphviz_dot(&decision_tree, &mut f)?;
     }
 
-    if let Some(rust) = opt.rust {
+    if let Some(rust) = opt.rs_file {
         log::info!("Writing decision tree to a Rust file {rust:?}");
         let mut f = std::fs::File::create(rust)?;
         decision_tree_to_rust(&decision_tree, &mut f)?;
