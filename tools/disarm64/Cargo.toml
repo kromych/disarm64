@@ -3,6 +3,10 @@ name = "disarm64"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "disarm64"
+path = "src/main.rs"
+
 [dependencies]
 anyhow.workspace = true
 bitfield-struct.workspace = true

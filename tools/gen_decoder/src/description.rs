@@ -464,7 +464,7 @@ bitflags! {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Hash, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, EnumIter, Deserialize)]
 #[allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
 pub enum InsnOperandKind {
     ADDR_ADRP,
@@ -770,7 +770,7 @@ pub enum InsnOperandKind {
 }
 
 #[allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, EnumIter, Deserialize)]
 pub enum InsnOperandClass {
     ADDRESS,
     COND,
@@ -790,7 +790,7 @@ pub enum InsnOperandClass {
 }
 
 #[allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, EnumIter, Deserialize)]
 pub enum InsnOperandQualifier {
     imm_0_15,
     imm_0_31,
@@ -826,7 +826,7 @@ pub enum InsnOperandQualifier {
 }
 
 #[allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
-#[derive(Debug, PartialEq, Eq, Copy, Clone, Hash, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Hash, EnumIter, Deserialize)]
 pub enum InsnBitField {
     b40,
     b5,

@@ -1,18 +1,21 @@
-use std::collections::HashSet;
-use std::path::PathBuf;
-use std::rc::Rc;
-
 use clap::Parser;
 use clap_num::maybe_hex;
-
 use decision_tree::build_decision_tree;
 use description::Insn;
 use description::InsnClass;
 use description::InsnFeatureSet;
 use description::InsnFlags;
+use std::collections::HashSet;
+use std::path::PathBuf;
+use std::rc::Rc;
+
+use crate::generate_graphviz_dot::decistion_tree_to_graphviz_dot;
+use crate::generate_rust::decision_tree_to_rust;
 
 mod decision_tree;
 mod description;
+mod generate_graphviz_dot;
+mod generate_rust;
 
 #[derive(Parser, Debug)]
 /// This tool generates an instruction decoder from a JSON description of the ISA.
@@ -88,13 +91,13 @@ fn main() -> anyhow::Result<()> {
     if let Some(graphviz) = opt.graphviz {
         log::info!("Writing decision tree to a Graphviz dot file {graphviz:?}");
         let mut f = std::fs::File::create(graphviz)?;
-        decision_tree::decistion_tree_to_graphviz_dot(&decision_tree, &mut f)?;
+        decistion_tree_to_graphviz_dot(&decision_tree, &mut f)?;
     }
 
     if let Some(rust) = opt.rust {
         log::info!("Writing decision tree to a Rust file {rust:?}");
         let mut f = std::fs::File::create(rust)?;
-        decision_tree::decision_tree_to_rust(&decision_tree, &mut f)?;
+        decision_tree_to_rust(&decision_tree, &mut f)?;
     }
 
     Ok(())
