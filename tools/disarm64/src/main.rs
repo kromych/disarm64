@@ -22,8 +22,8 @@ enum Command {
         #[clap(short, long, value_parser = maybe_hex::<u64>, default_value = "0")]
         offset: u64,
         /// Number of instructions to decode.
-        #[clap(short, long, value_parser = maybe_hex::<u64>, default_value = "1")]
-        count: u64,
+        #[clap(short, long, value_parser = maybe_hex::<u64>)]
+        count: Option<u64>,
     },
     /// ELF file with instructions to decode.
     Elf { file: PathBuf },
@@ -75,7 +75,7 @@ fn main() -> anyhow::Result<()> {
             file,
             offset,
             count,
-        } => decode_bin(file.to_path_buf(), *offset, *count),
+        } => decode_bin(file.to_path_buf(), *offset, count.unwrap_or(!0)),
         Command::Elf { file } => decode_elf(file.to_path_buf()),
     }
 }
