@@ -45,8 +45,11 @@ fn main() -> anyhow::Result<()> {
 
     let opcode = opt.insn;
     log::info!("Decoding {opcode:#08x}");
-    let insn = decoder::decode(opcode);
-    log::info!("Decoded instruction: {:x?}", insn);
+    if let Some(insn) = decoder::decode(opcode) {
+        log::info!("Decoded instruction: {:x?}", insn);
+    } else {
+        anyhow::bail!("Could not decode");
+    }
 
     Ok(())
 }

@@ -312,6 +312,7 @@ pub fn decision_tree_to_rust(
         let opcode_struct_name = format_ident!("{}", opcode_struct_name);
         let opcode_hex: TokenStream = format!("{:#08x}", insn.opcode).parse().unwrap();
         let mask_hex: TokenStream = format!("{:#08x}", insn.mask).parse().unwrap();
+        let mnemonic = insn.mnemonic.as_str();
         struct_definitions.extend(quote! {
             #[bitfield(u32)]
             #[derive(PartialEq, Eq)]
@@ -319,9 +320,16 @@ pub fn decision_tree_to_rust(
                 #opcode_fields_tokens
             }
 
-            impl InsnOpcode for #opcode_struct_name {
+            impl #opcode_struct_name {
                 const OPCODE: u32 = #opcode_hex;
                 const MASK: u32 = #mask_hex;
+                const MNEMONIC: &'static str = #mnemonic;
+            }
+
+            impl InsnOpcode for #opcode_struct_name {
+                const OPCODE: u32 = #opcode_struct_name::OPCODE;
+                const MASK: u32 = #opcode_struct_name::MASK;
+                const MNEMONIC: &'static str = #opcode_struct_name::MNEMONIC;
             }
         });
     }
@@ -346,6 +354,7 @@ pub fn decision_tree_to_rust(
             pub trait InsnOpcode {
                 const OPCODE: u32;
                 const MASK: u32;
+                const MNEMONIC: &'static str;
             }
 
             #struct_definitions
