@@ -1,3 +1,4 @@
+use crate::decoder::InsnOpcode;
 use clap::Parser;
 use clap_num::maybe_hex;
 
@@ -47,6 +48,7 @@ fn main() -> anyhow::Result<()> {
     log::info!("Decoding {opcode:#08x}");
     if let Some(insn) = decoder::decode(opcode) {
         log::info!("Decoded instruction: {:x?}", insn);
+        log::info!("Details: {:x?}", insn.details());
     } else {
         anyhow::bail!("Could not decode");
     }

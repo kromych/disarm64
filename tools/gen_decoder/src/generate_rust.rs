@@ -98,7 +98,7 @@ fn write_prelude(_decision_tree: &DecisionTree, f: &mut impl Write) -> std::io::
             }
 
             pub trait InsnOpcode {
-                const DETAILS: &'static Insn;
+                fn details(&self) -> &'static Insn;
             }
         }
     )
@@ -226,7 +226,7 @@ fn write_insn_structs(
             }
 
             impl #opcode_struct_name {
-                const DETAILS: Insn = Insn {
+                pub const DETAILS: Insn = Insn {
                     mnemonic: #mnemonic,
                     opcode: #opcode_hex,
                     mask: #mask_hex,
@@ -237,7 +237,9 @@ fn write_insn_structs(
             }
 
             impl InsnOpcode for #opcode_struct_name {
-                const DETAILS: &'static Insn = &#opcode_struct_name::DETAILS;
+                fn details(&self) -> &'static Insn {
+                    &Self::DETAILS
+                }
             }
         });
     }
@@ -259,6 +261,16 @@ fn write_insn_structs(
                 #(
                     #used_names(#used_names),
                 )*
+            }
+
+            impl InsnOpcode for Opcode {
+                fn details(&self) -> &'static Insn {
+                    match self {
+                        #(
+                            Opcode::#used_names(insn) => insn.details(),
+                        )*
+                    }
+                }
             }
         }
     )?;
