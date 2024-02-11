@@ -6,12 +6,13 @@ use clap::Parser;
 use clap_num::maybe_hex;
 
 use decision_tree::build_decision_tree;
-use insn_def::description::Insn;
-use insn_def::description::InsnClass;
-use insn_def::description::InsnFeatureSet;
-use insn_def::description::InsnFlags;
+use description::Insn;
+use description::InsnClass;
+use description::InsnFeatureSet;
+use description::InsnFlags;
 
 mod decision_tree;
+mod description;
 
 #[derive(Parser, Debug)]
 /// This tool generates an instruction decoder from a JSON description of the ISA.

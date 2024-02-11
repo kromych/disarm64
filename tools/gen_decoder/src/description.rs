@@ -1,9 +1,10 @@
-use std::str::FromStr;
+#![allow(clippy::upper_case_acronyms)]
 
 use bitflags::bitflags;
 use serde::de::value::StrDeserializer;
 use serde::Deserialize;
 use serde::Deserializer;
+use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 

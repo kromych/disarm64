@@ -1,14 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
-    "support/insn_def",
     "tools/disarm64",
     "tools/gen_decoder"
 ]
 
 [workspace.dependencies]
-insn_def = { path = "support/insn_def" }
-
 anyhow = "1"
 bitfield-struct = "0.5"
 bitflags = { version = "2.4", features = ["serde"] }

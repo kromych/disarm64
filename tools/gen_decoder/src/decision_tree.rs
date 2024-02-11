@@ -8,7 +8,7 @@ use proc_macro2::TokenStream;
 use quote::format_ident;
 use quote::quote;
 
-use insn_def::description::Insn;
+use crate::description::Insn;
 
 #[derive(Debug, Clone)]
 pub struct LeafNode {
