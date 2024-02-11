@@ -83,7 +83,7 @@ cargo run --release --bin disarm64 -- -i 0x1a000001
 ```log
 [INFO ] Decoding 0x1a000001
 [INFO ] Decoded instruction: ADC_Rd_Rn_Rm(ADC_Rd_Rn_Rm { rd: 1, rn: 0, rm: 0 })
-[INFO ] Details: Insn { mnemonic: "adc", opcode: 1a000000, mask: 7fe0fc00, class: ADDSUB_CARRY, feature_set: V8, operands: [] }
+[INFO ] Details: Insn { mnemonic: "adc", opcode: 1a000000, mask: 7fe0fc00, class: ADDSUB_CARRY, feature_set: V8, operands: [InsnOperand { kind: Rd, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rd, lsb: 0, width: 5 }] }, InsnOperand { kind: Rn, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rn, lsb: 5, width: 5 }] }, InsnOperand { kind: Rm, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rm, lsb: 10, width: 5 }] }] }
 ```
 
 ### Visualizing the decision trees

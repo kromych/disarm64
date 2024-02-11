@@ -7,6 +7,7 @@ use crate::description::InsnFeatureSet;
 use crate::description::InsnOperandClass;
 use crate::description::InsnOperandKind;
 use crate::description::InsnOperandQualifier;
+use proc_macro2::Literal;
 use proc_macro2::TokenStream;
 use quote::format_ident;
 use quote::quote;
@@ -218,6 +219,38 @@ fn write_insn_structs(
         let mnemonic = insn.mnemonic.as_str();
         let feature_set = format_ident!("{}", insn.feature_set.to_string());
         let class = format_ident!("{}", insn.class.to_string());
+
+        let mut insn_operands = Vec::new();
+        for operand in insn.operands.iter() {
+            let kind = format_ident!("{}", format!("{:?}", operand.kind));
+            let class = format_ident!("{}", format!("{:?}", operand.class));
+            let qualifiers = operand
+                .qualifiers
+                .iter()
+                .map(|q| format_ident!("{}", format!("{q:?}")));
+            let bit_fields = operand.bit_fields.iter().map(|bf| {
+                let bf_name = format_ident!("{}", format!("{:?}", bf.bitfield));
+                let lsb = Literal::u8_unsuffixed(bf.lsb);
+                let width = Literal::u8_unsuffixed(bf.width);
+                quote! {
+                    BitfieldSpec {
+                        bitfield: InsnBitField::#bf_name,
+                        lsb: #lsb,
+                        width: #width,
+                    },
+                }
+            });
+
+            insn_operands.push(quote! {
+                InsnOperand {
+                    kind: InsnOperandKind::#kind,
+                    class: InsnOperandClass::#class,
+                    qualifiers: &[#(InsnOperandQualifier::#qualifiers,)*],
+                    bit_fields: &[#(#bit_fields)*],
+                },
+            });
+        }
+
         struct_definitions.extend(quote! {
             #[bitfield(u32)]
             #[derive(PartialEq, Eq)]
@@ -232,7 +265,7 @@ fn write_insn_structs(
                     mask: #mask_hex,
                     class: InsnClass::#class,
                     feature_set: InsnFeatureSet::#feature_set,
-                    operands: &[],
+                    operands: &[#(#insn_operands)*],
                 };
             }
 
