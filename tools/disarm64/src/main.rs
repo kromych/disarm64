@@ -30,7 +30,7 @@ enum Command {
 }
 
 #[derive(Parser, Debug)]
-/// This tool decodes an instruction
+/// This tool decodes instructions of the ARM64 architecture.
 struct CommandLine {
     /// Instructions to decode (hex 32-bit).
     #[clap(subcommand)]
@@ -83,8 +83,8 @@ fn main() -> anyhow::Result<()> {
 fn decode_insn(insn: u32) -> anyhow::Result<()> {
     log::debug!("Decoding {insn:#08x}");
     if let Some(opcode) = decoder::decode(insn) {
-        log::debug!("Decoded instruction: {:x?}", opcode);
-        log::info!("{insn:#08x}: {:x?}", opcode.details());
+        log::debug!("Decoded instruction: {:08x?}", opcode);
+        log::info!("{insn:#08x}: {:08x?}", opcode.details());
     } else {
         anyhow::bail!("Could not decode instruction {insn:#08x}");
     }
@@ -103,17 +103,27 @@ fn decode_bin(file: PathBuf, offset: u64, count: u64) -> anyhow::Result<()> {
     log::info!("Decoding binary file {file:?} at offset {offset:#x}");
     let data = std::fs::read(file)?;
     let data = &data[offset as usize..];
-    let mut offset = 0;
+
+    let mut pos = 0;
     let mut decoded = 0;
-    while offset + 4 <= data.len() && decoded < count {
-        let insn = u32::from_le_bytes([
-            data[offset],
-            data[offset + 1],
-            data[offset + 2],
-            data[offset + 3],
-        ]);
-        decode_insn(insn)?;
-        offset += 4;
+    while pos + 4 <= data.len() && decoded < count {
+        let insn = u32::from_le_bytes([data[pos], data[pos + 1], data[pos + 2], data[pos + 3]]);
+
+        let opcode = decoder::decode(insn);
+        if let Some(opcode) = opcode {
+            log::debug!("Decoded instruction: {:08x?}", opcode);
+            log::debug!("{insn:#08x}: {:08x?}", opcode.details());
+
+            log::info!(
+                "{:#08x}: {}\t\t\t// {insn:08x}",
+                offset + pos as u64,
+                opcode.details().mnemonic,
+            );
+        } else {
+            log::warn!("{offset:#08x}: ???\t\t\t// {insn:08x}");
+        }
+
+        pos += 4;
         decoded += 1;
     }
     Ok(())
@@ -134,7 +144,17 @@ fn decode_elf(file: PathBuf) -> anyhow::Result<()> {
                     data[offset + 2],
                     data[offset + 3],
                 ]);
-                decode_insn(insn)?;
+
+                let opcode = decoder::decode(insn);
+                if let Some(opcode) = opcode {
+                    log::info!(
+                        "{offset:#08x}: {}\t\t\t // {insn:08x}",
+                        opcode.details().mnemonic,
+                    );
+                } else {
+                    log::warn!("{offset:#08x}: <unknown>\t\t\t // {insn:08x}");
+                }
+
                 offset += 4;
             }
         }

@@ -4,8 +4,8 @@
 
 This project contains tooling for generating instruction decoders based on a decision
 tree from some standard description of ISA. The objective of efficient and precise
-instruction decoding is a pretty common one for disassemblers, debuggers and emulators,
-and the other tools alike.
+instruction decoding is a pretty common one for disassemblers, debuggers, emulators,
+VMMs, and the other tools alike.
 
 The more instructions are there to decode, the more laborious and error-prone the task
 becomes. Thus one might set their eyes on the idea to _generate_ the decoder from a
@@ -13,7 +13,8 @@ machine-readable description.
 
 The ISA description is read from a JSON file (there is an example in the repo:
 [aarch64.json](./aarch64.json), more than `3,000` instructions to play with), and
-the algorithms assume a fixed length 32-bit encoding.
+the algorithms assume a fixed length 32-bit encoding. The file is produced by the tools
+in the [opcodes-lab](https://github.com/kromych/opcodes-lab) repository.
 
 ## Using the generator
 
@@ -74,16 +75,39 @@ appropriately. For example, to generate a decoder for the V8 load/store instruct
 cargo run -- --bin gen_decoder ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -r decoder.rs
 ```
 
-To use the decoder:
+### Using the decoder
+
+The decoder can decode instructions from the command line, a flat binary file or an ELF file:
 
 ```sh
-cargo run --release --bin disarm64 -- -i 0x1a000001
+cargo run --release --bin disarm64 -- --help
+
+Usage: disarm64 [OPTIONS] <COMMAND>
+
+Commands:
+  insn  Instructions to decode (hex 32-bit)
+  bin   Flat binary file with instructions to decode
+  elf   ELF file with instructions to decode
+  help  Print this message or the help of the given subcommand(s)
+
+Options:
+  -v...       Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity
+  -h, --help  Print help
+```
+
+To decode instructions apssed on the command line:
+
+```sh
+cargo run --release --bin disarm64 -- insn 0x1a000001,0xa,0xa,0xa,0xa
 ```
 
 ```log
-[INFO ] Decoding 0x1a000001
-[INFO ] Decoded instruction: ADC_Rd_Rn_Rm(ADC_Rd_Rn_Rm { rd: 1, rn: 0, rm: 0 })
-[INFO ] Details: Insn { mnemonic: "adc", opcode: 1a000000, mask: 7fe0fc00, class: ADDSUB_CARRY, feature_set: V8, operands: [InsnOperand { kind: Rd, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rd, lsb: 0, width: 5 }] }, InsnOperand { kind: Rn, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rn, lsb: 5, width: 5 }] }, InsnOperand { kind: Rm, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rm, lsb: 10, width: 5 }] }] }
+[INFO ] Decoding instructions: [1a000001, 0000000a, 0000000a, 0000000a, 0000000a]
+[INFO ] 0x1a000001: Insn { mnemonic: "adc", opcode: 1a000000, mask: 7fe0fc00, class: ADDSUB_CARRY, feature_set: V8, operands: [InsnOperand { kind: Rd, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rd, lsb: 00000000, width: 00000005 }] }, InsnOperand { kind: Rn, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rn, lsb: 00000005, width: 00000005 }] }, InsnOperand { kind: Rm, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rm, lsb: 00000010, width: 00000005 }] }] }
+[INFO ] 0x00000a: Insn { mnemonic: "udf", opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }] }
+[INFO ] 0x00000a: Insn { mnemonic: "udf", opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }] }
+[INFO ] 0x00000a: Insn { mnemonic: "udf", opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }] }
+[INFO ] 0x00000a: Insn { mnemonic: "udf", opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }] }
 ```
 
 ### Visualizing the decision trees
@@ -92,16 +116,16 @@ cargo run --release --bin disarm64 -- -i 0x1a000001
 cargo run -- --bin gen_decoder ./aarch64.json -c exception -g dt-exception.dot
 cargo run -- --bin gen_decoder ./aarch64.json -f v8 -g dt-v8.dot
 cargo run -- --bin gen_decoder ./aarch64.json -c ic_system -g dt-system.dot
-cargo run -- --bin gen_decoder ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -g dt-ldst.dot 
+cargo run -- --bin gen_decoder ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -g dt-ldst.dot
 ```
 
 and then (assuming [Graphviz](https://graphviz.org/) tools are installed):
 
 ```sh
-dot -Tpng dt-exception.dot -o dt-exception.png 
-dot -Tpng dt-v8.dot -o dt-v8.png 
-dot -Tpng dt-system.dot -o dt-system.png 
-dot -Tpng dt-ldst.dot -o dt-ldst.png 
+dot -Tpng dt-exception.dot -o dt-exception.png
+dot -Tpng dt-v8.dot -o dt-v8.png
+dot -Tpng dt-system.dot -o dt-system.png
+dot -Tpng dt-ldst.dot -o dt-ldst.png
 ```
 
 to render the [`dot`](https://graphviz.org/doc/info/lang.html) file into a `png`
@@ -118,7 +142,7 @@ Examples (Aarch64):
 ### Debug output
 
 ```sh
-cargo run -- ./aarch64.json -c ldst_pos -m ldr -v
+cargo run -- --bin gen_decoder ./aarch64.json -c ldst_pos -m ldr -v
 ```
 
 ```log
@@ -155,3 +179,28 @@ cargo run -- ./aarch64.json -c ldst_pos -m ldr -v
 [DEBUG] One instruction at depth 1
 [DEBUG] Decision tree built at depth 0
 ```
+
+## Related art
+
+This project doesn't have any claims to fame. It uses well-known algorithms and approaches
+to generating instruction decoders and disassemblers with what seems to be few pretty
+minor twists: reading the ISA description from a JSON file and producing a strongly-typed Rust
+decoders with no pointers, unsafe blocks and memory allocations at all.
+
+There are other way more very mature projects with a much broader scope, rigorous testing,
+overwhelming coverage, and bindings in various languages:
+
+- [Capstone & its LLVM TableGen fork](https://github.com/capstone-engine)
+- [LLVM & TableGen](https://github.com/llvm/llvm-project)
+- [Qemu - Quick emulator](https://github.com/qemu/qemu)
+- [Unicorn](https://github.com/unicorn-engine/unicorn)
+- [Binutils & libopcode](https://www.gnu.org/software/binutils/)
+- [Binary Ninja ARM64 plugin](https://github.com/Vector35/arch-arm64)
+
+Not a library/API-centric, yet the one and only
+
+- [Ghidra by NSA](https://github.com/NationalSecurityAgency/ghidra)
+
+Although only x86_64 targeted, nonetheless an incredible one:
+
+- [Blinkenlights](https://github.com/jart/blink)
