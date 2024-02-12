@@ -11,3 +11,4 @@
 *.log
 *.bin
 *.elf
+decoder*.rs
