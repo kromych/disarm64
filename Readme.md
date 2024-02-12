@@ -17,7 +17,13 @@ the algorithms assume a fixed length 32-bit encoding. The file is produced by th
 from the [opcodes-lab](https://github.com/kromych/opcodes-lab) repository.
 
 Among the next steps are adding instruction formatting resembling what disassemblers use
-and tests. 
+and tests.
+
+To install:
+
+```sh
+cargo install disarm64
+```
 
 ## Using the generator
 
