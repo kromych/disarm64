@@ -1,6 +1,6 @@
 [package]
 name = "disarm64"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["kromych <kromych@users.noreply.github.com>"]
 description = """
@@ -13,8 +13,9 @@ documentation = "https://github.com/kromych/disarm64"
 homepage = "https://github.com/kromych/disarm64"
 repository = "https://github.com/kromych/disarm64"
 keywords = ["aarch64", "arm64", "arm-v8", "disassembler", "reverse-engineering"]
-categories = ["command-line-utilities", "development-tools", "embedded", "hardware", "system"]
+categories = ["command-line-utilities", "development-tools", "embedded"]
 license = "Unlicense OR MIT"
+readme = "Readme.md"
 
 [[bin]]
 name = "disarm64"
