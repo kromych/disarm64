@@ -152,11 +152,18 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "bitfield-struct",
+ "bitflags",
  "clap",
  "clap-num",
  "env_logger",
  "goblin",
  "log",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "serde_json",
+ "strum",
+ "strum_macros",
 ]
 
 [[package]]
@@ -180,25 +187,6 @@ dependencies = [
  "env_filter",
  "humantime",
  "log",
-]
-
-[[package]]
-name = "gen_decoder"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "bitfield-struct",
- "bitflags",
- "clap",
- "clap-num",
- "env_logger",
- "log",
- "proc-macro2",
- "quote",
- "serde",
- "serde_json",
- "strum",
- "strum_macros",
 ]
 
 [[package]]

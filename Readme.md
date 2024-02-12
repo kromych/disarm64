@@ -16,6 +16,9 @@ The ISA description is read from a JSON file (there is an example in the repo:
 the algorithms assume a fixed length 32-bit encoding. The file is produced by the tools
 from the [opcodes-lab](https://github.com/kromych/opcodes-lab) repository.
 
+Among the next steps are adding instruction formatting resembling what disassemblers use
+and tests. 
+
 ## Using the generator
 
 ### Available options

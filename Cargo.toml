@@ -1,19 +1,38 @@
-[workspace]
-resolver = "2"
-members = [
-    "./disarm64",
-    "./gen_decoder"
-]
+[package]
+name = "disarm64"
+version = "0.1.0"
+edition = "2021"
+authors = ["kromych <kromych@users.noreply.github.com>"]
+description = """
+disarm64 is a tool for decoding ARM64 instructions. It is a companion to
+a tool for generating disassembler/instruction decoder tables in Rust
+from a JSON file. Besides that, can visualize the instruction decoding as
+a tree.
+"""
+documentation = "https://github.com/kromych/disarm64"
+homepage = "https://github.com/kromych/disarm64"
+repository = "https://github.com/kromych/disarm64"
+keywords = ["aarch64", "arm64", "arm-v8", "disassembler", "generator", "instruction-decoder", "binary-analysis", "reverse-engineering"]
+categories = ["command-line-utilities", "development-tools", "embedded", "emulators", "hardware", "system", "utilities"]
+license = "Unlicense OR MIT"
 
-[workspace.dependencies]
+[[bin]]
+name = "disarm64"
+path = "disarm64/src/main.rs"
+
+[[bin]]
+name = "gen_decoder"
+path = "gen_decoder/src/main.rs"
+
+[dependencies]
 anyhow = "1"
 bitfield-struct = "0.5"
 bitflags = { version = "2.4", features = ["serde"] }
 clap = { version = "4", features = ["derive"] }
 clap-num = "1"
-log = "0.4"
-goblin = "0.8"
 env_logger = "0.11"
+goblin = "0.8"
+log = "0.4"
 proc-macro2 = { version = "1", default-features = false }
 quote = { version = "1", default-features = false }
 serde = { version = "1.0", features = ["derive"] }
