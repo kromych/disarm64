@@ -13,7 +13,7 @@ documentation = "https://github.com/kromych/disarm64"
 homepage = "https://github.com/kromych/disarm64"
 repository = "https://github.com/kromych/disarm64"
 keywords = ["aarch64", "arm64", "arm-v8", "disassembler", "reverse-engineering"]
-categories = ["command-line-utilities", "development-tools", "embedded", "hardware", "system", "utilities"]
+categories = ["command-line-utilities", "development-tools", "embedded", "hardware", "system"]
 license = "Unlicense OR MIT"
 
 [[bin]]
