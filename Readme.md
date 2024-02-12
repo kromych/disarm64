@@ -14,7 +14,7 @@ machine-readable description.
 The ISA description is read from a JSON file (there is an example in the repo:
 [aarch64.json](./aarch64.json), more than `3,000` instructions to play with), and
 the algorithms assume a fixed length 32-bit encoding. The file is produced by the tools
-in the [opcodes-lab](https://github.com/kromych/opcodes-lab) repository.
+from the [opcodes-lab](https://github.com/kromych/opcodes-lab) repository.
 
 ## Using the generator
 
