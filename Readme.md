@@ -185,10 +185,11 @@ cargo run -- --bin gen_decoder ./aarch64.json -c ldst_pos -m ldr -v
 This project doesn't have any claims to fame. It uses well-known algorithms and approaches
 to generating instruction decoders and disassemblers with what seems to be few pretty
 minor twists: reading the ISA description from a JSON file and producing a strongly-typed Rust
-decoders with no pointers, unsafe blocks and memory allocations at all.
+decoders with no pointers, unsafe blocks and memory allocations at all. Perhaps, you'll
+enjoy the ability to generate a decoder for a part of the instruction set which makes
+for a smaller code size, too.
 
-There are other way more very mature projects with a much broader scope, rigorous testing,
-overwhelming coverage, and bindings in various languages:
+Here are other projects touching on the topic of decoding the machine instructions:
 
 - [Capstone & its LLVM TableGen fork](https://github.com/capstone-engine)
 - [LLVM & TableGen](https://github.com/llvm/llvm-project)
@@ -196,6 +197,8 @@ overwhelming coverage, and bindings in various languages:
 - [Unicorn](https://github.com/unicorn-engine/unicorn)
 - [Binutils & libopcode](https://www.gnu.org/software/binutils/)
 - [Binary Ninja ARM64 plugin](https://github.com/Vector35/arch-arm64)
+
+Those mentioned have broader scope, some offer bindings in various languages.
 
 Not a library/API-centric, yet the one and only
 
