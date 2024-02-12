@@ -1,13 +1,13 @@
 /target
-.idea
-.vscode
-junk/
+/junk
+/.idea
+/.vscode
+.DS_Store
 *.dot
 *.pdf
 *.png
 *.jpg
 *.svg
 *.log
-.DS_Store
 *.bin
 *.elf
