@@ -189,6 +189,22 @@ cargo run -- --bin disarm64_gen ./aarch64.json -c ldst_pos -m ldr -v
 [DEBUG] Decision tree built at depth 0
 ```
 
+## Testing
+
+To compare how this project stacks up to the authorithy of binutils or LLVM, one can disassemble a binary file
+with:
+
+```sh
+aarch64-linux-gnu-objdump -m aarch64 -b binary -D test0000.bin
+```
+
+and
+
+```sh
+llvm-objcopy -I binary -O elf64-littleaarch64 --rename-section=.data=.text,code test0000.bin test0000.elf
+llvm-objdump --section .data -d test0000.elf
+```
+
 ## Related art
 
 This project doesn't have any claims to fame. It uses well-known algorithms and approaches

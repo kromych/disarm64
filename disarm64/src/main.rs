@@ -28,6 +28,8 @@ enum Command {
     },
     /// ELF file with instructions to decode.
     Elf { file: PathBuf },
+    /// Test file
+    Test { file: PathBuf },
 }
 
 #[derive(Parser, Debug)]
@@ -78,6 +80,7 @@ fn main() -> anyhow::Result<()> {
             count,
         } => decode_bin(file.to_path_buf(), *offset, count.unwrap_or(!0)),
         Command::Elf { file } => decode_elf(file.to_path_buf()),
+        Command::Test { file } => decode_test(file.to_path_buf()),
     }
 }
 
@@ -157,5 +160,49 @@ fn decode_elf(file: PathBuf) -> anyhow::Result<()> {
             }
         }
     }
+    Ok(())
+}
+
+fn decode_test(file: PathBuf) -> anyhow::Result<()> {
+    log::info!("Decoding test file {file:?}");
+    let mut all_code = Vec::new();
+
+    let data = std::fs::read_to_string(file)?;
+    let lines = data.lines();
+    for (i, line) in lines.enumerate() {
+        let line = line.trim();
+        if line.starts_with("//") {
+            continue;
+        }
+        if line.is_empty() {
+            continue;
+        }
+
+        log::info!("Decoding line {i:05}: {line}");
+
+        // Split the line on spaces and get the first two items
+        let mut split = line.split_whitespace();
+        let insn_test = split.next().unwrap();
+        let mnemonic_test = split.next().unwrap();
+
+        let insn = u32::from_str_radix(insn_test, 16)?;
+        all_code.extend(insn.to_le_bytes().iter());
+
+        if let Some(opcode) = crate::decoder::decode(insn) {
+            let mnemonic = opcode.details().mnemonic;
+            if mnemonic == mnemonic_test {
+                log::info!("Decoded instruction: {:08x?}", opcode);
+                log::info!("{insn_test}: {opcode}");
+            } else {
+                log::warn!("Decoded instruction: {:08x?}", opcode);
+                log::warn!("{insn_test}: {opcode} (expected {mnemonic_test})");
+            }
+        } else {
+            log::warn!("{insn_test}: ????");
+        }
+    }
+
+    std::fs::write("test.bin", all_code.as_slice())?;
+
     Ok(())
 }
