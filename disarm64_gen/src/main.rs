@@ -14,6 +14,7 @@ use crate::generate_rust::decision_tree_to_rust;
 mod decision_tree;
 mod generate_graphviz_dot;
 mod generate_rust;
+mod generate_test_bin;
 
 #[derive(Parser, Debug)]
 /// This tool generates an instruction decoder from a JSON description of the ISA.
@@ -38,6 +39,9 @@ struct CommandLine {
     /// Generate the decoder implemented in Rust.
     #[clap(short, long)]
     rs_file: Option<PathBuf>,
+    /// Generate a test binary.
+    #[clap(short, long)]
+    test_bin: Option<PathBuf>,
     /// Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity.
     #[clap(short, action = clap::ArgAction::Count)]
     verbosity: u8,
@@ -93,6 +97,12 @@ fn main() -> anyhow::Result<()> {
         log::info!("Writing decision tree to a Rust file {rust:?}");
         let mut f = std::fs::File::create(rust)?;
         decision_tree_to_rust(&decision_tree, &mut f)?;
+    }
+
+    if let Some(test_bin) = opt.test_bin {
+        log::info!("Generating test binary {test_bin:?}");
+        let mut f = std::fs::File::create(test_bin)?;
+        generate_test_bin::generate_test_bin(insns.as_slice(), &mut f)?;
     }
 
     Ok(())
