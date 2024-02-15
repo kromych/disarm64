@@ -1,5 +1,6 @@
 use crate::decision_tree::DecisionTree;
 use crate::decision_tree::DecisionTreeNode;
+use std::io::BufWriter;
 use std::io::Write;
 
 pub fn decistion_tree_to_graphviz_dot(
@@ -47,6 +48,8 @@ pub fn decistion_tree_to_graphviz_dot(
         Ok(())
     }
 
+    let mut f = BufWriter::new(f);
+
     let root_id = 0;
     let mut running_id = root_id + 1;
 
@@ -55,7 +58,7 @@ pub fn decistion_tree_to_graphviz_dot(
     writeln!(f, "  edge [arrowhead=normal];")?;
     writeln!(f, "  {root_id} [shape=circle label=\"?\"]")?;
 
-    decistion_tree_to_graphviz_dot_recursive(decision_tree, f, root_id, &mut running_id)?;
+    decistion_tree_to_graphviz_dot_recursive(decision_tree, &mut f, root_id, &mut running_id)?;
 
     writeln!(f, "}}")?;
 
