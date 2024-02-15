@@ -42,6 +42,9 @@ struct CommandLine {
     /// Generate a test binary.
     #[clap(short, long)]
     test_bin: Option<PathBuf>,
+    /// The size limit of the generated test binary, the default is 64MB.
+    #[clap(long, default_value = "67108864")]
+    test_bin_size_limit: usize,
     /// Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity.
     #[clap(short, action = clap::ArgAction::Count)]
     verbosity: u8,
@@ -100,9 +103,12 @@ fn main() -> anyhow::Result<()> {
     }
 
     if let Some(test_bin) = opt.test_bin {
-        log::info!("Generating test binary {test_bin:?}");
+        log::info!(
+            "Generating test binary {test_bin:?}, limit {} bytes",
+            opt.test_bin_size_limit
+        );
         let mut f = std::fs::File::create(test_bin)?;
-        generate_test_bin::generate_test_bin(insns.as_slice(), &mut f)?;
+        generate_test_bin::generate_test_bin(insns.as_slice(), &mut f, opt.test_bin_size_limit)?;
     }
 
     Ok(())

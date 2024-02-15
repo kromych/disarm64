@@ -71,11 +71,22 @@ impl Iterator for MaskedU32Iter {
     }
 }
 
-pub fn generate_test_bin(insns: &[Rc<Insn>], f: &mut impl Write) -> anyhow::Result<()> {
+pub fn generate_test_bin(
+    insns: &[Rc<Insn>],
+    f: &mut impl Write,
+    size_limit: usize,
+) -> anyhow::Result<()> {
+    let buf_writer = std::io::BufWriter::new(f);
+    let mut f = buf_writer;
+    let mut written = 0;
     for insn in insns {
         let encoding_iter = MaskedU32Iter::new(insn.opcode, insn.mask);
         for encoding in encoding_iter {
             f.write_all(&encoding.to_le_bytes())?;
+            written += std::mem::size_of::<u32>();
+            if written >= size_limit {
+                return Ok(());
+            }
         }
     }
 
