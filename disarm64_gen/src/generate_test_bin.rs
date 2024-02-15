@@ -5,6 +5,7 @@ use std::rc::Rc;
 
 /// Iterator for values of u32 with a mask. The masked bits don't change, and the unmasked bits
 /// count upwards.
+#[derive(Debug, Clone)]
 struct MaskedU32Iter {
     value: u32,
     encoding_count: u32,
@@ -38,6 +39,10 @@ impl MaskedU32Iter {
             current,
             insn_bit_fields,
         }
+    }
+
+    pub fn count(&self) -> u32 {
+        self.encoding_count
     }
 }
 
@@ -75,12 +80,20 @@ pub fn generate_test_bin(
     insns: &[Rc<Insn>],
     f: &mut impl Write,
     size_limit: usize,
+    encodings_limit: usize,
 ) -> anyhow::Result<()> {
     let buf_writer = std::io::BufWriter::new(f);
     let mut f = buf_writer;
     let mut written = 0;
     for insn in insns {
+        // TODO: introduce a limit for the number of encodings to emit, like 0x1000
         let encoding_iter = MaskedU32Iter::new(insn.opcode, insn.mask);
+        log::debug!(
+            "{}: {} possible encodings",
+            insn.mnemonic,
+            encoding_iter.clone().count()
+        );
+
         for encoding in encoding_iter {
             f.write_all(&encoding.to_le_bytes())?;
             written += std::mem::size_of::<u32>();
