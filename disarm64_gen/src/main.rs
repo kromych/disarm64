@@ -45,8 +45,8 @@ struct CommandLine {
     /// The size limit of the generated test binary, the default is 64MB.
     #[clap(long, default_value = "67108864")]
     test_bin_size_limit: usize,
-    /// The number of test encodings to generate for each instruction, the default is 0x1000.
-    #[clap(long, default_value = "4096")]
+    /// The number of test encodings to generate for each instruction, the default is 0x10_000.
+    #[clap(long, default_value = "65536")]
     test_encodings_limit: usize,
     /// Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity.
     #[clap(short, action = clap::ArgAction::Count)]

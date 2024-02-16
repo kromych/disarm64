@@ -12,6 +12,16 @@ categories=(
 )
 
 for category in "${categories[@]}"; do
-    mkdir -p "./test/classes/$category"
-    cargo run --release --bin gen_decoder -- ./aarch64.json -c "$category" -t "./test/classes/$category/$category.bin"
+    dir="./test/classes/$category"
+    mkdir -p "$dir"
+
+    echo "Generating $dir/$category.bin"
+    cargo run --release --bin gen_decoder -- ./aarch64.json -c "$category" -t "$dir/$category.bin"
+
+    echo "Generating $dir/$category.elf"
+    rust-objcopy -I binary -O elf64-littleaarch64 --rename-section=.data=.text,code "$dir/$category.bin" "$dir/$category.elf"
+
+    echo "Generating $dir/$category-llvm.lst"
+    rust-objdump -d "$dir/$category.elf" > "$dir/$category-llvm.lst"
+    rm "$dir/$category.elf"
 done

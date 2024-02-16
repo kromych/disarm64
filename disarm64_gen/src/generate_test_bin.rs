@@ -11,10 +11,11 @@ struct MaskedU32Iter {
     encoding_count: u32,
     current: u32,
     insn_bit_fields: Vec<Range<u32>>,
+    step: u32,
 }
 
 impl MaskedU32Iter {
-    fn new(value: u32, mask: u32) -> Self {
+    fn new(value: u32, mask: u32, limit: Option<usize>) -> Self {
         // Find runs of 1's in the mask
         let mut curr_bit = 0;
         let mut insn_bit_fields = Vec::new();
@@ -32,17 +33,33 @@ impl MaskedU32Iter {
         }
 
         let encoding_count = 1 << mask.count_zeros();
+        let step = if let Some(limit) = limit {
+            if encoding_count < limit {
+                1
+            } else {
+                encoding_count / limit
+            }
+        } else {
+            1
+        } as u32;
+        let encoding_count = encoding_count as u32;
+
         let current = 0;
         Self {
             value,
             encoding_count,
             current,
             insn_bit_fields,
+            step,
         }
     }
 
-    pub fn count(&self) -> u32 {
+    pub fn number_of(&self) -> u32 {
         self.encoding_count
+    }
+
+    pub fn limited_number_of(&self) -> u32 {
+        self.encoding_count / self.step
     }
 }
 
@@ -68,7 +85,7 @@ impl Iterator for MaskedU32Iter {
             current = shift_left_partial(current, range.end - range.start, range.start);
         }
 
-        self.current += 1;
+        self.current += self.step;
 
         // Now the mask bits are in the correct position, and the unmasked bits are 0
         let value = self.value | current;
@@ -85,22 +102,35 @@ pub fn generate_test_bin(
     let buf_writer = std::io::BufWriter::new(f);
     let mut f = buf_writer;
     let mut written = 0;
+    let mut insn_processed = 0;
     for insn in insns {
-        // TODO: introduce a limit for the number of encodings to emit, like 0x1000
-        let encoding_iter = MaskedU32Iter::new(insn.opcode, insn.mask);
-        log::debug!(
-            "{}: {} possible encodings",
+        let encoding_iter = MaskedU32Iter::new(insn.opcode, insn.mask, Some(encodings_limit));
+        log::info!(
+            "{}({:#08x}): {} possible encodings, generating {} encodings",
             insn.mnemonic,
-            encoding_iter.clone().count()
+            insn.opcode,
+            encoding_iter.number_of(),
+            encoding_iter.limited_number_of()
         );
 
         for encoding in encoding_iter {
             f.write_all(&encoding.to_le_bytes())?;
             written += std::mem::size_of::<u32>();
             if written >= size_limit {
-                return Ok(());
+                break;
             }
         }
+        insn_processed += 1;
+    }
+    log::info!("Wrote {} bytes to test binary", written);
+    if insn_processed < insns.len() {
+        log::warn!(
+            "Did not process all instructions, only processed {} out of {}; adjust limits if necessary",
+            insn_processed,
+            insns.len()
+        );
+    } else {
+        log::info!("Processed all {} instructions", insns.len());
     }
 
     Ok(())
