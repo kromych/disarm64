@@ -202,7 +202,7 @@ and
 
 ```sh
 llvm-objcopy -I binary -O elf64-littleaarch64 --rename-section=.data=.text,code test0000.bin test0000.elf
-llvm-objdump --section .data -d test0000.elf
+llvm-objdump -d test0000.elf
 ```
 
 ## Related art
