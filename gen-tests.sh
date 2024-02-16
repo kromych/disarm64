@@ -24,4 +24,7 @@ for category in "${categories[@]}"; do
     echo "Generating $dir/$category-llvm.lst"
     rust-objdump -d "$dir/$category.elf" > "$dir/$category-llvm.lst"
     rm "$dir/$category.elf"
+
+    echo "Generating $dir/$category-binutils.lst"
+    aarch64-linux-gnu-objdump -m aarch64 -b binary -D "$dir/$category.bin" > "$dir/$category-binutils.lst"
 done
