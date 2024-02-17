@@ -25,6 +25,10 @@ path = "disarm64/src/main.rs"
 name = "disarm64_gen"
 path = "disarm64_gen/src/main.rs"
 
+[[bin]]
+name = "norm"
+path = "test/src/main.rs"
+
 [dependencies]
 disarm64_defn = "0.1"
 
