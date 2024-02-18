@@ -36,7 +36,7 @@ cargo run -- --help
 ```txt
 This tool generates an instruction decoder from a JSON description of the ISA
 
-Usage: gen_insn_dec [OPTIONS] <DESCRIPTION_JSON>
+Usage: disarm64_gen [OPTIONS] <DESCRIPTION_JSON>
 
 Arguments:
   <DESCRIPTION_JSON>  A JSON file with the description of the instruction set architecture
@@ -58,13 +58,13 @@ To learn about the classes and feature sets available in the description of the 
 please run
 
 ```sh
-cargo run -- --bin gen_decoder ./aarch64.json -c -
+cargo run -- --bin disarm64_gen ./aarch64.json -c -
 ```
 
 or
 
 ```sh
-cargo run -- --bin gen_decoder ./aarch64.json -f -
+cargo run -- --bin disarm64_gen ./aarch64.json -f -
 ```
 
 ## Examples
@@ -74,14 +74,14 @@ cargo run -- --bin gen_decoder ./aarch64.json -f -
 For the entire known instruction set:
 
 ```sh
-cargo run --release --bin gen_decoder -- ./aarch64.json -r decoder.rs
+cargo run --release --bin disarm64_gen -- ./aarch64.json -r decoder.rs
 ```
 
 If only a subset of the whole instruction set needs to de decoded, use the filter(s)
 appropriately. For example, to generate a decoder for the V8 load/store instructions, do:
 
 ```sh
-cargo run -- --bin gen_decoder ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -r decoder.rs
+cargo run -- --bin disarm64_gen ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -r decoder.rs
 ```
 
 ### Using the decoder
@@ -122,10 +122,10 @@ cargo run --release --bin disarm64 -- insn 0x1a000001,0xa,0xa,0xa,0xa
 ### Visualizing the decision trees
 
 ```sh
-cargo run -- --bin gen_decoder ./aarch64.json -c exception -g dt-exception.dot
-cargo run -- --bin gen_decoder ./aarch64.json -f v8 -g dt-v8.dot
-cargo run -- --bin gen_decoder ./aarch64.json -c ic_system -g dt-system.dot
-cargo run -- --bin gen_decoder ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -g dt-ldst.dot
+cargo run -- --bin disarm64_gen ./aarch64.json -c exception -g dt-exception.dot
+cargo run -- --bin disarm64_gen ./aarch64.json -f v8 -g dt-v8.dot
+cargo run -- --bin disarm64_gen ./aarch64.json -c ic_system -g dt-system.dot
+cargo run -- --bin disarm64_gen ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -g dt-ldst.dot
 ```
 
 and then (assuming [Graphviz](https://graphviz.org/) tools are installed):
@@ -151,7 +151,7 @@ Examples (Aarch64):
 ### Debug output
 
 ```sh
-cargo run -- --bin gen_decoder ./aarch64.json -c ldst_pos -m ldr -v
+cargo run -- --bin disarm64_gen ./aarch64.json -c ldst_pos -m ldr -v
 ```
 
 ```log

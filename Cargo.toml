@@ -1,6 +1,6 @@
 [package]
 name = "disarm64"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 authors = ["kromych <kromych@users.noreply.github.com>"]
 description = """
@@ -22,8 +22,8 @@ name = "disarm64"
 path = "disarm64/src/main.rs"
 
 [[bin]]
-name = "gen_decoder"
-path = "gen_decoder/src/main.rs"
+name = "disarm64_gen"
+path = "disarm64_gen/src/main.rs"
 
 [dependencies]
 disarm64_defn = "0.1"
