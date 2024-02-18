@@ -131,7 +131,7 @@ pub fn format_insn(f: &mut impl Write, opcode: &Opcode) -> Result {
     for (i, operand) in definition.operands.iter().enumerate() {
         format_operand(f, bits, operand, definition)?;
         if i + 1 < op_count {
-            write!(f, ",")?;
+            write!(f, ", ")?;
         }
     }
 
