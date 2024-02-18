@@ -2,6 +2,7 @@ use disarm64_defn::defn::InsnOpcode;
 use clap::Parser;
 use clap::Subcommand;
 use clap_num::maybe_hex;
+use disarm64_defn::defn::InsnOpcode;
 use std::path::PathBuf;
 
 mod decoder;
@@ -149,7 +150,7 @@ fn decode_elf(file: PathBuf) -> anyhow::Result<()> {
                 let opcode = decoder::decode(insn);
                 if let Some(opcode) = opcode {
                     log::debug!("Decoded instruction: {:08x?}", opcode);
-                    log::debug!("{insn:#08x}: {:08x?}", opcode.details());
+                    log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
 
                     log::info!("{offset:#08x}: {opcode}\t\t\t// {insn:08x}");
                 } else {
@@ -189,7 +190,7 @@ fn decode_test(file: PathBuf) -> anyhow::Result<()> {
         all_code.extend(insn.to_le_bytes().iter());
 
         if let Some(opcode) = crate::decoder::decode(insn) {
-            let mnemonic = opcode.details().mnemonic;
+            let mnemonic = opcode.definition().mnemonic;
             if mnemonic == mnemonic_test {
                 log::info!("Decoded instruction: {:08x?}", opcode);
                 log::info!("{insn_test}: {opcode}");

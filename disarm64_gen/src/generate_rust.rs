@@ -1,6 +1,12 @@
 use crate::decision_tree::DecisionTree;
 use crate::decision_tree::DecisionTreeNode;
 use disarm64_defn::deser::Insn;
+use disarm64_defn::InsnBitField;
+use disarm64_defn::InsnClass;
+use disarm64_defn::InsnFeatureSet;
+use disarm64_defn::InsnOperandClass;
+use disarm64_defn::InsnOperandKind;
+use disarm64_defn::InsnOperandQualifier;
 use proc_macro2::Literal;
 use proc_macro2::TokenStream;
 use quote::format_ident;

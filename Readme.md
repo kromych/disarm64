@@ -191,19 +191,10 @@ cargo run -- --bin disarm64_gen ./aarch64.json -c ldst_pos -m ldr -v
 
 ## Testing
 
-To compare how this project stacks up to the authorithy of binutils or LLVM, one can disassemble a binary file
-with:
+For the test collateral and disassembly delta's between LLVM and binutils, please refer to
+[disarm64_test_data](https://github.com/kromych/disarm64_test_data).
 
-```sh
-aarch64-linux-gnu-objdump -m aarch64 -b binary -D test0000.bin
-```
-
-and
-
-```sh
-llvm-objcopy -I binary -O elf64-littleaarch64 --rename-section=.data=.text,code test0000.bin test0000.elf
-llvm-objdump -d test0000.elf
-```
+> That repo uses [Git LFS](https://git-lfs.com/) because it takes `~ 30 GiB` of space.
 
 ## Related art
 

@@ -1,4 +1,4 @@
-use crate::description::Insn;
+use disarm64_defn::deser::Insn;
 use std::io::Write;
 use std::ops::Range;
 use std::rc::Rc;
