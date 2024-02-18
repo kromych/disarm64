@@ -26,7 +26,7 @@ name = "disarm64_gen"
 path = "disarm64_gen/src/main.rs"
 
 [dependencies]
-disarm64_defn = "0.1"
+disarm64_defn = { git = "https://github.com/kromych/disarm64_defn"}
 
 anyhow = "1"
 bitfield-struct = "0.6"

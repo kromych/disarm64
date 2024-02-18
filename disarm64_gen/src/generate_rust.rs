@@ -1,12 +1,6 @@
 use crate::decision_tree::DecisionTree;
 use crate::decision_tree::DecisionTreeNode;
 use disarm64_defn::deser::Insn;
-use disarm64_defn::InsnBitField;
-use disarm64_defn::InsnClass;
-use disarm64_defn::InsnFeatureSet;
-use disarm64_defn::InsnOperandClass;
-use disarm64_defn::InsnOperandKind;
-use disarm64_defn::InsnOperandQualifier;
 use proc_macro2::Literal;
 use proc_macro2::TokenStream;
 use quote::format_ident;
@@ -213,6 +207,16 @@ fn write_insn_structs(
             });
         }
 
+        // Serialize flags tyo  STRING
+        let mut flags = Vec::new();
+        for flag in insn.flags.iter() {
+            let str_flag = format!("{flag:?}")
+                .replace('(', "::")
+                .replace(')', ".bits()");
+            flags.push(str_flag);
+        }
+        let flags: TokenStream = flags.join("|").parse().unwrap();
+
         struct_definitions.extend(quote! {
             #[bitfield(u32)]
             #[derive(PartialEq, Eq)]
@@ -229,7 +233,7 @@ fn write_insn_structs(
                     class: InsnClass::#class,
                     feature_set: InsnFeatureSet::#feature_set,
                     operands: &[#(#insn_operands)*],
-                    flags: InsnFlags::empty(),
+                    flags: InsnFlags::const_from_bits(#flags),
                 };
             }
 
