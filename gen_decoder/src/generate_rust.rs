@@ -1,12 +1,6 @@
 use crate::decision_tree::DecisionTree;
 use crate::decision_tree::DecisionTreeNode;
-use crate::description::Insn;
-use crate::description::InsnBitField;
-use crate::description::InsnClass;
-use crate::description::InsnFeatureSet;
-use crate::description::InsnOperandClass;
-use crate::description::InsnOperandKind;
-use crate::description::InsnOperandQualifier;
+use disarm64_defn::deser::Insn;
 use proc_macro2::Literal;
 use proc_macro2::TokenStream;
 use quote::format_ident;
@@ -15,28 +9,8 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::io::Write;
 use std::rc::Rc;
-use strum::IntoEnumIterator;
 
 fn write_prelude(_decision_tree: &DecisionTree, f: &mut impl Write) -> std::io::Result<()> {
-    let insn_class = InsnClass::iter()
-        .map(|x| format_ident!("{x:?}"))
-        .collect::<Vec<_>>();
-    let insn_feature_set = InsnFeatureSet::iter()
-        .map(|x| format_ident!("{x:?}"))
-        .collect::<Vec<_>>();
-    let insn_operand_kind = InsnOperandKind::iter()
-        .map(|x| format_ident!("{x:?}"))
-        .collect::<Vec<_>>();
-    let insn_operand_class = InsnOperandClass::iter()
-        .map(|x| format_ident!("{x:?}"))
-        .collect::<Vec<_>>();
-    let insn_operand_qualifier = InsnOperandQualifier::iter()
-        .map(|x| format_ident!("{x:?}"))
-        .collect::<Vec<_>>();
-    let insn_bit_field = InsnBitField::iter()
-        .map(|x| format_ident!("{x:?}"))
-        .collect::<Vec<_>>();
-
     let prelude = quote! {
         #![allow(clippy::collapsible_else_if)]
         #![allow(clippy::upper_case_acronyms)]
@@ -46,61 +20,25 @@ fn write_prelude(_decision_tree: &DecisionTree, f: &mut impl Write) -> std::io::
 
         use bitfield_struct::bitfield;
 
-        #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-        pub enum InsnClass {
-            #(#insn_class,)*
-        }
-        #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-        pub enum InsnFeatureSet {
-            #(#insn_feature_set,)*
-        }
-        #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-        pub enum InsnOperandKind {
-            #(#insn_operand_kind,)*
-        }
-        #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-        pub enum InsnOperandClass {
-            #(#insn_operand_class,)*
-        }
-        #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-        pub enum InsnOperandQualifier {
-            #(#insn_operand_qualifier,)*
-        }
-        #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-        pub enum InsnBitField {
-            #(#insn_bit_field,)*
-        }
-
-        #[derive(Debug, Copy, Clone, Eq, PartialEq)]
-        pub struct BitfieldSpec {
-            pub bitfield: InsnBitField,
-            pub lsb: u8,
-            pub width: u8,
-        }
-
-        #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-        pub struct InsnOperand {
-            pub kind: InsnOperandKind,
-            pub class: InsnOperandClass,
-            pub qualifiers: &'static [InsnOperandQualifier],
-            pub bit_fields: &'static [BitfieldSpec],
-        }
-
-        #[derive(Debug, Copy, Clone, Eq, PartialEq)]
-        pub struct Insn {
-            pub mnemonic: &'static str,
-            pub opcode: u32,
-            pub mask: u32,
-            pub class: InsnClass,
-            pub feature_set: InsnFeatureSet,
-            pub operands: &'static [InsnOperand],
-        }
-
-        pub trait InsnOpcode {
-            fn details(&self) -> &'static Insn;
-        }
+        use disarm64_defn::InsnClass;
+        use disarm64_defn::InsnFeatureSet;
+        use disarm64_defn::InsnOperandKind;
+        use disarm64_defn::InsnOperandClass;
+        use disarm64_defn::InsnOperandQualifier;
+        use disarm64_defn::InsnBitField;
+        use disarm64_defn::BitfieldSpec;
+        use disarm64_defn::InsnFlags;
+        use disarm64_defn::defn::InsnOperand;
+        use disarm64_defn::defn::Insn;
+        use disarm64_defn::defn::InsnOpcode;
     };
 
+    writeln!(
+        f,
+        r#"// Auto-generated.
+// The changes will be LOST.
+"#
+    )?;
     writeln!(f, "{prelude}")
 }
 
@@ -277,19 +215,25 @@ fn write_insn_structs(
             }
 
             impl #opcode_struct_name {
-                pub const DETAILS: Insn = Insn {
+                pub const DEFINITION: Insn = Insn {
                     mnemonic: #mnemonic,
+                    aliases: &[],
                     opcode: #opcode_hex,
                     mask: #mask_hex,
                     class: InsnClass::#class,
                     feature_set: InsnFeatureSet::#feature_set,
                     operands: &[#(#insn_operands)*],
+                    flags: InsnFlags::empty(),
                 };
             }
 
             impl InsnOpcode for #opcode_struct_name {
-                fn details(&self) -> &'static Insn {
-                    &Self::DETAILS
+                fn definition(&self) -> &'static Insn {
+                    &Self::DEFINITION
+                }
+
+                fn bits(&self) -> u32 {
+                    (*self).into()
                 }
             }
         });
@@ -314,10 +258,18 @@ fn write_insn_structs(
             }
 
             impl InsnOpcode for #class_name {
-                fn details(&self) -> &'static Insn {
+                fn definition(&self) -> &'static Insn {
                     match self {
                         #(
-                            #class_name::#class_opcode_idents(opcode) => opcode.details(),
+                            #class_name::#class_opcode_idents(opcode) => opcode.definition(),
+                        )*
+                    }
+                }
+
+                fn bits(&self) -> u32 {
+                    match self {
+                        #(
+                            #class_name::#class_opcode_idents(opcode) => opcode.bits(),
                         )*
                     }
                 }
@@ -344,10 +296,18 @@ fn write_insn_structs(
             }
 
             impl InsnOpcode for Opcode {
-                fn details(&self) -> &'static Insn {
+                fn definition(&self) -> &'static Insn {
                     match self {
                         #(
-                            Opcode::#classes_idents(class) => class.details(),
+                            Opcode::#classes_idents(class) => class.definition(),
+                        )*
+                    }
+                }
+
+                fn bits(&self) -> u32 {
+                    match self {
+                        #(
+                            Opcode::#classes_idents(class) => class.bits(),
                         )*
                     }
                 }
@@ -423,9 +383,11 @@ pub fn decision_tree_to_rust(
     decision_tree: &DecisionTree,
     f: &mut impl Write,
 ) -> std::io::Result<()> {
-    write_prelude(decision_tree, f)?;
+    let mut f = std::io::BufWriter::new(f);
 
-    let opcode_to_used_name = write_insn_structs(decision_tree, f)?;
+    write_prelude(decision_tree, &mut f)?;
+
+    let opcode_to_used_name = write_insn_structs(decision_tree, &mut f)?;
     let decoder = decision_tree_to_rust_recursive(decision_tree, &opcode_to_used_name);
 
     writeln!(

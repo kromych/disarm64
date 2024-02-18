@@ -1,9 +1,9 @@
 use clap::Parser;
 use decision_tree::build_decision_tree;
-use description::Insn;
-use description::InsnClass;
-use description::InsnFeatureSet;
-use description::InsnFlags;
+use disarm64_defn::deser::Insn;
+use disarm64_defn::InsnClass;
+use disarm64_defn::InsnFeatureSet;
+use disarm64_defn::InsnFlags;
 use std::collections::HashSet;
 use std::path::PathBuf;
 use std::rc::Rc;
@@ -12,7 +12,6 @@ use crate::generate_graphviz_dot::decistion_tree_to_graphviz_dot;
 use crate::generate_rust::decision_tree_to_rust;
 
 mod decision_tree;
-mod description;
 mod generate_graphviz_dot;
 mod generate_rust;
 

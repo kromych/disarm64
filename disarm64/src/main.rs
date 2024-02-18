@@ -1,4 +1,4 @@
-use crate::decoder::InsnOpcode;
+use disarm64_defn::defn::InsnOpcode;
 use clap::Parser;
 use clap::Subcommand;
 use clap_num::maybe_hex;
@@ -84,7 +84,7 @@ fn decode_insn(insn: u32) -> anyhow::Result<()> {
     log::debug!("Decoding {insn:#08x}");
     if let Some(opcode) = decoder::decode(insn) {
         log::debug!("Decoded instruction: {:08x?}", opcode);
-        log::info!("{insn:#08x}: {:08x?}", opcode.details());
+        log::info!("{insn:#08x}: {:08x?}", opcode.definition());
     } else {
         anyhow::bail!("Could not decode instruction {insn:#08x}");
     }
@@ -112,12 +112,12 @@ fn decode_bin(file: PathBuf, offset: u64, count: u64) -> anyhow::Result<()> {
         let opcode = decoder::decode(insn);
         if let Some(opcode) = opcode {
             log::debug!("Decoded instruction: {:08x?}", opcode);
-            log::debug!("{insn:#08x}: {:08x?}", opcode.details());
+            log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
 
             log::info!(
                 "{:#08x}: {}\t\t\t// {insn:08x}",
                 offset + pos as u64,
-                opcode.details().mnemonic,
+                opcode.definition().mnemonic,
             );
         } else {
             log::warn!("{offset:#08x}: ???\t\t\t// {insn:08x}");
@@ -149,7 +149,7 @@ fn decode_elf(file: PathBuf) -> anyhow::Result<()> {
                 if let Some(opcode) = opcode {
                     log::info!(
                         "{offset:#08x}: {}\t\t\t // {insn:08x}",
-                        opcode.details().mnemonic,
+                        opcode.definition().mnemonic,
                     );
                 } else {
                     log::warn!("{offset:#08x}: <unknown>\t\t\t // {insn:08x}");

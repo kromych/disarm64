@@ -1,4 +1,4 @@
-use crate::description::Insn;
+use disarm64_defn::deser::Insn;
 use std::ops::Shl;
 use std::rc::Rc;
 
