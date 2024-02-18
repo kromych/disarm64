@@ -1,4 +1,3 @@
-use disarm64_defn::defn::InsnOpcode;
 use clap::Parser;
 use clap::Subcommand;
 use clap_num::maybe_hex;

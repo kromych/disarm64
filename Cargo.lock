@@ -178,18 +178,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "disarm64_defn"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "92f1138420b47e0636e4b6d24b4e8e1fefcdb56dd3e5168f17d094b582d7eba0"
-dependencies = [
- "bitflags",
- "serde",
- "strum",
- "strum_macros",
-]
-
-[[package]]
 name = "env_filter"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
