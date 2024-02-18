@@ -2,6 +2,7 @@ use clap::Parser;
 use clap::Subcommand;
 use clap_num::maybe_hex;
 use disarm64_defn::defn::InsnOpcode;
+use std::io::IsTerminal;
 use std::path::PathBuf;
 
 mod decoder;
@@ -28,8 +29,6 @@ enum Command {
     },
     /// ELF file with instructions to decode.
     Elf { file: PathBuf },
-    /// Test file
-    Test { file: PathBuf },
 }
 
 #[derive(Parser, Debug)]
@@ -52,7 +51,9 @@ fn init_logging(opt: &CommandLine) {
     // From the env variable:
     // env_logger::Builder::from_env().init();
 
-    env_logger::builder()
+    let mut builder = env_logger::builder();
+    let mut builder = builder
+        .target(env_logger::Target::Stdout)
         .format_timestamp(None)
         .format_module_path(false)
         .format_target(false)
@@ -63,8 +64,14 @@ fn init_logging(opt: &CommandLine) {
                 1 => log::LevelFilter::Debug,
                 _ => log::LevelFilter::Trace,
             },
-        )
-        .init();
+        );
+
+    if !std::io::stdout().is_terminal() {
+        builder = builder
+            .write_style(env_logger::WriteStyle::Never)
+            .format_level(false);
+    }
+    builder.init();
 }
 
 fn main() -> anyhow::Result<()> {
@@ -80,7 +87,6 @@ fn main() -> anyhow::Result<()> {
             count,
         } => decode_bin(file.to_path_buf(), *offset, count.unwrap_or(!0)),
         Command::Elf { file } => decode_elf(file.to_path_buf()),
-        Command::Test { file } => decode_test(file.to_path_buf()),
     }
 }
 
@@ -88,9 +94,9 @@ fn decode_insn(insn: u32) -> anyhow::Result<()> {
     log::debug!("Decoding {insn:#08x}");
     if let Some(opcode) = decoder::decode(insn) {
         log::debug!("Decoded instruction: {:08x?}", opcode);
-        log::info!("{insn:08x}: {opcode}");
+        log::info!("{opcode}");
     } else {
-        log::warn!("{insn:08x}: ????");
+        log::warn!("<unknown>\t// {insn:08x}");
     }
     Ok(())
 }
@@ -119,9 +125,9 @@ fn decode_bin(file: PathBuf, offset: u64, count: u64) -> anyhow::Result<()> {
             log::debug!("Decoded instruction: {:08x?}", opcode);
             log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
 
-            log::info!("{current_offset:#08x}: {opcode}\t\t\t// {insn:08x}");
+            log::info!("{current_offset:#08x}: {opcode}");
         } else {
-            log::warn!("{current_offset:#08x}: ????\t\t\t// {insn:08x}");
+            log::warn!("{current_offset:#08x}: <unknown>\t// {insn:08x}");
         }
 
         pos += 4;
@@ -151,58 +157,14 @@ fn decode_elf(file: PathBuf) -> anyhow::Result<()> {
                     log::debug!("Decoded instruction: {:08x?}", opcode);
                     log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
 
-                    log::info!("{offset:#08x}: {opcode}\t\t\t// {insn:08x}");
+                    log::info!("{offset:#08x}: {opcode}");
                 } else {
-                    log::warn!("{offset:#08x}: ????\t\t\t// {insn:08x}");
+                    log::warn!("{offset:#08x}: {insn:08x} <unknown>");
                 }
 
                 offset += 4;
             }
         }
     }
-    Ok(())
-}
-
-fn decode_test(file: PathBuf) -> anyhow::Result<()> {
-    log::info!("Decoding test file {file:?}");
-    let mut all_code = Vec::new();
-
-    let data = std::fs::read_to_string(file)?;
-    let lines = data.lines();
-    for (i, line) in lines.enumerate() {
-        let line = line.trim();
-        if line.starts_with("//") {
-            continue;
-        }
-        if line.is_empty() {
-            continue;
-        }
-
-        log::info!("Decoding line {i:05}: {line}");
-
-        // Split the line on spaces and get the first two items
-        let mut split = line.split_whitespace();
-        let insn_test = split.next().unwrap();
-        let mnemonic_test = split.next().unwrap();
-
-        let insn = u32::from_str_radix(insn_test, 16)?;
-        all_code.extend(insn.to_le_bytes().iter());
-
-        if let Some(opcode) = crate::decoder::decode(insn) {
-            let mnemonic = opcode.definition().mnemonic;
-            if mnemonic == mnemonic_test {
-                log::info!("Decoded instruction: {:08x?}", opcode);
-                log::info!("{insn_test}: {opcode}");
-            } else {
-                log::warn!("Decoded instruction: {:08x?}", opcode);
-                log::warn!("{insn_test}: {opcode} (expected {mnemonic_test})");
-            }
-        } else {
-            log::warn!("{insn_test}: ????");
-        }
-    }
-
-    std::fs::write("test.bin", all_code.as_slice())?;
-
     Ok(())
 }

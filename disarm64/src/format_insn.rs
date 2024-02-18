@@ -1,12 +1,14 @@
 use crate::decoder::Opcode;
 use disarm64_defn::defn::InsnOpcode;
+use disarm64_defn::InsnBitField;
+use disarm64_defn::InsnFlags;
 use disarm64_defn::InsnOperandKind;
 use std::fmt::Display;
 use std::fmt::Formatter;
 use std::fmt::Result;
 use std::fmt::Write;
 
-fn get_int_reg_name(is_64: bool, reg: u8, is_sp: bool) -> &'static str {
+fn get_int_reg_name(is_64: bool, reg: u8, with_zr: bool) -> &'static str {
     debug_assert!(reg < 32);
     const INT_REG: [[[&str; 32]; 2]; 2] = [
         [
@@ -35,7 +37,7 @@ fn get_int_reg_name(is_64: bool, reg: u8, is_sp: bool) -> &'static str {
         ],
     ];
 
-    let is_sp = is_sp as usize;
+    let is_sp = with_zr as usize;
     let is_64 = is_64 as usize;
 
     INT_REG[is_sp][is_64][reg as usize]
@@ -63,37 +65,73 @@ fn get_sve_reg_name(is_64: bool, reg: u8) -> &'static str {
     SVE_REG[is_64][reg as usize]
 }
 
+/// Format an operand to a string
+fn format_operand(
+    f: &mut impl Write,
+    bits: u32,
+    operand: &disarm64_defn::defn::InsnOperand,
+    definition: &disarm64_defn::defn::Insn,
+) -> Result {
+    let kind = operand.kind;
+    match kind {
+        InsnOperandKind::Rd
+        | InsnOperandKind::Rn
+        | InsnOperandKind::Rm
+        | InsnOperandKind::Rt
+        | InsnOperandKind::Rt2
+        | InsnOperandKind::Rs
+        | InsnOperandKind::Ra
+        | InsnOperandKind::Rt_LS64
+        | InsnOperandKind::Rt_SYS
+        | InsnOperandKind::PAIRREG
+        | InsnOperandKind::PAIRREG_OR_XZR
+        | InsnOperandKind::SVE_Rm
+        | InsnOperandKind::LSE128_Rt
+        | InsnOperandKind::LSE128_Rt2 => {
+            let flags = definition.flags;
+            let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
+                bits & 0x80000000 != 0
+            } else {
+                true
+            };
+            let with_zr = true;
+            let bit_field_spec = operand
+                .bit_fields
+                .iter()
+                .find(|bf| {
+                    bf.bitfield == InsnBitField::Rd
+                        || bf.bitfield == InsnBitField::Rn
+                        || bf.bitfield == InsnBitField::Rm
+                        || bf.bitfield == InsnBitField::Rt
+                        || bf.bitfield == InsnBitField::Rt2
+                        || bf.bitfield == InsnBitField::Rs
+                        || bf.bitfield == InsnBitField::Ra
+                        || bf.bitfield == InsnBitField::SVE_Rm
+                        || bf.bitfield == InsnBitField::LSE128_Rt
+                        || bf.bitfield == InsnBitField::LSE128_Rt2
+                })
+                .expect("must be bitfield definition present");
+            let reg_no = (bits >> bit_field_spec.lsb) & ((1 << bit_field_spec.width) - 1);
+            let reg_name = get_int_reg_name(is_64, reg_no as u8, with_zr);
+            write!(f, "{reg_name}")?;
+        }
+        _ => write!(f, "op?")?,
+    };
+
+    Ok(())
+}
+
 /// Format an instruction to a string
 pub fn format_insn(f: &mut impl Write, opcode: &Opcode) -> Result {
     let definition = opcode.definition();
     let bits = opcode.bits();
 
-    write!(f, "{}\t", definition.mnemonic)?;
+    write!(f, "{bits:08x}\t{}\t", definition.mnemonic)?;
     let op_count = definition.operands.len();
     for (i, operand) in definition.operands.iter().enumerate() {
-        let op_kind = operand.kind;
-        match op_kind {
-            InsnOperandKind::Rd
-            | InsnOperandKind::Rn
-            | InsnOperandKind::Rm
-            | InsnOperandKind::Rt
-            | InsnOperandKind::Rt2
-            | InsnOperandKind::Rs
-            | InsnOperandKind::Ra
-            | InsnOperandKind::Rt_LS64
-            | InsnOperandKind::Rt_SYS
-            | InsnOperandKind::PAIRREG
-            | InsnOperandKind::PAIRREG_OR_XZR
-            | InsnOperandKind::SVE_Rm
-            | InsnOperandKind::LSE128_Rt
-            | InsnOperandKind::LSE128_Rt2 => {
-                write!(f, "{op_kind:?}")?;
-            }
-            _ => write!(f, "op{i}")?,
-        };
-
+        format_operand(f, bits, operand, definition)?;
         if i + 1 < op_count {
-            write!(f, ", ")?;
+            write!(f, ",")?;
         }
     }
 
