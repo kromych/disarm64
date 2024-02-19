@@ -207,6 +207,25 @@ fn write_insn_structs(
             });
         }
 
+        // Serialize flags tyo  STRING
+        let mut flags = Vec::new();
+        for flag in insn.flags.iter() {
+            let str_flag = format!("{flag:?}")
+                .replace('(', "::")
+                .replace(')', ".bits()");
+            flags.push(str_flag);
+        }
+        let flags: TokenStream = if flags.is_empty() {
+            quote! {
+                InsnFlags::empty()
+            }
+        } else {
+            let flags: TokenStream = flags.join("|").parse().unwrap();
+            quote! {
+                InsnFlags::const_from_bits(#flags)
+            }
+        };
+
         struct_definitions.extend(quote! {
             #[bitfield(u32)]
             #[derive(PartialEq, Eq)]
@@ -223,7 +242,7 @@ fn write_insn_structs(
                     class: InsnClass::#class,
                     feature_set: InsnFeatureSet::#feature_set,
                     operands: &[#(#insn_operands)*],
-                    flags: InsnFlags::empty(),
+                    flags: #flags,
                 };
             }
 

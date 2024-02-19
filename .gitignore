@@ -11,4 +11,6 @@
 *.log
 *.bin
 *.elf
+*.hex
+*.lst
 decoder*.rs

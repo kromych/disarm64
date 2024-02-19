@@ -14,6 +14,7 @@ use crate::generate_rust::decision_tree_to_rust;
 mod decision_tree;
 mod generate_graphviz_dot;
 mod generate_rust;
+mod generate_test_bin;
 
 #[derive(Parser, Debug)]
 /// This tool generates an instruction decoder from a JSON description of the ISA.
@@ -38,6 +39,15 @@ struct CommandLine {
     /// Generate the decoder implemented in Rust.
     #[clap(short, long)]
     rs_file: Option<PathBuf>,
+    /// Generate a test binary.
+    #[clap(short, long)]
+    test_bin: Option<PathBuf>,
+    /// The size limit of the generated test binary, the default is 64MB.
+    #[clap(long, default_value = "67108864")]
+    test_bin_size_limit: usize,
+    /// The number of test encodings to generate for each instruction, the default is 0x10_000.
+    #[clap(long, default_value = "65536")]
+    test_encodings_limit: usize,
     /// Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity.
     #[clap(short, action = clap::ArgAction::Count)]
     verbosity: u8,
@@ -93,6 +103,21 @@ fn main() -> anyhow::Result<()> {
         log::info!("Writing decision tree to a Rust file {rust:?}");
         let mut f = std::fs::File::create(rust)?;
         decision_tree_to_rust(&decision_tree, &mut f)?;
+    }
+
+    if let Some(test_bin) = opt.test_bin {
+        log::info!(
+            "Generating test binary {test_bin:?}, limit {} bytes, {} encodings per instruction",
+            opt.test_bin_size_limit,
+            opt.test_encodings_limit
+        );
+        let mut f = std::fs::File::create(test_bin)?;
+        generate_test_bin::generate_test_bin(
+            insns.as_slice(),
+            &mut f,
+            opt.test_bin_size_limit,
+            opt.test_encodings_limit,
+        )?;
     }
 
     Ok(())

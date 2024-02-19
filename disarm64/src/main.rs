@@ -1,10 +1,12 @@
-use disarm64_defn::defn::InsnOpcode;
 use clap::Parser;
 use clap::Subcommand;
 use clap_num::maybe_hex;
+use disarm64_defn::defn::InsnOpcode;
+use std::io::IsTerminal;
 use std::path::PathBuf;
 
 mod decoder;
+mod format_insn;
 
 #[derive(Subcommand, Debug, Clone, PartialEq, Eq)]
 enum Command {
@@ -49,7 +51,9 @@ fn init_logging(opt: &CommandLine) {
     // From the env variable:
     // env_logger::Builder::from_env().init();
 
-    env_logger::builder()
+    let mut builder = env_logger::builder();
+    let mut builder = builder
+        .target(env_logger::Target::Stdout)
         .format_timestamp(None)
         .format_module_path(false)
         .format_target(false)
@@ -60,8 +64,14 @@ fn init_logging(opt: &CommandLine) {
                 1 => log::LevelFilter::Debug,
                 _ => log::LevelFilter::Trace,
             },
-        )
-        .init();
+        );
+
+    if !std::io::stdout().is_terminal() {
+        builder = builder
+            .write_style(env_logger::WriteStyle::Never)
+            .format_level(false);
+    }
+    builder.init();
 }
 
 fn main() -> anyhow::Result<()> {
@@ -84,9 +94,11 @@ fn decode_insn(insn: u32) -> anyhow::Result<()> {
     log::debug!("Decoding {insn:#08x}");
     if let Some(opcode) = decoder::decode(insn) {
         log::debug!("Decoded instruction: {:08x?}", opcode);
-        log::info!("{insn:#08x}: {:08x?}", opcode.definition());
+        log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
+
+        log::info!("{opcode}");
     } else {
-        anyhow::bail!("Could not decode instruction {insn:#08x}");
+        log::warn!("<unknown>\t// {insn:08x}");
     }
     Ok(())
 }
@@ -110,17 +122,14 @@ fn decode_bin(file: PathBuf, offset: u64, count: u64) -> anyhow::Result<()> {
         let insn = u32::from_le_bytes([data[pos], data[pos + 1], data[pos + 2], data[pos + 3]]);
 
         let opcode = decoder::decode(insn);
+        let current_offset = offset + pos as u64;
         if let Some(opcode) = opcode {
             log::debug!("Decoded instruction: {:08x?}", opcode);
             log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
 
-            log::info!(
-                "{:#08x}: {}\t\t\t// {insn:08x}",
-                offset + pos as u64,
-                opcode.definition().mnemonic,
-            );
+            log::info!("{current_offset:#08x}: {opcode}");
         } else {
-            log::warn!("{offset:#08x}: ???\t\t\t// {insn:08x}");
+            log::warn!("{current_offset:#08x}: <unknown>\t// {insn:08x}");
         }
 
         pos += 4;
@@ -147,12 +156,12 @@ fn decode_elf(file: PathBuf) -> anyhow::Result<()> {
 
                 let opcode = decoder::decode(insn);
                 if let Some(opcode) = opcode {
-                    log::info!(
-                        "{offset:#08x}: {}\t\t\t // {insn:08x}",
-                        opcode.definition().mnemonic,
-                    );
+                    log::debug!("Decoded instruction: {:08x?}", opcode);
+                    log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
+
+                    log::info!("{offset:#08x}: {opcode}");
                 } else {
-                    log::warn!("{offset:#08x}: <unknown>\t\t\t // {insn:08x}");
+                    log::warn!("{offset:#08x}: {insn:08x} <unknown>");
                 }
 
                 offset += 4;
