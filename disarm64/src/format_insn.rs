@@ -215,7 +215,7 @@ fn format_operand_reg_shift(f: &mut impl Write, bits: u32) -> Result {
 
     let reg_name = get_int_reg_name(reg_shift.sf(), reg_shift.regm() as u8, true);
     write!(f, "{reg_name}")?;
-    if reg_shift.imm6() != 0 {
+    if reg_shift.imm6() != 0 || shift != "lsl" {
         write!(f, ", {shift} #{}", reg_shift.imm6())?;
     }
 
