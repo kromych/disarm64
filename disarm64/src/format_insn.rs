@@ -171,6 +171,57 @@ fn format_operand_reg_ext(f: &mut impl Write, bits: u32) -> Result {
     Ok(())
 }
 
+/// Format a register with shift operand to a string.
+/// An example: https://developer.arm.com/documentation/ddi0602/2023-12/Base-Instructions/ADD--shifted-register---Add--shifted-register--
+fn format_operand_reg_shift(f: &mut impl Write, bits: u32) -> Result {
+    // The bitfields don't come from the operand (might fix up the description in the future).
+    #[bitfield(u32)]
+    struct RegShift {
+        #[bits(5)]
+        regd: u32,
+        #[bits(5)]
+        regn: u32,
+        #[bits(6)]
+        imm6: u32,
+        #[bits(5)]
+        regm: u32,
+        #[bits(1)]
+        zero: u32,
+        #[bits(2)]
+        shift: u32,
+        #[bits(7)]
+        opcode_bits: u32,
+        #[bits(1)]
+        sf: bool,
+    }
+    let reg_shift = RegShift::from_bits(bits);
+    if reg_shift.zero() != 0
+        || reg_shift.shift() == 0b11
+        || (!reg_shift.sf() && reg_shift.imm6() & 0b100000 != 0)
+    {
+        write!(f, "<undefined>")?;
+        return Ok(());
+    }
+
+    let shift = match reg_shift.shift() {
+        // Logical Shift Left (LSL) by the immediate value.
+        0b00 => "lsl",
+        // Logical Shift Right (LSR) by the immediate value.
+        0b01 => "lsr",
+        // Arithmetic Shift Right (ASL) by the immediate value.
+        0b10 => "asr",
+        _ => unreachable!(),
+    };
+
+    let reg_name = get_int_reg_name(reg_shift.sf(), reg_shift.regm() as u8, true);
+    write!(f, "{reg_name}")?;
+    if reg_shift.imm6() != 0 {
+        write!(f, ", {shift} #{}", reg_shift.imm6())?;
+    }
+
+    Ok(())
+}
+
 /// Format an operand to a string
 fn format_operand(
     f: &mut impl Write,
@@ -208,6 +259,8 @@ fn format_operand(
         }
 
         InsnOperandKind::Rm_EXT => format_operand_reg_ext(f, bits)?,
+
+        InsnOperandKind::Rm_SFT => format_operand_reg_shift(f, bits)?,
 
         _ => write!(f, "op?")?,
     };
