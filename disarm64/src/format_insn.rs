@@ -44,7 +44,7 @@ fn get_int_reg_name(is_64: bool, reg: u8, with_zr: bool) -> &'static str {
     INT_REG[is_sp][is_64][reg as usize]
 }
 
-fn get_sve_reg_name(is_64: bool, reg: u8) -> &'static str {
+fn _get_sve_reg_name(is_64: bool, reg: u8) -> &'static str {
     const SVE_REG: [[&str; 32]; 2] = [
         [
             "z0.s", "z1.s", "z2.s", "z3.s", "z4.s", "z5.s", "z6.s", "z7.s", "z8.s", "z9.s",
@@ -80,26 +80,26 @@ fn format_operand_reg(
     } else {
         true
     };
-    let bit_field_spec = operand
-        .bit_fields
-        .iter()
-        .find(|bf| {
-            bf.bitfield == InsnBitField::Rd
-                || bf.bitfield == InsnBitField::Rn
-                || bf.bitfield == InsnBitField::Rm
-                || bf.bitfield == InsnBitField::Rt
-                || bf.bitfield == InsnBitField::Rt2
-                || bf.bitfield == InsnBitField::Rs
-                || bf.bitfield == InsnBitField::Ra
-                || bf.bitfield == InsnBitField::SVE_Rm
-                || bf.bitfield == InsnBitField::LSE128_Rt
-                || bf.bitfield == InsnBitField::LSE128_Rt2
-        })
-        .expect("must be bitfield definition present");
-    let reg_no = (bits >> bit_field_spec.lsb) & ((1 << bit_field_spec.width) - 1);
-    let reg_name = get_int_reg_name(is_64, reg_no as u8, with_zr);
+    if let Some(bit_field_spec) = operand.bit_fields.iter().find(|bf| {
+        bf.bitfield == InsnBitField::Rd
+            || bf.bitfield == InsnBitField::Rn
+            || bf.bitfield == InsnBitField::Rm
+            || bf.bitfield == InsnBitField::Rt
+            || bf.bitfield == InsnBitField::Rt2
+            || bf.bitfield == InsnBitField::Rs
+            || bf.bitfield == InsnBitField::Ra
+            || bf.bitfield == InsnBitField::SVE_Rm
+            || bf.bitfield == InsnBitField::SVE_Rn
+            || bf.bitfield == InsnBitField::LSE128_Rt
+            || bf.bitfield == InsnBitField::LSE128_Rt2
+    }) {
+        let reg_no = (bits >> bit_field_spec.lsb) & ((1 << bit_field_spec.width) - 1);
+        let reg_name = get_int_reg_name(is_64, reg_no as u8, with_zr);
 
-    write!(f, "{reg_name}")
+        write!(f, "{reg_name}")
+    } else {
+        write!(f, "<undefined>")
+    }
 }
 
 /// Format a register with extended shioft operand to a string.
@@ -240,14 +240,14 @@ fn format_operand(
         | InsnOperandKind::Ra
         | InsnOperandKind::Rt_LS64
         | InsnOperandKind::Rt_SYS
-        | InsnOperandKind::PAIRREG
-        | InsnOperandKind::PAIRREG_OR_XZR
         | InsnOperandKind::SVE_Rm
         | InsnOperandKind::LSE128_Rt
         | InsnOperandKind::LSE128_Rt2 => {
             let with_zr = true;
             format_operand_reg(f, bits, operand, definition, with_zr)?
         }
+
+        InsnOperandKind::PAIRREG | InsnOperandKind::PAIRREG_OR_XZR => write!(f, ":{kind:?}:")?,
 
         InsnOperandKind::Rd_SP
         | InsnOperandKind::Rn_SP
@@ -262,7 +262,332 @@ fn format_operand(
 
         InsnOperandKind::Rm_SFT => format_operand_reg_shift(f, bits)?,
 
-        _ => write!(f, "op?")?,
+        InsnOperandKind::Fd
+        | InsnOperandKind::Fn
+        | InsnOperandKind::Fm
+        | InsnOperandKind::Fa
+        | InsnOperandKind::Ft
+        | InsnOperandKind::Ft2
+        | InsnOperandKind::Sd
+        | InsnOperandKind::Sn
+        | InsnOperandKind::Sm
+        | InsnOperandKind::SVE_VZn
+        | InsnOperandKind::SVE_Vd
+        | InsnOperandKind::SVE_Vm
+        | InsnOperandKind::SVE_Vn => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::Va | InsnOperandKind::Vd | InsnOperandKind::Vn | InsnOperandKind::Vm => {
+            write!(f, ":{kind:?}:")?
+        }
+
+        InsnOperandKind::Ed | InsnOperandKind::En | InsnOperandKind::Em | InsnOperandKind::Em16 => {
+            write!(f, ":{kind:?}:")?
+        }
+
+        InsnOperandKind::VdD1 | InsnOperandKind::VnD1 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::LVn
+        | InsnOperandKind::LVt
+        | InsnOperandKind::LVt_AL
+        | InsnOperandKind::LEt => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SVE_Pd
+        | InsnOperandKind::SVE_Pg3
+        | InsnOperandKind::SVE_Pg4_5
+        | InsnOperandKind::SVE_Pg4_10
+        | InsnOperandKind::SVE_Pg4_16
+        | InsnOperandKind::SVE_Pm
+        | InsnOperandKind::SVE_Pn
+        | InsnOperandKind::SVE_Pt
+        | InsnOperandKind::SME_Pm => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SVE_PNd
+        | InsnOperandKind::SVE_PNg4_10
+        | InsnOperandKind::SVE_PNn
+        | InsnOperandKind::SVE_PNt
+        | InsnOperandKind::SME_PNd3
+        | InsnOperandKind::SME_PNg3
+        | InsnOperandKind::SME_PNn => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SME_Pdx2 | InsnOperandKind::SME_PdxN => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SME_PNn3_INDEX1 | InsnOperandKind::SME_PNn3_INDEX2 => {
+            write!(f, ":{kind:?}:")?
+        }
+
+        InsnOperandKind::SVE_Za_5
+        | InsnOperandKind::SVE_Za_16
+        | InsnOperandKind::SVE_Zd
+        | InsnOperandKind::SVE_Zm_5
+        | InsnOperandKind::SVE_Zm_16
+        | InsnOperandKind::SVE_Zn
+        | InsnOperandKind::SVE_Zt
+        | InsnOperandKind::SME_Zm => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SVE_ZnxN
+        | InsnOperandKind::SVE_ZtxN
+        | InsnOperandKind::SME_Zdnx2
+        | InsnOperandKind::SME_Zdnx4
+        | InsnOperandKind::SME_Zmx2
+        | InsnOperandKind::SME_Zmx4
+        | InsnOperandKind::SME_Znx2
+        | InsnOperandKind::SME_Znx4
+        | InsnOperandKind::SME_Ztx2_STRIDED
+        | InsnOperandKind::SME_Ztx4_STRIDED
+        | InsnOperandKind::SME_Zt2
+        | InsnOperandKind::SME_Zt3
+        | InsnOperandKind::SME_Zt4 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SVE_Zm3_INDEX
+        | InsnOperandKind::SVE_Zm3_22_INDEX
+        | InsnOperandKind::SVE_Zm3_19_INDEX
+        | InsnOperandKind::SVE_Zm3_11_INDEX
+        | InsnOperandKind::SVE_Zm4_11_INDEX
+        | InsnOperandKind::SVE_Zm4_INDEX
+        | InsnOperandKind::SVE_Zn_INDEX
+        | InsnOperandKind::SME_Zm_INDEX1
+        | InsnOperandKind::SME_Zm_INDEX2
+        | InsnOperandKind::SME_Zm_INDEX3_1
+        | InsnOperandKind::SME_Zm_INDEX3_2
+        | InsnOperandKind::SME_Zm_INDEX3_10
+        | InsnOperandKind::SVE_Zn_5_INDEX
+        | InsnOperandKind::SME_Zm_INDEX4_1
+        | InsnOperandKind::SME_Zm_INDEX4_10
+        | InsnOperandKind::SME_Zn_INDEX1_16
+        | InsnOperandKind::SME_Zn_INDEX2_15
+        | InsnOperandKind::SME_Zn_INDEX2_16
+        | InsnOperandKind::SME_Zn_INDEX3_14
+        | InsnOperandKind::SME_Zn_INDEX3_15
+        | InsnOperandKind::SME_Zn_INDEX4_14
+        | InsnOperandKind::SVE_Zm_imm4 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SME_ZAda_2b | InsnOperandKind::SME_ZAda_3b => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SME_ZA_HV_idx_src
+        | InsnOperandKind::SME_ZA_HV_idx_srcxN
+        | InsnOperandKind::SME_ZA_HV_idx_dest
+        | InsnOperandKind::SME_ZA_HV_idx_destxN
+        | InsnOperandKind::SME_ZA_HV_idx_ldstr => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SME_list_of_64bit_tiles => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SME_ZA_array_off1x4
+        | InsnOperandKind::SME_ZA_array_off2x2
+        | InsnOperandKind::SME_ZA_array_off2x4
+        | InsnOperandKind::SME_ZA_array_off3_0
+        | InsnOperandKind::SME_ZA_array_off3_5
+        | InsnOperandKind::SME_ZA_array_off3x2
+        | InsnOperandKind::SME_ZA_array_off4 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SME_ZA_array_vrsb_1
+        | InsnOperandKind::SME_ZA_array_vrsh_1
+        | InsnOperandKind::SME_ZA_array_vrss_1
+        | InsnOperandKind::SME_ZA_array_vrsd_1
+        | InsnOperandKind::SME_ZA_array_vrsb_2
+        | InsnOperandKind::SME_ZA_array_vrsh_2
+        | InsnOperandKind::SME_ZA_array_vrss_2
+        | InsnOperandKind::SME_ZA_array_vrsd_2 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SME_SM_ZA => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SME_PnT_Wm_imm => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SME_VLxN_10 | InsnOperandKind::SME_VLxN_13 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::CRn | InsnOperandKind::CRm => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::IDX
+        | InsnOperandKind::MASK
+        | InsnOperandKind::IMM
+        | InsnOperandKind::IMM_2
+        | InsnOperandKind::WIDTH
+        | InsnOperandKind::UIMM3_OP1
+        | InsnOperandKind::UIMM3_OP2
+        | InsnOperandKind::BIT_NUM
+        | InsnOperandKind::IMM_VLSL
+        | InsnOperandKind::IMM_VLSR
+        | InsnOperandKind::SHLL_IMM
+        | InsnOperandKind::IMM0
+        | InsnOperandKind::IMMR
+        | InsnOperandKind::IMMS
+        | InsnOperandKind::UNDEFINED
+        | InsnOperandKind::FBITS
+        | InsnOperandKind::TME_UIMM16
+        | InsnOperandKind::SIMM5
+        | InsnOperandKind::SME_SHRIMM4
+        | InsnOperandKind::SME_SHRIMM5
+        | InsnOperandKind::SVE_SHLIMM_PRED
+        | InsnOperandKind::SVE_SHLIMM_UNPRED
+        | InsnOperandKind::SVE_SHLIMM_UNPRED_22
+        | InsnOperandKind::SVE_SHRIMM_PRED
+        | InsnOperandKind::SVE_SHRIMM_UNPRED
+        | InsnOperandKind::SVE_SHRIMM_UNPRED_22
+        | InsnOperandKind::SVE_SIMM5
+        | InsnOperandKind::SVE_SIMM5B
+        | InsnOperandKind::SVE_SIMM6
+        | InsnOperandKind::SVE_SIMM8
+        | InsnOperandKind::SVE_UIMM3
+        | InsnOperandKind::SVE_UIMM7
+        | InsnOperandKind::SVE_UIMM8
+        | InsnOperandKind::SVE_UIMM8_53
+        | InsnOperandKind::IMM_ROT1
+        | InsnOperandKind::IMM_ROT2
+        | InsnOperandKind::IMM_ROT3
+        | InsnOperandKind::SVE_IMM_ROT1
+        | InsnOperandKind::SVE_IMM_ROT2
+        | InsnOperandKind::SVE_IMM_ROT3
+        | InsnOperandKind::CSSC_SIMM8
+        | InsnOperandKind::CSSC_UIMM8 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SVE_I1_HALF_ONE
+        | InsnOperandKind::SVE_I1_HALF_TWO
+        | InsnOperandKind::SVE_I1_ZERO_ONE => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SVE_PATTERN => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SVE_PATTERN_SCALED => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SVE_PRFOP => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::IMM_MOV => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::FPIMM0 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::LIMM
+        | InsnOperandKind::AIMM
+        | InsnOperandKind::HALF
+        | InsnOperandKind::SVE_INV_LIMM
+        | InsnOperandKind::SVE_LIMM
+        | InsnOperandKind::SVE_LIMM_MOV => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SIMD_IMM | InsnOperandKind::SIMD_IMM_SFT => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SVE_AIMM | InsnOperandKind::SVE_ASIMM => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::FPIMM | InsnOperandKind::SIMD_FPIMM | InsnOperandKind::SVE_FPIMM8 => {
+            write!(f, ":{kind:?}:")?
+        }
+
+        InsnOperandKind::CCMP_IMM
+        | InsnOperandKind::NZCV
+        | InsnOperandKind::EXCEPTION
+        | InsnOperandKind::UIMM4
+        | InsnOperandKind::UIMM4_ADDG
+        | InsnOperandKind::UIMM7
+        | InsnOperandKind::UIMM10 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::COND | InsnOperandKind::COND1 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::ADDR_ADRP => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::ADDR_PCREL14
+        | InsnOperandKind::ADDR_PCREL19
+        | InsnOperandKind::ADDR_PCREL21
+        | InsnOperandKind::ADDR_PCREL26 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::ADDR_SIMPLE
+        | InsnOperandKind::SIMD_ADDR_SIMPLE
+        | InsnOperandKind::SIMD_ADDR_POST => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::ADDR_REGOFF
+        | InsnOperandKind::SVE_ADDR_R
+        | InsnOperandKind::SVE_ADDR_RR
+        | InsnOperandKind::SVE_ADDR_RR_LSL1
+        | InsnOperandKind::SVE_ADDR_RR_LSL2
+        | InsnOperandKind::SVE_ADDR_RR_LSL3
+        | InsnOperandKind::SVE_ADDR_RR_LSL4
+        | InsnOperandKind::SVE_ADDR_RX
+        | InsnOperandKind::SVE_ADDR_RX_LSL1
+        | InsnOperandKind::SVE_ADDR_RX_LSL2
+        | InsnOperandKind::SVE_ADDR_RX_LSL3 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SVE_ADDR_ZX => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SVE_ADDR_RZ
+        | InsnOperandKind::SVE_ADDR_RZ_LSL1
+        | InsnOperandKind::SVE_ADDR_RZ_LSL2
+        | InsnOperandKind::SVE_ADDR_RZ_LSL3
+        | InsnOperandKind::SVE_ADDR_RZ_XTW_14
+        | InsnOperandKind::SVE_ADDR_RZ_XTW_22
+        | InsnOperandKind::SVE_ADDR_RZ_XTW1_14
+        | InsnOperandKind::SVE_ADDR_RZ_XTW1_22
+        | InsnOperandKind::SVE_ADDR_RZ_XTW2_14
+        | InsnOperandKind::SVE_ADDR_RZ_XTW2_22
+        | InsnOperandKind::SVE_ADDR_RZ_XTW3_14
+        | InsnOperandKind::SVE_ADDR_RZ_XTW3_22 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::ADDR_SIMM7
+        | InsnOperandKind::ADDR_SIMM9
+        | InsnOperandKind::ADDR_SIMM10
+        | InsnOperandKind::ADDR_SIMM11
+        | InsnOperandKind::ADDR_SIMM13
+        | InsnOperandKind::RCPC3_ADDR_OFFSET
+        | InsnOperandKind::ADDR_OFFSET
+        | InsnOperandKind::RCPC3_ADDR_OPT_POSTIND
+        | InsnOperandKind::RCPC3_ADDR_OPT_PREIND_WB
+        | InsnOperandKind::RCPC3_ADDR_POSTIND
+        | InsnOperandKind::RCPC3_ADDR_PREIND_WB
+        | InsnOperandKind::SME_ADDR_RI_U4xVL
+        | InsnOperandKind::SVE_ADDR_RI_S4x16
+        | InsnOperandKind::SVE_ADDR_RI_S4x32
+        | InsnOperandKind::SVE_ADDR_RI_S4xVL
+        | InsnOperandKind::SVE_ADDR_RI_S4x2xVL
+        | InsnOperandKind::SVE_ADDR_RI_S4x3xVL
+        | InsnOperandKind::SVE_ADDR_RI_S4x4xVL
+        | InsnOperandKind::SVE_ADDR_RI_S6xVL
+        | InsnOperandKind::SVE_ADDR_RI_S9xVL
+        | InsnOperandKind::SVE_ADDR_RI_U6
+        | InsnOperandKind::SVE_ADDR_RI_U6x2
+        | InsnOperandKind::SVE_ADDR_RI_U6x4
+        | InsnOperandKind::SVE_ADDR_RI_U6x8 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SVE_ADDR_ZI_U5
+        | InsnOperandKind::SVE_ADDR_ZI_U5x2
+        | InsnOperandKind::SVE_ADDR_ZI_U5x4
+        | InsnOperandKind::SVE_ADDR_ZI_U5x8 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SVE_ADDR_ZZ_LSL
+        | InsnOperandKind::SVE_ADDR_ZZ_SXTW
+        | InsnOperandKind::SVE_ADDR_ZZ_UXTW => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::ADDR_UIMM12 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SYSREG | InsnOperandKind::SYSREG128 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::PSTATEFIELD => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SYSREG_AT
+        | InsnOperandKind::SYSREG_DC
+        | InsnOperandKind::SYSREG_IC
+        | InsnOperandKind::SYSREG_TLBI
+        | InsnOperandKind::SYSREG_TLBIP
+        | InsnOperandKind::SYSREG_SR => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::BARRIER | InsnOperandKind::BARRIER_DSB_NXS => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::BARRIER_ISB => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::PRFOP => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::RPRFMOP => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::BARRIER_PSB => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::X16 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SME_ZT0 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SME_ZT0_INDEX => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::SME_ZT0_LIST => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::BARRIER_GCSB => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::BTI_TARGET => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::MOPS_ADDR_Rd | InsnOperandKind::MOPS_ADDR_Rs => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::MOPS_WB_Rn => write!(f, ":{kind:?}:")?,
     };
 
     Ok(())

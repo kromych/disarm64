@@ -16,8 +16,8 @@ The ISA description is read from a JSON file (there is an example in the repo:
 the algorithms assume a fixed length 32-bit encoding. The file is produced by the tools
 from the [opcodes-lab](https://github.com/kromych/opcodes-lab) repository.
 
-Among the next steps are adding instruction formatting resembling what disassemblers use
-and tests.
+Adding instruction formatting resembling what disassemblers use is in progress, expected
+in version `0.2.0`. Before that, using this package as a library will be made easier, too.
 
 To install:
 
@@ -42,14 +42,26 @@ Arguments:
   <DESCRIPTION_JSON>  A JSON file with the description of the instruction set architecture
 
 Options:
-  -f, --feature-sets <FEATURE_SETS>...  Include filter for feature sets, e.g. "v8,simd". Case-insensitive, ignored if not provided
-  -c, --insn-class <INSN_CLASS>...      Include filter for instruction classes, e.g. "addsub_imm,ldst_pos,exception". Case-insensitive, ignored if not provided
-  -m, --mnemonic <MNEMONIC>...          Include filter for mnemonics, e.g. "adc,ldp". Case-insensitive, ignored if not provided
-  -g, --graphviz <GRAPHVIZ>             Output the decision tree to a Graphviz DOT file
-  -r, --rs-file <RS_FILE>               Generate the decoder implemented in Rust
-  -v...                                 Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity
-  -h, --help                            Print help
-
+  -f, --feature-sets <FEATURE_SETS>...
+          Include filter for feature sets, e.g. "v8,simd". Case-insensitive, ignored if not provided
+  -c, --insn-class <INSN_CLASS>...
+          Include filter for instruction classes, e.g. "addsub_imm,ldst_pos,exception". Case-insensitive, ignored if not provided
+  -m, --mnemonic <MNEMONIC>...
+          Include filter for mnemonics, e.g. "adc,ldp". Case-insensitive, ignored if not provided
+  -g, --graphviz <GRAPHVIZ>
+          Output the decision tree to a Graphviz DOT file
+  -r, --rs-file <RS_FILE>
+          Generate the decoder implemented in Rust
+  -t, --test-bin <TEST_BIN>
+          Generate a test binary
+      --test-bin-size-limit <TEST_BIN_SIZE_LIMIT>
+          The size limit of the generated test binary, the default is 64MB [default: 67108864]
+      --test-encodings-limit <TEST_ENCODINGS_LIMIT>
+          The number of test encodings to generate for each instruction, the default is 0x10_000 [default: 65536]
+  -v...
+          Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity
+  -h, --help
+          Print help
 ```
 
 ### Instruction classes and feature sets
@@ -107,16 +119,31 @@ Options:
 To decode instructions apssed on the command line:
 
 ```sh
-cargo run --release --bin disarm64 -- insn 0x1a000001,0xa,0xa,0xa,0xa
+cargo run --release --bin disarm64 -- -v insn 0x1a000001,0xa,0xa,0xa,0xa
 ```
 
 ```log
 [INFO ] Decoding instructions: [1a000001, 0000000a, 0000000a, 0000000a, 0000000a]
-[INFO ] 0x1a000001: Insn { mnemonic: "adc", opcode: 1a000000, mask: 7fe0fc00, class: ADDSUB_CARRY, feature_set: V8, operands: [InsnOperand { kind: Rd, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rd, lsb: 00000000, width: 00000005 }] }, InsnOperand { kind: Rn, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rn, lsb: 00000005, width: 00000005 }] }, InsnOperand { kind: Rm, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rm, lsb: 00000010, width: 00000005 }] }] }
-[INFO ] 0x00000a: Insn { mnemonic: "udf", opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }] }
-[INFO ] 0x00000a: Insn { mnemonic: "udf", opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }] }
-[INFO ] 0x00000a: Insn { mnemonic: "udf", opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }] }
-[INFO ] 0x00000a: Insn { mnemonic: "udf", opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }] }
+[DEBUG] Decoding 0x1a000001
+[DEBUG] Decoded instruction: ADDSUB_CARRY(ADC_Rd_Rn_Rm(ADC_Rd_Rn_Rm { rd: 00000001, rn: 00000000, rm: 00000000 }))
+[DEBUG] 0x1a000001: Insn { mnemonic: "adc", aliases: [], opcode: 1a000000, mask: 7fe0fc00, class: ADDSUB_CARRY, feature_set: V8, operands: [InsnOperand { kind: Rd, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rd, lsb: 00000000, width: 00000005 }] }, InsnOperand { kind: Rn, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rn, lsb: 00000005, width: 00000005 }] }, InsnOperand { kind: Rm, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rm, lsb: 00000010, width: 00000005 }] }], flags: InsnFlags(HAS_SF_FIELD) }
+[INFO ] 1a000001        adc     w1, w0, w0
+[DEBUG] Decoding 0x00000a
+[DEBUG] Decoded instruction: EXCEPTION(UDF_UNDEFINED(UDF_UNDEFINED { imm16_0: 0000000a }))
+[DEBUG] 0x00000a: Insn { mnemonic: "udf", aliases: [], opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }], flags: InsnFlags(0x0) }
+[INFO ] 0000000a        udf     :UNDEFINED:
+[DEBUG] Decoding 0x00000a
+[DEBUG] Decoded instruction: EXCEPTION(UDF_UNDEFINED(UDF_UNDEFINED { imm16_0: 0000000a }))
+[DEBUG] 0x00000a: Insn { mnemonic: "udf", aliases: [], opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }], flags: InsnFlags(0x0) }
+[INFO ] 0000000a        udf     :UNDEFINED:
+[DEBUG] Decoding 0x00000a
+[DEBUG] Decoded instruction: EXCEPTION(UDF_UNDEFINED(UDF_UNDEFINED { imm16_0: 0000000a }))
+[DEBUG] 0x00000a: Insn { mnemonic: "udf", aliases: [], opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }], flags: InsnFlags(0x0) }
+[INFO ] 0000000a        udf     :UNDEFINED:
+[DEBUG] Decoding 0x00000a
+[DEBUG] Decoded instruction: EXCEPTION(UDF_UNDEFINED(UDF_UNDEFINED { imm16_0: 0000000a }))
+[DEBUG] 0x00000a: Insn { mnemonic: "udf", aliases: [], opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }], flags: InsnFlags(0x0) }
+[INFO ] 0000000a        udf     :UNDEFINED:
 ```
 
 ### Visualizing the decision trees

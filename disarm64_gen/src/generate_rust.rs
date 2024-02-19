@@ -215,7 +215,16 @@ fn write_insn_structs(
                 .replace(')', ".bits()");
             flags.push(str_flag);
         }
-        let flags: TokenStream = flags.join("|").parse().unwrap();
+        let flags: TokenStream = if flags.is_empty() {
+            quote! {
+                InsnFlags::empty()
+            }
+        } else {
+            let flags: TokenStream = flags.join("|").parse().unwrap();
+            quote! {
+                InsnFlags::const_from_bits(#flags)
+            }
+        };
 
         struct_definitions.extend(quote! {
             #[bitfield(u32)]
@@ -233,7 +242,7 @@ fn write_insn_structs(
                     class: InsnClass::#class,
                     feature_set: InsnFeatureSet::#feature_set,
                     operands: &[#(#insn_operands)*],
-                    flags: InsnFlags::const_from_bits(#flags),
+                    flags: #flags,
                 };
             }
 
