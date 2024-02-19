@@ -248,7 +248,7 @@ fn write_insn_structs(
                     flags: #flags,
                 };
 
-                pub fn make_opcode(bits: u32) -> Opcode {
+                fn make_opcode(bits: u32) -> Opcode {
                     Opcode::#class(#class::#opcode_struct_name(#opcode_struct_name::from(bits)))
                 }
             }
