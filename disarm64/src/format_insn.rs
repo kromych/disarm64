@@ -1,4 +1,5 @@
 use crate::decoder::Opcode;
+use bitfield_struct::bitfield;
 use disarm64_defn::defn::InsnOpcode;
 use disarm64_defn::InsnBitField;
 use disarm64_defn::InsnFlags;
@@ -65,6 +66,111 @@ fn get_sve_reg_name(is_64: bool, reg: u8) -> &'static str {
     SVE_REG[is_64][reg as usize]
 }
 
+/// Format a register (32-bit or 64-bit) to a string
+fn format_operand_reg(
+    f: &mut impl Write,
+    bits: u32,
+    operand: &disarm64_defn::defn::InsnOperand,
+    definition: &disarm64_defn::defn::Insn,
+    with_zr: bool,
+) -> Result {
+    let flags = definition.flags;
+    let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
+        bits & 0x80000000 != 0
+    } else {
+        true
+    };
+    let bit_field_spec = operand
+        .bit_fields
+        .iter()
+        .find(|bf| {
+            bf.bitfield == InsnBitField::Rd
+                || bf.bitfield == InsnBitField::Rn
+                || bf.bitfield == InsnBitField::Rm
+                || bf.bitfield == InsnBitField::Rt
+                || bf.bitfield == InsnBitField::Rt2
+                || bf.bitfield == InsnBitField::Rs
+                || bf.bitfield == InsnBitField::Ra
+                || bf.bitfield == InsnBitField::SVE_Rm
+                || bf.bitfield == InsnBitField::LSE128_Rt
+                || bf.bitfield == InsnBitField::LSE128_Rt2
+        })
+        .expect("must be bitfield definition present");
+    let reg_no = (bits >> bit_field_spec.lsb) & ((1 << bit_field_spec.width) - 1);
+    let reg_name = get_int_reg_name(is_64, reg_no as u8, with_zr);
+
+    write!(f, "{reg_name}")
+}
+
+/// Format a register with extended shioft operand to a string.
+/// This is a lot of logic and dependencies on the other registers
+/// for 4 instructions and 2 aliases.
+fn format_operand_reg_ext(f: &mut impl Write, bits: u32) -> Result {
+    // E.g. for ADD (extended register) instruction:
+    // https://developer.arm.com/documentation/ddi0602/2023-12/Base-Instructions/ADD--extended-register---Add--extended-register--
+
+    // The bitfields don't come from the operand (might fix up the description in the future).
+    #[bitfield(u32)]
+    struct RegExt {
+        #[bits(5)]
+        regd: u32,
+        #[bits(5)]
+        regn: u32,
+        #[bits(3)]
+        imm3: u32,
+        #[bits(3)]
+        option: u32,
+        #[bits(5)]
+        regm: u32,
+        #[bits(10)]
+        opcode_bits: u32,
+        #[bits(1)]
+        sf: bool,
+    }
+    let reg_ext = RegExt::from_bits(bits);
+
+    if reg_ext.imm3() > 4 {
+        write!(f, "<undefined>")?;
+        return Ok(());
+    }
+
+    let extend_use_lsl = if !reg_ext.sf() { 0b010 } else { 0b011 };
+    let extend =
+        if (reg_ext.regd() == 31 || reg_ext.regn() == 31) && reg_ext.option() == extend_use_lsl {
+            if reg_ext.imm3() != 0 {
+                // Logical Shift Left (LSL) by the immediate value.
+                "lsl"
+            } else {
+                ""
+            }
+        } else {
+            // Signed or Unsigned eXTend of a Byte, Halfword, Word, or (X) Doubleword.
+            match reg_ext.option() {
+                0b000 => "uxtb",
+                0b001 => "uxth",
+                0b010 => "uxtw",
+                0b011 => "uxtx",
+                0b100 => "sxtb",
+                0b101 => "sxth",
+                0b110 => "sxtw",
+                0b111 => "sxtx",
+                _ => unreachable!(),
+            }
+        };
+
+    let reg_name = get_int_reg_name(reg_ext.sf(), reg_ext.regm() as u8, true);
+    write!(f, "{reg_name}")?;
+    if !extend.is_empty() {
+        write!(f, ", {}", extend)?;
+
+        if reg_ext.imm3() != 0 {
+            write!(f, " #{}", reg_ext.imm3())?;
+        }
+    }
+
+    Ok(())
+}
+
 /// Format an operand to a string
 fn format_operand(
     f: &mut impl Write,
@@ -88,40 +194,29 @@ fn format_operand(
         | InsnOperandKind::SVE_Rm
         | InsnOperandKind::LSE128_Rt
         | InsnOperandKind::LSE128_Rt2 => {
-            let flags = definition.flags;
-            let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
-                bits & 0x80000000 != 0
-            } else {
-                true
-            };
             let with_zr = true;
-            let bit_field_spec = operand
-                .bit_fields
-                .iter()
-                .find(|bf| {
-                    bf.bitfield == InsnBitField::Rd
-                        || bf.bitfield == InsnBitField::Rn
-                        || bf.bitfield == InsnBitField::Rm
-                        || bf.bitfield == InsnBitField::Rt
-                        || bf.bitfield == InsnBitField::Rt2
-                        || bf.bitfield == InsnBitField::Rs
-                        || bf.bitfield == InsnBitField::Ra
-                        || bf.bitfield == InsnBitField::SVE_Rm
-                        || bf.bitfield == InsnBitField::LSE128_Rt
-                        || bf.bitfield == InsnBitField::LSE128_Rt2
-                })
-                .expect("must be bitfield definition present");
-            let reg_no = (bits >> bit_field_spec.lsb) & ((1 << bit_field_spec.width) - 1);
-            let reg_name = get_int_reg_name(is_64, reg_no as u8, with_zr);
-            write!(f, "{reg_name}")?;
+            format_operand_reg(f, bits, operand, definition, with_zr)?
         }
+
+        InsnOperandKind::Rd_SP
+        | InsnOperandKind::Rn_SP
+        | InsnOperandKind::Rt_SP
+        | InsnOperandKind::SVE_Rn_SP
+        | InsnOperandKind::Rm_SP => {
+            let with_zr = false;
+            format_operand_reg(f, bits, operand, definition, with_zr)?
+        }
+
+        InsnOperandKind::Rm_EXT => format_operand_reg_ext(f, bits)?,
+
         _ => write!(f, "op?")?,
     };
 
     Ok(())
 }
 
-/// Format an instruction to a string
+/// Format an instruction to a string. It does not use the aliases yet
+/// and always emits the primary mnemonic.
 pub fn format_insn(f: &mut impl Write, opcode: &Opcode) -> Result {
     let definition = opcode.definition();
     let bits = opcode.bits();
