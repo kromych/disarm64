@@ -74,6 +74,7 @@ fn write_insn_structs(
     collect_insns_recursive(decision_tree, &mut insns);
     insns.sort_by_key(|insn| insn.mnemonic.clone());
     let mut struct_definitions = quote! {};
+    let mut struct_impls = quote! {};
 
     let mut used_names = std::collections::HashSet::new();
     let mut opcode_to_used_name = std::collections::HashMap::new();
@@ -232,7 +233,9 @@ fn write_insn_structs(
             pub struct #opcode_struct_name {
                 #opcode_fields_tokens
             }
+        });
 
+        struct_impls.extend(quote! {
             impl #opcode_struct_name {
                 pub const DEFINITION: Insn = Insn {
                     mnemonic: #mnemonic,
@@ -244,6 +247,10 @@ fn write_insn_structs(
                     operands: &[#(#insn_operands)*],
                     flags: #flags,
                 };
+
+                pub fn make_opcode(bits: u32) -> Opcode {
+                    Opcode::#class(#class::#opcode_struct_name(#opcode_struct_name::from(bits)))
+                }
             }
 
             impl InsnOpcode for #opcode_struct_name {
@@ -275,7 +282,8 @@ fn write_insn_structs(
                     #class_opcode_idents(#class_opcode_idents),
                 )*
             }
-
+        });
+        struct_impls.extend(quote! {
             impl InsnOpcode for #class_name {
                 fn definition(&self) -> &'static Insn {
                     match self {
@@ -314,6 +322,8 @@ fn write_insn_structs(
                 )*
             }
 
+            #struct_impls
+
             impl InsnOpcode for Opcode {
                 fn definition(&self) -> &'static Insn {
                     match self {
@@ -351,25 +361,21 @@ fn decision_tree_to_rust_recursive(
             for insn in insns {
                 let opcode_hex: TokenStream = format!("{:#08x}", insn.insn.opcode).parse().unwrap();
                 let mask_hex: TokenStream = format!("{:#08x}", insn.insn.mask).parse().unwrap();
-                let opcode_class = format_ident!("{}", format!("{:?}", insn.insn.class));
                 let opcode_type = format_ident!(
                     "{}",
                     opcode_to_used_name[&(Opcode(insn.insn.opcode), Mask(insn.insn.mask))]
                 );
-                let opcode_type: TokenStream = quote! {
-                    Opcode::#opcode_class(#opcode_class::#opcode_type(#opcode_type::from(insn)))
-                };
 
                 if insn.insn.mask == !0 {
                     tokens.extend(quote! {
                         if insn == #opcode_hex {
-                            return Some(#opcode_type);
+                            return Some(#opcode_type::make_opcode(insn));
                         }
                     });
                 } else {
                     tokens.extend(quote! {
                         if insn & #mask_hex == #opcode_hex {
-                            return Some(#opcode_type);
+                            return Some(#opcode_type::make_opcode(insn));
                         }
                     });
                 }
