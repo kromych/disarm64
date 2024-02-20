@@ -1,3 +1,4 @@
+use crate::decision_tree;
 use crate::decision_tree::DecisionTree;
 use crate::decision_tree::DecisionTreeNode;
 use disarm64_defn::deser::Insn;
@@ -31,6 +32,26 @@ fn write_prelude(_decision_tree: &DecisionTree, f: &mut impl Write) -> std::io::
         use disarm64_defn::defn::InsnOperand;
         use disarm64_defn::defn::Insn;
         use disarm64_defn::defn::InsnOpcode;
+
+        /// Leaf nodes in the decision tree
+        struct Leaf {
+            insn: &'static Insn,
+            factory: fn(u32) -> Opcode,
+        }
+
+        /// The decision tree node
+        enum Decode {
+            /// Branch in the decision tree
+            Branch {
+                mask: u32,
+                next: [Option<u16>; 2],
+            },
+            Leaf(&'static [Leaf]),
+        }
+
+        /// The decode table
+        type DecodeTable = &'static [Decode];
+
     };
 
     writeln!(
@@ -58,7 +79,9 @@ fn write_insn_structs(
         }
 
         match decision_tree.as_ref().unwrap().as_ref() {
-            DecisionTreeNode::Leaf { insns: leaf_insns } => {
+            DecisionTreeNode::Leaf {
+                insns: leaf_insns, ..
+            } => {
                 for leaf_insn in leaf_insns {
                     insns.push(leaf_insn.insn.clone());
                 }
@@ -347,7 +370,7 @@ fn write_insn_structs(
     Ok(opcode_to_used_name)
 }
 
-fn decision_tree_to_rust_recursive(
+fn decision_tree_to_rust_recursive_conditionals(
     decision_tree: &DecisionTree,
     opcode_to_used_name: &HashMap<(Opcode, Mask), String>,
 ) -> TokenStream {
@@ -356,7 +379,7 @@ fn decision_tree_to_rust_recursive(
     }
 
     match decision_tree.as_ref().unwrap().as_ref() {
-        DecisionTreeNode::Leaf { insns } => {
+        DecisionTreeNode::Leaf { insns, .. } => {
             let mut tokens = quote! {};
             for insn in insns {
                 let opcode_hex: TokenStream = format!("{:#08x}", insn.insn.opcode).parse().unwrap();
@@ -387,9 +410,11 @@ fn decision_tree_to_rust_recursive(
             decision_bit,
             zero,
             one,
+            ..
         } => {
-            let zero_branch = decision_tree_to_rust_recursive(zero, opcode_to_used_name);
-            let one_branch = decision_tree_to_rust_recursive(one, opcode_to_used_name);
+            let zero_branch =
+                decision_tree_to_rust_recursive_conditionals(zero, opcode_to_used_name);
+            let one_branch = decision_tree_to_rust_recursive_conditionals(one, opcode_to_used_name);
             let decision_mask_lit: TokenStream =
                 format!("{:#08x}", 1 << *decision_bit).parse().unwrap();
 
@@ -404,8 +429,125 @@ fn decision_tree_to_rust_recursive(
     }
 }
 
+fn decision_tree_to_rust_indexed(
+    decision_tree: &DecisionTree,
+    opcode_to_used_name: &HashMap<(Opcode, Mask), String>,
+) -> TokenStream {
+    fn decision_tree_to_rust_indexed_recursive(
+        decision_tree: &DecisionTree,
+        node_tokens: &mut HashMap<usize, TokenStream>,
+        opcode_to_used_name: &HashMap<(Opcode, Mask), String>,
+    ) {
+        match decision_tree {
+            Some(node) => match node.as_ref() {
+                DecisionTreeNode::Leaf { index, insns } => {
+                    let index = index.expect("index must be present");
+                    assert!(!node_tokens.contains_key(&index));
+
+                    let mut leafs = vec![];
+                    for insn in insns {
+                        let opcode_type = format_ident!(
+                            "{}",
+                            opcode_to_used_name[&(Opcode(insn.insn.opcode), Mask(insn.insn.mask))]
+                        );
+                        leafs.push(quote! {
+                            Leaf {
+                                insn: &#opcode_type::DEFINITION,
+                                factory: #opcode_type::make_opcode
+                            }
+                        });
+                    }
+                    let tokens = quote! {
+                        Decode::Leaf(&[#(#leafs,)*])
+                    };
+                    node_tokens.insert(index, tokens);
+                }
+                DecisionTreeNode::Branch {
+                    index,
+                    decision_bit,
+                    zero,
+                    one,
+                } => {
+                    let index = index.expect("index must be present");
+                    assert!(!node_tokens.contains_key(&index));
+
+                    let mask: TokenStream = format!("{:#x}", 1 << decision_bit).parse().unwrap();
+                    let get_next_index = |n: &Option<Box<DecisionTreeNode>>| -> Option<usize> {
+                        if let Some(n) = n {
+                            match n.as_ref() {
+                                DecisionTreeNode::Leaf { index, .. } => *index,
+                                DecisionTreeNode::Branch { index, .. } => *index,
+                            }
+                        } else {
+                            None
+                        }
+                    };
+                    let zero_next: TokenStream =
+                        format!("{:?}", get_next_index(zero)).parse().unwrap();
+                    let one_next: TokenStream =
+                        format!("{:?}", get_next_index(one)).parse().unwrap();
+
+                    let tokens = quote! {
+                        Decode::Branch {
+                            mask: #mask,
+                            next: [#zero_next, #one_next]
+                        }
+                    };
+                    node_tokens.insert(index, tokens);
+
+                    decision_tree_to_rust_indexed_recursive(zero, node_tokens, opcode_to_used_name);
+                    decision_tree_to_rust_indexed_recursive(one, node_tokens, opcode_to_used_name);
+                }
+            },
+            None => {}
+        }
+    }
+
+    let mut node_tokens = HashMap::new();
+    decision_tree_to_rust_indexed_recursive(decision_tree, &mut node_tokens, opcode_to_used_name);
+
+    let mut node_tokens_table = vec![];
+    for i in 0..node_tokens.len() {
+        node_tokens_table.push(&node_tokens[&i]);
+    }
+
+    quote! {
+        const DECODE_TABLE: DecodeTable = &[
+            #(#node_tokens_table,)*
+        ];
+
+        if DECODE_TABLE.is_empty() {
+            return None;
+        }
+
+        let mut index = 0;
+        loop {
+            let entry = &DECODE_TABLE[index];
+            match entry {
+                Decode::Branch { mask, next } => {
+                    let bit = (insn & mask != 0) as usize;
+                    if let Some(i) = next[bit] {
+                        index = i as usize;
+                    } else {
+                        return None;
+                    }
+                }
+                Decode::Leaf(leafs) => {
+                    for leaf in leafs.iter() {
+                        if insn & leaf.insn.mask == leaf.insn.opcode {
+                            return Some((leaf.factory)(insn));
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+}
+
 pub fn decision_tree_to_rust(
     decision_tree: &DecisionTree,
+    decision_tree_indexing: decision_tree::DecisionTreeIndexing,
     f: &mut impl Write,
 ) -> std::io::Result<()> {
     let mut f = std::io::BufWriter::new(f);
@@ -413,7 +555,14 @@ pub fn decision_tree_to_rust(
     write_prelude(decision_tree, &mut f)?;
 
     let opcode_to_used_name = write_insn_structs(decision_tree, &mut f)?;
-    let decoder = decision_tree_to_rust_recursive(decision_tree, &opcode_to_used_name);
+    let decoder = match decision_tree_indexing {
+        decision_tree::DecisionTreeIndexing::None => {
+            decision_tree_to_rust_recursive_conditionals(decision_tree, &opcode_to_used_name)
+        }
+        decision_tree::DecisionTreeIndexing::DFS | decision_tree::DecisionTreeIndexing::BFS => {
+            decision_tree_to_rust_indexed(decision_tree, &opcode_to_used_name)
+        }
+    };
 
     writeln!(
         f,

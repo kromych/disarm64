@@ -18,7 +18,7 @@ pub fn decistion_tree_to_graphviz_dot(
         }
 
         match decision_tree.as_ref().unwrap().as_ref() {
-            DecisionTreeNode::Leaf { insns } => {
+            DecisionTreeNode::Leaf { insns, .. } => {
                 for insn in insns {
                     writeln!(
                         f,
@@ -33,6 +33,7 @@ pub fn decistion_tree_to_graphviz_dot(
                 decision_bit,
                 zero,
                 one,
+                ..
             } => {
                 let branch_id = *running_id;
                 *running_id += 1;

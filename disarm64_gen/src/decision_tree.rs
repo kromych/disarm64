@@ -11,9 +11,11 @@ pub struct LeafNode {
 #[derive(Debug, Clone)]
 pub enum DecisionTreeNode {
     Leaf {
+        index: Option<usize>,
         insns: Vec<LeafNode>,
     },
     Branch {
+        index: Option<usize>,
         decision_bit: u32,
         zero: DecisionTree,
         one: DecisionTree,
@@ -41,6 +43,7 @@ fn build_decision_tree_recursive(
     if insns.len() == 1 {
         *decision_tree = Some(Box::new(DecisionTreeNode::Leaf {
             insns: insns.to_vec(),
+            index: None,
         }));
         *depth -= 1;
         log::debug!("One instruction at depth {}", depth);
@@ -60,6 +63,7 @@ fn build_decision_tree_recursive(
         if acc_mask == 0 {
             *decision_tree = Some(Box::new(DecisionTreeNode::Leaf {
                 insns: insns.to_vec(),
+                index: None,
             }));
             break;
         }
@@ -105,6 +109,7 @@ fn build_decision_tree_recursive(
             decision_bit,
             zero: zero_tree,
             one: one_tree,
+            index: None,
         }));
         break;
     }
@@ -113,7 +118,77 @@ fn build_decision_tree_recursive(
     log::debug!("Decision tree built at depth {}", depth);
 }
 
-pub fn build_decision_tree(insns: &[Rc<Insn>]) -> DecisionTree {
+fn assign_indexes_dfs(decision_tree: &mut DecisionTree, index: &mut usize) {
+    if let Some(node) = decision_tree {
+        match &mut **node {
+            DecisionTreeNode::Leaf { index: i, .. } => {
+                *i = Some(*index);
+                *index += 1;
+            }
+            DecisionTreeNode::Branch {
+                index: i,
+                zero,
+                one,
+                ..
+            } => {
+                *i = Some(*index);
+                *index += 1;
+                assign_indexes_dfs(zero, index);
+                assign_indexes_dfs(one, index);
+            }
+        }
+    }
+}
+
+fn assign_indexes_bfs(decision_tree: &mut DecisionTree) {
+    let mut index = 0;
+    let mut queue = Vec::new();
+    queue.push(decision_tree);
+
+    while let Some(node) = queue.pop() {
+        if let Some(node) = node {
+            match &mut **node {
+                DecisionTreeNode::Leaf { index: i, .. } => {
+                    *i = Some(index);
+                    index += 1;
+                }
+                DecisionTreeNode::Branch {
+                    index: i,
+                    zero,
+                    one,
+                    ..
+                } => {
+                    *i = Some(index);
+                    index += 1;
+                    queue.push(zero);
+                    queue.push(one);
+                }
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum DecisionTreeIndexing {
+    None,
+    DFS,
+    BFS,
+}
+
+fn assign_indexes(decision_tree: &mut DecisionTree, indexing: DecisionTreeIndexing) {
+    match indexing {
+        DecisionTreeIndexing::DFS => {
+            let mut index = 0;
+            assign_indexes_dfs(decision_tree, &mut index);
+        }
+        DecisionTreeIndexing::BFS => {
+            assign_indexes_bfs(decision_tree);
+        }
+        DecisionTreeIndexing::None => {}
+    }
+}
+
+pub fn build_decision_tree(insns: &[Rc<Insn>], indexing: DecisionTreeIndexing) -> DecisionTree {
     let mut decision_tree = None;
     let mut depth = 0;
 
@@ -126,8 +201,10 @@ pub fn build_decision_tree(insns: &[Rc<Insn>]) -> DecisionTree {
         .collect::<Vec<_>>();
 
     build_decision_tree_recursive(&mut decision_tree, insns.as_slice(), &mut depth);
+    assign_indexes(&mut decision_tree, indexing);
 
     log::info!("Decision tree generated");
+    log::trace!("Decision tree: {:x?}", decision_tree);
 
     decision_tree
 }

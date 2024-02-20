@@ -14,7 +14,9 @@ machine-readable description.
 The ISA description is read from a JSON file (there is an example in the repo:
 [aarch64.json](./aarch64.json), more than `3,000` instructions to play with), and
 the algorithms assume a fixed length 32-bit encoding. The file is produced by the tools
-from the [opcodes-lab](https://github.com/kromych/opcodes-lab) repository.
+from the [opcodes-lab](https://github.com/kromych/opcodes-lab) repository. The generated
+decoder can be driven by conditionals statements (the default), the DFS table, or the
+BFS table. There are trade-offs between size and speed, one can find what's best for them.
 
 Adding instruction formatting resembling what disassemblers use is in progress, expected
 in version `0.2.0`. Before that, using this package as a library will be made easier, too.
@@ -39,29 +41,51 @@ This tool generates an instruction decoder from a JSON description of the ISA
 Usage: disarm64_gen [OPTIONS] <DESCRIPTION_JSON>
 
 Arguments:
-  <DESCRIPTION_JSON>  A JSON file with the description of the instruction set architecture
+  <DESCRIPTION_JSON>
+          A JSON file with the description of the instruction set architecture
 
 Options:
+  -a, --algo <ALGO>
+          Decoder algorithm style, defaults to conditionals
+
+          Possible values:
+          - cond: Conditionals
+          - dfs:  DFS table-driven
+          - bfs:  BFS table-driven
+
   -f, --feature-sets <FEATURE_SETS>...
           Include filter for feature sets, e.g. "v8,simd". Case-insensitive, ignored if not provided
+
   -c, --insn-class <INSN_CLASS>...
           Include filter for instruction classes, e.g. "addsub_imm,ldst_pos,exception". Case-insensitive, ignored if not provided
+
   -m, --mnemonic <MNEMONIC>...
           Include filter for mnemonics, e.g. "adc,ldp". Case-insensitive, ignored if not provided
+
   -g, --graphviz <GRAPHVIZ>
           Output the decision tree to a Graphviz DOT file
+
   -r, --rs-file <RS_FILE>
           Generate the decoder implemented in Rust
+
   -t, --test-bin <TEST_BIN>
           Generate a test binary
+
       --test-bin-size-limit <TEST_BIN_SIZE_LIMIT>
-          The size limit of the generated test binary, the default is 64MB [default: 67108864]
+          The size limit of the generated test binary, the default is 64MB
+          
+          [default: 67108864]
+
       --test-encodings-limit <TEST_ENCODINGS_LIMIT>
-          The number of test encodings to generate for each instruction, the default is 0x10_000 [default: 65536]
+          The number of test encodings to generate for each instruction, the default is 0x10_000
+          
+          [default: 65536]
+
   -v...
           Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity
+
   -h, --help
-          Print help
+          Print help (see a summary with '-h')
 ```
 
 ### Instruction classes and feature sets

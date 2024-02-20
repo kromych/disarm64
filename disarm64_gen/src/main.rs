@@ -10,17 +10,31 @@ use std::rc::Rc;
 
 use crate::generate_graphviz_dot::decistion_tree_to_graphviz_dot;
 use crate::generate_rust::decision_tree_to_rust;
+use decision_tree::DecisionTreeIndexing;
 
 mod decision_tree;
 mod generate_graphviz_dot;
 mod generate_rust;
 mod generate_test_bin;
 
+#[derive(Debug, Copy, Clone, clap::ValueEnum)]
+enum DecoderAlgo {
+    /// Conditionals
+    Cond,
+    /// DFS table-driven
+    Dfs,
+    /// BFS table-driven
+    Bfs,
+}
+
 #[derive(Parser, Debug)]
 /// This tool generates an instruction decoder from a JSON description of the ISA.
 struct CommandLine {
     /// A JSON file with the description of the instruction set architecture.
     description_json: PathBuf,
+    /// Decoder algorithm style, defaults to conditionals.
+    #[clap(short = 'a', long)]
+    algo: Option<DecoderAlgo>,
     /// Include filter for feature sets, e.g. "v8,simd".
     /// Case-insensitive, ignored if not provided.
     #[clap(short = 'f', long, value_delimiter = ',', num_args = 1..)]
@@ -92,7 +106,12 @@ fn main() -> anyhow::Result<()> {
         filter_mnemonic,
     )?;
 
-    let decision_tree = build_decision_tree(insns.as_slice());
+    let decision_tree_indexing = match opt.algo {
+        Some(DecoderAlgo::Cond) | None => DecisionTreeIndexing::None,
+        Some(DecoderAlgo::Bfs) => DecisionTreeIndexing::BFS,
+        Some(DecoderAlgo::Dfs) => DecisionTreeIndexing::DFS,
+    };
+    let decision_tree = build_decision_tree(insns.as_slice(), decision_tree_indexing);
     if let Some(graphviz) = opt.graphviz {
         log::info!("Writing decision tree to a Graphviz dot file {graphviz:?}");
         let mut f = std::fs::File::create(graphviz)?;
@@ -102,7 +121,7 @@ fn main() -> anyhow::Result<()> {
     if let Some(rust) = opt.rs_file {
         log::info!("Writing decision tree to a Rust file {rust:?}");
         let mut f = std::fs::File::create(rust)?;
-        decision_tree_to_rust(&decision_tree, &mut f)?;
+        decision_tree_to_rust(&decision_tree, decision_tree_indexing, &mut f)?;
     }
 
     if let Some(test_bin) = opt.test_bin {
