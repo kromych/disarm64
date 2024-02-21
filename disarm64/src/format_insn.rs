@@ -1,12 +1,13 @@
 use crate::decoder::Opcode;
 use bitfield_struct::bitfield;
-use disarm64_defn::defn::InsnOpcode;
+use defn::InsnOpcode;
+use disarm64_defn::defn;
 use disarm64_defn::InsnBitField;
 use disarm64_defn::InsnFlags;
 use disarm64_defn::InsnOperandKind;
+use disarm64_defn::InsnOperandQualifier;
 use std::fmt::Display;
 use std::fmt::Formatter;
-use std::fmt::Result;
 use std::fmt::Write;
 
 fn get_int_reg_name(is_64: bool, reg: u8, with_zr: bool) -> &'static str {
@@ -70,15 +71,18 @@ fn _get_sve_reg_name(is_64: bool, reg: u8) -> &'static str {
 fn format_operand_reg(
     f: &mut impl Write,
     bits: u32,
-    operand: &disarm64_defn::defn::InsnOperand,
-    definition: &disarm64_defn::defn::Insn,
+    operand: &defn::InsnOperand,
+    definition: &defn::Insn,
     with_zr: bool,
-) -> Result {
+) -> core::fmt::Result {
     let flags = definition.flags;
     let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
         bits & 0x80000000 != 0
+    } else if operand.kind == InsnOperandKind::Rt {
+        bits & 0x40000000 != 0
     } else {
-        true
+        operand.qualifiers != [InsnOperandQualifier::W]
+            && operand.qualifiers != [InsnOperandQualifier::WSP]
     };
     if let Some(bit_field_spec) = operand.bit_fields.iter().find(|bf| {
         bf.bitfield == InsnBitField::Rd
@@ -105,7 +109,7 @@ fn format_operand_reg(
 /// Format a register with extended shioft operand to a string.
 /// This is a lot of logic and dependencies on the other registers
 /// for 4 instructions and 2 aliases.
-fn format_operand_reg_ext(f: &mut impl Write, bits: u32) -> Result {
+fn format_operand_reg_ext(f: &mut impl Write, bits: u32) -> core::fmt::Result {
     // E.g. for ADD (extended register) instruction:
     // https://developer.arm.com/documentation/ddi0602/2023-12/Base-Instructions/ADD--extended-register---Add--extended-register--
 
@@ -173,7 +177,7 @@ fn format_operand_reg_ext(f: &mut impl Write, bits: u32) -> Result {
 
 /// Format a register with shift operand to a string.
 /// An example: https://developer.arm.com/documentation/ddi0602/2023-12/Base-Instructions/ADD--shifted-register---Add--shifted-register--
-fn format_operand_reg_shift(f: &mut impl Write, bits: u32) -> Result {
+fn format_operand_reg_shift(f: &mut impl Write, bits: u32) -> core::fmt::Result {
     // The bitfields don't come from the operand (might fix up the description in the future).
     #[bitfield(u32)]
     struct RegShift {
@@ -226,9 +230,10 @@ fn format_operand_reg_shift(f: &mut impl Write, bits: u32) -> Result {
 fn format_operand(
     f: &mut impl Write,
     bits: u32,
-    operand: &disarm64_defn::defn::InsnOperand,
-    definition: &disarm64_defn::defn::Insn,
-) -> Result {
+    operand: &defn::InsnOperand,
+    definition: &defn::Insn,
+    stop: &mut bool,
+) -> core::fmt::Result {
     let kind = operand.kind;
     match kind {
         InsnOperandKind::Rd
@@ -480,10 +485,14 @@ fn format_operand(
 
         InsnOperandKind::ADDR_ADRP => write!(f, ":{kind:?}:")?,
 
-        InsnOperandKind::ADDR_PCREL14
-        | InsnOperandKind::ADDR_PCREL19
-        | InsnOperandKind::ADDR_PCREL21
-        | InsnOperandKind::ADDR_PCREL26 => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::ADDR_PCREL14 => write!(f, "{:#08x}", (bits >> 5) & ((1 << 14) - 1))?,
+        InsnOperandKind::ADDR_PCREL19 => write!(f, "{:#08x}", (bits >> 5) & ((1 << 19) - 1))?,
+        InsnOperandKind::ADDR_PCREL21 => write!(
+            f,
+            "{:#08x}",
+            (bits >> 5) & ((1 << 19) - 1) | (((bits >> 29) & 0b11) << 19)
+        )?,
+        InsnOperandKind::ADDR_PCREL26 => write!(f, "{:#08x}", bits & ((1 << 26) - 1))?,
 
         InsnOperandKind::ADDR_SIMPLE
         | InsnOperandKind::SIMD_ADDR_SIMPLE
@@ -516,9 +525,22 @@ fn format_operand(
         | InsnOperandKind::SVE_ADDR_RZ_XTW3_14
         | InsnOperandKind::SVE_ADDR_RZ_XTW3_22 => write!(f, ":{kind:?}:")?,
 
-        InsnOperandKind::ADDR_SIMM7
-        | InsnOperandKind::ADDR_SIMM9
-        | InsnOperandKind::ADDR_SIMM10
+        InsnOperandKind::ADDR_SIMM7 => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::ADDR_SIMM9 => {
+            let post_index = bits & (1 << 11) == 0;
+            let imm9 = (bits >> 12) & ((1 << 9) - 1);
+            let imm64 = (imm9 as i64).wrapping_shl(55).wrapping_shr(55);
+
+            let reg_no = (bits >> 5) & 0b11111;
+            let reg_name = get_int_reg_name(true, reg_no as u8, false);
+            if !post_index {
+                write!(f, "[{reg_name}, #{}]!", imm64)?;
+            } else {
+                write!(f, "[{reg_name}], #{}", imm64)?;
+            }
+            *stop = true;
+        }
+        InsnOperandKind::ADDR_SIMM10
         | InsnOperandKind::ADDR_SIMM11
         | InsnOperandKind::ADDR_SIMM13
         | InsnOperandKind::RCPC3_ADDR_OFFSET
@@ -595,16 +617,20 @@ fn format_operand(
 
 /// Format an instruction to a string. It does not use the aliases yet
 /// and always emits the primary mnemonic.
-pub fn format_insn(f: &mut impl Write, opcode: &Opcode) -> Result {
+pub fn format_insn(f: &mut impl Write, opcode: &Opcode) -> core::fmt::Result {
     let definition = opcode.definition();
     let bits = opcode.bits();
 
     write!(f, "{bits:08x}\t{}\t", definition.mnemonic)?;
     let op_count = definition.operands.len();
     for (i, operand) in definition.operands.iter().enumerate() {
-        format_operand(f, bits, operand, definition)?;
-        if i + 1 < op_count {
+        let mut stop = false;
+        format_operand(f, bits, operand, definition, &mut stop)?;
+        if !stop || i + 1 < op_count {
             write!(f, ", ")?;
+        }
+        if stop {
+            break;
         }
     }
 
@@ -612,7 +638,7 @@ pub fn format_insn(f: &mut impl Write, opcode: &Opcode) -> Result {
 }
 
 impl Display for Opcode {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         format_insn(f, self)
     }
 }
