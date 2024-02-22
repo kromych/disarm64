@@ -79,7 +79,20 @@ fn format_operand_reg(
     let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
         bits & 0x80000000 != 0
     } else if operand.kind == InsnOperandKind::Rt {
-        bits & 0x40000000 != 0
+        if bits & 0x800000 == 0 {
+            // Store or zero-extending load, not signed.
+            // Bit 22 is set if this is a load.
+            bits >> 30 == 0b11
+        } else {
+            // Sign-extending load
+            if bits >> 30 == 0b11 {
+                return write!(f, "<undefined>");
+            }
+            if bits >> 30 == 0b10 && bits & 0x400000 != 0 {
+                return write!(f, "<undefined>");
+            }
+            bits & 0x400000 == 0
+        }
     } else {
         operand.qualifiers != [InsnOperandQualifier::W]
             && operand.qualifiers != [InsnOperandQualifier::WSP]
