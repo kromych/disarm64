@@ -3,12 +3,15 @@ use bitfield_struct::bitfield;
 use defn::InsnOpcode;
 use disarm64_defn::defn;
 use disarm64_defn::InsnBitField;
+use disarm64_defn::InsnClass;
 use disarm64_defn::InsnFlags;
 use disarm64_defn::InsnOperandKind;
 use disarm64_defn::InsnOperandQualifier;
 use std::fmt::Display;
 use std::fmt::Formatter;
 use std::fmt::Write;
+
+const LOG2_TAG_GRANULE: u32 = 4;
 
 fn get_int_reg_name(is_64: bool, reg: u8, with_zr: bool) -> &'static str {
     debug_assert!(reg < 32);
@@ -45,6 +48,47 @@ fn get_int_reg_name(is_64: bool, reg: u8, with_zr: bool) -> &'static str {
     INT_REG[is_sp][is_64][reg as usize]
 }
 
+#[repr(usize)]
+enum FpRegSize {
+    B8,
+    H16,
+    S32,
+    D64,
+    Q128,
+}
+
+fn get_fp_reg_name(size: FpRegSize, reg_no: usize) -> &'static str {
+    const FP_REG: [[&str; 32]; 5] = [
+        [
+            "b0", "b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9", "b10", "b11", "b12", "b13",
+            "b14", "b15", "b16", "b17", "b18", "b19", "b20", "b21", "b22", "b23", "b24", "b25",
+            "b26", "b27", "b28", "b29", "b30", "b31",
+        ],
+        [
+            "h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11", "h12", "h13",
+            "h14", "h15", "h16", "h17", "h18", "h19", "h20", "h21", "h22", "h23", "h24", "h25",
+            "h26", "h27", "h28", "h29", "h30", "h31",
+        ],
+        [
+            "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "s12", "s13",
+            "s14", "s15", "s16", "s17", "s18", "s19", "s20", "s21", "s22", "s23", "s24", "s25",
+            "s26", "s27", "s28", "s29", "s30", "s31",
+        ],
+        [
+            "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", "d10", "d11", "d12", "d13",
+            "d14", "d15", "d16", "d17", "d18", "d19", "d20", "d21", "d22", "d23", "d24", "d25",
+            "d26", "d27", "d28", "d29", "d30", "d31",
+        ],
+        [
+            "q0", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10", "q11", "q12", "q13",
+            "q14", "q15", "q16", "q17", "q18", "q19", "q20", "q21", "q22", "q23", "q24", "q25",
+            "q26", "q27", "q28", "q29", "q30", "q31",
+        ],
+    ];
+
+    FP_REG[size as usize][reg_no]
+}
+
 fn _get_sve_reg_name(is_64: bool, reg: u8) -> &'static str {
     const SVE_REG: [[&str; 32]; 2] = [
         [
@@ -67,8 +111,43 @@ fn _get_sve_reg_name(is_64: bool, reg: u8) -> &'static str {
     SVE_REG[is_64][reg as usize]
 }
 
-/// Format a register (32-bit or 64-bit) to a string
-fn format_operand_reg(
+/// Format a floating-point register to a string
+fn format_fp_reg(
+    f: &mut impl Write,
+    bits: u32,
+    operand: &defn::InsnOperand,
+    definition: &defn::Insn,
+) -> core::fmt::Result {
+    let kind = operand.kind;
+
+    match definition.class {
+        InsnClass::LDST_IMM9 => {
+            let reg_no = bits & 0b11111;
+            let size = (bits >> 30) & 0b11;
+            let opc = (bits >> 22) & 0b11;
+            if opc == 0 || opc == 1 {
+                let fp_size = match size {
+                    0b00 => FpRegSize::B8,
+                    0b01 => FpRegSize::H16,
+                    0b10 => FpRegSize::S32,
+                    0b11 => FpRegSize::D64,
+                    _ => unreachable!(),
+                };
+                let fp_reg_name = get_fp_reg_name(fp_size, reg_no as usize);
+                write!(f, "{fp_reg_name}")
+            } else if (opc == 0b10 || opc == 0b11) && size == 0 {
+                let fp_reg_name = get_fp_reg_name(FpRegSize::Q128, reg_no as usize);
+                write!(f, "{fp_reg_name}")
+            } else {
+                write!(f, "<undefined>")
+            }
+        }
+        _ => write!(f, ":{kind:?}:"),
+    }
+}
+
+/// Format an integer register (32-bit or 64-bit) to a string
+fn format_int_operand_reg(
     f: &mut impl Write,
     bits: u32,
     operand: &defn::InsnOperand,
@@ -262,7 +341,7 @@ fn format_operand(
         | InsnOperandKind::LSE128_Rt
         | InsnOperandKind::LSE128_Rt2 => {
             let with_zr = true;
-            format_operand_reg(f, bits, operand, definition, with_zr)?
+            format_int_operand_reg(f, bits, operand, definition, with_zr)?
         }
 
         InsnOperandKind::PAIRREG | InsnOperandKind::PAIRREG_OR_XZR => write!(f, ":{kind:?}:")?,
@@ -273,7 +352,7 @@ fn format_operand(
         | InsnOperandKind::SVE_Rn_SP
         | InsnOperandKind::Rm_SP => {
             let with_zr = false;
-            format_operand_reg(f, bits, operand, definition, with_zr)?
+            format_int_operand_reg(f, bits, operand, definition, with_zr)?
         }
 
         InsnOperandKind::Rm_EXT => format_operand_reg_ext(f, bits)?,
@@ -292,7 +371,7 @@ fn format_operand(
         | InsnOperandKind::SVE_VZn
         | InsnOperandKind::SVE_Vd
         | InsnOperandKind::SVE_Vm
-        | InsnOperandKind::SVE_Vn => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SVE_Vn => format_fp_reg(f, bits, operand, definition)?,
 
         InsnOperandKind::Va | InsnOperandKind::Vd | InsnOperandKind::Vn | InsnOperandKind::Vm => {
             write!(f, ":{kind:?}:")?
@@ -539,23 +618,27 @@ fn format_operand(
         | InsnOperandKind::SVE_ADDR_RZ_XTW3_22 => write!(f, ":{kind:?}:")?,
 
         InsnOperandKind::ADDR_SIMM7 => write!(f, ":{kind:?}:")?,
-        InsnOperandKind::ADDR_SIMM9 => {
+        InsnOperandKind::ADDR_SIMM9 | InsnOperandKind::ADDR_SIMM13 => {
             let post_index = bits & (1 << 11) == 0;
             let imm9 = (bits >> 12) & ((1 << 9) - 1);
             let imm64 = (imm9 as i64).wrapping_shl(55).wrapping_shr(55);
+            let scale = if kind == InsnOperandKind::ADDR_SIMM13 {
+                LOG2_TAG_GRANULE
+            } else {
+                0
+            } as i64;
 
             let reg_no = (bits >> 5) & 0b11111;
             let reg_name = get_int_reg_name(true, reg_no as u8, false);
             if !post_index {
-                write!(f, "[{reg_name}, #{}]!", imm64)?;
+                write!(f, "[{reg_name}, #{}]!", imm64 << scale)?;
             } else {
-                write!(f, "[{reg_name}], #{}", imm64)?;
+                write!(f, "[{reg_name}], #{}", imm64 << scale)?;
             }
             *stop = true;
         }
         InsnOperandKind::ADDR_SIMM10
         | InsnOperandKind::ADDR_SIMM11
-        | InsnOperandKind::ADDR_SIMM13
         | InsnOperandKind::RCPC3_ADDR_OFFSET
         | InsnOperandKind::ADDR_OFFSET
         | InsnOperandKind::RCPC3_ADDR_OPT_POSTIND
