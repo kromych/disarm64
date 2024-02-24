@@ -27,17 +27,39 @@ To install:
 cargo install disarm64
 ```
 
-## Using the generator
+## Using the tools
 
-### Available options
+### The decoder
+
+The decoder can decode instructions from the command line, a flat binary file or an ELF file:
+
+```sh
+disarm64 --help
+```
+
+```txt
+Usage: disarm64 [OPTIONS] <COMMAND>
+
+Commands:
+  insn  Instructions to decode (hex 32-bit)
+  bin   Flat binary file with instructions to decode
+  elf   ELF file with instructions to decode
+  help  Print this message or the help of the given subcommand(s)
+
+Options:
+  -v...       Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity
+  -h, --help  Print help
+```
+
+### The generator
+
+This tool generates an instruction decoder from a JSON description of the ISA.
 
 ```sh
 disarm64_gen --help
 ```
 
 ```txt
-This tool generates an instruction decoder from a JSON description of the ISA
-
 Usage: disarm64_gen [OPTIONS] <DESCRIPTION_JSON>
 
 Arguments:
@@ -121,24 +143,6 @@ disarm64_gen ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_un
 ```
 
 ### Using the decoder
-
-The decoder can decode instructions from the command line, a flat binary file or an ELF file:
-
-```sh
-disarm64 --help
-
-Usage: disarm64 [OPTIONS] <COMMAND>
-
-Commands:
-  insn  Instructions to decode (hex 32-bit)
-  bin   Flat binary file with instructions to decode
-  elf   ELF file with instructions to decode
-  help  Print this message or the help of the given subcommand(s)
-
-Options:
-  -v...       Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity
-  -h, --help  Print help
-```
 
 To decode instructions apssed on the command line:
 
