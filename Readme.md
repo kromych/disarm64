@@ -32,7 +32,7 @@ cargo install disarm64
 ### Available options
 
 ```sh
-cargo run -- --help
+disarm64_gen --help
 ```
 
 ```txt
@@ -94,13 +94,13 @@ To learn about the classes and feature sets available in the description of the 
 please run
 
 ```sh
-cargo run -- --bin disarm64_gen ./aarch64.json -c -
+disarm64_gen ./aarch64.json -c -
 ```
 
 or
 
 ```sh
-cargo run -- --bin disarm64_gen ./aarch64.json -f -
+disarm64_gen ./aarch64.json -f -
 ```
 
 ## Examples
@@ -110,14 +110,14 @@ cargo run -- --bin disarm64_gen ./aarch64.json -f -
 For the entire known instruction set:
 
 ```sh
-cargo run --release --bin disarm64_gen -- ./aarch64.json -r decoder.rs
+disarm64_gen ./aarch64.json -r decoder.rs
 ```
 
 If only a subset of the whole instruction set needs to de decoded, use the filter(s)
 appropriately. For example, to generate a decoder for the V8 load/store instructions, do:
 
 ```sh
-cargo run -- --bin disarm64_gen ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -r decoder.rs
+disarm64_gen ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -r decoder.rs
 ```
 
 ### Using the decoder
@@ -125,7 +125,7 @@ cargo run -- --bin disarm64_gen ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,
 The decoder can decode instructions from the command line, a flat binary file or an ELF file:
 
 ```sh
-cargo run --release --bin disarm64 -- --help
+disarm64 --help
 
 Usage: disarm64 [OPTIONS] <COMMAND>
 
@@ -143,7 +143,7 @@ Options:
 To decode instructions apssed on the command line:
 
 ```sh
-cargo run --release --bin disarm64 -- -v insn 0x1a000001,0xa,0xa,0xa,0xa
+disarm64 -v insn 0x1a000001,0xa,0xa,0xa,0xa
 ```
 
 ```log
@@ -173,10 +173,10 @@ cargo run --release --bin disarm64 -- -v insn 0x1a000001,0xa,0xa,0xa,0xa
 ### Visualizing the decision trees
 
 ```sh
-cargo run -- --bin disarm64_gen ./aarch64.json -c exception -g dt-exception.dot
-cargo run -- --bin disarm64_gen ./aarch64.json -f v8 -g dt-v8.dot
-cargo run -- --bin disarm64_gen ./aarch64.json -c ic_system -g dt-system.dot
-cargo run -- --bin disarm64_gen ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -g dt-ldst.dot
+disarm64_gen ./aarch64.json -c exception -g dt-exception.dot
+disarm64_gen ./aarch64.json -f v8 -g dt-v8.dot
+disarm64_gen ./aarch64.json -c ic_system -g dt-system.dot
+disarm64_gen ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit -f v8 -g dt-ldst.dot
 ```
 
 and then (assuming [Graphviz](https://graphviz.org/) tools are installed):
@@ -202,7 +202,7 @@ Examples (Aarch64):
 ### Debug output
 
 ```sh
-cargo run -- --bin disarm64_gen ./aarch64.json -c ldst_pos -m ldr -v
+disarm64_gen ./aarch64.json -c ldst_pos -m ldr -v
 ```
 
 ```log
