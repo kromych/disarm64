@@ -722,7 +722,7 @@ pub fn format_insn(f: &mut impl Write, opcode: &Opcode) -> core::fmt::Result {
     for (i, operand) in definition.operands.iter().enumerate() {
         let mut stop = false;
         format_operand(f, bits, operand, definition, &mut stop)?;
-        if !stop || i + 1 < op_count {
+        if !stop && i + 1 < op_count {
             write!(f, ", ")?;
         }
         if stop {
