@@ -275,3 +275,12 @@ Not a library/API-centric, yet the one and only
 Although only x86_64 targeted, nonetheless an incredible one:
 
 - [Blinkenlights](https://github.com/jart/blink)
+
+## Some papers on this topic and the closely connected ones
+
+- C.S. Collberg. "Reverse interpretation + mutation analysis = automatic retargeting", Proc. of the ACM SIG- PLAN 1997 Conference on Programming Language Design and Implementation", 1997, pp. 57–70.
+- C.S. Collberg. "Automatic derivation of compiler machine descriptions", ACM Trans. Program. Lang. Syst., 2002, vol. 24, no. 4, pp. 369–408.
+- W.C. Hsieh, D.R. Engler, G. Back. "Reverse-engineering instruction encodings", Proc. of the General Track: 2002 USENIX Annual Technical Conference, 2001, pp. 133–145.
+- R. Krishna, T. Austin. "Efficient Software Decoder Design", IEEE Computer Society Technical Committee on Computer Architecture Newsletter, 2001.
+- H. Theiling. "Generating decision trees for decoding binaries", Proc. of the ACM SIGPLAN Workshop on Languages, Compilers and Tools for Embedded Systems, 2001, pp. 112–120.
+- W. Qin, S. Malik. "Automated synthesis of efficient binary decoders for retargetable software toolkits", Proc. of the 40th Annual Design Automation Conference, 2003, pp. 764–769.
