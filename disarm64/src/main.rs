@@ -1,12 +1,10 @@
 use clap::Parser;
 use clap::Subcommand;
 use clap_num::maybe_hex;
+use disarm64::decoder;
 use disarm64_defn::defn::InsnOpcode;
 use std::io::IsTerminal;
 use std::path::PathBuf;
-
-mod decoder;
-mod format_insn;
 
 #[derive(Subcommand, Debug, Clone, PartialEq, Eq)]
 enum Command {

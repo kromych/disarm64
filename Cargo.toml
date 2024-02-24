@@ -17,6 +17,9 @@ categories = ["command-line-utilities", "development-tools", "embedded"]
 license = "Unlicense OR MIT"
 readme = "Readme.md"
 
+[lib]
+path = "lib/src/lib.rs"
+
 [[bin]]
 name = "disarm64"
 path = "disarm64/src/main.rs"

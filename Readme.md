@@ -19,12 +19,31 @@ decoder can be driven by conditionals statements (the default), the DFS table, o
 BFS table. There are trade-offs between size and speed, one can find what's best for them.
 
 Adding instruction formatting resembling what disassemblers use is in progress, expected
-in version `0.2.0`. Before that, using this package as a library will be made easier, too.
+in version `0.2.0`.
 
-To install:
+To install the tools:
 
 ```sh
 cargo install disarm64
+```
+
+To just use as a library:
+
+```sh
+cargo add disarm64
+cargo add disarm64_defn
+```
+
+and somewhere in your cool code could start with a snippet like this
+
+```rust
+use disarm64::decoder;
+use disarm64_defn::defn::InsnOpcode;
+
+let insn = decoder::decode(0x94000000).unwrap();
+
+println!("Instruction: {insn:?}");
+println!("Definition: {:?}", insn.definition());
 ```
 
 ## Using the tools
