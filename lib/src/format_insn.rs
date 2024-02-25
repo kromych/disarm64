@@ -111,6 +111,14 @@ fn _get_sve_reg_name(is_64: bool, reg: u8) -> &'static str {
     SVE_REG[is_64][reg as usize]
 }
 
+fn bit_set(bits: u32, bit: u32) -> bool {
+    bits & (1 << bit) != 0
+}
+
+fn bit_range(bits: u32, start: u32, width: u32) -> u32 {
+    (bits >> start) & ((1 << width) - 1)
+}
+
 /// Format a floating-point register to a string
 fn format_fp_reg(
     f: &mut impl Write,
@@ -122,9 +130,9 @@ fn format_fp_reg(
 
     match definition.class {
         InsnClass::LDST_IMM9 => {
-            let reg_no = bits & 0b11111;
-            let size = (bits >> 30) & 0b11;
-            let opc = (bits >> 22) & 0b11;
+            let reg_no = bit_range(bits, 0, 5);
+            let size = bit_range(bits, 30, 2);
+            let opc = bit_range(bits, 22, 2);
             if opc == 0 || opc == 1 {
                 let fp_size = match size {
                     0b00 => FpRegSize::B8,
@@ -158,19 +166,22 @@ fn format_int_operand_reg(
     let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
         bits & 0x80000000 != 0
     } else if operand.kind == InsnOperandKind::Rt {
-        if bits & 0x800000 == 0 {
+        let size = bit_range(bits, 30, 2);
+        let opc1 = bit_set(bits, 23);
+        let opc0 = bit_set(bits, 22);
+        if !opc1 {
             // Store or zero-extending load, not signed.
             // Bit 22 is set if this is a load.
-            bits >> 30 == 0b11
+            size == 0b11
         } else {
             // Sign-extending load
-            if bits >> 30 == 0b11 {
+            if size == 0b11 {
                 return write!(f, "<undefined>");
             }
-            if bits >> 30 == 0b10 && bits & 0x400000 != 0 {
+            if size == 0b10 && opc0 {
                 return write!(f, "<undefined>");
             }
-            bits & 0x400000 == 0
+            !opc0
         }
     } else {
         operand.qualifiers != [InsnOperandQualifier::W]
@@ -189,7 +200,7 @@ fn format_int_operand_reg(
             || bf.bitfield == InsnBitField::LSE128_Rt
             || bf.bitfield == InsnBitField::LSE128_Rt2
     }) {
-        let reg_no = (bits >> bit_field_spec.lsb) & ((1 << bit_field_spec.width) - 1);
+        let reg_no = bit_range(bits, bit_field_spec.lsb.into(), bit_field_spec.width.into());
         let reg_name = get_int_reg_name(is_64, reg_no as u8, with_zr);
 
         write!(f, "{reg_name}")
@@ -555,8 +566,17 @@ fn format_operand(
 
         InsnOperandKind::FPIMM0 => write!(f, ":{kind:?}:")?,
 
+        InsnOperandKind::AIMM => {
+            let shift = bit_set(bits, 22);
+            let imm12 = bit_range(bits, 10, 12);
+            write!(f, "#{imm12:#x}")?;
+
+            if shift {
+                return write!(f, ", lsl #12");
+            }
+        }
+
         InsnOperandKind::LIMM
-        | InsnOperandKind::AIMM
         | InsnOperandKind::HALF
         | InsnOperandKind::SVE_INV_LIMM
         | InsnOperandKind::SVE_LIMM
@@ -582,14 +602,14 @@ fn format_operand(
 
         InsnOperandKind::ADDR_ADRP => write!(f, ":{kind:?}:")?,
 
-        InsnOperandKind::ADDR_PCREL14 => write!(f, "{:#08x}", (bits >> 5) & ((1 << 14) - 1))?,
-        InsnOperandKind::ADDR_PCREL19 => write!(f, "{:#08x}", (bits >> 5) & ((1 << 19) - 1))?,
+        InsnOperandKind::ADDR_PCREL14 => write!(f, "{:#08x}", bit_range(bits, 5, 14))?,
+        InsnOperandKind::ADDR_PCREL19 => write!(f, "{:#08x}", bit_range(bits, 5, 19))?,
         InsnOperandKind::ADDR_PCREL21 => write!(
             f,
             "{:#08x}",
-            (bits >> 5) & ((1 << 19) - 1) | (((bits >> 29) & 0b11) << 19)
+            bit_range(bits, 5, 19) | (bit_range(bits, 29, 2) << 19)
         )?,
-        InsnOperandKind::ADDR_PCREL26 => write!(f, "{:#08x}", bits & ((1 << 26) - 1))?,
+        InsnOperandKind::ADDR_PCREL26 => write!(f, "{:#08x}", bit_range(bits, 0, 26))?,
 
         InsnOperandKind::ADDR_SIMPLE
         | InsnOperandKind::SIMD_ADDR_SIMPLE
@@ -624,8 +644,8 @@ fn format_operand(
 
         InsnOperandKind::ADDR_SIMM7 => write!(f, ":{kind:?}:")?,
         InsnOperandKind::ADDR_SIMM9 | InsnOperandKind::ADDR_SIMM13 => {
-            let post_index = bits & (1 << 11) == 0;
-            let imm9 = (bits >> 12) & ((1 << 9) - 1);
+            let post_index = !bit_set(bits, 11);
+            let imm9 = bit_range(bits, 12, 9);
             let imm64 = (imm9 as i64).wrapping_shl(55).wrapping_shr(55);
             let scale = if kind == InsnOperandKind::ADDR_SIMM13 {
                 LOG2_TAG_GRANULE
@@ -633,7 +653,7 @@ fn format_operand(
                 0
             } as i64;
 
-            let reg_no = (bits >> 5) & 0b11111;
+            let reg_no = bit_range(bits, 5, 5);
             let reg_name = get_int_reg_name(true, reg_no as u8, false);
             if !post_index {
                 write!(f, "[{reg_name}, #{}]!", imm64 << scale)?;
