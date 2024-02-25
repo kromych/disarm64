@@ -61,6 +61,8 @@ fn build_decision_tree_recursive(
 
         // No common bits, will match one instruction at a time.
         if acc_mask == 0 {
+            // Match first against the mask with the most ones.
+            insns.sort_by_key(|insn| insn.mask.count_zeros());
             *decision_tree = Some(Box::new(DecisionTreeNode::Leaf {
                 insns: insns.to_vec(),
                 index: None,
