@@ -19,7 +19,7 @@ decoder can be driven by conditionals statements (the default), the DFS table, o
 BFS table. There are trade-offs between size and speed, one can find what's best for them.
 
 Adding instruction formatting resembling what disassemblers use is in progress, expected
-in version `0.2.0`.
+in version `0.2.0`. The current progress is summarized [here](https://github.com/kromych/disarm64_test_data).
 
 To install the tools:
 
@@ -27,7 +27,7 @@ To install the tools:
 cargo install disarm64
 ```
 
-To just use as a library:
+To use as a library:
 
 ```sh
 cargo add disarm64
