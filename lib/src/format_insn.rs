@@ -164,7 +164,7 @@ fn format_int_operand_reg(
 ) -> core::fmt::Result {
     let flags = definition.flags;
     let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
-        bits & 0x80000000 != 0
+        bit_set(bits, 31)
     } else if operand.kind == InsnOperandKind::Rt {
         let size = bit_range(bits, 30, 2);
         let opc1 = bit_set(bits, 23);
