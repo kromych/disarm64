@@ -548,9 +548,13 @@ fn format_operand(
         | InsnOperandKind::IMM_ROT3
         | InsnOperandKind::SVE_IMM_ROT1
         | InsnOperandKind::SVE_IMM_ROT2
-        | InsnOperandKind::SVE_IMM_ROT3
-        | InsnOperandKind::CSSC_SIMM8
-        | InsnOperandKind::CSSC_UIMM8 => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SVE_IMM_ROT3 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::CSSC_SIMM8 => write!(f, "#{}", bit_range(bits, 10, 8) as i8)?,
+        InsnOperandKind::CSSC_UIMM8 => write!(f, "#{}", bit_range(bits, 10, 8) as u8)?,
+        InsnOperandKind::UIMM4_ADDG => write!(f, "#{}", bit_range(bits, 10, 4))?,
+        // The 10 bit size comes from 6 bit in the instruction and the shift of 4.
+        InsnOperandKind::UIMM10 => write!(f, "#{}", bit_range(bits, 16, 6) << LOG2_TAG_GRANULE)?,
 
         InsnOperandKind::SVE_I1_HALF_ONE
         | InsnOperandKind::SVE_I1_HALF_TWO
@@ -594,9 +598,7 @@ fn format_operand(
         | InsnOperandKind::NZCV
         | InsnOperandKind::EXCEPTION
         | InsnOperandKind::UIMM4
-        | InsnOperandKind::UIMM4_ADDG
-        | InsnOperandKind::UIMM7
-        | InsnOperandKind::UIMM10 => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::UIMM7 => write!(f, ":{kind:?}:")?,
 
         InsnOperandKind::COND | InsnOperandKind::COND1 => write!(f, ":{kind:?}:")?,
 
