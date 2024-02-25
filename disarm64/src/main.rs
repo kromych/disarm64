@@ -96,7 +96,7 @@ fn decode_insn(insn: u32) -> anyhow::Result<()> {
 
         log::info!("{opcode}");
     } else {
-        log::warn!("<unknown>\t// {insn:08x}");
+        log::warn!("{insn:08x}\t.inst\t{insn:#08x} // undefined");
     }
     Ok(())
 }
@@ -127,7 +127,7 @@ fn decode_bin(file: PathBuf, offset: u64, count: u64) -> anyhow::Result<()> {
 
             log::info!("{current_offset:#08x}: {opcode}");
         } else {
-            log::warn!("{current_offset:#08x}: <unknown>\t// {insn:08x}");
+            log::warn!("{current_offset:#08x}: {insn:08x}\t.inst\t{insn:#08x} // undefined");
         }
 
         pos += 4;
@@ -159,7 +159,7 @@ fn decode_elf(file: PathBuf) -> anyhow::Result<()> {
 
                     log::info!("{offset:#08x}: {opcode}");
                 } else {
-                    log::warn!("{offset:#08x}: {insn:08x} <unknown>");
+                    log::warn!("{offset:#08x}: {insn:08x}\t.inst\t{insn:#08x} // undefined");
                 }
 
                 offset += 4;
