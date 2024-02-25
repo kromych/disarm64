@@ -198,7 +198,7 @@ fn format_int_operand_reg(
     }
 }
 
-/// Format a register with extended shioft operand to a string.
+/// Format a register with extended shift operand to a string.
 /// This is a lot of logic and dependencies on the other registers
 /// for 4 instructions and 2 aliases.
 fn format_operand_reg_ext(f: &mut impl Write, bits: u32) -> core::fmt::Result {
@@ -253,8 +253,13 @@ fn format_operand_reg_ext(f: &mut impl Write, bits: u32) -> core::fmt::Result {
                 _ => unreachable!(),
             }
         };
+    let is_64bit = if reg_ext.sf() {
+        reg_ext.option() & 0b11 == 0b11
+    } else {
+        false
+    };
 
-    let reg_name = get_int_reg_name(reg_ext.sf(), reg_ext.regm() as u8, true);
+    let reg_name = get_int_reg_name(is_64bit, reg_ext.regm() as u8, true);
     write!(f, "{reg_name}")?;
     if !extend.is_empty() {
         write!(f, ", {}", extend)?;
