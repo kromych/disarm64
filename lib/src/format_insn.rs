@@ -127,6 +127,17 @@ fn bit_range(bits: u32, start: u32, width: u32) -> u32 {
     (bits >> start) & ((1 << width) - 1)
 }
 
+fn sign_extend(v: u32, n: u8) -> u64 {
+    debug_assert!(n < 32);
+
+    let v = v as u64;
+    let mask = 1u64 << n;
+
+    // Sign-extend by utilizing the fact that shifting into the sign bit replicates the bit.
+    // Also can do arithmetic shift right by 64 - n bits and then shift left by 64 - n bits.
+    (v ^ mask).wrapping_sub(mask)
+}
+
 /// Format a floating-point register to a string
 fn format_fp_reg(
     f: &mut impl Write,
@@ -612,29 +623,30 @@ pub fn format_operand(
         InsnOperandKind::COND | InsnOperandKind::COND1 => write!(f, ":{kind:?}:")?,
 
         InsnOperandKind::ADDR_PCREL14 => {
-            let offset = bit_range(bits, 5, 14) as i32;
-            let offset = offset.wrapping_shl(18).wrapping_shr(18) << 2;
-            write!(f, "{:#x}", pc.wrapping_add(offset as i64 as u64))?
+            let offset = bit_range(bits, 5, 14);
+            let offset = sign_extend(offset, 13) << 2;
+            write!(f, "{:#x}", pc.wrapping_add(offset))?
         }
         InsnOperandKind::ADDR_PCREL19 => {
-            let offset = bit_range(bits, 5, 19) as i32;
-            let offset = offset.wrapping_shl(13).wrapping_shr(13) << 2;
-            write!(f, "{:#x}", pc.wrapping_add(offset as i64 as u64))?
+            let offset = bit_range(bits, 5, 19);
+            let offset = sign_extend(offset, 18) << 2;
+            write!(f, "{:#x}", pc.wrapping_add(offset))?
         }
         InsnOperandKind::ADDR_PCREL21 => {
-            let offset = ((bit_range(bits, 5, 19) << 2) | bit_range(bits, 29, 2)) as i32;
-            let offset = offset.wrapping_shl(11).wrapping_shr(11);
-            write!(f, "{:#x}", pc.wrapping_add(offset as i64 as u64))?
+            let offset = (bit_range(bits, 5, 19) << 2) | bit_range(bits, 29, 2);
+            let offset = sign_extend(offset, 20);
+            write!(f, "{:#x}", pc.wrapping_add(offset))?
         }
         InsnOperandKind::ADDR_ADRP => {
-            let offset = (((bit_range(bits, 5, 19) << 2) | bit_range(bits, 29, 2)) << 12) as i32;
+            let offset = (bit_range(bits, 5, 19) << 2) | bit_range(bits, 29, 2);
+            let offset = sign_extend(offset, 20) << 12;
             let pc = pc & !((1 << 12) - 1);
-            write!(f, "{:#x}", pc.wrapping_add(offset as i64 as u64))?
+            write!(f, "{:#x}", pc.wrapping_add(offset))?
         }
         InsnOperandKind::ADDR_PCREL26 => {
-            let offset = bit_range(bits, 0, 26) as i32;
-            let offset = offset.wrapping_shl(6).wrapping_shr(6) << 2;
-            write!(f, "{:#x}", pc.wrapping_add(offset as i64 as u64))?
+            let offset = bit_range(bits, 0, 26);
+            let offset = sign_extend(offset, 25) << 2;
+            write!(f, "{:#x}", pc.wrapping_add(offset))?
         }
 
         InsnOperandKind::ADDR_SIMPLE
@@ -672,19 +684,19 @@ pub fn format_operand(
         InsnOperandKind::ADDR_SIMM9 | InsnOperandKind::ADDR_SIMM13 => {
             let post_index = !bit_set(bits, 11);
             let imm9 = bit_range(bits, 12, 9);
-            let imm64 = (imm9 as i64).wrapping_shl(55).wrapping_shr(55);
+            let imm32 = sign_extend(imm9, 8) as u32;
             let scale = if kind == InsnOperandKind::ADDR_SIMM13 {
                 LOG2_TAG_GRANULE
             } else {
                 0
-            } as i64;
+            };
 
             let reg_no = bit_range(bits, 5, 5);
             let reg_name = get_int_reg_name(true, reg_no as u8, false);
             if !post_index {
-                write!(f, "[{reg_name}, #{}]!", imm64 << scale)?;
+                write!(f, "[{reg_name}, #{:#x}]!", imm32 << scale)?;
             } else {
-                write!(f, "[{reg_name}], #{}", imm64 << scale)?;
+                write!(f, "[{reg_name}], #{:#x}", imm32 << scale)?;
             }
             *stop = true;
         }
