@@ -2,6 +2,7 @@ use clap::Parser;
 use clap::Subcommand;
 use clap_num::maybe_hex;
 use disarm64::decoder;
+use disarm64::format_insn;
 use disarm64_defn::defn::InsnOpcode;
 use std::io::IsTerminal;
 use std::path::PathBuf;
@@ -116,6 +117,7 @@ fn decode_bin(file: PathBuf, offset: u64, count: u64) -> anyhow::Result<()> {
 
     let mut pos = 0;
     let mut decoded = 0;
+    let mut buffer = String::new();
     while pos + 4 <= data.len() && decoded < count {
         let insn = u32::from_le_bytes([data[pos], data[pos + 1], data[pos + 2], data[pos + 3]]);
 
@@ -125,7 +127,13 @@ fn decode_bin(file: PathBuf, offset: u64, count: u64) -> anyhow::Result<()> {
             log::debug!("Decoded instruction: {:08x?}", opcode);
             log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
 
-            log::info!("{current_offset:#08x}: {opcode}");
+            // For the PC-relative instructions, we need to know the current offset
+            // to calculate the target address. If that is not relevant, you can use the
+            // Display implementation and remove the buffer.
+            buffer.clear();
+            format_insn::format_insn_pc(current_offset, &mut buffer, &opcode)?;
+
+            log::info!("{current_offset:#08x}: {insn:08x}\t{buffer}");
         } else {
             log::warn!("{current_offset:#08x}: {insn:08x}\t.inst\t{insn:#08x} // undefined");
         }
@@ -140,6 +148,7 @@ fn decode_elf(file: PathBuf) -> anyhow::Result<()> {
     log::info!("Decoding ELF file {file:?}");
     let data = std::fs::read(file)?;
     let elf = goblin::elf::Elf::parse(&data)?;
+    let mut buffer = String::new();
     for section in &elf.section_headers {
         if section.sh_type == goblin::elf::section_header::SHT_PROGBITS {
             let data = &data[section.sh_offset as usize..][..section.sh_size as usize];
@@ -157,7 +166,13 @@ fn decode_elf(file: PathBuf) -> anyhow::Result<()> {
                     log::debug!("Decoded instruction: {:08x?}", opcode);
                     log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
 
-                    log::info!("{offset:#08x}: {opcode}");
+                    // For the PC-relative instructions, we need to know the current offset
+                    // to calculate the target address. If that is not relevant, you can use the
+                    // Display implementation and remove the buffer.
+                    buffer.clear();
+                    format_insn::format_insn_pc(offset as u64, &mut buffer, &opcode)?;
+
+                    log::info!("{offset:#08x}: {insn:08x}\t{buffer}");
                 } else {
                     log::warn!("{offset:#08x}: {insn:08x}\t.inst\t{insn:#08x} // undefined");
                 }

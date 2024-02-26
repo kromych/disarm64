@@ -26061,7 +26061,7 @@
     "index": 656
   },
   {
-    "mnemonic": "b.c",
+    "mnemonic": "b.",
     "aliases": [],
     "opcode": "0x54000000",
     "mask": "0xff000010",
@@ -132310,7 +132310,7 @@
     "index": 3192
   },
   {
-    "mnemonic": "bc.c",
+    "mnemonic": "bc.",
     "aliases": [],
     "opcode": "0x54000010",
     "mask": "0xff000010",

@@ -111,6 +111,14 @@ fn _get_sve_reg_name(is_64: bool, reg: u8) -> &'static str {
     SVE_REG[is_64][reg as usize]
 }
 
+fn cond_name(cond: u32) -> &'static str {
+    const COND: [&str; 16] = [
+        "eq", "ne", "cs", "cc", "mi", "pl", "vs", "vc", "hi", "ls", "ge", "lt", "gt", "le", "al",
+        "nv",
+    ];
+    COND[(cond & 0b1111) as usize]
+}
+
 fn bit_set(bits: u32, bit: u32) -> bool {
     bits & (1 << bit) != 0
 }
@@ -335,7 +343,8 @@ fn format_operand_reg_shift(f: &mut impl Write, bits: u32) -> core::fmt::Result 
 }
 
 /// Format an operand to a string
-fn format_operand(
+pub fn format_operand(
+    pc: u64,
     f: &mut impl Write,
     bits: u32,
     operand: &defn::InsnOperand,
@@ -602,16 +611,31 @@ fn format_operand(
 
         InsnOperandKind::COND | InsnOperandKind::COND1 => write!(f, ":{kind:?}:")?,
 
-        InsnOperandKind::ADDR_ADRP => write!(f, ":{kind:?}:")?,
-
-        InsnOperandKind::ADDR_PCREL14 => write!(f, "{:#08x}", bit_range(bits, 5, 14))?,
-        InsnOperandKind::ADDR_PCREL19 => write!(f, "{:#08x}", bit_range(bits, 5, 19))?,
-        InsnOperandKind::ADDR_PCREL21 => write!(
-            f,
-            "{:#08x}",
-            bit_range(bits, 5, 19) | (bit_range(bits, 29, 2) << 19)
-        )?,
-        InsnOperandKind::ADDR_PCREL26 => write!(f, "{:#08x}", bit_range(bits, 0, 26))?,
+        InsnOperandKind::ADDR_PCREL14 => {
+            let offset = bit_range(bits, 5, 14) as i32;
+            let offset = offset.wrapping_shl(18).wrapping_shr(18) << 2;
+            write!(f, "{:#x}", pc.wrapping_add(offset as i64 as u64))?
+        }
+        InsnOperandKind::ADDR_PCREL19 => {
+            let offset = bit_range(bits, 5, 19) as i32;
+            let offset = offset.wrapping_shl(13).wrapping_shr(13) << 2;
+            write!(f, "{:#x}", pc.wrapping_add(offset as i64 as u64))?
+        }
+        InsnOperandKind::ADDR_PCREL21 => {
+            let offset = ((bit_range(bits, 5, 19) << 2) | bit_range(bits, 29, 2)) as i32;
+            let offset = offset.wrapping_shl(11).wrapping_shr(11);
+            write!(f, "{:#x}", pc.wrapping_add(offset as i64 as u64))?
+        }
+        InsnOperandKind::ADDR_ADRP => {
+            let offset = (((bit_range(bits, 5, 19) << 2) | bit_range(bits, 29, 2)) << 12) as i32;
+            let pc = pc & !((1 << 12) - 1);
+            write!(f, "{:#x}", pc.wrapping_add(offset as i64 as u64))?
+        }
+        InsnOperandKind::ADDR_PCREL26 => {
+            let offset = bit_range(bits, 0, 26) as i32;
+            let offset = offset.wrapping_shl(6).wrapping_shr(6) << 2;
+            write!(f, "{:#x}", pc.wrapping_add(offset as i64 as u64))?
+        }
 
         InsnOperandKind::ADDR_SIMPLE
         | InsnOperandKind::SIMD_ADDR_SIMPLE
@@ -740,15 +764,25 @@ fn format_operand(
 
 /// Format an instruction to a string. It does not use the aliases yet
 /// and always emits the primary mnemonic.
-pub fn format_insn(f: &mut impl Write, opcode: &Opcode) -> core::fmt::Result {
+/// The program counter is useful for the PC-relative addressing to
+/// emit the target address in the disassembly rather than the offset.
+pub fn format_insn_pc(pc: u64, f: &mut impl Write, opcode: &Opcode) -> core::fmt::Result {
     let definition = opcode.definition();
     let bits = opcode.bits();
 
-    write!(f, "{bits:08x}\t{}\t", definition.mnemonic)?;
+    write!(f, "{}", definition.mnemonic)?;
+    if definition.flags.contains(InsnFlags::IS_COND) {
+        // Conditional branch or the consistent conditional branch.
+        let cond = bit_range(bits, 0, 4);
+        let cond = cond_name(cond);
+        write!(f, "{} ", cond)?;
+    }
+    write!(f, "\t")?;
+
     let op_count = definition.operands.len();
     for (i, operand) in definition.operands.iter().enumerate() {
         let mut stop = false;
-        format_operand(f, bits, operand, definition, &mut stop)?;
+        format_operand(pc, f, bits, operand, definition, &mut stop)?;
         if !stop && i + 1 < op_count {
             write!(f, ", ")?;
         }
@@ -761,7 +795,10 @@ pub fn format_insn(f: &mut impl Write, opcode: &Opcode) -> core::fmt::Result {
 }
 
 impl Display for Opcode {
+    /// The program counter is not used for the PC-relative addressing here.
+    /// Thus this default formattikng is not able to emit the target address
+    /// in the disassembly so it emits the offset.
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        format_insn(f, self)
+        format_insn_pc(0, f, self)
     }
 }
