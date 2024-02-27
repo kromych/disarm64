@@ -13,4 +13,6 @@
 *.elf
 *.hex
 *.lst
+*.s
+*.S
 decoder*.rs
