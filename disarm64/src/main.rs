@@ -186,20 +186,23 @@ fn decode_elf(data: &[u8]) -> anyhow::Result<()> {
 
     let mut buffer = String::new();
     for section in &elf.section_headers {
-        if section.sh_type == goblin::elf::section_header::SHT_PROGBITS {
-            let section_name = elf
-                .shdr_strtab
-                .get_at(section.sh_name)
-                .unwrap_or("<unknown>");
-            log::info!(
-                "// Decoding section {section_name:?} @ {:#x}",
-                section.sh_addr
-            );
-
-            let data = &data[section.sh_offset as usize..][..section.sh_size as usize];
-            process_bytes(data, section.sh_addr, &mut buffer)?;
+        if section.sh_flags & goblin::elf::section_header::SHF_EXECINSTR as u64 == 0 {
+            continue;
         }
+
+        let section_name = elf
+            .shdr_strtab
+            .get_at(section.sh_name)
+            .unwrap_or("<unknown>");
+        log::info!(
+            "// Decoding section {section_name:?} @ {:#x}",
+            section.sh_addr
+        );
+
+        let data = &data[section.sh_offset as usize..][..section.sh_size as usize];
+        process_bytes(data, section.sh_addr, &mut buffer)?;
     }
+
     Ok(())
 }
 
