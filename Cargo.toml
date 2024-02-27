@@ -37,8 +37,9 @@ bitflags = { version = "2.4", features = ["serde"] }
 clap = { version = "4", features = ["derive"] }
 clap-num = "1"
 env_logger = "0.11"
-goblin = "0.8"
+goblin = { version = "0.8", features = ["elf64", "pe64", "mach64"] }
 log = "0.4"
+memmap2 = "0.9"
 proc-macro2 = { version = "1", default-features = false }
 quote = { version = "1", default-features = false }
 serde = { version = "1.0", features = ["derive"] }

@@ -4,18 +4,22 @@ use clap_num::maybe_hex;
 use disarm64::decoder;
 use disarm64::format_insn;
 use disarm64_defn::defn::InsnOpcode;
+use memmap2::Mmap;
+use std::fs::File;
+use std::io::BufReader;
 use std::io::IsTerminal;
+use std::io::Read;
 use std::path::PathBuf;
 
 #[derive(Subcommand, Debug, Clone, PartialEq, Eq)]
 enum Command {
-    /// Instructions to decode (hex 32-bit).
+    /// Instructions to decode (hex 32-bit), can specify multiple instructions separated by commas.
     Insn {
         /// Instructions delimited by commas.
         #[clap(value_parser = maybe_hex::<u32>, value_delimiter = ',', num_args = 1..)]
         dwords: Vec<u32>,
     },
-    /// Flat binary file with instructions to decode.
+    /// Flat binary file with instructions to decode, can specify offset and count.
     Bin {
         /// Path to the binary file.
         file: PathBuf,
@@ -28,6 +32,10 @@ enum Command {
     },
     /// ELF file with instructions to decode.
     Elf { file: PathBuf },
+    /// Mach-O file with instructions to decode.
+    MachO { file: PathBuf },
+    /// PE file with instructions to decode.
+    Pe { file: PathBuf },
 }
 
 #[derive(Parser, Debug)]
@@ -78,107 +86,176 @@ fn main() -> anyhow::Result<()> {
 
     init_logging(&opt);
 
+    let decode_file =
+        |file: &PathBuf, reader: fn(data: &[u8]) -> anyhow::Result<()>| -> anyhow::Result<()> {
+            let file = File::open(file)?;
+            let mmap = unsafe { Mmap::map(&file)? };
+
+            reader(&mmap)?;
+            Ok(())
+        };
+
     match &opt.command {
         Command::Insn { dwords } => decode_insn_list(dwords.as_slice()),
         Command::Bin {
             file,
             offset,
             count,
-        } => decode_bin(file.to_path_buf(), *offset, count.unwrap_or(!0)),
-        Command::Elf { file } => decode_elf(file.to_path_buf()),
+        } => {
+            log::info!("// Decoding binary file: {file:?}, offset {offset:#x}, count {count:#x?}");
+
+            let file = File::open(file)?;
+            let mmap = unsafe { Mmap::map(&file)? };
+            let data = &mmap[*offset as usize..];
+            let data = if let Some(count) = count {
+                &data[..*count as usize]
+            } else {
+                data
+            };
+            decode_bin(data, *offset)
+        }
+        Command::Elf { file } => {
+            log::info!("// Decoding ELF file: {file:?}");
+            decode_file(file, decode_elf)
+        }
+        Command::MachO { file } => {
+            log::info!("// Decoding Mach-O file: {file:?}");
+            decode_file(file, decode_mach)
+        }
+        Command::Pe { file } => {
+            log::info!("// Decoding PE file: {file:?}");
+            decode_file(file, decode_pe)
+        }
     }
 }
 
-fn decode_insn(insn: u32) -> anyhow::Result<()> {
-    log::debug!("Decoding {insn:#08x}");
-    if let Some(opcode) = decoder::decode(insn) {
+fn print_insn(pc: u64, insn: u32, buffer: &mut String) -> anyhow::Result<()> {
+    let opcode = decoder::decode(insn);
+    if let Some(opcode) = opcode {
         log::debug!("Decoded instruction: {:08x?}", opcode);
         log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
 
-        log::info!("{opcode}");
+        // For the PC-relative instructions, we need to know the current offset
+        // to calculate the target address. If that is not relevant, you can use the
+        // Display implementation and remove the buffer.
+        buffer.clear();
+        format_insn::format_insn_pc(pc, buffer, &opcode)?;
+
+        log::info!("{pc:#08x}: {insn:08x}\t{buffer}");
     } else {
-        log::warn!("{insn:08x}\t.inst\t{insn:#08x} // undefined");
+        log::warn!("{pc:#08x}: {insn:08x}\t.inst\t{insn:#08x} // undefined");
+    }
+
+    Ok(())
+}
+
+fn process_bytes(data: &[u8], offset: u64, buffer: &mut String) -> anyhow::Result<()> {
+    let mut pos = 0;
+    let mut reader = BufReader::new(data);
+    while pos + 4 <= data.len() {
+        let mut insn = [0; 4];
+        reader.read_exact(&mut insn)?;
+        let insn = u32::from_le_bytes(insn);
+        let current_offset = offset + pos as u64;
+
+        print_insn(current_offset, insn, buffer)?;
+        pos += 4;
     }
     Ok(())
 }
 
 fn decode_insn_list(dwords: &[u32]) -> anyhow::Result<()> {
-    log::info!("Decoding instructions: {:08x?}", dwords);
-    for insn in dwords {
-        decode_insn(*insn)?;
-    }
-    Ok(())
-}
-
-fn decode_bin(file: PathBuf, offset: u64, count: u64) -> anyhow::Result<()> {
-    log::info!("Decoding binary file {file:?} at offset {offset:#x}");
-    let data = std::fs::read(file)?;
-    let data = &data[offset as usize..];
-
-    let mut pos = 0;
-    let mut decoded = 0;
     let mut buffer = String::new();
-    while pos + 4 <= data.len() && decoded < count {
-        let insn = u32::from_le_bytes([data[pos], data[pos + 1], data[pos + 2], data[pos + 3]]);
-
-        let opcode = decoder::decode(insn);
-        let current_offset = offset + pos as u64;
-        if let Some(opcode) = opcode {
-            log::debug!("Decoded instruction: {:08x?}", opcode);
-            log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
-
-            // For the PC-relative instructions, we need to know the current offset
-            // to calculate the target address. If that is not relevant, you can use the
-            // Display implementation and remove the buffer.
-            buffer.clear();
-            format_insn::format_insn_pc(current_offset, &mut buffer, &opcode)?;
-
-            log::info!("{current_offset:#08x}: {insn:08x}\t{buffer}");
-        } else {
-            log::warn!("{current_offset:#08x}: {insn:08x}\t.inst\t{insn:#08x} // undefined");
-        }
-
-        pos += 4;
-        decoded += 1;
+    for (i, insn) in dwords.iter().enumerate() {
+        print_insn(i as u64 * 4, *insn, &mut buffer)?;
     }
     Ok(())
 }
 
-fn decode_elf(file: PathBuf) -> anyhow::Result<()> {
-    log::info!("Decoding ELF file {file:?}");
-    let data = std::fs::read(file)?;
-    let elf = goblin::elf::Elf::parse(&data)?;
+fn decode_bin(data: &[u8], offset: u64) -> anyhow::Result<()> {
+    let mut buffer = String::new();
+    process_bytes(data, offset, &mut buffer)
+}
+
+fn decode_elf(data: &[u8]) -> anyhow::Result<()> {
+    let elf = goblin::elf::Elf::parse(data)?;
+    if elf.header.e_machine != goblin::elf::header::EM_AARCH64 {
+        log::error!("Not an ARM64 ELF file");
+        return Err(anyhow::anyhow!("Not an ARM64 ELF file"));
+    }
+
     let mut buffer = String::new();
     for section in &elf.section_headers {
         if section.sh_type == goblin::elf::section_header::SHT_PROGBITS {
+            log::info!(
+                "// Decoding section {:?}@{:#x}",
+                section.sh_name,
+                section.sh_addr
+            );
+
             let data = &data[section.sh_offset as usize..][..section.sh_size as usize];
-            let mut offset = 0;
-            while offset + 4 <= data.len() {
-                let insn = u32::from_le_bytes([
-                    data[offset],
-                    data[offset + 1],
-                    data[offset + 2],
-                    data[offset + 3],
-                ]);
+            process_bytes(data, section.sh_addr, &mut buffer)?;
+        }
+    }
+    Ok(())
+}
 
-                let opcode = decoder::decode(insn);
-                if let Some(opcode) = opcode {
-                    log::debug!("Decoded instruction: {:08x?}", opcode);
-                    log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
-
-                    // For the PC-relative instructions, we need to know the current offset
-                    // to calculate the target address. If that is not relevant, you can use the
-                    // Display implementation and remove the buffer.
-                    buffer.clear();
-                    format_insn::format_insn_pc(offset as u64, &mut buffer, &opcode)?;
-
-                    log::info!("{offset:#08x}: {insn:08x}\t{buffer}");
-                } else {
-                    log::warn!("{offset:#08x}: {insn:08x}\t.inst\t{insn:#08x} // undefined");
-                }
-
-                offset += 4;
+fn decode_mach(data: &[u8]) -> anyhow::Result<()> {
+    let mach = goblin::mach::Mach::parse(data)?;
+    let mach = match mach {
+        goblin::mach::Mach::Binary(macho) => {
+            if macho.header.cputype != goblin::mach::cputype::CPU_TYPE_ARM64 {
+                log::error!("Not an ARM64 Mach-O file");
+                return Err(anyhow::anyhow!("Not an ARM64 Mach-O file"));
             }
+            macho
+        }
+        goblin::mach::Mach::Fat(_) => {
+            log::error!("Fat Mach-O files are not supported");
+            return Err(anyhow::anyhow!("Fat Mach-O files are not supported"));
+        }
+    };
+
+    let mut buffer = String::new();
+    for segment in &mach.segments {
+        if let Ok(sections) = segment.sections() {
+            for (section, data) in sections {
+                if section.flags & 0x80000000 != 0 {
+                    log::info!(
+                        "// Decoding section {:?}@{:#x}",
+                        section.name().unwrap_or("<unknwon>"),
+                        section.addr
+                    );
+
+                    process_bytes(data, section.addr, &mut buffer)?;
+                }
+            }
+        } else {
+            log::warn!("Failed to read sections for segment {:?}", segment.name());
+        }
+    }
+    Ok(())
+}
+
+fn decode_pe(data: &[u8]) -> anyhow::Result<()> {
+    let pe = goblin::pe::PE::parse(data)?;
+    if pe.header.coff_header.machine != goblin::pe::header::COFF_MACHINE_ARM64 {
+        log::error!("Not an ARM64 PE file");
+        return Err(anyhow::anyhow!("Not an ARM64 PE file"));
+    }
+
+    let mut buffer = String::new();
+    for section in &pe.sections {
+        if section.characteristics & 0x20000000 != 0 {
+            log::info!(
+                "// Decoding section {:?}@{:#x}",
+                section.name,
+                section.virtual_address
+            );
+
+            let data =
+                &data[section.pointer_to_raw_data as usize..][..section.size_of_raw_data as usize];
+            process_bytes(data, section.virtual_address as u64, &mut buffer)?;
         }
     }
     Ok(())

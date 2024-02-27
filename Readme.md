@@ -50,7 +50,8 @@ println!("Definition: {:?}", insn.definition());
 
 ### The decoder
 
-The decoder can decode instructions from the command line, a flat binary file or an ELF file:
+The decoder can decode ARM64 instructions from the command line, a flat binary file,
+an ELF file, a PE file, or a Mach-O file:
 
 ```sh
 disarm64 --help
@@ -60,10 +61,12 @@ disarm64 --help
 Usage: disarm64 [OPTIONS] <COMMAND>
 
 Commands:
-  insn  Instructions to decode (hex 32-bit)
-  bin   Flat binary file with instructions to decode
-  elf   ELF file with instructions to decode
-  help  Print this message or the help of the given subcommand(s)
+  insn    Instructions to decode (hex 32-bit), can specify multiple instructions separated by commas
+  bin     Flat binary file with instructions to decode, can specify offset and count
+  elf     ELF file with instructions to decode
+  mach-o  Mach-O file with instructions to decode
+  pe      PE file with instructions to decode
+  help    Print this message or the help of the given subcommand(s)
 
 Options:
   -v...       Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity
