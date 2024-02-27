@@ -187,9 +187,12 @@ fn decode_elf(data: &[u8]) -> anyhow::Result<()> {
     let mut buffer = String::new();
     for section in &elf.section_headers {
         if section.sh_type == goblin::elf::section_header::SHT_PROGBITS {
+            let section_name = elf
+                .shdr_strtab
+                .get_at(section.sh_name)
+                .unwrap_or("<unknown>");
             log::info!(
-                "// Decoding section {:?}@{:#x}",
-                section.sh_name,
+                "// Decoding section {section_name:?} @ {:#x}",
                 section.sh_addr
             );
 
@@ -222,7 +225,7 @@ fn decode_mach(data: &[u8]) -> anyhow::Result<()> {
             for (section, data) in sections {
                 if section.flags & 0x80000000 != 0 {
                     log::info!(
-                        "// Decoding section {:?}@{:#x}",
+                        "// Decoding section {:?} @ {:#x}",
                         section.name().unwrap_or("<unknwon>"),
                         section.addr
                     );
@@ -248,7 +251,7 @@ fn decode_pe(data: &[u8]) -> anyhow::Result<()> {
     for section in &pe.sections {
         if section.characteristics & 0x20000000 != 0 {
             log::info!(
-                "// Decoding section {:?}@{:#x}",
+                "// Decoding section {:?} @ {:#x}",
                 section.name,
                 section.virtual_address
             );
