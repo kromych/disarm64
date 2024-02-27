@@ -147,9 +147,14 @@ fn format_fp_reg(
 ) -> core::fmt::Result {
     let kind = operand.kind;
 
-    match definition.class {
+    let reg_no = if let Some(bit_filed) = operand.bit_fields.first() {
+        bit_range(bits, bit_filed.lsb.into(), bit_filed.width.into())
+    } else {
+        return write!(f, ":{kind:?}:");
+    };
+
+    let fp_reg_name = match definition.class {
         InsnClass::LDST_IMM9 => {
-            let reg_no = bit_range(bits, 0, 5);
             let size = bit_range(bits, 30, 2);
             let opc = bit_range(bits, 22, 2);
             if opc == 0 || opc == 1 {
@@ -160,17 +165,29 @@ fn format_fp_reg(
                     0b11 => FpRegSize::D64,
                     _ => unreachable!(),
                 };
-                let fp_reg_name = get_fp_reg_name(fp_size, reg_no as usize);
-                write!(f, "{fp_reg_name}")
+                get_fp_reg_name(fp_size, reg_no as usize)
             } else if (opc == 0b10 || opc == 0b11) && size == 0 {
-                let fp_reg_name = get_fp_reg_name(FpRegSize::Q128, reg_no as usize);
-                write!(f, "{fp_reg_name}")
+                get_fp_reg_name(FpRegSize::Q128, reg_no as usize)
             } else {
-                write!(f, "<undefined>")
+                return write!(f, "<undefined>");
             }
         }
-        _ => write!(f, ":{kind:?}:"),
-    }
+        InsnClass::LDSTPAIR_OFF => {
+            let opc = bit_range(bits, 30, 2);
+            if opc == 0 {
+                get_fp_reg_name(FpRegSize::S32, reg_no as usize)
+            } else if opc == 1 {
+                get_fp_reg_name(FpRegSize::D64, reg_no as usize)
+            } else if opc == 2 {
+                get_fp_reg_name(FpRegSize::Q128, reg_no as usize)
+            } else {
+                return write!(f, "<undefined>");
+            }
+        }
+        _ => return write!(f, ":{kind:?}:"),
+    };
+
+    write!(f, "{fp_reg_name}")
 }
 
 /// Format an integer register (32-bit or 64-bit) to a string
@@ -400,14 +417,15 @@ pub fn format_operand(
         | InsnOperandKind::Fm
         | InsnOperandKind::Fa
         | InsnOperandKind::Ft
-        | InsnOperandKind::Ft2
-        | InsnOperandKind::Sd
+        | InsnOperandKind::Ft2 => format_fp_reg(f, bits, operand, definition)?,
+
+        InsnOperandKind::Sd
         | InsnOperandKind::Sn
         | InsnOperandKind::Sm
         | InsnOperandKind::SVE_VZn
         | InsnOperandKind::SVE_Vd
         | InsnOperandKind::SVE_Vm
-        | InsnOperandKind::SVE_Vn => format_fp_reg(f, bits, operand, definition)?,
+        | InsnOperandKind::SVE_Vn => write!(f, ":{kind:?}:")?,
 
         InsnOperandKind::Va | InsnOperandKind::Vd | InsnOperandKind::Vn | InsnOperandKind::Vm => {
             write!(f, ":{kind:?}:")?
@@ -680,7 +698,34 @@ pub fn format_operand(
         | InsnOperandKind::SVE_ADDR_RZ_XTW3_14
         | InsnOperandKind::SVE_ADDR_RZ_XTW3_22 => write!(f, ":{kind:?}:")?,
 
-        InsnOperandKind::ADDR_SIMM7 => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::ADDR_SIMM7 => {
+            let opc = bit_range(bits, 30, 2);
+            if opc == 0b11 {
+                return write!(f, "<undefined>");
+            }
+
+            let fp = bit_set(bits, 26);
+            let scale = if fp { 2 + opc } else { 2 + (opc >> 1) };
+
+            let imm7 = bit_range(bits, 15, 7);
+            let imm32 = (sign_extend(imm7, 6) << scale) as u32;
+
+            let reg_no = bit_range(bits, 5, 5);
+            let reg_name = get_int_reg_name(true, reg_no as u8, false);
+
+            if bit_set(bits, 23) {
+                if bit_set(bits, 24) {
+                    write!(f, "[{reg_name}, #{:#x}]!", imm32)?;
+                } else {
+                    write!(f, "[{reg_name}, #{:#x}]", imm32)?;
+                }
+            } else if imm32 == 0 {
+                write!(f, "[{reg_name}]")?;
+            } else {
+                write!(f, "[{reg_name}, #{:#x}]", imm32)?;
+            }
+        }
+
         InsnOperandKind::ADDR_SIMM9 | InsnOperandKind::ADDR_SIMM13 => {
             let post_index = !bit_set(bits, 11);
             let imm9 = bit_range(bits, 12, 9);
