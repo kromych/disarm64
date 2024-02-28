@@ -255,7 +255,9 @@ fn decode_pe(data: &[u8]) -> anyhow::Result<()> {
         if section.characteristics & 0x20000000 != 0 {
             log::info!(
                 "// Decoding section {:?} @ {:#x}",
-                section.name,
+                std::ffi::CStr::from_bytes_until_nul(&section.name).unwrap_or(
+                    std::ffi::CStr::from_bytes_until_nul(b"<unknown>\0").expect("a valid C string")
+                ),
                 section.virtual_address
             );
 
