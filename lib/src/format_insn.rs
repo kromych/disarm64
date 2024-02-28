@@ -2,7 +2,6 @@ use crate::decoder::Opcode;
 use bitfield_struct::bitfield;
 use defn::InsnOpcode;
 use disarm64_defn::defn;
-use disarm64_defn::InsnBitField;
 use disarm64_defn::InsnClass;
 use disarm64_defn::InsnFlags;
 use disarm64_defn::InsnOperandKind;
@@ -201,7 +200,9 @@ fn format_int_operand_reg(
     let flags = definition.flags;
     let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
         bit_set(bits, 31)
-    } else if operand.kind == InsnOperandKind::Rt {
+    } else if operand.qualifiers == [InsnOperandQualifier::X] || operand.qualifiers.is_empty() {
+        true
+    } else if definition.class == InsnClass::LDST_IMM9 {
         let size = bit_range(bits, 30, 2);
         let opc1 = bit_set(bits, 23);
         let opc0 = bit_set(bits, 22);
@@ -220,22 +221,10 @@ fn format_int_operand_reg(
             !opc0
         }
     } else {
-        operand.qualifiers != [InsnOperandQualifier::W]
-            && operand.qualifiers != [InsnOperandQualifier::WSP]
+        false
     };
-    if let Some(bit_field_spec) = operand.bit_fields.iter().find(|bf| {
-        bf.bitfield == InsnBitField::Rd
-            || bf.bitfield == InsnBitField::Rn
-            || bf.bitfield == InsnBitField::Rm
-            || bf.bitfield == InsnBitField::Rt
-            || bf.bitfield == InsnBitField::Rt2
-            || bf.bitfield == InsnBitField::Rs
-            || bf.bitfield == InsnBitField::Ra
-            || bf.bitfield == InsnBitField::SVE_Rm
-            || bf.bitfield == InsnBitField::SVE_Rn
-            || bf.bitfield == InsnBitField::LSE128_Rt
-            || bf.bitfield == InsnBitField::LSE128_Rt2
-    }) {
+
+    if let Some(bit_field_spec) = operand.bit_fields.first() {
         let reg_no = bit_range(bits, bit_field_spec.lsb.into(), bit_field_spec.width.into());
         let reg_name = get_int_reg_name(is_64, reg_no as u8, with_zr);
 
