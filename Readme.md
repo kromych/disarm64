@@ -290,6 +290,7 @@ Here are other projects touching on the topic of decoding the machine instructio
 - [Unicorn](https://github.com/unicorn-engine/unicorn)
 - [Binutils & libopcode](https://www.gnu.org/software/binutils/)
 - [Radare2](https://github.com/radareorg/radare2)
+- [Rizin](https://rizin.re/)
 - [Binary Ninja ARM64 plugin](https://github.com/Vector35/arch-arm64)
 
 Those mentioned have broader scope, some offer bindings in various languages.
