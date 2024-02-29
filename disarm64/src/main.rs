@@ -179,7 +179,13 @@ fn decode_bin(data: &[u8], offset: u64) -> anyhow::Result<()> {
 
 fn decode_elf(data: &[u8]) -> anyhow::Result<()> {
     let elf = goblin::elf::Elf::parse(data)?;
-    if elf.header.e_machine != goblin::elf::header::EM_AARCH64 {
+    if elf.header.e_machine != goblin::elf::header::EM_AARCH64
+        || !elf
+            .header
+            .endianness()
+            .expect("endiannes is known")
+            .is_little()
+    {
         log::error!("Not an ARM64 ELF file");
         return Err(anyhow::anyhow!("Not an ARM64 ELF file"));
     }
@@ -210,9 +216,10 @@ fn decode_mach(data: &[u8]) -> anyhow::Result<()> {
     let mach = goblin::mach::Mach::parse(data)?;
     let mach = match mach {
         goblin::mach::Mach::Binary(macho) => {
-            if macho.header.cputype != goblin::mach::cputype::CPU_TYPE_ARM64 {
-                log::error!("Not an ARM64 Mach-O file");
-                return Err(anyhow::anyhow!("Not an ARM64 Mach-O file"));
+            if macho.header.cputype != goblin::mach::cputype::CPU_TYPE_ARM64 || !macho.little_endian
+            {
+                log::error!("Not an ARM64 little-endian Mach-O file");
+                return Err(anyhow::anyhow!("Not an ARM64 Mach-O little-endian file"));
             }
             macho
         }
