@@ -253,17 +253,17 @@ fn decode_pe(data: &[u8]) -> anyhow::Result<()> {
     let mut buffer = String::new();
     for section in &pe.sections {
         if section.characteristics & 0x20000000 != 0 {
+            let vbase = pe.image_base + section.virtual_address as usize;
             log::info!(
-                "// Decoding section {:?} @ {:#x}",
+                "// Decoding section {:?} @ {vbase:#x}",
                 std::ffi::CStr::from_bytes_until_nul(&section.name).unwrap_or(
                     std::ffi::CStr::from_bytes_until_nul(b"<unknown>\0").expect("a valid C string")
                 ),
-                section.virtual_address
             );
 
             let data =
                 &data[section.pointer_to_raw_data as usize..][..section.size_of_raw_data as usize];
-            process_bytes(data, section.virtual_address as u64, &mut buffer)?;
+            process_bytes(data, vbase as u64, &mut buffer)?;
         }
     }
     Ok(())
