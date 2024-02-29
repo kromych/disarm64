@@ -153,7 +153,7 @@ fn format_fp_reg(
     };
 
     let fp_reg_name = match definition.class {
-        InsnClass::LDST_IMM9 => {
+        InsnClass::LDST_IMM9 | InsnClass::LDST_POS => {
             let size = bit_range(bits, 30, 2);
             let opc = bit_range(bits, 22, 2);
             if opc == 0 || opc == 1 {
@@ -200,9 +200,7 @@ fn format_int_operand_reg(
     let flags = definition.flags;
     let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
         bit_set(bits, 31)
-    } else if operand.qualifiers == [InsnOperandQualifier::X] || operand.qualifiers.is_empty() {
-        true
-    } else if definition.class == InsnClass::LDST_IMM9 {
+    } else if definition.class == InsnClass::LDST_IMM9 || definition.class == InsnClass::LDST_POS {
         let size = bit_range(bits, 30, 2);
         let opc1 = bit_set(bits, 23);
         let opc0 = bit_set(bits, 22);
@@ -221,7 +219,7 @@ fn format_int_operand_reg(
             !opc0
         }
     } else {
-        false
+        operand.qualifiers == [InsnOperandQualifier::X] || operand.qualifiers.is_empty()
     };
 
     if let Some(bit_field_spec) = operand.bit_fields.first() {
@@ -734,6 +732,24 @@ pub fn format_operand(
             }
             *stop = true;
         }
+        InsnOperandKind::ADDR_UIMM12 => {
+            let fp = bit_set(bits, 26);
+            let size = bit_range(bits, 30, 2);
+            let scale = if fp {
+                (bit_range(bits, 23, 1) << 2) | size
+            } else {
+                size
+            };
+            let uimm12 = bit_range(bits, 10, 12) << scale;
+            let reg_no = bit_range(bits, 5, 5);
+            let reg_name = get_int_reg_name(true, reg_no as u8, false);
+            write!(f, "[{reg_name}")?;
+            if uimm12 != 0 {
+                write!(f, ", #{uimm12:#x}")?;
+            }
+            write!(f, "]")?;
+        }
+
         InsnOperandKind::ADDR_SIMM10
         | InsnOperandKind::ADDR_SIMM11
         | InsnOperandKind::RCPC3_ADDR_OFFSET
@@ -764,8 +780,6 @@ pub fn format_operand(
         InsnOperandKind::SVE_ADDR_ZZ_LSL
         | InsnOperandKind::SVE_ADDR_ZZ_SXTW
         | InsnOperandKind::SVE_ADDR_ZZ_UXTW => write!(f, ":{kind:?}:")?,
-
-        InsnOperandKind::ADDR_UIMM12 => write!(f, ":{kind:?}:")?,
 
         InsnOperandKind::SYSREG | InsnOperandKind::SYSREG128 => write!(f, ":{kind:?}:")?,
 
