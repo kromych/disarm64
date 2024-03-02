@@ -657,9 +657,12 @@ pub fn format_operand(
             write!(f, "{:#x}", pc.wrapping_add(offset))?
         }
 
-        InsnOperandKind::ADDR_SIMPLE
-        | InsnOperandKind::SIMD_ADDR_SIMPLE
-        | InsnOperandKind::SIMD_ADDR_POST => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::ADDR_SIMPLE | InsnOperandKind::SIMD_ADDR_SIMPLE => {
+            let reg_no = bit_range(bits, 5, 5);
+            let reg_name = get_int_reg_name(true, reg_no as u8, false);
+            write!(f, "[{reg_name}]")?
+        }
+        InsnOperandKind::SIMD_ADDR_POST => write!(f, ":{kind:?}:")?,
 
         InsnOperandKind::ADDR_REGOFF => {
             let option = bit_range(bits, 13, 3);
@@ -860,11 +863,29 @@ pub fn format_operand(
                 let target = target.unwrap_or("<undefined>");
                 write!(f, "{typ}{target}{policy}")?
             } else {
-                write!(f, "{:#x}", bit_range(bits, 0, 5))?
+                write!(f, "#{:#x}", bit_range(bits, 0, 5))?
             }
         }
 
-        InsnOperandKind::RPRFMOP => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::RPRFMOP => {
+            let b12 = bit_range(bits, 12, 1) << 3;
+            let b13 = bit_range(bits, 13, 1) << 4;
+            let b15 = bit_range(bits, 15, 1) << 5;
+            let rprfmop = bit_range(bits, 0, 3) | b12 | b13 | b15;
+            let op = match rprfmop {
+                0b00 => Some("pldkeep"),
+                0b01 => Some("pstkeep"),
+                0b100 => Some("pldstrm"),
+                0b101 => Some("pststrm"),
+                _ => None,
+            };
+
+            if let Some(op) = op {
+                write!(f, "{op}")?
+            } else {
+                write!(f, "#{rprfmop:#x}")?
+            }
+        }
 
         InsnOperandKind::BARRIER_PSB => write!(f, ":{kind:?}:")?,
 
