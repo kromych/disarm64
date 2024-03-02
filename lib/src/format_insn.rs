@@ -171,7 +171,7 @@ fn format_fp_reg(
                 return write!(f, "<undefined>");
             }
         }
-        InsnClass::LDSTPAIR_OFF => {
+        InsnClass::LDSTPAIR_OFF | InsnClass::LDSTNAPAIR_OFFS => {
             let opc = bit_range(bits, 30, 2);
             if opc == 0 {
                 get_fp_reg_name(FpRegSize::S32, reg_no as usize)
@@ -183,6 +183,7 @@ fn format_fp_reg(
                 return write!(f, "<undefined>");
             }
         }
+
         _ => return write!(f, ":{kind:?}:"),
     };
 
