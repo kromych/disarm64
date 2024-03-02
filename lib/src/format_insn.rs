@@ -153,7 +153,7 @@ fn format_fp_reg(
     };
 
     let fp_reg_name = match definition.class {
-        InsnClass::LDST_IMM9 | InsnClass::LDST_POS => {
+        InsnClass::LDST_IMM9 | InsnClass::LDST_POS | InsnClass::LDST_REGOFF => {
             let size = bit_range(bits, 30, 2);
             let opc = bit_range(bits, 22, 2);
             if opc == 0 || opc == 1 {
@@ -200,7 +200,10 @@ fn format_int_operand_reg(
     let flags = definition.flags;
     let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
         bit_set(bits, 31)
-    } else if definition.class == InsnClass::LDST_IMM9 || definition.class == InsnClass::LDST_POS {
+    } else if definition.class == InsnClass::LDST_IMM9
+        || definition.class == InsnClass::LDST_POS
+        || definition.class == InsnClass::LDST_REGOFF
+    {
         let size = bit_range(bits, 30, 2);
         let opc1 = bit_set(bits, 23);
         let opc0 = bit_set(bits, 22);
@@ -658,8 +661,49 @@ pub fn format_operand(
         | InsnOperandKind::SIMD_ADDR_SIMPLE
         | InsnOperandKind::SIMD_ADDR_POST => write!(f, ":{kind:?}:")?,
 
-        InsnOperandKind::ADDR_REGOFF
-        | InsnOperandKind::SVE_ADDR_R
+        InsnOperandKind::ADDR_REGOFF => {
+            let option = bit_range(bits, 13, 3);
+            let size = bit_range(bits, 30, 2);
+            let shift = bit_set(bits, 12);
+
+            let is_64bit = option == 0b011 || option == 0b111;
+
+            let fp = bit_set(bits, 26);
+            let scale = if fp {
+                (bit_range(bits, 23, 1) << 2) | size
+            } else {
+                size
+            };
+
+            let rn_reg_no = bit_range(bits, 5, 5);
+            let rn_reg_name = get_int_reg_name(true, rn_reg_no as u8, false);
+            let rm_reg_no = bit_range(bits, 16, 5);
+            let rm_reg_name = get_int_reg_name(is_64bit, rm_reg_no as u8, true);
+
+            let extend = match option {
+                0b010 => "uxtw",
+                0b011 => "lsl",
+                0b110 => "sxtw",
+                0b111 => "sxtx",
+                _ => "<undefined>",
+            };
+            write!(f, "[{rn_reg_name}, {rm_reg_name}")?;
+            if option == 0b011 {
+                if shift {
+                    write!(f, ", lsl #{scale}")?;
+                }
+            } else if option != 0b011 {
+                write!(f, ", {extend}")?;
+                if shift {
+                    write!(f, " #{scale}")?;
+                }
+            }
+            write!(f, "]")?;
+
+            *stop = true;
+        }
+
+        InsnOperandKind::SVE_ADDR_R
         | InsnOperandKind::SVE_ADDR_RR
         | InsnOperandKind::SVE_ADDR_RR_LSL1
         | InsnOperandKind::SVE_ADDR_RR_LSL2
