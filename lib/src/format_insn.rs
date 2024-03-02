@@ -840,13 +840,35 @@ pub fn format_operand(
 
         InsnOperandKind::BARRIER_ISB => write!(f, ":{kind:?}:")?,
 
-        InsnOperandKind::PRFOP => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::PRFOP => {
+            let typ = match bit_range(bits, 3, 2) {
+                0b00 => Some("pld"),
+                0b01 => Some("pli"),
+                0b10 => Some("pst"),
+                _ => None,
+            };
+            let target = match bit_range(bits, 1, 2) {
+                0b00 => Some("l1"),
+                0b01 => Some("l2"),
+                0b10 => Some("l3"),
+                _ => None,
+            };
+
+            if typ.is_some() && target.is_some() {
+                let policy = if !bit_set(bits, 0) { "keep" } else { "strm" };
+                let typ = typ.unwrap_or("<undefined>");
+                let target = target.unwrap_or("<undefined>");
+                write!(f, "{typ}{target}{policy}")?
+            } else {
+                write!(f, "{:#x}", bit_range(bits, 0, 5))?
+            }
+        }
 
         InsnOperandKind::RPRFMOP => write!(f, ":{kind:?}:")?,
 
         InsnOperandKind::BARRIER_PSB => write!(f, ":{kind:?}:")?,
 
-        InsnOperandKind::X16 => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::X16 => write!(f, "x16")?,
 
         InsnOperandKind::SME_ZT0 => write!(f, ":{kind:?}:")?,
 
