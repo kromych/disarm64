@@ -763,21 +763,21 @@ pub fn format_operand(
             let scale = if fp { 2 + opc } else { 2 + (opc >> 1) };
 
             let imm7 = bit_range(bits, 15, 7);
-            let imm32 = (sign_extend(imm7, 6) << scale) as u32;
+            let imm = (sign_extend(imm7, 6) << scale) as i64;
 
             let reg_no = bit_range(bits, 5, 5);
             let reg_name = get_int_reg_name(true, reg_no as u8, false);
 
             if bit_set(bits, 23) {
                 if bit_set(bits, 24) {
-                    write!(f, "[{reg_name}, #{:#x}]!", imm32)?;
+                    write!(f, "[{reg_name}, #{imm}]!")?;
                 } else {
-                    write!(f, "[{reg_name}, #{:#x}]", imm32)?;
+                    write!(f, "[{reg_name}], #{imm}")?;
                 }
-            } else if imm32 == 0 {
+            } else if imm == 0 {
                 write!(f, "[{reg_name}]")?;
             } else {
-                write!(f, "[{reg_name}, #{:#x}]", imm32)?;
+                write!(f, "[{reg_name}, #{imm}]")?;
             }
         }
 
