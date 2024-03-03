@@ -153,7 +153,10 @@ fn format_fp_reg(
     };
 
     let fp_reg_name = match definition.class {
-        InsnClass::LDST_IMM9 | InsnClass::LDST_POS | InsnClass::LDST_REGOFF => {
+        InsnClass::LDST_IMM9
+        | InsnClass::LDST_POS
+        | InsnClass::LDST_REGOFF
+        | InsnClass::LDST_UNSCALED => {
             let size = bit_range(bits, 30, 2);
             let opc = bit_range(bits, 22, 2);
             if opc == 0 || opc == 1 {
@@ -209,6 +212,7 @@ fn format_int_operand_reg(
         || definition.class == InsnClass::LDST_POS
         || definition.class == InsnClass::LDST_REGOFF
         || definition.class == InsnClass::LDST_UNPRIV
+        || definition.class == InsnClass::LDST_UNSCALED
     {
         let size = bit_range(bits, 30, 2);
         let opc1 = bit_set(bits, 23);
@@ -770,7 +774,9 @@ pub fn format_operand(
             }
         }
 
-        InsnOperandKind::ADDR_SIMM9 | InsnOperandKind::ADDR_SIMM13 => {
+        InsnOperandKind::ADDR_SIMM9
+        | InsnOperandKind::ADDR_SIMM13
+        | InsnOperandKind::ADDR_OFFSET => {
             let imm9 = bit_range(bits, 12, 9);
             let scale = if kind == InsnOperandKind::ADDR_SIMM13 {
                 LOG2_TAG_GRANULE
@@ -782,8 +788,9 @@ pub fn format_operand(
             let reg_no = bit_range(bits, 5, 5);
             let reg_name = get_int_reg_name(true, reg_no as u8, false);
 
-            let ldst_unpriv = definition.class == InsnClass::LDST_UNPRIV;
-            if ldst_unpriv {
+            let ldst_offset_only = definition.class == InsnClass::LDST_UNPRIV
+                || definition.class == InsnClass::LDST_UNSCALED;
+            if ldst_offset_only {
                 write!(f, "[{reg_name}")?;
                 if imm != 0 {
                     write!(f, ", #{imm}")?;
@@ -843,7 +850,6 @@ pub fn format_operand(
 
         InsnOperandKind::ADDR_SIMM11
         | InsnOperandKind::RCPC3_ADDR_OFFSET
-        | InsnOperandKind::ADDR_OFFSET
         | InsnOperandKind::RCPC3_ADDR_OPT_POSTIND
         | InsnOperandKind::RCPC3_ADDR_OPT_PREIND_WB
         | InsnOperandKind::RCPC3_ADDR_POSTIND
