@@ -174,7 +174,10 @@ fn format_fp_reg(
                 return write!(f, "<undefined>");
             }
         }
-        InsnClass::LDSTPAIR_OFF | InsnClass::LDSTNAPAIR_OFFS | InsnClass::LOADLIT => {
+        InsnClass::LDSTPAIR_OFF
+        | InsnClass::LDSTNAPAIR_OFFS
+        | InsnClass::LDSTPAIR_INDEXED
+        | InsnClass::LOADLIT => {
             let opc = bit_range(bits, 30, 2);
             if opc == 0 {
                 get_fp_reg_name(FpRegSize::S32, reg_no as usize)
