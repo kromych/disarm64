@@ -201,6 +201,8 @@ fn format_int_operand_reg(
     let flags = definition.flags;
     let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
         bit_set(bits, 31)
+    } else if operand.qualifiers.is_empty() || operand.qualifiers == [InsnOperandQualifier::X] {
+        true
     } else if definition.class == InsnClass::LDST_IMM9
         || definition.class == InsnClass::LDST_POS
         || definition.class == InsnClass::LDST_REGOFF
@@ -214,16 +216,13 @@ fn format_int_operand_reg(
             size == 0b11
         } else {
             // Sign-extending load
-            if size == 0b11 {
-                return write!(f, "<undefined>");
-            }
             if size == 0b10 && opc0 {
                 return write!(f, "<undefined>");
             }
             !opc0
         }
     } else {
-        operand.qualifiers == [InsnOperandQualifier::X] || operand.qualifiers.is_empty()
+        false
     };
 
     if let Some(bit_field_spec) = operand.bit_fields.first() {
