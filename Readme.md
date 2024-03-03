@@ -173,27 +173,21 @@ disarm64 -v insn 0x1a000001,0xa,0xa,0xa,0xa
 ```
 
 ```log
-[INFO ] Decoding instructions: [1a000001, 0000000a, 0000000a, 0000000a, 0000000a]
-[DEBUG] Decoding 0x1a000001
 [DEBUG] Decoded instruction: ADDSUB_CARRY(ADC_Rd_Rn_Rm(ADC_Rd_Rn_Rm { rd: 00000001, rn: 00000000, rm: 00000000 }))
 [DEBUG] 0x1a000001: Insn { mnemonic: "adc", aliases: [], opcode: 1a000000, mask: 7fe0fc00, class: ADDSUB_CARRY, feature_set: V8, operands: [InsnOperand { kind: Rd, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rd, lsb: 00000000, width: 00000005 }] }, InsnOperand { kind: Rn, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rn, lsb: 00000005, width: 00000005 }] }, InsnOperand { kind: Rm, class: INT_REG, qualifiers: [W, X], bit_fields: [BitfieldSpec { bitfield: Rm, lsb: 00000010, width: 00000005 }] }], flags: InsnFlags(HAS_SF_FIELD) }
-[INFO ] 1a000001        adc     w1, w0, w0
-[DEBUG] Decoding 0x00000a
+[INFO ] 0x000000: 1a000001      adc     w1, w0, w0
 [DEBUG] Decoded instruction: EXCEPTION(UDF_UNDEFINED(UDF_UNDEFINED { imm16_0: 0000000a }))
 [DEBUG] 0x00000a: Insn { mnemonic: "udf", aliases: [], opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }], flags: InsnFlags(0x0) }
-[INFO ] 0000000a        udf     :UNDEFINED:
-[DEBUG] Decoding 0x00000a
+[INFO ] 0x000004: 0000000a      udf     #0xa
 [DEBUG] Decoded instruction: EXCEPTION(UDF_UNDEFINED(UDF_UNDEFINED { imm16_0: 0000000a }))
 [DEBUG] 0x00000a: Insn { mnemonic: "udf", aliases: [], opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }], flags: InsnFlags(0x0) }
-[INFO ] 0000000a        udf     :UNDEFINED:
-[DEBUG] Decoding 0x00000a
+[INFO ] 0x000008: 0000000a      udf     #0xa
 [DEBUG] Decoded instruction: EXCEPTION(UDF_UNDEFINED(UDF_UNDEFINED { imm16_0: 0000000a }))
 [DEBUG] 0x00000a: Insn { mnemonic: "udf", aliases: [], opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }], flags: InsnFlags(0x0) }
-[INFO ] 0000000a        udf     :UNDEFINED:
-[DEBUG] Decoding 0x00000a
+[INFO ] 0x00000c: 0000000a      udf     #0xa
 [DEBUG] Decoded instruction: EXCEPTION(UDF_UNDEFINED(UDF_UNDEFINED { imm16_0: 0000000a }))
 [DEBUG] 0x00000a: Insn { mnemonic: "udf", aliases: [], opcode: 00000000, mask: ffff0000, class: EXCEPTION, feature_set: V8, operands: [InsnOperand { kind: UNDEFINED, class: IMMEDIATE, qualifiers: [], bit_fields: [BitfieldSpec { bitfield: imm16_0, lsb: 00000000, width: 00000010 }] }], flags: InsnFlags(0x0) }
-[INFO ] 0000000a        udf     :UNDEFINED:
+[INFO ] 0x000010: 0000000a      udf     #0xa
 ```
 
 ### Visualizing the decision trees
