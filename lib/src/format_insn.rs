@@ -852,8 +852,31 @@ pub fn format_operand(
             }
         }
 
-        InsnOperandKind::ADDR_SIMM11
-        | InsnOperandKind::RCPC3_ADDR_OFFSET
+        InsnOperandKind::ADDR_SIMM11 => {
+            let reg_n_no = bit_range(bits, 5, 5);
+            let reg_n_name = get_int_reg_name(true, reg_n_no as u8, false);
+            let simm = (sign_extend(bit_range(bits, 15, 7), 6) << LOG2_TAG_GRANULE) as i64;
+            match bit_range(bits, 23, 2) {
+                0b01 => {
+                    write!(f, "[{reg_n_name}], #{simm}")?;
+                }
+                0b11 => {
+                    write!(f, "[{reg_n_name}, #{simm}]!")?;
+                }
+                0b10 => {
+                    write!(f, "[{reg_n_name}")?;
+                    if simm != 0 {
+                        write!(f, ", #{simm}")?;
+                    }
+                    write!(f, "]")?;
+                }
+                _ => {
+                    write!(f, "<undefined>")?;
+                }
+            }
+        }
+
+        InsnOperandKind::RCPC3_ADDR_OFFSET
         | InsnOperandKind::RCPC3_ADDR_OPT_POSTIND
         | InsnOperandKind::RCPC3_ADDR_OPT_PREIND_WB
         | InsnOperandKind::RCPC3_ADDR_POSTIND
