@@ -552,7 +552,6 @@ pub fn format_operand(
         | InsnOperandKind::IMM0
         | InsnOperandKind::IMMR
         | InsnOperandKind::IMMS
-        | InsnOperandKind::UNDEFINED
         | InsnOperandKind::FBITS
         | InsnOperandKind::TME_UIMM16
         | InsnOperandKind::SIMM5
@@ -623,9 +622,17 @@ pub fn format_operand(
             write!(f, ":{kind:?}:")?
         }
 
+        InsnOperandKind::EXCEPTION => {
+            let imm16 = bit_range(bits, 5, 16);
+            write!(f, "#{imm16:#x}")?
+        }
+        InsnOperandKind::UNDEFINED => {
+            let imm16 = bit_range(bits, 0, 16);
+            write!(f, "#{imm16:#x}")?;
+        }
+
         InsnOperandKind::CCMP_IMM
         | InsnOperandKind::NZCV
-        | InsnOperandKind::EXCEPTION
         | InsnOperandKind::UIMM4
         | InsnOperandKind::UIMM7 => write!(f, ":{kind:?}:")?,
 
