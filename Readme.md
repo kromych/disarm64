@@ -273,6 +273,12 @@ For the test collateral and disassembly delta's between LLVM and binutils, pleas
 
 > That repo uses [Git LFS](https://git-lfs.com/) because it takes `~ 30 GiB` of space.
 
+## Reference materials for the ARM A64 ISA
+
+- [HTML](https://developer.arm.com/documentation/ddi0602)
+- [PDF](https://developer.arm.com/documentation/ddi0487)
+- [Expolation Tools](https://developer.arm.com/downloads/-/exploration-tools)
+
 ## Related art
 
 This project doesn't have any claims to fame. It uses well-known algorithms and approaches
