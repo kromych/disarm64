@@ -206,6 +206,10 @@ fn format_int_operand_reg(
         bit_set(bits, 31)
     } else if flags.contains(InsnFlags::HAS_LDS_SIZE_IN_BIT_22) {
         !bit_set(bits, 22)
+    } else if flags.contains(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q)
+        && (operand.kind == InsnOperandKind::Rt || operand.kind == InsnOperandKind::Rt2)
+    {
+        bit_set(bits, 30)
     } else if operand.qualifiers.is_empty() || operand.qualifiers == [InsnOperandQualifier::X] {
         true
     } else if definition.class == InsnClass::LDST_IMM9
