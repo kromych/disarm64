@@ -201,11 +201,14 @@ fn format_int_operand_reg(
     let flags = definition.flags;
     let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
         bit_set(bits, 31)
+    } else if flags.contains(InsnFlags::HAS_LDS_SIZE_IN_BIT_22) {
+        !bit_set(bits, 22)
     } else if operand.qualifiers.is_empty() || operand.qualifiers == [InsnOperandQualifier::X] {
         true
     } else if definition.class == InsnClass::LDST_IMM9
         || definition.class == InsnClass::LDST_POS
         || definition.class == InsnClass::LDST_REGOFF
+        || definition.class == InsnClass::LDST_UNPRIV
     {
         let size = bit_range(bits, 30, 2);
         let opc1 = bit_set(bits, 23);
@@ -768,21 +771,31 @@ pub fn format_operand(
         }
 
         InsnOperandKind::ADDR_SIMM9 | InsnOperandKind::ADDR_SIMM13 => {
-            let post_index = !bit_set(bits, 11);
             let imm9 = bit_range(bits, 12, 9);
-            let imm32 = sign_extend(imm9, 8) as u32;
             let scale = if kind == InsnOperandKind::ADDR_SIMM13 {
                 LOG2_TAG_GRANULE
             } else {
                 0
             };
+            let imm = (sign_extend(imm9, 8) << scale) as i64;
 
             let reg_no = bit_range(bits, 5, 5);
             let reg_name = get_int_reg_name(true, reg_no as u8, false);
+
+            let ldst_unpriv = definition.class == InsnClass::LDST_UNPRIV;
+            if ldst_unpriv {
+                write!(f, "[{reg_name}")?;
+                if imm != 0 {
+                    write!(f, ", #{imm}")?;
+                }
+                return write!(f, "]");
+            }
+
+            let post_index = !bit_set(bits, 11);
             if !post_index {
-                write!(f, "[{reg_name}, #{:#x}]!", imm32 << scale)?;
+                write!(f, "[{reg_name}, #{imm}]!")?;
             } else {
-                write!(f, "[{reg_name}], #{:#x}", imm32 << scale)?;
+                write!(f, "[{reg_name}], #{imm}")?;
             }
             *stop = true;
         }
