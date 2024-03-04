@@ -1,14 +1,14 @@
 use crate::decoder::Opcode;
 use bitfield_struct::bitfield;
+use core::fmt::Display;
+use core::fmt::Formatter;
+use core::fmt::Write;
 use defn::InsnOpcode;
 use disarm64_defn::defn;
 use disarm64_defn::InsnClass;
 use disarm64_defn::InsnFlags;
 use disarm64_defn::InsnOperandKind;
 use disarm64_defn::InsnOperandQualifier;
-use std::fmt::Display;
-use std::fmt::Formatter;
-use std::fmt::Write;
 
 const LOG2_TAG_GRANULE: u32 = 4;
 
