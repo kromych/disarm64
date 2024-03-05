@@ -1,3 +1,10 @@
+//! Formatting instructions to human-readable strings
+//!
+//! Currently, the decoded instruction is converted straight to a string.
+//! Once the full known set of instructions is implemented, this will be
+//! supplemented with a more structured approach while retaining the
+//! current string formatting instructions.
+
 use crate::decoder::Opcode;
 use bitfield_struct::bitfield;
 use core::fmt::Display;
