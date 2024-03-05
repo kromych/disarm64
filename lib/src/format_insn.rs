@@ -385,10 +385,7 @@ fn format_operand_reg_shift(f: &mut impl Write, bits: u32) -> core::fmt::Result 
         sf: bool,
     }
     let reg_shift = RegShift::from_bits(bits);
-    if reg_shift.zero() != 0
-        || reg_shift.shift() == 0b11
-        || (!reg_shift.sf() && reg_shift.imm6() & 0b100000 != 0)
-    {
+    if !reg_shift.sf() && reg_shift.imm6() & 0b100000 != 0 {
         write!(f, "<undefined>")?;
         return Ok(());
     }
@@ -400,6 +397,8 @@ fn format_operand_reg_shift(f: &mut impl Write, bits: u32) -> core::fmt::Result 
         0b01 => "lsr",
         // Arithmetic Shift Right (ASL) by the immediate value.
         0b10 => "asr",
+        // Rotate Right (ROR) by the immediate value.
+        0b11 => "ror",
         _ => unreachable!(),
     };
 
