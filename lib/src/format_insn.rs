@@ -20,7 +20,6 @@ use disarm64_defn::InsnOperandQualifier;
 const LOG2_TAG_GRANULE: u32 = 4;
 
 fn get_int_reg_name(is_64: bool, reg: u8, with_zr: bool) -> &'static str {
-    debug_assert!(reg < 32);
     const INT_REG: [[[&str; 32]; 2]; 2] = [
         [
             [
@@ -50,6 +49,10 @@ fn get_int_reg_name(is_64: bool, reg: u8, with_zr: bool) -> &'static str {
 
     let is_sp = with_zr as usize;
     let is_64 = is_64 as usize;
+
+    if reg >= 32 {
+        return "<undefined>";
+    }
 
     INT_REG[is_sp][is_64][reg as usize]
 }
@@ -92,6 +95,10 @@ fn get_fp_reg_name(size: FpRegSize, reg_no: usize) -> &'static str {
         ],
     ];
 
+    if reg_no >= 32 {
+        return "<undefined>";
+    }
+
     FP_REG[size as usize][reg_no]
 }
 
@@ -111,9 +118,11 @@ fn _get_sve_reg_name(is_64: bool, reg: u8) -> &'static str {
         ],
     ];
 
-    debug_assert!(reg < 32);
-    let is_64 = is_64 as usize;
+    if reg >= 32 {
+        return "<undefined>";
+    }
 
+    let is_64 = is_64 as usize;
     SVE_REG[is_64][reg as usize]
 }
 
@@ -204,7 +213,8 @@ fn format_fp_reg(
 }
 
 /// Format an integer register (32-bit or 64-bit) to a string
-fn format_int_operand_reg(
+fn format_int_operand_reg_pair(
+    pair: bool,
     f: &mut impl Write,
     bits: u32,
     operand: &defn::InsnOperand,
@@ -216,8 +226,10 @@ fn format_int_operand_reg(
         bit_set(bits, 31)
     } else if flags.contains(InsnFlags::HAS_LDS_SIZE_IN_BIT_22) {
         !bit_set(bits, 22)
-    } else if flags.contains(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q)
-        && (operand.kind == InsnOperandKind::Rt || operand.kind == InsnOperandKind::Rt2)
+    } else if (flags.contains(InsnFlags::HAS_LSE_SZ_FIELD)
+        && (operand.kind == InsnOperandKind::Rt || operand.kind == InsnOperandKind::Rs))
+        || (flags.contains(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q)
+            && (operand.kind == InsnOperandKind::Rt || operand.kind == InsnOperandKind::Rt2))
     {
         bit_set(bits, 30)
     } else if operand.qualifiers.is_empty() || operand.qualifiers == [InsnOperandQualifier::X] {
@@ -248,12 +260,31 @@ fn format_int_operand_reg(
 
     if let Some(bit_field_spec) = operand.bit_fields.first() {
         let reg_no = bit_range(bits, bit_field_spec.lsb.into(), bit_field_spec.width.into());
+        let reg_no = if pair {
+            if reg_no & 1 != 0 {
+                return write!(f, "<undefined>");
+            }
+            reg_no + 1
+        } else {
+            reg_no
+        };
         let reg_name = get_int_reg_name(is_64, reg_no as u8, with_zr);
 
         write!(f, "{reg_name}")
     } else {
         write!(f, "<undefined>")
     }
+}
+
+/// Format an integer register (32-bit or 64-bit) to a string
+fn format_int_operand_reg(
+    f: &mut impl Write,
+    bits: u32,
+    operand: &defn::InsnOperand,
+    definition: &defn::Insn,
+    with_zr: bool,
+) -> core::fmt::Result {
+    format_int_operand_reg_pair(false, f, bits, operand, definition, with_zr)
 }
 
 /// Format a register with extended shift operand to a string.
@@ -382,7 +413,8 @@ fn format_operand_reg_shift(f: &mut impl Write, bits: u32) -> core::fmt::Result 
 }
 
 /// Format an operand to a string
-pub fn format_operand(
+fn format_operand(
+    pos: usize,
     pc: u64,
     f: &mut impl Write,
     bits: u32,
@@ -408,7 +440,15 @@ pub fn format_operand(
             format_int_operand_reg(f, bits, operand, definition, with_zr)?
         }
 
-        InsnOperandKind::PAIRREG | InsnOperandKind::PAIRREG_OR_XZR => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::PAIRREG | InsnOperandKind::PAIRREG_OR_XZR => {
+            if pos == 0 {
+                return write!(f, "<undefined>");
+            }
+
+            let prev_operand = &definition.operands[pos - 1];
+            let pair = true;
+            format_int_operand_reg_pair(pair, f, bits, prev_operand, definition, true)?;
+        }
 
         InsnOperandKind::Rd_SP
         | InsnOperandKind::Rn_SP
@@ -1015,7 +1055,7 @@ pub fn format_insn_pc(pc: u64, f: &mut impl Write, opcode: &Opcode) -> core::fmt
     let op_count = definition.operands.len();
     for (i, operand) in definition.operands.iter().enumerate() {
         let mut stop = false;
-        format_operand(pc, f, bits, operand, definition, &mut stop)?;
+        format_operand(i, pc, f, bits, operand, definition, &mut stop)?;
         if !stop && i + 1 < op_count {
             write!(f, ", ")?;
         }
