@@ -668,8 +668,19 @@ fn format_operand(
             }
         }
 
+        InsnOperandKind::HALF => {
+            let hw = bit_range(bits, 21, 2);
+            if !bit_set(bits, 31) && bit_set(hw, 1) {
+                return write!(f, "<undefined>");
+            }
+
+            let imm16 = bit_range(bits, 5, 16);
+            let shift = hw << 4;
+
+            write!(f, "#{imm16:#x}, lsl #{shift:#x}")?
+        }
+
         InsnOperandKind::LIMM
-        | InsnOperandKind::HALF
         | InsnOperandKind::SVE_INV_LIMM
         | InsnOperandKind::SVE_LIMM
         | InsnOperandKind::SVE_LIMM_MOV => write!(f, ":{kind:?}:")?,
