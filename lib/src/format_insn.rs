@@ -669,6 +669,27 @@ fn format_operand(
 
         InsnOperandKind::CRn | InsnOperandKind::CRm => write!(f, ":{kind:?}:")?,
 
+        InsnOperandKind::IMMR => {
+            let immr = bit_range(bits, 16, 6);
+            let n = bit_set(bits, 22);
+            let sf = bit_set(bits, 31);
+
+            if (sf && !n) || (!sf && (n || bit_set(immr, 5))) {
+                return write!(f, "<undefined>");
+            }
+            write!(f, "#{}", immr)?;
+        }
+        InsnOperandKind::IMMS => {
+            let imms = bit_range(bits, 10, 6);
+            let n = bit_set(bits, 22);
+            let sf = bit_set(bits, 31);
+
+            if (sf && !n) || (!sf && (n || bit_set(imms, 5))) {
+                return write!(f, "<undefined>");
+            }
+            write!(f, "#{}", imms)?;
+        }
+
         InsnOperandKind::IDX
         | InsnOperandKind::MASK
         | InsnOperandKind::IMM
@@ -681,8 +702,6 @@ fn format_operand(
         | InsnOperandKind::IMM_VLSR
         | InsnOperandKind::SHLL_IMM
         | InsnOperandKind::IMM0
-        | InsnOperandKind::IMMR
-        | InsnOperandKind::IMMS
         | InsnOperandKind::FBITS
         | InsnOperandKind::TME_UIMM16
         | InsnOperandKind::SIMM5
