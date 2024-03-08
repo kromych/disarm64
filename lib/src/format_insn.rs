@@ -154,17 +154,16 @@ fn sign_extend(v: u32, n: u8) -> u64 {
 }
 
 /// Decode a logical immediate value, N:immr:imms.
-fn decode_limm(is_64bit: bool, n: u32, mut immr: u32, mut imms: u32) -> Option<u64> {
-    let byte_count = if is_64bit { 8 } else { 4 };
+fn decode_limm(byte_count: u32, n: u32, mut immr: u32, mut imms: u32) -> Option<u64> {
     let mut imm;
     let mask;
-    let simd_size: u32;
+    let bit_count: u32;
 
     if n != 0 {
-        simd_size = 64;
-        mask = 0xffffffffffffffffu64;
+        bit_count = 64;
+        mask = !0;
     } else {
-        simd_size = match imms {
+        bit_count = match imms {
             0x00..=0x1f => 32,
             0x20..=0x2f => {
                 imms &= 0xf;
@@ -184,46 +183,39 @@ fn decode_limm(is_64bit: bool, n: u32, mut immr: u32, mut imms: u32) -> Option<u
             }
             _ => return None,
         };
-        mask = (1u64 << simd_size) - 1;
-        immr &= simd_size - 1;
+        mask = (1u64 << bit_count) - 1;
+        immr &= bit_count - 1;
     }
 
-    if simd_size > byte_count as u32 * 8 {
+    if bit_count > byte_count * 8 {
         return None;
     }
 
-    if imms == simd_size - 1 {
+    if imms == bit_count - 1 {
         return None;
     }
 
     imm = (1u64 << (imms + 1)) - 1;
     if immr != 0 {
-        imm = ((imm << (simd_size - immr)) & mask) | (imm >> immr);
+        imm = ((imm << (bit_count - immr)) & mask) | (imm >> immr);
     }
 
-    imm = match simd_size {
-        2 => (imm << 2) | imm,
-        4 => {
-            imm = (imm << 2) | imm;
-            (imm << 4) | imm
-        }
-        8 => {
-            imm = (imm << 4) | imm;
-            (imm << 8) | imm
-        }
-        16 => {
-            imm = (imm << 8) | imm;
-            (imm << 16) | imm
-        }
-        32 => {
-            imm = (imm << 16) | imm;
-            (imm << 32) | imm
-        }
-        64 => imm,
+    let replicate: &[u64] = match bit_count {
+        2 => &[2, 4, 8, 16, 32],
+        4 => &[4, 8, 16, 32],
+        8 => &[8, 16, 32],
+        16 => &[16, 32],
+        32 => &[32],
+        64 => &[],
         _ => return None,
     };
+    for &r in replicate {
+        imm |= imm << r;
+    }
 
-    Some(imm & !(!0 << (byte_count * 4) << (byte_count * 4)))
+    let limm = !0 << (byte_count * 4) << (byte_count * 4);
+    let limm = imm & !limm;
+    Some(limm)
 }
 
 /// Format a floating-point register to a string
@@ -759,20 +751,21 @@ fn format_operand(
             write!(f, "#{imm16:#x}, lsl #{shift:#x}")?
         }
 
-        InsnOperandKind::LIMM
-        | InsnOperandKind::SVE_INV_LIMM
-        | InsnOperandKind::SVE_LIMM
-        | InsnOperandKind::SVE_LIMM_MOV => {
+        InsnOperandKind::LIMM => {
             let imms = bit_range(bits, 10, 6);
-            let immr = bit_range(imms, 16, 6);
-            let n = bit_range(imms, 22, 1);
+            let immr = bit_range(bits, 16, 6);
+            let n = bit_range(bits, 22, 1);
             let is_64bit = bit_set(bits, 31);
-            if let Some(imm) = decode_limm(is_64bit, n, immr, imms) {
+            let byte_count = if is_64bit { 8 } else { 4 };
+            if let Some(imm) = decode_limm(byte_count, n, immr, imms) {
                 write!(f, "#{imm:#x}")?;
             } else {
                 write!(f, "<undefined>")?;
             }
         }
+        InsnOperandKind::SVE_INV_LIMM
+        | InsnOperandKind::SVE_LIMM
+        | InsnOperandKind::SVE_LIMM_MOV => write!(f, ":{kind:?}:")?,
 
         InsnOperandKind::SIMD_IMM | InsnOperandKind::SIMD_IMM_SFT => write!(f, ":{kind:?}:")?,
 
