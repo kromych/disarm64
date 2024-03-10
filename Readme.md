@@ -186,7 +186,7 @@ disarm64_gen ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_un
 
 ### Using the decoder
 
-To decode instructions apssed on the command line:
+To decode instructions passed on the command line:
 
 ```sh
 disarm64 -v insn 0x1a000001,0xa,0xa,0xa,0xa
