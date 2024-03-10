@@ -3,7 +3,7 @@
 ## About this project
 
 This project contains a library and a tooling for generating instruction decoders
-based on a decision tree from some standard description of ISA. The objective of
+based on a decision tree from some standard description of the ISA. The objective of
 efficient and precise instruction decoding is a pretty common one for disassemblers,
 debuggers, emulators, VMMs, and the other tools alike.
 
@@ -17,6 +17,9 @@ the algorithms assume a fixed length 32-bit encoding. The file is produced by th
 from the [opcodes-lab](https://github.com/kromych/opcodes-lab) repository. The generated
 decoder can be driven by conditionals statements (the default), the DFS table, or the
 BFS table. There are trade-offs between size and speed, one can find what's best for them.
+
+The default options deliver at least 250 MiB/sec of the decoding speed on a laptop that
+is used for development.
 
 After the instruction is recognized (decoded), one might need to format it as some string.
 Adding instruction formatting resembling what disassemblers use is in progress, expected

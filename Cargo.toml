@@ -4,10 +4,10 @@ version = "0.1.8"
 edition = "2021"
 authors = ["kromych <kromych@users.noreply.github.com>"]
 description = """
-disarm64 provides a tool and a library for decoding ARM64 instructions. It
-is a companion to a utility for generating disassembler/instruction decoder
-tables in Rust from a JSON file. Besides that, can visualize the instruction
-decoding as a tree.
+disarm64 provides a tool and a library for decoding ARM64 instructions (at least 250 MiB/sec
+of the decoding speed is delivered on a laptop that is used for development). Here you will
+also find a utility for generating disassembler/instruction decoder tables in Rust from
+a JSON file. Besides that, can visualize the instruction decoding as a tree.
 """
 documentation = "https://github.com/kromych/disarm64"
 homepage = "https://github.com/kromych/disarm64"
