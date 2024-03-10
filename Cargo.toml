@@ -1,13 +1,13 @@
 [package]
 name = "disarm64"
-version = "0.1.7"
+version = "0.1.8"
 edition = "2021"
 authors = ["kromych <kromych@users.noreply.github.com>"]
 description = """
-disarm64 is a tool for decoding ARM64 instructions. It is a companion to
-a tool for generating disassembler/instruction decoder tables in Rust
-from a JSON file. Besides that, can visualize the instruction decoding as
-a tree.
+disarm64 provides a tool and a library for decoding ARM64 instructions. It
+is a companion to an utility for generating disassembler/instruction decoder
+tables in Rust from a JSON file. Besides that, can visualize the instruction
+decoding as a tree.
 """
 documentation = "https://github.com/kromych/disarm64"
 homepage = "https://github.com/kromych/disarm64"

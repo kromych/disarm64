@@ -2,10 +2,10 @@
 
 ## About this project
 
-This project contains tooling for generating instruction decoders based on a decision
-tree from some standard description of ISA. The objective of efficient and precise
-instruction decoding is a pretty common one for disassemblers, debuggers, emulators,
-VMMs, and the other tools alike.
+This project contains a library and a tooling for generating instruction decoders
+based on a decision tree from some standard description of ISA. The objective of
+efficient and precise instruction decoding is a pretty common one for disassemblers,
+debuggers, emulators, VMMs, and the other tools alike.
 
 The more instructions are there to decode, the more laborious and error-prone the task
 becomes. Thus one might set their eyes on the idea to _generate_ the decoder from a
@@ -19,7 +19,19 @@ decoder can be driven by conditionals statements (the default), the DFS table, o
 BFS table. There are trade-offs between size and speed, one can find what's best for them.
 
 Adding instruction formatting resembling what disassemblers use is in progress, expected
-in version `0.2.0`. The current progress is summarized [here](https://github.com/kromych/disarm64_test_data).
+in version `0.2.0`. The detailed progress is summarized [here](https://github.com/kromych/disarm64_test_data).
+The high-level status is that the formatting matching LLVM and binutils works for
+the instructions of the following groups:
+
+- [x] Arithmetic
+- [x] Data processing (some aliases might not be used just yet, the base instruction form is used)
+- [x] Logical
+- [x] Bit manipulation (some aliases might not be used just yet, the base instruction form is used)
+- [x] Branches
+- [x] Exceptions
+- [x] Load/store
+- [x] Moves
+- [x] PC-relative
 
 To install the tools:
 
