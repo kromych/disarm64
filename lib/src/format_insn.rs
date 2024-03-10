@@ -803,12 +803,22 @@ fn format_operand(
             write!(f, "#{imm16:#x}")?;
         }
 
-        InsnOperandKind::CCMP_IMM
-        | InsnOperandKind::NZCV
-        | InsnOperandKind::UIMM4
-        | InsnOperandKind::UIMM7 => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::CCMP_IMM => {
+            let imm5 = bit_range(bits, 16, 5);
+            write!(f, "#{imm5:#x}")?
+        }
 
-        InsnOperandKind::COND | InsnOperandKind::COND1 => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::NZCV => {
+            let imm4 = bit_range(bits, 0, 4);
+            write!(f, "#{imm4:#x}")?
+        }
+
+        InsnOperandKind::UIMM4 | InsnOperandKind::UIMM7 => write!(f, ":{kind:?}:")?,
+
+        InsnOperandKind::COND | InsnOperandKind::COND1 => {
+            let cond = bit_range(bits, 12, 4);
+            write!(f, "{}", cond_name(cond))?
+        }
 
         InsnOperandKind::ADDR_PCREL14 => {
             let offset = bit_range(bits, 5, 14);

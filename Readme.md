@@ -32,6 +32,7 @@ the instructions of the following groups:
 - [x] Logical
 - [x] Bit manipulation (some aliases might not be used just yet, the base instruction form is used)
 - [x] Branches
+- [x] Conditionals
 - [x] Exceptions
 - [x] Load/store
 - [x] Moves
