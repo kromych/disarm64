@@ -5,6 +5,7 @@ use disarm64::decoder;
 use disarm64::format_insn;
 use disarm64_defn::defn::InsnOpcode;
 use memmap2::Mmap;
+use std::fs;
 use std::fs::File;
 use std::io::BufReader;
 use std::io::IsTerminal;
@@ -24,11 +25,11 @@ enum Command {
         /// Path to the binary file.
         file: PathBuf,
         /// Offset in the file to start decoding.
-        #[clap(short, long, value_parser = maybe_hex::<u64>, default_value = "0")]
-        offset: u64,
+        #[clap(short, long, value_parser = maybe_hex::<usize>, default_value = "0")]
+        offset: usize,
         /// Number of instructions to decode.
-        #[clap(short, long, value_parser = maybe_hex::<u64>)]
-        count: Option<u64>,
+        #[clap(short, long, value_parser = maybe_hex::<usize>)]
+        count: Option<usize>,
     },
     /// ELF file with instructions to decode.
     Elf { file: PathBuf },
@@ -36,6 +37,12 @@ enum Command {
     MachO { file: PathBuf },
     /// PE file with instructions to decode.
     Pe { file: PathBuf },
+}
+
+#[derive(Parser, Debug, Copy, Clone, PartialEq, Eq, clap::ValueEnum)]
+enum BenchmarkMode {
+    Decode,
+    Format,
 }
 
 #[derive(Parser, Debug)]
@@ -47,6 +54,31 @@ struct CommandLine {
     /// Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity.
     #[clap(short, action = clap::ArgAction::Count)]
     verbosity: u8,
+    /// Benchmark mode: measure the time to decode the instructions. This is not
+    /// a synthetic benchmark, it provides an estimate of the real-world
+    /// performance.
+    #[clap(long)]
+    benchmark: Option<BenchmarkMode>,
+}
+
+#[derive(Debug, Clone, Copy, Default)]
+struct ProcessingStats {
+    elapsed: std::time::Duration,
+    processed_size: usize,
+}
+
+impl ProcessingStats {
+    fn add(&mut self, other: &Self) {
+        self.elapsed += other.elapsed;
+        self.processed_size += other.processed_size;
+    }
+
+    fn mib_per_second(&self) -> u64 {
+        if self.elapsed.as_secs_f64() == 0.0 {
+            return 0;
+        }
+        (self.processed_size as f64 / self.elapsed.as_secs_f64()).floor() as u64 >> 20
+    }
 }
 
 fn init_logging(opt: &CommandLine) {
@@ -57,6 +89,11 @@ fn init_logging(opt: &CommandLine) {
 
     // From the env variable:
     // env_logger::Builder::from_env().init();
+
+    if opt.benchmark.is_some() {
+        eprintln!("Benchmark mode: logging disabled");
+        return;
+    }
 
     let mut builder = env_logger::builder();
     let mut builder = builder
@@ -86,17 +123,41 @@ fn main() -> anyhow::Result<()> {
 
     init_logging(&opt);
 
-    let decode_file =
-        |file: &PathBuf, reader: fn(data: &[u8]) -> anyhow::Result<()>| -> anyhow::Result<()> {
+    let decode_file = |file: &PathBuf,
+                       reader: fn(
+        data: &[u8],
+        benchmark: Option<BenchmarkMode>,
+    ) -> anyhow::Result<ProcessingStats>,
+                       offset: usize,
+                       count: Option<usize>|
+     -> anyhow::Result<ProcessingStats> {
+        if opt.benchmark.is_none() {
             let file = File::open(file)?;
             let mmap = unsafe { Mmap::map(&file)? };
 
-            reader(&mmap)?;
-            Ok(())
-        };
+            let data = &mmap[offset..];
+            let data = if let Some(count) = count {
+                &data[..count]
+            } else {
+                data
+            };
 
-    match &opt.command {
-        Command::Insn { dwords } => decode_insn_list(dwords.as_slice()),
+            reader(data, opt.benchmark)
+        } else {
+            let data = fs::read(file)?;
+            let data = &data[offset..];
+            let data = if let Some(count) = count {
+                &data[..count]
+            } else {
+                data
+            };
+
+            reader(data, opt.benchmark)
+        }
+    };
+
+    let stats = match &opt.command {
+        Command::Insn { dwords } => decode_insn_list(dwords.as_slice(), opt.benchmark),
         Command::Bin {
             file,
             offset,
@@ -104,80 +165,125 @@ fn main() -> anyhow::Result<()> {
         } => {
             log::info!("// Decoding binary file: {file:?}, offset {offset:#x}, count {count:#x?}");
 
-            let file = File::open(file)?;
-            let mmap = unsafe { Mmap::map(&file)? };
-            let data = &mmap[*offset as usize..];
-            let data = if let Some(count) = count {
-                &data[..*count as usize]
-            } else {
-                data
-            };
-            decode_bin(data, *offset)
+            decode_file(file, decode_bin, *offset, *count)
         }
         Command::Elf { file } => {
             log::info!("// Decoding ELF file: {file:?}");
-            decode_file(file, decode_elf)
+            decode_file(file, decode_elf, 0, None)
         }
         Command::MachO { file } => {
             log::info!("// Decoding Mach-O file: {file:?}");
-            decode_file(file, decode_mach)
+            decode_file(file, decode_mach, 0, None)
         }
         Command::Pe { file } => {
             log::info!("// Decoding PE file: {file:?}");
-            decode_file(file, decode_pe)
+            decode_file(file, decode_pe, 0, None)
         }
+    }?;
+
+    if let Some(benchmark) = opt.benchmark {
+        eprintln!(
+                    "Benchmark mode {benchmark:?}. Processing has taken {elapsed:?} for {processed_size} bytes, {mib_per_second} MiB/s",
+                    elapsed = stats.elapsed,
+                    processed_size = stats.processed_size,
+                    mib_per_second = stats.mib_per_second()
+                );
     }
+
+    Ok(())
 }
 
-fn print_insn(pc: u64, insn: u32, buffer: &mut String) -> anyhow::Result<()> {
+#[inline]
+fn print_insn(
+    pc: u64,
+    insn: u32,
+    buffer: &mut String,
+    benchmark: Option<BenchmarkMode>,
+) -> anyhow::Result<()> {
     let opcode = decoder::decode(insn);
-    if let Some(opcode) = opcode {
-        log::debug!("Decoded instruction: {:08x?}", opcode);
-        log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
+    if benchmark == Some(BenchmarkMode::Decode) {
+        return Ok(());
+    }
 
+    if let Some(opcode) = opcode {
         // For the PC-relative instructions, we need to know the current offset
         // to calculate the target address. If that is not relevant, you can use the
         // Display implementation and remove the buffer.
         buffer.clear();
         format_insn::format_insn_pc(pc, buffer, &opcode)?;
 
+        if benchmark == Some(BenchmarkMode::Format) {
+            return Ok(());
+        }
+
+        log::debug!("Decoded instruction: {:08x?}", opcode);
+        log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
         log::info!("{pc:#08x}: {insn:08x}\t{buffer}");
     } else {
+        if benchmark == Some(BenchmarkMode::Format) {
+            return Ok(());
+        }
+
         log::warn!("{pc:#08x}: {insn:08x}\t.inst\t{insn:#08x} // undefined");
     }
 
     Ok(())
 }
 
-fn process_bytes(data: &[u8], offset: u64, buffer: &mut String) -> anyhow::Result<()> {
+#[inline]
+fn process_bytes(
+    data: &[u8],
+    offset: u64,
+    buffer: &mut String,
+    benchmark: Option<BenchmarkMode>,
+) -> anyhow::Result<ProcessingStats> {
     let mut pos = 0;
     let mut reader = BufReader::new(data);
+    let start = std::time::Instant::now();
     while pos + 4 <= data.len() {
         let mut insn = [0; 4];
         reader.read_exact(&mut insn)?;
         let insn = u32::from_le_bytes(insn);
         let current_offset = offset + pos as u64;
 
-        print_insn(current_offset, insn, buffer)?;
+        print_insn(current_offset, insn, buffer, benchmark)?;
         pos += 4;
     }
-    Ok(())
+    let elapsed = start.elapsed();
+
+    Ok(ProcessingStats {
+        elapsed,
+        processed_size: pos,
+    })
 }
 
-fn decode_insn_list(dwords: &[u32]) -> anyhow::Result<()> {
+fn decode_insn_list(
+    dwords: &[u32],
+    benchmark: Option<BenchmarkMode>,
+) -> anyhow::Result<ProcessingStats> {
     let mut buffer = String::new();
+    let start = std::time::Instant::now();
     for (i, insn) in dwords.iter().enumerate() {
-        print_insn(i as u64 * 4, *insn, &mut buffer)?;
+        print_insn(i as u64 * 4, *insn, &mut buffer, benchmark)?;
     }
-    Ok(())
+    let elapsed = start.elapsed();
+
+    Ok(ProcessingStats {
+        elapsed,
+        processed_size: dwords.len() * 4,
+    })
 }
 
-fn decode_bin(data: &[u8], offset: u64) -> anyhow::Result<()> {
+fn decode_bin(data: &[u8], benchmark: Option<BenchmarkMode>) -> anyhow::Result<ProcessingStats> {
     let mut buffer = String::new();
-    process_bytes(data, offset, &mut buffer)
+    let stats = process_bytes(data, 0, &mut buffer, benchmark)?;
+
+    Ok(stats)
 }
 
-fn decode_elf(data: &[u8]) -> anyhow::Result<()> {
+fn decode_elf(data: &[u8], benchmark: Option<BenchmarkMode>) -> anyhow::Result<ProcessingStats> {
+    let mut proc_stats = ProcessingStats::default();
+
     let elf = goblin::elf::Elf::parse(data)?;
     if elf.header.e_machine != goblin::elf::header::EM_AARCH64
         || !elf
@@ -206,13 +312,16 @@ fn decode_elf(data: &[u8]) -> anyhow::Result<()> {
         );
 
         let data = &data[section.sh_offset as usize..][..section.sh_size as usize];
-        process_bytes(data, section.sh_addr, &mut buffer)?;
+        let stats = process_bytes(data, section.sh_addr, &mut buffer, benchmark)?;
+        proc_stats.add(&stats);
     }
 
-    Ok(())
+    Ok(proc_stats)
 }
 
-fn decode_mach(data: &[u8]) -> anyhow::Result<()> {
+fn decode_mach(data: &[u8], benchmark: Option<BenchmarkMode>) -> anyhow::Result<ProcessingStats> {
+    let mut proc_stats = ProcessingStats::default();
+
     let mach = goblin::mach::Mach::parse(data)?;
     let mach = match mach {
         goblin::mach::Mach::Binary(macho) => {
@@ -240,23 +349,26 @@ fn decode_mach(data: &[u8]) -> anyhow::Result<()> {
                         section.addr
                     );
 
-                    process_bytes(data, section.addr, &mut buffer)?;
+                    let stats = process_bytes(data, section.addr, &mut buffer, benchmark)?;
+                    proc_stats.add(&stats);
                 }
             }
         } else {
             log::warn!("Failed to read sections for segment {:?}", segment.name());
         }
     }
-    Ok(())
+
+    Ok(proc_stats)
 }
 
-fn decode_pe(data: &[u8]) -> anyhow::Result<()> {
+fn decode_pe(data: &[u8], benchmark: Option<BenchmarkMode>) -> anyhow::Result<ProcessingStats> {
     let pe = goblin::pe::PE::parse(data)?;
     if pe.header.coff_header.machine != goblin::pe::header::COFF_MACHINE_ARM64 {
         log::error!("Not an ARM64 PE file");
         return Err(anyhow::anyhow!("Not an ARM64 PE file"));
     }
 
+    let mut proc_stats = ProcessingStats::default();
     let mut buffer = String::new();
     for section in &pe.sections {
         if section.characteristics & 0x20000000 != 0 {
@@ -270,8 +382,10 @@ fn decode_pe(data: &[u8]) -> anyhow::Result<()> {
 
             let data =
                 &data[section.pointer_to_raw_data as usize..][..section.size_of_raw_data as usize];
-            process_bytes(data, vbase as u64, &mut buffer)?;
+            let stats = process_bytes(data, vbase as u64, &mut buffer, benchmark)?;
+            proc_stats.add(&stats);
         }
     }
-    Ok(())
+
+    Ok(proc_stats)
 }

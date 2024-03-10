@@ -18,6 +18,7 @@ from the [opcodes-lab](https://github.com/kromych/opcodes-lab) repository. The g
 decoder can be driven by conditionals statements (the default), the DFS table, or the
 BFS table. There are trade-offs between size and speed, one can find what's best for them.
 
+After the instruction is recognized (decoded), one might need to format it as some string.
 Adding instruction formatting resembling what disassemblers use is in progress, expected
 in version `0.2.0`. The detailed progress is summarized [here](https://github.com/kromych/disarm64_test_data).
 The high-level status is that the formatting matching LLVM and binutils works for
@@ -82,6 +83,10 @@ Commands:
 
 Options:
   -v...       Log level/verbosity; repeat (-v, -vv, ...) to increase the verbosity
+  --benchmark <BENCHMARK>  Benchmark mode: measure the time to decode the instructions.
+                           This is not a synthetic benchmark, it provides an estimate
+                           of the real-world performance
+                           [possible values: decode, format]
   -h, --help  Print help
 ```
 
@@ -274,10 +279,8 @@ disarm64_gen ./aarch64.json -c ldst_pos -m ldr -v
 
 ## Testing
 
-For the test collateral and disassembly delta's between LLVM and binutils, please refer to
-[disarm64_test_data](https://github.com/kromych/disarm64_test_data).
-
-> That repo uses [Git LFS](https://git-lfs.com/) because it takes `~ 30 GiB` of space.
+For the test collateral and disassembly delta's between disarm64 & LLVM and diasrm64 & binutils,
+please refer to [disarm64_test_data](https://github.com/kromych/disarm64_test_data).
 
 ## Reference materials for the ARM A64 ISA
 

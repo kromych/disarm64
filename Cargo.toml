@@ -5,7 +5,7 @@ edition = "2021"
 authors = ["kromych <kromych@users.noreply.github.com>"]
 description = """
 disarm64 provides a tool and a library for decoding ARM64 instructions. It
-is a companion to an utility for generating disassembler/instruction decoder
+is a companion to a utility for generating disassembler/instruction decoder
 tables in Rust from a JSON file. Besides that, can visualize the instruction
 decoding as a tree.
 """
