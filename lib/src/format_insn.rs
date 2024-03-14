@@ -690,10 +690,17 @@ fn format_operand(
             write!(f, "#{}", imms)?;
         }
 
+        InsnOperandKind::IMM_2 => {
+            let imm = bit_range(bits, 15, 6);
+            write!(f, "#{}", imm)?;
+        }
+        InsnOperandKind::MASK => {
+            let mask = bit_range(bits, 0, 4);
+            write!(f, "#{}", mask)?;
+        }
+
         InsnOperandKind::IDX
-        | InsnOperandKind::MASK
         | InsnOperandKind::IMM
-        | InsnOperandKind::IMM_2
         | InsnOperandKind::WIDTH
         | InsnOperandKind::UIMM3_OP1
         | InsnOperandKind::UIMM3_OP2
