@@ -38,6 +38,9 @@ the instructions of the following groups:
 - [x] Moves
 - [x] PC-relative
 - [x] System instructions (hints, system registers)
+- [ ] Floating point
+- [ ] SIMD, SVE
+- [ ] SME
 
 To install the tools:
 
