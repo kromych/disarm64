@@ -6,6 +6,7 @@
 //! current string formatting instructions.
 
 use crate::decoder::Opcode;
+use crate::decoder::IC_SYSTEM;
 use bitfield_struct::bitfield;
 use core::fmt::Display;
 use core::fmt::Formatter;
@@ -667,7 +668,8 @@ fn format_operand(
 
         InsnOperandKind::SME_VLxN_10 | InsnOperandKind::SME_VLxN_13 => write!(f, ":{kind:?}:")?,
 
-        InsnOperandKind::CRn | InsnOperandKind::CRm => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::CRn => write!(f, "c{}", bit_range(bits, 12, 4))?,
+        InsnOperandKind::CRm => write!(f, "c{}", bit_range(bits, 8, 4))?,
 
         InsnOperandKind::IMMR => {
             let immr = bit_range(bits, 16, 6);
@@ -702,8 +704,6 @@ fn format_operand(
         InsnOperandKind::IDX
         | InsnOperandKind::IMM
         | InsnOperandKind::WIDTH
-        | InsnOperandKind::UIMM3_OP1
-        | InsnOperandKind::UIMM3_OP2
         | InsnOperandKind::BIT_NUM
         | InsnOperandKind::IMM_VLSL
         | InsnOperandKind::IMM_VLSR
@@ -820,7 +820,25 @@ fn format_operand(
             write!(f, "#{imm4:#x}")?
         }
 
-        InsnOperandKind::UIMM4 | InsnOperandKind::UIMM7 => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::UIMM3_OP1 => {
+            let imm = bit_range(bits, 16, 3);
+            write!(f, "#{}", imm)?;
+        }
+        InsnOperandKind::UIMM3_OP2 => {
+            let imm = bit_range(bits, 5, 3);
+            write!(f, "#{}", imm)?;
+        }
+        InsnOperandKind::UIMM4 => {
+            let imm4 = bit_range(bits, 8, 4);
+            write!(f, "#{imm4:#x}")?
+        }
+        InsnOperandKind::BARRIER_ISB => {
+            let imm4 = bit_range(bits, 8, 4);
+            if imm4 != 0xf {
+                write!(f, "#{imm4:#x}")?
+            }
+        }
+        InsnOperandKind::UIMM7 => write!(f, ":{kind:?}:")?,
 
         InsnOperandKind::COND | InsnOperandKind::COND1 => {
             let cond = bit_range(bits, 12, 4);
@@ -1094,9 +1112,36 @@ fn format_operand(
         | InsnOperandKind::SYSREG_TLBIP
         | InsnOperandKind::SYSREG_SR => write!(f, ":{kind:?}:")?,
 
-        InsnOperandKind::BARRIER | InsnOperandKind::BARRIER_DSB_NXS => write!(f, ":{kind:?}:")?,
-
-        InsnOperandKind::BARRIER_ISB => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::BARRIER => {
+            let barrier = bit_range(bits, 8, 4);
+            let barrier = match barrier {
+                0b0001 => "oshld",
+                0b0010 => "oshst",
+                0b0011 => "osh",
+                0b0101 => "nshld",
+                0b0110 => "nshst",
+                0b0111 => "nsh",
+                0b1001 => "ishld",
+                0b1010 => "ishst",
+                0b1011 => "ish",
+                0b1101 => "ld",
+                0b1110 => "st",
+                0b1111 => "sy",
+                _ => return write!(f, "#{:#x}", barrier),
+            };
+            write!(f, "{barrier}")?
+        }
+        InsnOperandKind::BARRIER_DSB_NXS => {
+            let barrier = bit_range(bits, 8, 4);
+            let barrier = match barrier {
+                0b0010 => "oshnxs",
+                0b0110 => "nshnxs",
+                0b1010 => "ishnxs",
+                0b1110 => "synxs",
+                _ => return write!(f, "#{:#x}", barrier),
+            };
+            write!(f, "{barrier}")?
+        }
 
         InsnOperandKind::PRFOP => {
             let typ = match bit_range(bits, 3, 2) {
@@ -1164,6 +1209,47 @@ fn format_operand(
     Ok(())
 }
 
+fn format_hint(f: &mut impl Write, bits: u32) -> core::fmt::Result {
+    let hint = bit_range(bits, 5, 7);
+
+    #[allow(clippy::unusual_byte_groupings)]
+    let hint = match hint {
+        0b0000_000 => "nop",
+        0b0000_001 => "yield",
+        0b0000_010 => "wfe",
+        0b0000_011 => "wfi",
+        0b0000_100 => "sev",
+        0b0000_101 => "sevl",
+        0b0000_110 => "dgh",
+        0b0000_111 => "xpaclri",
+        0b0001_000 => "pacia1716",
+        0b0001_010 => "pacib1716",
+        0b0001_100 => "autia1716",
+        0b0001_110 => "autib1716",
+        0b0010_000 => "esb",
+        0b0010_001 => "psb\tcsync",
+        0b0010_010 => "tsb\tcsync",
+        0b0010_100 => "csdb",
+        0b0010_110 => "clrbhb",
+        0b0010_011 => "gcsb\tdsync",
+        0b0011_000 => "paciaz",
+        0b0011_001 => "paciasp",
+        0b0011_010 => "pacibz",
+        0b0011_011 => "pacibsp",
+        0b0011_100 => "autiaz",
+        0b0011_101 => "autiasp",
+        0b0011_110 => "autibz",
+        0b0011_111 => "autibsp",
+        0b0100_000 => "bti",
+        0b0100_010 => "bti\tc",
+        0b0100_100 => "bti\tj",
+        0b0100_110 => "bti\tjc",
+        _ => return write!(f, "hint\t#{:#x}", hint),
+    };
+
+    write!(f, "{}", hint)
+}
+
 /// Format an instruction to a string. It does not use the aliases yet
 /// and always emits the primary mnemonic.
 /// The program counter is useful for the PC-relative addressing to
@@ -1171,6 +1257,11 @@ fn format_operand(
 pub fn format_insn_pc(pc: u64, f: &mut impl Write, opcode: &Opcode) -> core::fmt::Result {
     let definition = opcode.definition();
     let bits = opcode.bits();
+
+    // Process hints
+    if let Opcode::IC_SYSTEM(IC_SYSTEM::HINT_UIMM7(hint)) = opcode {
+        return format_hint(f, hint.bits());
+    }
 
     write!(f, "{}", definition.mnemonic)?;
     if definition.flags.contains(InsnFlags::IS_COND) {
