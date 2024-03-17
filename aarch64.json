@@ -124698,7 +124698,7 @@
         ]
       }
     ],
-    "flags": "",
+    "flags": "HAS_SF_FIELD",
     "index": 3011
   },
   {
@@ -124719,7 +124719,7 @@
         ]
       }
     ],
-    "flags": "",
+    "flags": "HAS_SF_FIELD",
     "index": 3012
   },
   {
