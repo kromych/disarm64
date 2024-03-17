@@ -599,10 +599,16 @@ fn format_operand(
             write!(f, "#{}", mask)?;
         }
 
+        InsnOperandKind::BIT_NUM => {
+            let b5 = bit_range(bits, 31, 1);
+            let b40 = bit_range(bits, 19, 5);
+            let bit_num = (b5 << 5) | b40;
+            write!(f, "#{}", bit_num)?;
+        }
+
         InsnOperandKind::IDX
         | InsnOperandKind::IMM
         | InsnOperandKind::WIDTH
-        | InsnOperandKind::BIT_NUM
         | InsnOperandKind::IMM_VLSL
         | InsnOperandKind::IMM_VLSR
         | InsnOperandKind::SHLL_IMM

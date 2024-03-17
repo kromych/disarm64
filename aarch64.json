@@ -48680,7 +48680,7 @@
         ]
       }
     ],
-    "flags": "",
+    "flags": "HAS_SF_FIELD",
     "index": 1289
   },
   {
@@ -48722,7 +48722,7 @@
         ]
       }
     ],
-    "flags": "",
+    "flags": "HAS_SF_FIELD",
     "index": 1290
   },
   {
