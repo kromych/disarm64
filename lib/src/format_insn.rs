@@ -1227,11 +1227,11 @@ fn format_hint(f: &mut impl Write, bits: u32) -> core::fmt::Result {
         0b0001_100 => "autia1716",
         0b0001_110 => "autib1716",
         0b0010_000 => "esb",
-        0b0010_001 => "psb\tcsync",
-        0b0010_010 => "tsb\tcsync",
+        0b0010_001 => "psb\t\tcsync",
+        0b0010_010 => "tsb\t\tcsync",
         0b0010_100 => "csdb",
         0b0010_110 => "clrbhb",
-        0b0010_011 => "gcsb\tdsync",
+        0b0010_011 => "gcsb\t\tdsync",
         0b0011_000 => "paciaz",
         0b0011_001 => "paciasp",
         0b0011_010 => "pacibz",
@@ -1241,10 +1241,10 @@ fn format_hint(f: &mut impl Write, bits: u32) -> core::fmt::Result {
         0b0011_110 => "autibz",
         0b0011_111 => "autibsp",
         0b0100_000 => "bti",
-        0b0100_010 => "bti\tc",
-        0b0100_100 => "bti\tj",
-        0b0100_110 => "bti\tjc",
-        _ => return write!(f, "hint\t#{:#x}", hint),
+        0b0100_010 => "bti\t\tc",
+        0b0100_100 => "bti\t\tj",
+        0b0100_110 => "bti\t\tjc",
+        _ => return write!(f, "hint\t\t#{:#x}", hint),
     };
 
     write!(f, "{}", hint)
@@ -1270,7 +1270,7 @@ pub fn format_insn_pc(pc: u64, f: &mut impl Write, opcode: &Opcode) -> core::fmt
         let cond = cond_name(cond);
         write!(f, "{} ", cond)?;
     }
-    write!(f, "\t")?;
+    write!(f, "\t\t")?;
 
     let op_count = definition.operands.len();
     for (i, operand) in definition.operands.iter().enumerate() {
