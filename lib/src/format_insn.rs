@@ -7,6 +7,11 @@
 
 use crate::decoder::Opcode;
 use crate::decoder::IC_SYSTEM;
+use crate::registers::get_fp_reg_name;
+use crate::registers::get_int_reg_name;
+use crate::registers::get_sys_reg_name;
+use crate::registers::sys_reg_number;
+use crate::registers::FpRegSize;
 use bitfield_struct::bitfield;
 use core::fmt::Display;
 use core::fmt::Formatter;
@@ -19,113 +24,6 @@ use disarm64_defn::InsnOperandKind;
 use disarm64_defn::InsnOperandQualifier;
 
 const LOG2_TAG_GRANULE: u32 = 4;
-
-fn get_int_reg_name(is_64: bool, reg: u8, with_zr: bool) -> &'static str {
-    const INT_REG: [[[&str; 32]; 2]; 2] = [
-        [
-            [
-                "w0", "w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11", "w12",
-                "w13", "w14", "w15", "w16", "w17", "w18", "w19", "w20", "w21", "w22", "w23", "w24",
-                "w25", "w26", "w27", "w28", "w29", "w30", "wsp",
-            ],
-            [
-                "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11", "x12",
-                "x13", "x14", "x15", "x16", "x17", "x18", "x19", "x20", "x21", "x22", "x23", "x24",
-                "x25", "x26", "x27", "x28", "x29", "x30", "sp",
-            ],
-        ],
-        [
-            [
-                "w0", "w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11", "w12",
-                "w13", "w14", "w15", "w16", "w17", "w18", "w19", "w20", "w21", "w22", "w23", "w24",
-                "w25", "w26", "w27", "w28", "w29", "w30", "wzr",
-            ],
-            [
-                "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11", "x12",
-                "x13", "x14", "x15", "x16", "x17", "x18", "x19", "x20", "x21", "x22", "x23", "x24",
-                "x25", "x26", "x27", "x28", "x29", "x30", "xzr",
-            ],
-        ],
-    ];
-
-    let is_sp = with_zr as usize;
-    let is_64 = is_64 as usize;
-
-    if reg >= 32 {
-        return "<undefined>";
-    }
-
-    INT_REG[is_sp][is_64][reg as usize]
-}
-
-#[repr(usize)]
-enum FpRegSize {
-    B8,
-    H16,
-    S32,
-    D64,
-    Q128,
-}
-
-fn get_fp_reg_name(size: FpRegSize, reg_no: usize) -> &'static str {
-    const FP_REG: [[&str; 32]; 5] = [
-        [
-            "b0", "b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9", "b10", "b11", "b12", "b13",
-            "b14", "b15", "b16", "b17", "b18", "b19", "b20", "b21", "b22", "b23", "b24", "b25",
-            "b26", "b27", "b28", "b29", "b30", "b31",
-        ],
-        [
-            "h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11", "h12", "h13",
-            "h14", "h15", "h16", "h17", "h18", "h19", "h20", "h21", "h22", "h23", "h24", "h25",
-            "h26", "h27", "h28", "h29", "h30", "h31",
-        ],
-        [
-            "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "s12", "s13",
-            "s14", "s15", "s16", "s17", "s18", "s19", "s20", "s21", "s22", "s23", "s24", "s25",
-            "s26", "s27", "s28", "s29", "s30", "s31",
-        ],
-        [
-            "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", "d10", "d11", "d12", "d13",
-            "d14", "d15", "d16", "d17", "d18", "d19", "d20", "d21", "d22", "d23", "d24", "d25",
-            "d26", "d27", "d28", "d29", "d30", "d31",
-        ],
-        [
-            "q0", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10", "q11", "q12", "q13",
-            "q14", "q15", "q16", "q17", "q18", "q19", "q20", "q21", "q22", "q23", "q24", "q25",
-            "q26", "q27", "q28", "q29", "q30", "q31",
-        ],
-    ];
-
-    if reg_no >= 32 {
-        return "<undefined>";
-    }
-
-    FP_REG[size as usize][reg_no]
-}
-
-fn _get_sve_reg_name(is_64: bool, reg: u8) -> &'static str {
-    const SVE_REG: [[&str; 32]; 2] = [
-        [
-            "z0.s", "z1.s", "z2.s", "z3.s", "z4.s", "z5.s", "z6.s", "z7.s", "z8.s", "z9.s",
-            "z10.s", "z11.s", "z12.s", "z13.s", "z14.s", "z15.s", "z16.s", "z17.s", "z18.s",
-            "z19.s", "z20.s", "z21.s", "z22.s", "z23.s", "z24.s", "z25.s", "z26.s", "z27.s",
-            "z28.s", "z29.s", "z30.s", "z31.s",
-        ],
-        [
-            "z0.d", "z1.d", "z2.d", "z3.d", "z4.d", "z5.d", "z6.d", "z7.d", "z8.d", "z9.d",
-            "z10.d", "z11.d", "z12.d", "z13.d", "z14.d", "z15.d", "z16.d", "z17.d", "z18.d",
-            "z19.d", "z20.d", "z21.d", "z22.d", "z23.d", "z24.d", "z25.d", "z26.d", "z27.d",
-            "z28.d", "z29.d", "z30.d", "z31.d",
-        ],
-    ];
-
-    if reg >= 32 {
-        return "<undefined>";
-    }
-
-    let is_64 = is_64 as usize;
-    SVE_REG[is_64][reg as usize]
-}
 
 fn cond_name(cond: u32) -> &'static str {
     const COND: [&str; 16] = [
@@ -1101,7 +999,19 @@ fn format_operand(
         | InsnOperandKind::SVE_ADDR_ZZ_SXTW
         | InsnOperandKind::SVE_ADDR_ZZ_UXTW => write!(f, ":{kind:?}:")?,
 
-        InsnOperandKind::SYSREG | InsnOperandKind::SYSREG128 => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SYSREG | InsnOperandKind::SYSREG128 => {
+            let op0 = bit_range(bits, 19, 2) as u8;
+            let op1 = bit_range(bits, 16, 3) as u8;
+            let crn = bit_range(bits, 12, 4) as u8;
+            let crm = bit_range(bits, 8, 4) as u8;
+            let op2 = bit_range(bits, 5, 3) as u8;
+            if let Some(sys_reg) = get_sys_reg_name(sys_reg_number(op0, op1, crn, crm, op2)) {
+                let sys_reg = sys_reg.1;
+                write!(f, "{sys_reg}")?;
+            } else {
+                write!(f, "s{op0}_{op1}_c{crn}_c{crm}_{op2}")?;
+            }
+        }
 
         InsnOperandKind::PSTATEFIELD => write!(f, ":{kind:?}:")?,
 

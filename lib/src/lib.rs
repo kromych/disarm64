@@ -17,3 +17,4 @@
 
 pub mod decoder;
 pub mod format_insn;
+pub mod registers;
