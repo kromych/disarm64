@@ -31,12 +31,13 @@ the instructions of the following groups:
 - [x] Data processing (some aliases might not be used just yet, the base instruction form is used)
 - [x] Logical
 - [x] Bit manipulation (some aliases might not be used just yet, the base instruction form is used)
-- [x] Branches
+- [x] Branches (uncoditional, conditional, test bit & branch)
 - [x] Conditionals
 - [x] Exceptions
 - [x] Load/store
 - [x] Moves
 - [x] PC-relative
+- [x] System instructions (hints, system registers)
 
 To install the tools:
 
