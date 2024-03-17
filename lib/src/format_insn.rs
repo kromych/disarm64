@@ -1019,7 +1019,36 @@ fn format_operand(
             }
         }
 
-        InsnOperandKind::PSTATEFIELD => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::PSTATEFIELD => {
+            let op2 = bit_range(bits, 5, 3);
+            let crm = bit_range(bits, 8, 4);
+            let op1 = bit_range(bits, 16, 3);
+            let field = match op1 {
+                0b000 => match op2 {
+                    0b011 => "uao",
+                    0b100 => "pan",
+                    0b101 => "spsel",
+                    _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}"),
+                },
+                0b001 => match op2 {
+                    0b000 if crm & 0b1110 == 0 => "allint",
+                    _ => return write!(f, "s0_{op1}_c4_c{crm}_{op2}"),
+                },
+                0b011 => match op2 {
+                    0b011 if crm & 0b1110 == 0b0010 => "svcrsm",
+                    0b100 if crm & 0b1110 == 0b0100 => "svcrza",
+                    0b101 if crm & 0b1110 == 0b0110 => "svcrsmza",
+                    0b001 => "ssbs",
+                    0b010 => "dit",
+                    0b100 => "tco",
+                    0b110 => "daifset",
+                    0b111 => "daifclr",
+                    _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}"),
+                },
+                _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}"),
+            };
+            write!(f, "{field}")?
+        }
 
         InsnOperandKind::SYSREG_AT
         | InsnOperandKind::SYSREG_DC
