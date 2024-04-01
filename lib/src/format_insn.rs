@@ -170,7 +170,20 @@ fn format_fp_reg(
             }
         }
 
-        _ => return write!(f, ":{kind:?}:"),
+        _ => {
+            if definition.flags.contains(InsnFlags::HAS_FPTYPE_FIELD) {
+                let fp_type = bit_range(bits, 22, 2);
+                match fp_type {
+                    0b00 => get_fp_reg_name(FpRegSize::S32, reg_no as usize),
+                    0b01 => get_fp_reg_name(FpRegSize::D64, reg_no as usize),
+                    0b10 => "<undefined>",
+                    0b11 => get_fp_reg_name(FpRegSize::H16, reg_no as usize),
+                    _ => unreachable!(),
+                }
+            } else {
+                return write!(f, ":{kind:?}:");
+            }
+        }
     };
 
     write!(f, "{fp_reg_name}")
