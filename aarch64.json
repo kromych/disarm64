@@ -31386,7 +31386,7 @@
         ]
       }
     ],
-    "flags": "",
+    "flags": "HAS_FPTYPE_FIELD",
     "index": 798
   },
   {
