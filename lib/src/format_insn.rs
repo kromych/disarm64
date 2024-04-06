@@ -619,6 +619,19 @@ fn format_operand(
             write!(f, "#{}", bit_num)?;
         }
 
+        InsnOperandKind::FBITS => {
+            let ftype = bit_range(bits, 22, 2);
+            if ftype == 0b10 {
+                return write!(f, "<undefined>");
+            }
+            let sf = bit_set(bits, 31);
+            let scale = 64 - bit_range(bits, 10, 6);
+            if !sf && scale > 32 {
+                return write!(f, "<undefined>");
+            }
+            write!(f, "#{scale}")?;
+        }
+
         InsnOperandKind::IDX
         | InsnOperandKind::IMM
         | InsnOperandKind::WIDTH
@@ -626,7 +639,6 @@ fn format_operand(
         | InsnOperandKind::IMM_VLSR
         | InsnOperandKind::SHLL_IMM
         | InsnOperandKind::IMM0
-        | InsnOperandKind::FBITS
         | InsnOperandKind::TME_UIMM16
         | InsnOperandKind::SIMM5
         | InsnOperandKind::SME_SHRIMM4
