@@ -169,6 +169,13 @@ fn format_fp_reg(
                 return write!(f, "<undefined>");
             }
         }
+        InsnClass::BFLOAT16 => match kind {
+            InsnOperandKind::Fd => get_fp_reg_name(FpRegSize::H16, reg_no as usize),
+            InsnOperandKind::Fn => get_fp_reg_name(FpRegSize::S32, reg_no as usize),
+            _ => {
+                return write!(f, "<undefined>");
+            }
+        },
 
         _ => {
             if definition.flags.contains(InsnFlags::HAS_FPTYPE_FIELD) {
