@@ -196,6 +196,38 @@ fn format_fp_reg(
     write!(f, "{fp_reg_name}")
 }
 
+/// Follows `bits(N) VFPExpandImm(bits(8) imm8, integer N)` in the A64 reference.
+fn fp_expand_imm(size: i32, imm8: u32) -> Option<f64> {
+    let imm8_7 = (imm8 >> 7) & 0x01; // imm8<7>
+    let imm8_6_0 = imm8 & 0x7f; // imm8<6:0>
+    let imm8_6 = imm8_6_0 >> 6; // imm8<6>
+    let imm8_6_repl4 = (imm8_6 << 3) | (imm8_6 << 2) | (imm8_6 << 1) | imm8_6; // Replicate(imm8<6>,4)
+
+    match size {
+        8 => {
+            // Double-precision
+            let imm: u64 = ((imm8_7 as u64) << (63-32))    // imm8<7>
+                | (((imm8_6 ^ 1) as u64) << (62-32)) // NOT(imm8<6>)
+                | ((imm8_6_repl4 as u64) << (58-32))
+                | ((imm8_6 as u64) << (57-32))
+                | ((imm8_6 as u64) << (56-32))
+                | ((imm8_6 as u64) << (55-32))      // Replicate(imm8<6>,7)
+                | ((imm8_6_0 as u64) << (48-32)); // imm8<6>:imm8<5:0>
+            unsafe { Some(core::mem::transmute(imm << 32)) }
+        }
+        4 | 2 => {
+            // Single precision | Half-precision
+            let imm = ((imm8_7 as u64) << 31)    // imm8<7>
+                | (((imm8_6 ^ 1) as u64) << 30) // NOT(imm8<6>)
+                | ((imm8_6_repl4 as u64) << 26) // Replicate(imm8<6>,4)
+                | ((imm8_6_0 as u64) << 19); // imm8<6>:imm8<5:0>
+            let imm: f32 = unsafe { core::mem::transmute(imm as u32) };
+            Some(imm as f64)
+        }
+        _ => None,
+    }
+}
+
 /// Format an integer register (32-bit or 64-bit) to a string
 fn format_int_operand_reg_pair(
     pair: bool,
@@ -734,7 +766,20 @@ fn format_operand(
         InsnOperandKind::SVE_AIMM | InsnOperandKind::SVE_ASIMM => write!(f, ":{kind:?}:")?,
 
         InsnOperandKind::FPIMM | InsnOperandKind::SIMD_FPIMM | InsnOperandKind::SVE_FPIMM8 => {
-            write!(f, ":{kind:?}:")?
+            let fp_type = bit_range(bits, 22, 2);
+            let size = match fp_type {
+                0b00 => 4,
+                0b01 => 8,
+                0b10 => return write!(f, "<undefined>"),
+                0b11 => 2,
+                _ => unreachable!(),
+            };
+            let imm8 = bit_range(bits, 13, 8);
+            if let Some(imm) = fp_expand_imm(size, imm8) {
+                write!(f, "#{}", imm)?
+            } else {
+                write!(f, "<undefined>")?
+            }
         }
 
         InsnOperandKind::EXCEPTION => {
