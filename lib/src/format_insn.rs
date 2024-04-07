@@ -672,6 +672,7 @@ fn format_operand(
         }
 
         InsnOperandKind::IMM0 => write!(f, "#0")?,
+        InsnOperandKind::TME_UIMM16 => write!(f, "#{}", bit_range(bits, 5, 16))?,
 
         InsnOperandKind::IDX
         | InsnOperandKind::IMM
@@ -679,7 +680,6 @@ fn format_operand(
         | InsnOperandKind::IMM_VLSL
         | InsnOperandKind::IMM_VLSR
         | InsnOperandKind::SHLL_IMM
-        | InsnOperandKind::TME_UIMM16
         | InsnOperandKind::SIMM5
         | InsnOperandKind::SME_SHRIMM4
         | InsnOperandKind::SME_SHRIMM5
