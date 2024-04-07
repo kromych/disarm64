@@ -689,7 +689,7 @@ fn format_operand(
 
         InsnOperandKind::IMM_MOV => write!(f, ":{kind:?}:")?,
 
-        InsnOperandKind::FPIMM0 => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::FPIMM0 => write!(f, "#{:.1}", 0.0)?,
 
         InsnOperandKind::AIMM => {
             let shift = bit_set(bits, 22);
