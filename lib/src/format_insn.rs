@@ -671,13 +671,14 @@ fn format_operand(
             write!(f, "#{scale}")?;
         }
 
+        InsnOperandKind::IMM0 => write!(f, "#0")?,
+
         InsnOperandKind::IDX
         | InsnOperandKind::IMM
         | InsnOperandKind::WIDTH
         | InsnOperandKind::IMM_VLSL
         | InsnOperandKind::IMM_VLSR
         | InsnOperandKind::SHLL_IMM
-        | InsnOperandKind::IMM0
         | InsnOperandKind::TME_UIMM16
         | InsnOperandKind::SIMM5
         | InsnOperandKind::SME_SHRIMM4
