@@ -1224,9 +1224,35 @@ fn format_operand(
 
         InsnOperandKind::BTI_TARGET => write!(f, ":{kind:?}:")?,
 
-        InsnOperandKind::MOPS_ADDR_Rd | InsnOperandKind::MOPS_ADDR_Rs => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::MOPS_ADDR_Rd
+        | InsnOperandKind::MOPS_ADDR_Rs
+        | InsnOperandKind::MOPS_WB_Rn => {
+            *stop = true;
 
-        InsnOperandKind::MOPS_WB_Rn => write!(f, ":{kind:?}:")?,
+            let rd = bit_range(bits, 0, 5) as u8;
+            let rn = bit_range(bits, 5, 5) as u8;
+            let rs = bit_range(bits, 16, 5) as u8;
+            let op1 = bit_range(bits, 22, 2);
+
+            if rd == rn || rd == rs || rs == rn {
+                return write!(f, "<undefined>");
+            }
+            if rd == 31 || rn == 31 || (rs == 31 && op1 != 0b11) {
+                return write!(f, "<undefined>");
+            }
+
+            let rd = get_int_reg_name(true, rd, true);
+            let rn = get_int_reg_name(true, rn, true);
+            let rs = get_int_reg_name(true, rs, true);
+
+            if op1 != 0b11 {
+                // Memory copy forward only (cpyfm, ...)
+                write!(f, "[{rd}]!, [{rs}]!, {rn}!")?
+            } else {
+                // Set memory (setp, setm, sete, ...)
+                write!(f, "[{rd}]!, {rn}!, {rs}")?
+            }
+        }
     };
 
     Ok(())
