@@ -213,7 +213,7 @@ fn fp_expand_imm(size: i32, imm8: u32) -> Option<f64> {
                 | ((imm8_6 as u64) << (56-32))
                 | ((imm8_6 as u64) << (55-32))      // Replicate(imm8<6>,7)
                 | ((imm8_6_0 as u64) << (48-32)); // imm8<6>:imm8<5:0>
-            unsafe { Some(core::mem::transmute(imm << 32)) }
+            Some(f64::from_bits(imm << 32))
         }
         4 | 2 => {
             // Single precision | Half-precision
@@ -221,8 +221,7 @@ fn fp_expand_imm(size: i32, imm8: u32) -> Option<f64> {
                 | (((imm8_6 ^ 1) as u64) << 30) // NOT(imm8<6>)
                 | ((imm8_6_repl4 as u64) << 26) // Replicate(imm8<6>,4)
                 | ((imm8_6_0 as u64) << 19); // imm8<6>:imm8<5:0>
-            let imm: f32 = unsafe { core::mem::transmute(imm as u32) };
-            Some(imm as f64)
+            Some(f32::from_bits(imm as u32) as f64)
         }
         _ => None,
     }
