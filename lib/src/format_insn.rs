@@ -9,9 +9,11 @@ use crate::decoder::Opcode;
 use crate::decoder::IC_SYSTEM;
 use crate::registers::get_fp_reg_name;
 use crate::registers::get_int_reg_name;
+use crate::registers::get_simd_reg_name;
 use crate::registers::get_sys_reg_name;
 use crate::registers::sys_reg_number;
 use crate::registers::FpRegSize;
+use crate::registers::SimdRegArrangement;
 use bitfield_struct::bitfield;
 use core::fmt::Display;
 use core::fmt::Formatter;
@@ -445,6 +447,63 @@ fn format_operand_reg_shift(f: &mut impl Write, bits: u32) -> core::fmt::Result 
     Ok(())
 }
 
+/// Format a SIMD register to a string
+fn format_simd_reg(
+    f: &mut impl Write,
+    bits: u32,
+    operand: &defn::InsnOperand,
+    definition: &defn::Insn,
+) -> core::fmt::Result {
+    let kind = operand.kind;
+
+    let reg_no = if let Some(bit_filed) = operand.bit_fields.first() {
+        bit_range(bits, bit_filed.lsb.into(), bit_filed.width.into())
+    } else {
+        return write!(f, ":{kind:?}:");
+    } as u8;
+
+    let simd_reg_arrangement = if let Some(qual) = operand.qualifiers.first() {
+        let double = if definition.flags.contains(InsnFlags::HAS_SIZEQ_FIELD) {
+            bit_set(bits, 30)
+        } else {
+            false
+        };
+        if !double {
+            match qual {
+                InsnOperandQualifier::V_8B => SimdRegArrangement::Vector8B,
+                InsnOperandQualifier::V_16B => SimdRegArrangement::Vector16B,
+                InsnOperandQualifier::V_2H => SimdRegArrangement::Vector2H,
+                InsnOperandQualifier::V_4H => SimdRegArrangement::Vector4H,
+                InsnOperandQualifier::V_8H => SimdRegArrangement::Vector8H,
+                InsnOperandQualifier::V_2S => SimdRegArrangement::Vector2S,
+                InsnOperandQualifier::V_4S => SimdRegArrangement::Vector4S,
+                InsnOperandQualifier::V_1D => SimdRegArrangement::Vector1D,
+                InsnOperandQualifier::V_2D => SimdRegArrangement::Vector2D,
+                InsnOperandQualifier::V_1Q => SimdRegArrangement::Vector1Q,
+                _ => {
+                    return write!(f, "<undefined>");
+                }
+            }
+        } else {
+            match qual {
+                InsnOperandQualifier::V_8B => SimdRegArrangement::Vector16B,
+                InsnOperandQualifier::V_2H => SimdRegArrangement::Vector4H,
+                InsnOperandQualifier::V_4H => SimdRegArrangement::Vector8H,
+                InsnOperandQualifier::V_2S => SimdRegArrangement::Vector4S,
+                InsnOperandQualifier::V_1D => SimdRegArrangement::Vector2D,
+                _ => {
+                    return write!(f, "<undefined>");
+                }
+            }
+        }
+    } else {
+        return write!(f, "<undefined>");
+    };
+    let simd_reg_name = get_simd_reg_name(reg_no, simd_reg_arrangement);
+
+    write!(f, "{simd_reg_name}")
+}
+
 /// Format an operand to a string
 fn format_operand(
     pos: usize,
@@ -512,7 +571,7 @@ fn format_operand(
         | InsnOperandKind::SVE_Vn => write!(f, ":{kind:?}:")?,
 
         InsnOperandKind::Va | InsnOperandKind::Vd | InsnOperandKind::Vn | InsnOperandKind::Vm => {
-            write!(f, ":{kind:?}:")?
+            format_simd_reg(f, bits, operand, definition)?
         }
 
         InsnOperandKind::Ed | InsnOperandKind::En | InsnOperandKind::Em | InsnOperandKind::Em16 => {
