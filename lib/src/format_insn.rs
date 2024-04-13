@@ -187,6 +187,18 @@ fn format_fp_reg(
                     0b11 => get_fp_reg_name(FpRegSize::H16, reg_no as usize),
                     _ => unreachable!(),
                 }
+            } else if let Some(qual) = operand.qualifiers.first() {
+                let size = match qual {
+                    InsnOperandQualifier::S_B => FpRegSize::B8,
+                    InsnOperandQualifier::S_H => FpRegSize::H16,
+                    InsnOperandQualifier::S_S => FpRegSize::S32,
+                    InsnOperandQualifier::S_D => FpRegSize::D64,
+                    InsnOperandQualifier::S_Q => FpRegSize::Q128,
+                    _ => {
+                        return write!(f, "<undefined>");
+                    }
+                };
+                get_fp_reg_name(size, reg_no as usize)
             } else {
                 return write!(f, ":{kind:?}:");
             }
