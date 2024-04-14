@@ -61,10 +61,14 @@ and somewhere in your cool code could start with a snippet like this
 use disarm64::decoder;
 use disarm64_defn::defn::InsnOpcode;
 
-let insn = decoder::decode(0x94000000).unwrap();
+fn neato() {
+    let insn = decoder::decode(0x11000000).unwrap();
 
-println!("Instruction: {insn:?}");
-println!("Definition: {:?}", insn.definition());
+    println!("Instruction: {insn:?}");
+    println!("Formatted: {insn}");
+    println!("Definition: {:?}", insn.definition());
+}
+
 ```
 
 By default, the library is built to support the full known instruction set. There are also
