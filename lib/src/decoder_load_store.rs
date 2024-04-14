@@ -3558,26 +3558,6 @@ pub struct SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
     pub _op_21: u32,
 }
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum LDSTPAIR_INDEXED {
-    LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S(LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S),
-    LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S),
-    LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S),
-    STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag(STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag),
-    STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S),
-    STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S),
-}
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum LOG_SHIFT {
-    ANDS_Rd_Rn_Rm_SFT(ANDS_Rd_Rn_Rm_SFT),
-    AND_Rd_Rn_Rm_SFT(AND_Rd_Rn_Rm_SFT),
-    BICS_Rd_Rn_Rm_SFT(BICS_Rd_Rn_Rm_SFT),
-    BIC_Rd_Rn_Rm_SFT(BIC_Rd_Rn_Rm_SFT),
-    EON_Rd_Rn_Rm_SFT(EON_Rd_Rn_Rm_SFT),
-    EOR_Rd_Rn_Rm_SFT(EOR_Rd_Rn_Rm_SFT),
-    ORN_Rd_Rn_Rm_SFT(ORN_Rd_Rn_Rm_SFT),
-    ORR_Rd_Rn_Rm_SFT(ORR_Rd_Rn_Rm_SFT),
-}
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum LDSTEXCL {
     LDAPRB_Rt_ADDR_SIMPLE(LDAPRB_Rt_ADDR_SIMPLE),
     LDAPRH_Rt_ADDR_SIMPLE(LDAPRH_Rt_ADDR_SIMPLE),
@@ -3615,9 +3595,67 @@ pub enum LDSTEXCL {
     STZGM_Rt_ADDR_SIMPLE(STZGM_Rt_ADDR_SIMPLE),
 }
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum LDSTNAPAIR_OFFS {
+    LDNP_Ft_Ft2_ADDR_SIMM7(LDNP_Ft_Ft2_ADDR_SIMM7),
+    LDNP_Rt_Rt2_ADDR_SIMM7(LDNP_Rt_Rt2_ADDR_SIMM7),
+    STNP_Ft_Ft2_ADDR_SIMM7(STNP_Ft_Ft2_ADDR_SIMM7),
+    STNP_Rt_Rt2_ADDR_SIMM7(STNP_Rt_Rt2_ADDR_SIMM7),
+}
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum LDSTPAIR_INDEXED {
+    LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S(LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S),
+    LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S),
+    LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S),
+    STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag(STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag),
+    STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S),
+    STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S),
+}
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum LDSTPAIR_OFF {
+    LDPSW_Rt_Rt2_ADDR_SIMM7(LDPSW_Rt_Rt2_ADDR_SIMM7),
+    LDP_Ft_Ft2_ADDR_SIMM7(LDP_Ft_Ft2_ADDR_SIMM7),
+    LDP_Rt_Rt2_ADDR_SIMM7(LDP_Rt_Rt2_ADDR_SIMM7),
+    STGP_Rt_Rt2_ADDR_SIMM11(STGP_Rt_Rt2_ADDR_SIMM11),
+    STP_Ft_Ft2_ADDR_SIMM7(STP_Ft_Ft2_ADDR_SIMM7),
+    STP_Rt_Rt2_ADDR_SIMM7(STP_Rt_Rt2_ADDR_SIMM7),
+}
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum LDST_IMM10 {
     LDRAA_Rt_ADDR_SIMM10(LDRAA_Rt_ADDR_SIMM10),
     LDRAB_Rt_ADDR_SIMM10(LDRAB_Rt_ADDR_SIMM10),
+}
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum LDST_IMM9 {
+    LDRB_Rt_ADDR_SIMM9(LDRB_Rt_ADDR_SIMM9),
+    LDRH_Rt_ADDR_SIMM9(LDRH_Rt_ADDR_SIMM9),
+    LDRSB_Rt_ADDR_SIMM9(LDRSB_Rt_ADDR_SIMM9),
+    LDRSH_Rt_ADDR_SIMM9(LDRSH_Rt_ADDR_SIMM9),
+    LDRSW_Rt_ADDR_SIMM9(LDRSW_Rt_ADDR_SIMM9),
+    LDR_Ft_ADDR_SIMM9(LDR_Ft_ADDR_SIMM9),
+    LDR_Rt_ADDR_SIMM9(LDR_Rt_ADDR_SIMM9),
+    ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag(ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag),
+    STG_Rt_SP_X_ADDR_SIMM13_imm_tag(STG_Rt_SP_X_ADDR_SIMM13_imm_tag),
+    STRB_Rt_ADDR_SIMM9(STRB_Rt_ADDR_SIMM9),
+    STRH_Rt_ADDR_SIMM9(STRH_Rt_ADDR_SIMM9),
+    STR_Ft_ADDR_SIMM9(STR_Ft_ADDR_SIMM9),
+    STR_Rt_ADDR_SIMM9(STR_Rt_ADDR_SIMM9),
+    STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag(STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag),
+    STZG_Rt_SP_X_ADDR_SIMM13_imm_tag(STZG_Rt_SP_X_ADDR_SIMM13_imm_tag),
+}
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum LDST_POS {
+    LDRB_Rt_ADDR_UIMM12(LDRB_Rt_ADDR_UIMM12),
+    LDRH_Rt_ADDR_UIMM12(LDRH_Rt_ADDR_UIMM12),
+    LDRSB_Rt_ADDR_UIMM12(LDRSB_Rt_ADDR_UIMM12),
+    LDRSH_Rt_ADDR_UIMM12(LDRSH_Rt_ADDR_UIMM12),
+    LDRSW_Rt_ADDR_UIMM12(LDRSW_Rt_ADDR_UIMM12),
+    LDR_Ft_ADDR_UIMM12(LDR_Ft_ADDR_UIMM12),
+    LDR_Rt_ADDR_UIMM12(LDR_Rt_ADDR_UIMM12),
+    PRFM_PRFOP_ADDR_UIMM12(PRFM_PRFOP_ADDR_UIMM12),
+    STRB_Rt_ADDR_UIMM12(STRB_Rt_ADDR_UIMM12),
+    STRH_Rt_ADDR_UIMM12(STRH_Rt_ADDR_UIMM12),
+    STR_Ft_ADDR_UIMM12(STR_Ft_ADDR_UIMM12),
+    STR_Rt_ADDR_UIMM12(STR_Rt_ADDR_UIMM12),
 }
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum LDST_REGOFF {
@@ -3635,13 +3673,89 @@ pub enum LDST_REGOFF {
     STR_Rt_ADDR_REGOFF(STR_Rt_ADDR_REGOFF),
 }
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum LDSTPAIR_OFF {
-    LDPSW_Rt_Rt2_ADDR_SIMM7(LDPSW_Rt_Rt2_ADDR_SIMM7),
-    LDP_Ft_Ft2_ADDR_SIMM7(LDP_Ft_Ft2_ADDR_SIMM7),
-    LDP_Rt_Rt2_ADDR_SIMM7(LDP_Rt_Rt2_ADDR_SIMM7),
-    STGP_Rt_Rt2_ADDR_SIMM11(STGP_Rt_Rt2_ADDR_SIMM11),
-    STP_Ft_Ft2_ADDR_SIMM7(STP_Ft_Ft2_ADDR_SIMM7),
-    STP_Rt_Rt2_ADDR_SIMM7(STP_Rt_Rt2_ADDR_SIMM7),
+pub enum LDST_UNPRIV {
+    LDTRB_Rt_ADDR_SIMM9(LDTRB_Rt_ADDR_SIMM9),
+    LDTRH_Rt_ADDR_SIMM9(LDTRH_Rt_ADDR_SIMM9),
+    LDTRSB_Rt_ADDR_SIMM9(LDTRSB_Rt_ADDR_SIMM9),
+    LDTRSH_Rt_ADDR_SIMM9(LDTRSH_Rt_ADDR_SIMM9),
+    LDTRSW_Rt_ADDR_SIMM9(LDTRSW_Rt_ADDR_SIMM9),
+    LDTR_Rt_ADDR_SIMM9(LDTR_Rt_ADDR_SIMM9),
+    STTRB_Rt_ADDR_SIMM9(STTRB_Rt_ADDR_SIMM9),
+    STTRH_Rt_ADDR_SIMM9(STTRH_Rt_ADDR_SIMM9),
+    STTR_Rt_ADDR_SIMM9(STTR_Rt_ADDR_SIMM9),
+}
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum LDST_UNSCALED {
+    LDAPURB_Rt_ADDR_OFFSET(LDAPURB_Rt_ADDR_OFFSET),
+    LDAPURH_Rt_ADDR_OFFSET(LDAPURH_Rt_ADDR_OFFSET),
+    LDAPURSB_Rt_ADDR_OFFSET(LDAPURSB_Rt_ADDR_OFFSET),
+    LDAPURSB_Rt_W_ADDR_OFFSET(LDAPURSB_Rt_W_ADDR_OFFSET),
+    LDAPURSH_Rt_ADDR_OFFSET(LDAPURSH_Rt_ADDR_OFFSET),
+    LDAPURSH_Rt_W_ADDR_OFFSET(LDAPURSH_Rt_W_ADDR_OFFSET),
+    LDAPURSW_Rt_ADDR_OFFSET(LDAPURSW_Rt_ADDR_OFFSET),
+    LDAPUR_Rt_ADDR_OFFSET(LDAPUR_Rt_ADDR_OFFSET),
+    LDAPUR_Rt_X_ADDR_OFFSET(LDAPUR_Rt_X_ADDR_OFFSET),
+    LDG_Rt_ADDR_SIMM13(LDG_Rt_ADDR_SIMM13),
+    LDURB_Rt_ADDR_SIMM9(LDURB_Rt_ADDR_SIMM9),
+    LDURH_Rt_ADDR_SIMM9(LDURH_Rt_ADDR_SIMM9),
+    LDURSB_Rt_ADDR_SIMM9(LDURSB_Rt_ADDR_SIMM9),
+    LDURSH_Rt_ADDR_SIMM9(LDURSH_Rt_ADDR_SIMM9),
+    LDURSW_Rt_ADDR_SIMM9(LDURSW_Rt_ADDR_SIMM9),
+    LDUR_Ft_ADDR_SIMM9(LDUR_Ft_ADDR_SIMM9),
+    LDUR_Rt_ADDR_SIMM9(LDUR_Rt_ADDR_SIMM9),
+    PRFUM_PRFOP_ADDR_SIMM9(PRFUM_PRFOP_ADDR_SIMM9),
+    ST2G_Rt_SP_ADDR_SIMM13(ST2G_Rt_SP_ADDR_SIMM13),
+    STG_Rt_SP_ADDR_SIMM13(STG_Rt_SP_ADDR_SIMM13),
+    STLURB_Rt_ADDR_OFFSET(STLURB_Rt_ADDR_OFFSET),
+    STLURH_Rt_ADDR_OFFSET(STLURH_Rt_ADDR_OFFSET),
+    STLUR_Rt_ADDR_OFFSET(STLUR_Rt_ADDR_OFFSET),
+    STLUR_Rt_X_ADDR_OFFSET(STLUR_Rt_X_ADDR_OFFSET),
+    STURB_Rt_ADDR_SIMM9(STURB_Rt_ADDR_SIMM9),
+    STURH_Rt_ADDR_SIMM9(STURH_Rt_ADDR_SIMM9),
+    STUR_Ft_ADDR_SIMM9(STUR_Ft_ADDR_SIMM9),
+    STUR_Rt_ADDR_SIMM9(STUR_Rt_ADDR_SIMM9),
+    STZ2G_Rt_SP_ADDR_SIMM13(STZ2G_Rt_SP_ADDR_SIMM13),
+    STZG_Rt_SP_ADDR_SIMM13(STZG_Rt_SP_ADDR_SIMM13),
+}
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum LOADLIT {
+    LDRSW_Rt_ADDR_PCREL19(LDRSW_Rt_ADDR_PCREL19),
+    LDR_Ft_ADDR_PCREL19(LDR_Ft_ADDR_PCREL19),
+    LDR_Rt_ADDR_PCREL19(LDR_Rt_ADDR_PCREL19),
+    PRFM_PRFOP_ADDR_PCREL19(PRFM_PRFOP_ADDR_PCREL19),
+}
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum LOG_IMM {
+    ANDS_Rd_Rn_LIMM(ANDS_Rd_Rn_LIMM),
+    AND_Rd_SP_Rn_LIMM(AND_Rd_SP_Rn_LIMM),
+    EOR_Rd_SP_Rn_LIMM(EOR_Rd_SP_Rn_LIMM),
+    ORR_Rd_SP_Rn_LIMM(ORR_Rd_SP_Rn_LIMM),
+}
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum LOG_SHIFT {
+    ANDS_Rd_Rn_Rm_SFT(ANDS_Rd_Rn_Rm_SFT),
+    AND_Rd_Rn_Rm_SFT(AND_Rd_Rn_Rm_SFT),
+    BICS_Rd_Rn_Rm_SFT(BICS_Rd_Rn_Rm_SFT),
+    BIC_Rd_Rn_Rm_SFT(BIC_Rd_Rn_Rm_SFT),
+    EON_Rd_Rn_Rm_SFT(EON_Rd_Rn_Rm_SFT),
+    EOR_Rd_Rn_Rm_SFT(EOR_Rd_Rn_Rm_SFT),
+    ORN_Rd_Rn_Rm_SFT(ORN_Rd_Rn_Rm_SFT),
+    ORR_Rd_Rn_Rm_SFT(ORR_Rd_Rn_Rm_SFT),
+}
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum LSE128_ATOMIC {
+    LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
+    LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
+    LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
+    LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
+    LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
+    LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
+    LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
+    LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
+    SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
+    SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
+    SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
+    SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
 }
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum LSE_ATOMIC {
@@ -3775,136 +3889,22 @@ pub enum LSE_ATOMIC {
     SWP_Rs_Rt_ADDR_SIMPLE(SWP_Rs_Rt_ADDR_SIMPLE),
 }
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum LOG_IMM {
-    ANDS_Rd_Rn_LIMM(ANDS_Rd_Rn_LIMM),
-    AND_Rd_SP_Rn_LIMM(AND_Rd_SP_Rn_LIMM),
-    EOR_Rd_SP_Rn_LIMM(EOR_Rd_SP_Rn_LIMM),
-    ORR_Rd_SP_Rn_LIMM(ORR_Rd_SP_Rn_LIMM),
-}
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum LDST_IMM9 {
-    LDRB_Rt_ADDR_SIMM9(LDRB_Rt_ADDR_SIMM9),
-    LDRH_Rt_ADDR_SIMM9(LDRH_Rt_ADDR_SIMM9),
-    LDRSB_Rt_ADDR_SIMM9(LDRSB_Rt_ADDR_SIMM9),
-    LDRSH_Rt_ADDR_SIMM9(LDRSH_Rt_ADDR_SIMM9),
-    LDRSW_Rt_ADDR_SIMM9(LDRSW_Rt_ADDR_SIMM9),
-    LDR_Ft_ADDR_SIMM9(LDR_Ft_ADDR_SIMM9),
-    LDR_Rt_ADDR_SIMM9(LDR_Rt_ADDR_SIMM9),
-    ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag(ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag),
-    STG_Rt_SP_X_ADDR_SIMM13_imm_tag(STG_Rt_SP_X_ADDR_SIMM13_imm_tag),
-    STRB_Rt_ADDR_SIMM9(STRB_Rt_ADDR_SIMM9),
-    STRH_Rt_ADDR_SIMM9(STRH_Rt_ADDR_SIMM9),
-    STR_Ft_ADDR_SIMM9(STR_Ft_ADDR_SIMM9),
-    STR_Rt_ADDR_SIMM9(STR_Rt_ADDR_SIMM9),
-    STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag(STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag),
-    STZG_Rt_SP_X_ADDR_SIMM13_imm_tag(STZG_Rt_SP_X_ADDR_SIMM13_imm_tag),
-}
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum LDST_UNSCALED {
-    LDAPURB_Rt_ADDR_OFFSET(LDAPURB_Rt_ADDR_OFFSET),
-    LDAPURH_Rt_ADDR_OFFSET(LDAPURH_Rt_ADDR_OFFSET),
-    LDAPURSB_Rt_ADDR_OFFSET(LDAPURSB_Rt_ADDR_OFFSET),
-    LDAPURSB_Rt_W_ADDR_OFFSET(LDAPURSB_Rt_W_ADDR_OFFSET),
-    LDAPURSH_Rt_ADDR_OFFSET(LDAPURSH_Rt_ADDR_OFFSET),
-    LDAPURSH_Rt_W_ADDR_OFFSET(LDAPURSH_Rt_W_ADDR_OFFSET),
-    LDAPURSW_Rt_ADDR_OFFSET(LDAPURSW_Rt_ADDR_OFFSET),
-    LDAPUR_Rt_ADDR_OFFSET(LDAPUR_Rt_ADDR_OFFSET),
-    LDAPUR_Rt_X_ADDR_OFFSET(LDAPUR_Rt_X_ADDR_OFFSET),
-    LDG_Rt_ADDR_SIMM13(LDG_Rt_ADDR_SIMM13),
-    LDURB_Rt_ADDR_SIMM9(LDURB_Rt_ADDR_SIMM9),
-    LDURH_Rt_ADDR_SIMM9(LDURH_Rt_ADDR_SIMM9),
-    LDURSB_Rt_ADDR_SIMM9(LDURSB_Rt_ADDR_SIMM9),
-    LDURSH_Rt_ADDR_SIMM9(LDURSH_Rt_ADDR_SIMM9),
-    LDURSW_Rt_ADDR_SIMM9(LDURSW_Rt_ADDR_SIMM9),
-    LDUR_Ft_ADDR_SIMM9(LDUR_Ft_ADDR_SIMM9),
-    LDUR_Rt_ADDR_SIMM9(LDUR_Rt_ADDR_SIMM9),
-    PRFUM_PRFOP_ADDR_SIMM9(PRFUM_PRFOP_ADDR_SIMM9),
-    ST2G_Rt_SP_ADDR_SIMM13(ST2G_Rt_SP_ADDR_SIMM13),
-    STG_Rt_SP_ADDR_SIMM13(STG_Rt_SP_ADDR_SIMM13),
-    STLURB_Rt_ADDR_OFFSET(STLURB_Rt_ADDR_OFFSET),
-    STLURH_Rt_ADDR_OFFSET(STLURH_Rt_ADDR_OFFSET),
-    STLUR_Rt_ADDR_OFFSET(STLUR_Rt_ADDR_OFFSET),
-    STLUR_Rt_X_ADDR_OFFSET(STLUR_Rt_X_ADDR_OFFSET),
-    STURB_Rt_ADDR_SIMM9(STURB_Rt_ADDR_SIMM9),
-    STURH_Rt_ADDR_SIMM9(STURH_Rt_ADDR_SIMM9),
-    STUR_Ft_ADDR_SIMM9(STUR_Ft_ADDR_SIMM9),
-    STUR_Rt_ADDR_SIMM9(STUR_Rt_ADDR_SIMM9),
-    STZ2G_Rt_SP_ADDR_SIMM13(STZ2G_Rt_SP_ADDR_SIMM13),
-    STZG_Rt_SP_ADDR_SIMM13(STZG_Rt_SP_ADDR_SIMM13),
-}
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum LOADLIT {
-    LDRSW_Rt_ADDR_PCREL19(LDRSW_Rt_ADDR_PCREL19),
-    LDR_Ft_ADDR_PCREL19(LDR_Ft_ADDR_PCREL19),
-    LDR_Rt_ADDR_PCREL19(LDR_Rt_ADDR_PCREL19),
-    PRFM_PRFOP_ADDR_PCREL19(PRFM_PRFOP_ADDR_PCREL19),
-}
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum LDSTNAPAIR_OFFS {
-    LDNP_Ft_Ft2_ADDR_SIMM7(LDNP_Ft_Ft2_ADDR_SIMM7),
-    LDNP_Rt_Rt2_ADDR_SIMM7(LDNP_Rt_Rt2_ADDR_SIMM7),
-    STNP_Ft_Ft2_ADDR_SIMM7(STNP_Ft_Ft2_ADDR_SIMM7),
-    STNP_Rt_Rt2_ADDR_SIMM7(STNP_Rt_Rt2_ADDR_SIMM7),
-}
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum LDST_POS {
-    LDRB_Rt_ADDR_UIMM12(LDRB_Rt_ADDR_UIMM12),
-    LDRH_Rt_ADDR_UIMM12(LDRH_Rt_ADDR_UIMM12),
-    LDRSB_Rt_ADDR_UIMM12(LDRSB_Rt_ADDR_UIMM12),
-    LDRSH_Rt_ADDR_UIMM12(LDRSH_Rt_ADDR_UIMM12),
-    LDRSW_Rt_ADDR_UIMM12(LDRSW_Rt_ADDR_UIMM12),
-    LDR_Ft_ADDR_UIMM12(LDR_Ft_ADDR_UIMM12),
-    LDR_Rt_ADDR_UIMM12(LDR_Rt_ADDR_UIMM12),
-    PRFM_PRFOP_ADDR_UIMM12(PRFM_PRFOP_ADDR_UIMM12),
-    STRB_Rt_ADDR_UIMM12(STRB_Rt_ADDR_UIMM12),
-    STRH_Rt_ADDR_UIMM12(STRH_Rt_ADDR_UIMM12),
-    STR_Ft_ADDR_UIMM12(STR_Ft_ADDR_UIMM12),
-    STR_Rt_ADDR_UIMM12(STR_Rt_ADDR_UIMM12),
-}
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum LSE128_ATOMIC {
-    LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
-    LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
-    LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
-    LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
-    LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
-    LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
-    LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
-    LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
-    SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
-    SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
-    SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
-    SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE),
-}
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum LDST_UNPRIV {
-    LDTRB_Rt_ADDR_SIMM9(LDTRB_Rt_ADDR_SIMM9),
-    LDTRH_Rt_ADDR_SIMM9(LDTRH_Rt_ADDR_SIMM9),
-    LDTRSB_Rt_ADDR_SIMM9(LDTRSB_Rt_ADDR_SIMM9),
-    LDTRSH_Rt_ADDR_SIMM9(LDTRSH_Rt_ADDR_SIMM9),
-    LDTRSW_Rt_ADDR_SIMM9(LDTRSW_Rt_ADDR_SIMM9),
-    LDTR_Rt_ADDR_SIMM9(LDTR_Rt_ADDR_SIMM9),
-    STTRB_Rt_ADDR_SIMM9(STTRB_Rt_ADDR_SIMM9),
-    STTRH_Rt_ADDR_SIMM9(STTRH_Rt_ADDR_SIMM9),
-    STTR_Rt_ADDR_SIMM9(STTR_Rt_ADDR_SIMM9),
-}
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum Opcode {
-    LDSTPAIR_INDEXED(LDSTPAIR_INDEXED),
-    LOG_SHIFT(LOG_SHIFT),
     LDSTEXCL(LDSTEXCL),
-    LDST_IMM10(LDST_IMM10),
-    LDST_REGOFF(LDST_REGOFF),
+    LDSTNAPAIR_OFFS(LDSTNAPAIR_OFFS),
+    LDSTPAIR_INDEXED(LDSTPAIR_INDEXED),
     LDSTPAIR_OFF(LDSTPAIR_OFF),
-    LSE_ATOMIC(LSE_ATOMIC),
-    LOG_IMM(LOG_IMM),
+    LDST_IMM10(LDST_IMM10),
     LDST_IMM9(LDST_IMM9),
+    LDST_POS(LDST_POS),
+    LDST_REGOFF(LDST_REGOFF),
+    LDST_UNPRIV(LDST_UNPRIV),
     LDST_UNSCALED(LDST_UNSCALED),
     LOADLIT(LOADLIT),
-    LDSTNAPAIR_OFFS(LDSTNAPAIR_OFFS),
-    LDST_POS(LDST_POS),
+    LOG_IMM(LOG_IMM),
+    LOG_SHIFT(LOG_SHIFT),
     LSE128_ATOMIC(LSE128_ATOMIC),
-    LDST_UNPRIV(LDST_UNPRIV),
+    LSE_ATOMIC(LSE_ATOMIC),
 }
 impl AND_Rd_SP_Rn_LIMM {
     pub const DEFINITION: Insn = Insn {
@@ -18823,54 +18823,6 @@ impl InsnOpcode for SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
         (*self).into()
     }
 }
-impl InsnOpcode for LDSTPAIR_INDEXED {
-    fn definition(&self) -> &'static Insn {
-        match self {
-            LDSTPAIR_INDEXED::LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S(opcode) => opcode.definition(),
-            LDSTPAIR_INDEXED::LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(opcode) => opcode.definition(),
-            LDSTPAIR_INDEXED::LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(opcode) => opcode.definition(),
-            LDSTPAIR_INDEXED::STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag(opcode) => opcode.definition(),
-            LDSTPAIR_INDEXED::STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(opcode) => opcode.definition(),
-            LDSTPAIR_INDEXED::STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(opcode) => opcode.definition(),
-        }
-    }
-    fn bits(&self) -> u32 {
-        match self {
-            LDSTPAIR_INDEXED::LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S(opcode) => opcode.bits(),
-            LDSTPAIR_INDEXED::LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(opcode) => opcode.bits(),
-            LDSTPAIR_INDEXED::LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(opcode) => opcode.bits(),
-            LDSTPAIR_INDEXED::STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag(opcode) => opcode.bits(),
-            LDSTPAIR_INDEXED::STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(opcode) => opcode.bits(),
-            LDSTPAIR_INDEXED::STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(opcode) => opcode.bits(),
-        }
-    }
-}
-impl InsnOpcode for LOG_SHIFT {
-    fn definition(&self) -> &'static Insn {
-        match self {
-            LOG_SHIFT::ANDS_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
-            LOG_SHIFT::AND_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
-            LOG_SHIFT::BICS_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
-            LOG_SHIFT::BIC_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
-            LOG_SHIFT::EON_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
-            LOG_SHIFT::EOR_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
-            LOG_SHIFT::ORN_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
-            LOG_SHIFT::ORR_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
-        }
-    }
-    fn bits(&self) -> u32 {
-        match self {
-            LOG_SHIFT::ANDS_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
-            LOG_SHIFT::AND_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
-            LOG_SHIFT::BICS_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
-            LOG_SHIFT::BIC_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
-            LOG_SHIFT::EON_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
-            LOG_SHIFT::EOR_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
-            LOG_SHIFT::ORN_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
-            LOG_SHIFT::ORR_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
-        }
-    }
-}
 impl InsnOpcode for LDSTEXCL {
     fn definition(&self) -> &'static Insn {
         match self {
@@ -18949,6 +18901,68 @@ impl InsnOpcode for LDSTEXCL {
         }
     }
 }
+impl InsnOpcode for LDSTNAPAIR_OFFS {
+    fn definition(&self) -> &'static Insn {
+        match self {
+            LDSTNAPAIR_OFFS::LDNP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.definition(),
+            LDSTNAPAIR_OFFS::LDNP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.definition(),
+            LDSTNAPAIR_OFFS::STNP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.definition(),
+            LDSTNAPAIR_OFFS::STNP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.definition(),
+        }
+    }
+    fn bits(&self) -> u32 {
+        match self {
+            LDSTNAPAIR_OFFS::LDNP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.bits(),
+            LDSTNAPAIR_OFFS::LDNP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.bits(),
+            LDSTNAPAIR_OFFS::STNP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.bits(),
+            LDSTNAPAIR_OFFS::STNP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.bits(),
+        }
+    }
+}
+impl InsnOpcode for LDSTPAIR_INDEXED {
+    fn definition(&self) -> &'static Insn {
+        match self {
+            LDSTPAIR_INDEXED::LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S(opcode) => opcode.definition(),
+            LDSTPAIR_INDEXED::LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(opcode) => opcode.definition(),
+            LDSTPAIR_INDEXED::LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(opcode) => opcode.definition(),
+            LDSTPAIR_INDEXED::STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag(opcode) => opcode.definition(),
+            LDSTPAIR_INDEXED::STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(opcode) => opcode.definition(),
+            LDSTPAIR_INDEXED::STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(opcode) => opcode.definition(),
+        }
+    }
+    fn bits(&self) -> u32 {
+        match self {
+            LDSTPAIR_INDEXED::LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S(opcode) => opcode.bits(),
+            LDSTPAIR_INDEXED::LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(opcode) => opcode.bits(),
+            LDSTPAIR_INDEXED::LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(opcode) => opcode.bits(),
+            LDSTPAIR_INDEXED::STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag(opcode) => opcode.bits(),
+            LDSTPAIR_INDEXED::STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(opcode) => opcode.bits(),
+            LDSTPAIR_INDEXED::STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(opcode) => opcode.bits(),
+        }
+    }
+}
+impl InsnOpcode for LDSTPAIR_OFF {
+    fn definition(&self) -> &'static Insn {
+        match self {
+            LDSTPAIR_OFF::LDPSW_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.definition(),
+            LDSTPAIR_OFF::LDP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.definition(),
+            LDSTPAIR_OFF::LDP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.definition(),
+            LDSTPAIR_OFF::STGP_Rt_Rt2_ADDR_SIMM11(opcode) => opcode.definition(),
+            LDSTPAIR_OFF::STP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.definition(),
+            LDSTPAIR_OFF::STP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.definition(),
+        }
+    }
+    fn bits(&self) -> u32 {
+        match self {
+            LDSTPAIR_OFF::LDPSW_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.bits(),
+            LDSTPAIR_OFF::LDP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.bits(),
+            LDSTPAIR_OFF::LDP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.bits(),
+            LDSTPAIR_OFF::STGP_Rt_Rt2_ADDR_SIMM11(opcode) => opcode.bits(),
+            LDSTPAIR_OFF::STP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.bits(),
+            LDSTPAIR_OFF::STP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.bits(),
+        }
+    }
+}
 impl InsnOpcode for LDST_IMM10 {
     fn definition(&self) -> &'static Insn {
         match self {
@@ -18960,6 +18974,80 @@ impl InsnOpcode for LDST_IMM10 {
         match self {
             LDST_IMM10::LDRAA_Rt_ADDR_SIMM10(opcode) => opcode.bits(),
             LDST_IMM10::LDRAB_Rt_ADDR_SIMM10(opcode) => opcode.bits(),
+        }
+    }
+}
+impl InsnOpcode for LDST_IMM9 {
+    fn definition(&self) -> &'static Insn {
+        match self {
+            LDST_IMM9::LDRB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_IMM9::LDRH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_IMM9::LDRSB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_IMM9::LDRSH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_IMM9::LDRSW_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_IMM9::LDR_Ft_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_IMM9::LDR_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_IMM9::ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.definition(),
+            LDST_IMM9::STG_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.definition(),
+            LDST_IMM9::STRB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_IMM9::STRH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_IMM9::STR_Ft_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_IMM9::STR_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_IMM9::STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.definition(),
+            LDST_IMM9::STZG_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.definition(),
+        }
+    }
+    fn bits(&self) -> u32 {
+        match self {
+            LDST_IMM9::LDRB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_IMM9::LDRH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_IMM9::LDRSB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_IMM9::LDRSH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_IMM9::LDRSW_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_IMM9::LDR_Ft_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_IMM9::LDR_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_IMM9::ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.bits(),
+            LDST_IMM9::STG_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.bits(),
+            LDST_IMM9::STRB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_IMM9::STRH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_IMM9::STR_Ft_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_IMM9::STR_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_IMM9::STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.bits(),
+            LDST_IMM9::STZG_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.bits(),
+        }
+    }
+}
+impl InsnOpcode for LDST_POS {
+    fn definition(&self) -> &'static Insn {
+        match self {
+            LDST_POS::LDRB_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
+            LDST_POS::LDRH_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
+            LDST_POS::LDRSB_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
+            LDST_POS::LDRSH_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
+            LDST_POS::LDRSW_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
+            LDST_POS::LDR_Ft_ADDR_UIMM12(opcode) => opcode.definition(),
+            LDST_POS::LDR_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
+            LDST_POS::PRFM_PRFOP_ADDR_UIMM12(opcode) => opcode.definition(),
+            LDST_POS::STRB_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
+            LDST_POS::STRH_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
+            LDST_POS::STR_Ft_ADDR_UIMM12(opcode) => opcode.definition(),
+            LDST_POS::STR_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
+        }
+    }
+    fn bits(&self) -> u32 {
+        match self {
+            LDST_POS::LDRB_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
+            LDST_POS::LDRH_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
+            LDST_POS::LDRSB_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
+            LDST_POS::LDRSH_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
+            LDST_POS::LDRSW_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
+            LDST_POS::LDR_Ft_ADDR_UIMM12(opcode) => opcode.bits(),
+            LDST_POS::LDR_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
+            LDST_POS::PRFM_PRFOP_ADDR_UIMM12(opcode) => opcode.bits(),
+            LDST_POS::STRB_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
+            LDST_POS::STRH_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
+            LDST_POS::STR_Ft_ADDR_UIMM12(opcode) => opcode.bits(),
+            LDST_POS::STR_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
         }
     }
 }
@@ -18997,25 +19085,197 @@ impl InsnOpcode for LDST_REGOFF {
         }
     }
 }
-impl InsnOpcode for LDSTPAIR_OFF {
+impl InsnOpcode for LDST_UNPRIV {
     fn definition(&self) -> &'static Insn {
         match self {
-            LDSTPAIR_OFF::LDPSW_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.definition(),
-            LDSTPAIR_OFF::LDP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.definition(),
-            LDSTPAIR_OFF::LDP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.definition(),
-            LDSTPAIR_OFF::STGP_Rt_Rt2_ADDR_SIMM11(opcode) => opcode.definition(),
-            LDSTPAIR_OFF::STP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.definition(),
-            LDSTPAIR_OFF::STP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.definition(),
+            LDST_UNPRIV::LDTRB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNPRIV::LDTRH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNPRIV::LDTRSB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNPRIV::LDTRSH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNPRIV::LDTRSW_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNPRIV::LDTR_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNPRIV::STTRB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNPRIV::STTRH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNPRIV::STTR_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
         }
     }
     fn bits(&self) -> u32 {
         match self {
-            LDSTPAIR_OFF::LDPSW_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.bits(),
-            LDSTPAIR_OFF::LDP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.bits(),
-            LDSTPAIR_OFF::LDP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.bits(),
-            LDSTPAIR_OFF::STGP_Rt_Rt2_ADDR_SIMM11(opcode) => opcode.bits(),
-            LDSTPAIR_OFF::STP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.bits(),
-            LDSTPAIR_OFF::STP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.bits(),
+            LDST_UNPRIV::LDTRB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNPRIV::LDTRH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNPRIV::LDTRSB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNPRIV::LDTRSH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNPRIV::LDTRSW_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNPRIV::LDTR_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNPRIV::STTRB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNPRIV::STTRH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNPRIV::STTR_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+        }
+    }
+}
+impl InsnOpcode for LDST_UNSCALED {
+    fn definition(&self) -> &'static Insn {
+        match self {
+            LDST_UNSCALED::LDAPURB_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDAPURH_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDAPURSB_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDAPURSB_Rt_W_ADDR_OFFSET(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDAPURSH_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDAPURSH_Rt_W_ADDR_OFFSET(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDAPURSW_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDAPUR_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDAPUR_Rt_X_ADDR_OFFSET(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDG_Rt_ADDR_SIMM13(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDURB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDURH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDURSB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDURSH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDURSW_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDUR_Ft_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNSCALED::LDUR_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNSCALED::PRFUM_PRFOP_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNSCALED::ST2G_Rt_SP_ADDR_SIMM13(opcode) => opcode.definition(),
+            LDST_UNSCALED::STG_Rt_SP_ADDR_SIMM13(opcode) => opcode.definition(),
+            LDST_UNSCALED::STLURB_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
+            LDST_UNSCALED::STLURH_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
+            LDST_UNSCALED::STLUR_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
+            LDST_UNSCALED::STLUR_Rt_X_ADDR_OFFSET(opcode) => opcode.definition(),
+            LDST_UNSCALED::STURB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNSCALED::STURH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNSCALED::STUR_Ft_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNSCALED::STUR_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
+            LDST_UNSCALED::STZ2G_Rt_SP_ADDR_SIMM13(opcode) => opcode.definition(),
+            LDST_UNSCALED::STZG_Rt_SP_ADDR_SIMM13(opcode) => opcode.definition(),
+        }
+    }
+    fn bits(&self) -> u32 {
+        match self {
+            LDST_UNSCALED::LDAPURB_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDAPURH_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDAPURSB_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDAPURSB_Rt_W_ADDR_OFFSET(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDAPURSH_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDAPURSH_Rt_W_ADDR_OFFSET(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDAPURSW_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDAPUR_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDAPUR_Rt_X_ADDR_OFFSET(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDG_Rt_ADDR_SIMM13(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDURB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDURH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDURSB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDURSH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDURSW_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDUR_Ft_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNSCALED::LDUR_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNSCALED::PRFUM_PRFOP_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNSCALED::ST2G_Rt_SP_ADDR_SIMM13(opcode) => opcode.bits(),
+            LDST_UNSCALED::STG_Rt_SP_ADDR_SIMM13(opcode) => opcode.bits(),
+            LDST_UNSCALED::STLURB_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
+            LDST_UNSCALED::STLURH_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
+            LDST_UNSCALED::STLUR_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
+            LDST_UNSCALED::STLUR_Rt_X_ADDR_OFFSET(opcode) => opcode.bits(),
+            LDST_UNSCALED::STURB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNSCALED::STURH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNSCALED::STUR_Ft_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNSCALED::STUR_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
+            LDST_UNSCALED::STZ2G_Rt_SP_ADDR_SIMM13(opcode) => opcode.bits(),
+            LDST_UNSCALED::STZG_Rt_SP_ADDR_SIMM13(opcode) => opcode.bits(),
+        }
+    }
+}
+impl InsnOpcode for LOADLIT {
+    fn definition(&self) -> &'static Insn {
+        match self {
+            LOADLIT::LDRSW_Rt_ADDR_PCREL19(opcode) => opcode.definition(),
+            LOADLIT::LDR_Ft_ADDR_PCREL19(opcode) => opcode.definition(),
+            LOADLIT::LDR_Rt_ADDR_PCREL19(opcode) => opcode.definition(),
+            LOADLIT::PRFM_PRFOP_ADDR_PCREL19(opcode) => opcode.definition(),
+        }
+    }
+    fn bits(&self) -> u32 {
+        match self {
+            LOADLIT::LDRSW_Rt_ADDR_PCREL19(opcode) => opcode.bits(),
+            LOADLIT::LDR_Ft_ADDR_PCREL19(opcode) => opcode.bits(),
+            LOADLIT::LDR_Rt_ADDR_PCREL19(opcode) => opcode.bits(),
+            LOADLIT::PRFM_PRFOP_ADDR_PCREL19(opcode) => opcode.bits(),
+        }
+    }
+}
+impl InsnOpcode for LOG_IMM {
+    fn definition(&self) -> &'static Insn {
+        match self {
+            LOG_IMM::ANDS_Rd_Rn_LIMM(opcode) => opcode.definition(),
+            LOG_IMM::AND_Rd_SP_Rn_LIMM(opcode) => opcode.definition(),
+            LOG_IMM::EOR_Rd_SP_Rn_LIMM(opcode) => opcode.definition(),
+            LOG_IMM::ORR_Rd_SP_Rn_LIMM(opcode) => opcode.definition(),
+        }
+    }
+    fn bits(&self) -> u32 {
+        match self {
+            LOG_IMM::ANDS_Rd_Rn_LIMM(opcode) => opcode.bits(),
+            LOG_IMM::AND_Rd_SP_Rn_LIMM(opcode) => opcode.bits(),
+            LOG_IMM::EOR_Rd_SP_Rn_LIMM(opcode) => opcode.bits(),
+            LOG_IMM::ORR_Rd_SP_Rn_LIMM(opcode) => opcode.bits(),
+        }
+    }
+}
+impl InsnOpcode for LOG_SHIFT {
+    fn definition(&self) -> &'static Insn {
+        match self {
+            LOG_SHIFT::ANDS_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
+            LOG_SHIFT::AND_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
+            LOG_SHIFT::BICS_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
+            LOG_SHIFT::BIC_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
+            LOG_SHIFT::EON_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
+            LOG_SHIFT::EOR_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
+            LOG_SHIFT::ORN_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
+            LOG_SHIFT::ORR_Rd_Rn_Rm_SFT(opcode) => opcode.definition(),
+        }
+    }
+    fn bits(&self) -> u32 {
+        match self {
+            LOG_SHIFT::ANDS_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
+            LOG_SHIFT::AND_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
+            LOG_SHIFT::BICS_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
+            LOG_SHIFT::BIC_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
+            LOG_SHIFT::EON_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
+            LOG_SHIFT::EOR_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
+            LOG_SHIFT::ORN_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
+            LOG_SHIFT::ORR_Rd_Rn_Rm_SFT(opcode) => opcode.bits(),
+        }
+    }
+}
+impl InsnOpcode for LSE128_ATOMIC {
+    fn definition(&self) -> &'static Insn {
+        match self {
+            LSE128_ATOMIC::LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
+            LSE128_ATOMIC::LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
+            LSE128_ATOMIC::LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
+            LSE128_ATOMIC::LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
+            LSE128_ATOMIC::LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
+            LSE128_ATOMIC::LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
+            LSE128_ATOMIC::LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
+            LSE128_ATOMIC::LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
+            LSE128_ATOMIC::SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
+            LSE128_ATOMIC::SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
+            LSE128_ATOMIC::SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
+            LSE128_ATOMIC::SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
+        }
+    }
+    fn bits(&self) -> u32 {
+        match self {
+            LSE128_ATOMIC::LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
+            LSE128_ATOMIC::LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
+            LSE128_ATOMIC::LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
+            LSE128_ATOMIC::LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
+            LSE128_ATOMIC::LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
+            LSE128_ATOMIC::LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
+            LSE128_ATOMIC::LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
+            LSE128_ATOMIC::LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
+            LSE128_ATOMIC::SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
+            LSE128_ATOMIC::SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
+            LSE128_ATOMIC::SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
+            LSE128_ATOMIC::SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
         }
     }
 }
@@ -19285,303 +19545,43 @@ impl InsnOpcode for LSE_ATOMIC {
         }
     }
 }
-impl InsnOpcode for LOG_IMM {
-    fn definition(&self) -> &'static Insn {
-        match self {
-            LOG_IMM::ANDS_Rd_Rn_LIMM(opcode) => opcode.definition(),
-            LOG_IMM::AND_Rd_SP_Rn_LIMM(opcode) => opcode.definition(),
-            LOG_IMM::EOR_Rd_SP_Rn_LIMM(opcode) => opcode.definition(),
-            LOG_IMM::ORR_Rd_SP_Rn_LIMM(opcode) => opcode.definition(),
-        }
-    }
-    fn bits(&self) -> u32 {
-        match self {
-            LOG_IMM::ANDS_Rd_Rn_LIMM(opcode) => opcode.bits(),
-            LOG_IMM::AND_Rd_SP_Rn_LIMM(opcode) => opcode.bits(),
-            LOG_IMM::EOR_Rd_SP_Rn_LIMM(opcode) => opcode.bits(),
-            LOG_IMM::ORR_Rd_SP_Rn_LIMM(opcode) => opcode.bits(),
-        }
-    }
-}
-impl InsnOpcode for LDST_IMM9 {
-    fn definition(&self) -> &'static Insn {
-        match self {
-            LDST_IMM9::LDRB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_IMM9::LDRH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_IMM9::LDRSB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_IMM9::LDRSH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_IMM9::LDRSW_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_IMM9::LDR_Ft_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_IMM9::LDR_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_IMM9::ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.definition(),
-            LDST_IMM9::STG_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.definition(),
-            LDST_IMM9::STRB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_IMM9::STRH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_IMM9::STR_Ft_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_IMM9::STR_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_IMM9::STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.definition(),
-            LDST_IMM9::STZG_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.definition(),
-        }
-    }
-    fn bits(&self) -> u32 {
-        match self {
-            LDST_IMM9::LDRB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_IMM9::LDRH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_IMM9::LDRSB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_IMM9::LDRSH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_IMM9::LDRSW_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_IMM9::LDR_Ft_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_IMM9::LDR_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_IMM9::ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.bits(),
-            LDST_IMM9::STG_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.bits(),
-            LDST_IMM9::STRB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_IMM9::STRH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_IMM9::STR_Ft_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_IMM9::STR_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_IMM9::STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.bits(),
-            LDST_IMM9::STZG_Rt_SP_X_ADDR_SIMM13_imm_tag(opcode) => opcode.bits(),
-        }
-    }
-}
-impl InsnOpcode for LDST_UNSCALED {
-    fn definition(&self) -> &'static Insn {
-        match self {
-            LDST_UNSCALED::LDAPURB_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDAPURH_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDAPURSB_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDAPURSB_Rt_W_ADDR_OFFSET(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDAPURSH_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDAPURSH_Rt_W_ADDR_OFFSET(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDAPURSW_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDAPUR_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDAPUR_Rt_X_ADDR_OFFSET(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDG_Rt_ADDR_SIMM13(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDURB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDURH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDURSB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDURSH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDURSW_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDUR_Ft_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNSCALED::LDUR_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNSCALED::PRFUM_PRFOP_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNSCALED::ST2G_Rt_SP_ADDR_SIMM13(opcode) => opcode.definition(),
-            LDST_UNSCALED::STG_Rt_SP_ADDR_SIMM13(opcode) => opcode.definition(),
-            LDST_UNSCALED::STLURB_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
-            LDST_UNSCALED::STLURH_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
-            LDST_UNSCALED::STLUR_Rt_ADDR_OFFSET(opcode) => opcode.definition(),
-            LDST_UNSCALED::STLUR_Rt_X_ADDR_OFFSET(opcode) => opcode.definition(),
-            LDST_UNSCALED::STURB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNSCALED::STURH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNSCALED::STUR_Ft_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNSCALED::STUR_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNSCALED::STZ2G_Rt_SP_ADDR_SIMM13(opcode) => opcode.definition(),
-            LDST_UNSCALED::STZG_Rt_SP_ADDR_SIMM13(opcode) => opcode.definition(),
-        }
-    }
-    fn bits(&self) -> u32 {
-        match self {
-            LDST_UNSCALED::LDAPURB_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDAPURH_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDAPURSB_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDAPURSB_Rt_W_ADDR_OFFSET(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDAPURSH_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDAPURSH_Rt_W_ADDR_OFFSET(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDAPURSW_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDAPUR_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDAPUR_Rt_X_ADDR_OFFSET(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDG_Rt_ADDR_SIMM13(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDURB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDURH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDURSB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDURSH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDURSW_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDUR_Ft_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNSCALED::LDUR_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNSCALED::PRFUM_PRFOP_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNSCALED::ST2G_Rt_SP_ADDR_SIMM13(opcode) => opcode.bits(),
-            LDST_UNSCALED::STG_Rt_SP_ADDR_SIMM13(opcode) => opcode.bits(),
-            LDST_UNSCALED::STLURB_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
-            LDST_UNSCALED::STLURH_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
-            LDST_UNSCALED::STLUR_Rt_ADDR_OFFSET(opcode) => opcode.bits(),
-            LDST_UNSCALED::STLUR_Rt_X_ADDR_OFFSET(opcode) => opcode.bits(),
-            LDST_UNSCALED::STURB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNSCALED::STURH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNSCALED::STUR_Ft_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNSCALED::STUR_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNSCALED::STZ2G_Rt_SP_ADDR_SIMM13(opcode) => opcode.bits(),
-            LDST_UNSCALED::STZG_Rt_SP_ADDR_SIMM13(opcode) => opcode.bits(),
-        }
-    }
-}
-impl InsnOpcode for LOADLIT {
-    fn definition(&self) -> &'static Insn {
-        match self {
-            LOADLIT::LDRSW_Rt_ADDR_PCREL19(opcode) => opcode.definition(),
-            LOADLIT::LDR_Ft_ADDR_PCREL19(opcode) => opcode.definition(),
-            LOADLIT::LDR_Rt_ADDR_PCREL19(opcode) => opcode.definition(),
-            LOADLIT::PRFM_PRFOP_ADDR_PCREL19(opcode) => opcode.definition(),
-        }
-    }
-    fn bits(&self) -> u32 {
-        match self {
-            LOADLIT::LDRSW_Rt_ADDR_PCREL19(opcode) => opcode.bits(),
-            LOADLIT::LDR_Ft_ADDR_PCREL19(opcode) => opcode.bits(),
-            LOADLIT::LDR_Rt_ADDR_PCREL19(opcode) => opcode.bits(),
-            LOADLIT::PRFM_PRFOP_ADDR_PCREL19(opcode) => opcode.bits(),
-        }
-    }
-}
-impl InsnOpcode for LDSTNAPAIR_OFFS {
-    fn definition(&self) -> &'static Insn {
-        match self {
-            LDSTNAPAIR_OFFS::LDNP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.definition(),
-            LDSTNAPAIR_OFFS::LDNP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.definition(),
-            LDSTNAPAIR_OFFS::STNP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.definition(),
-            LDSTNAPAIR_OFFS::STNP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.definition(),
-        }
-    }
-    fn bits(&self) -> u32 {
-        match self {
-            LDSTNAPAIR_OFFS::LDNP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.bits(),
-            LDSTNAPAIR_OFFS::LDNP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.bits(),
-            LDSTNAPAIR_OFFS::STNP_Ft_Ft2_ADDR_SIMM7(opcode) => opcode.bits(),
-            LDSTNAPAIR_OFFS::STNP_Rt_Rt2_ADDR_SIMM7(opcode) => opcode.bits(),
-        }
-    }
-}
-impl InsnOpcode for LDST_POS {
-    fn definition(&self) -> &'static Insn {
-        match self {
-            LDST_POS::LDRB_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
-            LDST_POS::LDRH_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
-            LDST_POS::LDRSB_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
-            LDST_POS::LDRSH_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
-            LDST_POS::LDRSW_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
-            LDST_POS::LDR_Ft_ADDR_UIMM12(opcode) => opcode.definition(),
-            LDST_POS::LDR_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
-            LDST_POS::PRFM_PRFOP_ADDR_UIMM12(opcode) => opcode.definition(),
-            LDST_POS::STRB_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
-            LDST_POS::STRH_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
-            LDST_POS::STR_Ft_ADDR_UIMM12(opcode) => opcode.definition(),
-            LDST_POS::STR_Rt_ADDR_UIMM12(opcode) => opcode.definition(),
-        }
-    }
-    fn bits(&self) -> u32 {
-        match self {
-            LDST_POS::LDRB_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
-            LDST_POS::LDRH_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
-            LDST_POS::LDRSB_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
-            LDST_POS::LDRSH_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
-            LDST_POS::LDRSW_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
-            LDST_POS::LDR_Ft_ADDR_UIMM12(opcode) => opcode.bits(),
-            LDST_POS::LDR_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
-            LDST_POS::PRFM_PRFOP_ADDR_UIMM12(opcode) => opcode.bits(),
-            LDST_POS::STRB_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
-            LDST_POS::STRH_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
-            LDST_POS::STR_Ft_ADDR_UIMM12(opcode) => opcode.bits(),
-            LDST_POS::STR_Rt_ADDR_UIMM12(opcode) => opcode.bits(),
-        }
-    }
-}
-impl InsnOpcode for LSE128_ATOMIC {
-    fn definition(&self) -> &'static Insn {
-        match self {
-            LSE128_ATOMIC::LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
-            LSE128_ATOMIC::LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
-            LSE128_ATOMIC::LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
-            LSE128_ATOMIC::LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
-            LSE128_ATOMIC::LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
-            LSE128_ATOMIC::LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
-            LSE128_ATOMIC::LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
-            LSE128_ATOMIC::LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
-            LSE128_ATOMIC::SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
-            LSE128_ATOMIC::SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
-            LSE128_ATOMIC::SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
-            LSE128_ATOMIC::SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.definition(),
-        }
-    }
-    fn bits(&self) -> u32 {
-        match self {
-            LSE128_ATOMIC::LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
-            LSE128_ATOMIC::LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
-            LSE128_ATOMIC::LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
-            LSE128_ATOMIC::LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
-            LSE128_ATOMIC::LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
-            LSE128_ATOMIC::LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
-            LSE128_ATOMIC::LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
-            LSE128_ATOMIC::LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
-            LSE128_ATOMIC::SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
-            LSE128_ATOMIC::SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
-            LSE128_ATOMIC::SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
-            LSE128_ATOMIC::SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(opcode) => opcode.bits(),
-        }
-    }
-}
-impl InsnOpcode for LDST_UNPRIV {
-    fn definition(&self) -> &'static Insn {
-        match self {
-            LDST_UNPRIV::LDTRB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNPRIV::LDTRH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNPRIV::LDTRSB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNPRIV::LDTRSH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNPRIV::LDTRSW_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNPRIV::LDTR_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNPRIV::STTRB_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNPRIV::STTRH_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-            LDST_UNPRIV::STTR_Rt_ADDR_SIMM9(opcode) => opcode.definition(),
-        }
-    }
-    fn bits(&self) -> u32 {
-        match self {
-            LDST_UNPRIV::LDTRB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNPRIV::LDTRH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNPRIV::LDTRSB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNPRIV::LDTRSH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNPRIV::LDTRSW_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNPRIV::LDTR_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNPRIV::STTRB_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNPRIV::STTRH_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-            LDST_UNPRIV::STTR_Rt_ADDR_SIMM9(opcode) => opcode.bits(),
-        }
-    }
-}
 impl InsnOpcode for Opcode {
     fn definition(&self) -> &'static Insn {
         match self {
-            Opcode::LDSTPAIR_INDEXED(class) => class.definition(),
-            Opcode::LOG_SHIFT(class) => class.definition(),
             Opcode::LDSTEXCL(class) => class.definition(),
-            Opcode::LDST_IMM10(class) => class.definition(),
-            Opcode::LDST_REGOFF(class) => class.definition(),
+            Opcode::LDSTNAPAIR_OFFS(class) => class.definition(),
+            Opcode::LDSTPAIR_INDEXED(class) => class.definition(),
             Opcode::LDSTPAIR_OFF(class) => class.definition(),
-            Opcode::LSE_ATOMIC(class) => class.definition(),
-            Opcode::LOG_IMM(class) => class.definition(),
+            Opcode::LDST_IMM10(class) => class.definition(),
             Opcode::LDST_IMM9(class) => class.definition(),
+            Opcode::LDST_POS(class) => class.definition(),
+            Opcode::LDST_REGOFF(class) => class.definition(),
+            Opcode::LDST_UNPRIV(class) => class.definition(),
             Opcode::LDST_UNSCALED(class) => class.definition(),
             Opcode::LOADLIT(class) => class.definition(),
-            Opcode::LDSTNAPAIR_OFFS(class) => class.definition(),
-            Opcode::LDST_POS(class) => class.definition(),
+            Opcode::LOG_IMM(class) => class.definition(),
+            Opcode::LOG_SHIFT(class) => class.definition(),
             Opcode::LSE128_ATOMIC(class) => class.definition(),
-            Opcode::LDST_UNPRIV(class) => class.definition(),
+            Opcode::LSE_ATOMIC(class) => class.definition(),
         }
     }
     fn bits(&self) -> u32 {
         match self {
-            Opcode::LDSTPAIR_INDEXED(class) => class.bits(),
-            Opcode::LOG_SHIFT(class) => class.bits(),
             Opcode::LDSTEXCL(class) => class.bits(),
-            Opcode::LDST_IMM10(class) => class.bits(),
-            Opcode::LDST_REGOFF(class) => class.bits(),
+            Opcode::LDSTNAPAIR_OFFS(class) => class.bits(),
+            Opcode::LDSTPAIR_INDEXED(class) => class.bits(),
             Opcode::LDSTPAIR_OFF(class) => class.bits(),
-            Opcode::LSE_ATOMIC(class) => class.bits(),
-            Opcode::LOG_IMM(class) => class.bits(),
+            Opcode::LDST_IMM10(class) => class.bits(),
             Opcode::LDST_IMM9(class) => class.bits(),
+            Opcode::LDST_POS(class) => class.bits(),
+            Opcode::LDST_REGOFF(class) => class.bits(),
+            Opcode::LDST_UNPRIV(class) => class.bits(),
             Opcode::LDST_UNSCALED(class) => class.bits(),
             Opcode::LOADLIT(class) => class.bits(),
-            Opcode::LDSTNAPAIR_OFFS(class) => class.bits(),
-            Opcode::LDST_POS(class) => class.bits(),
+            Opcode::LOG_IMM(class) => class.bits(),
+            Opcode::LOG_SHIFT(class) => class.bits(),
             Opcode::LSE128_ATOMIC(class) => class.bits(),
-            Opcode::LDST_UNPRIV(class) => class.bits(),
+            Opcode::LSE_ATOMIC(class) => class.bits(),
         }
     }
 }
