@@ -289,7 +289,8 @@ fn write_insn_structs(
         });
     }
 
-    let sorted_classes = classes.keys().collect::<Vec<_>>();
+    let mut sorted_classes = classes.keys().collect::<Vec<_>>();
+    sorted_classes.sort_by_key(|x| x.to_string());
     for class in &sorted_classes {
         let class_name = format_ident!("{}", format!("{:?}", class));
         let mut class_opcode_idents = classes.get(class).unwrap().to_vec();
