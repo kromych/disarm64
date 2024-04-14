@@ -1,6 +1,6 @@
 [package]
 name = "disarm64"
-version = "0.1.12"
+version = "0.1.13"
 edition = "2021"
 authors = ["kromych <kromych@users.noreply.github.com>"]
 description = """
@@ -16,6 +16,13 @@ keywords = ["aarch64", "arm64", "arm-v8", "disassembler", "reverse-engineering"]
 categories = ["command-line-utilities", "development-tools", "embedded"]
 license = "Unlicense OR MIT"
 readme = "Readme.md"
+
+[features]
+full = []
+load_store = []
+exception = []
+system = []
+default = ["full"]
 
 [lib]
 path = "lib/src/lib.rs"

@@ -18,6 +18,7 @@ fn write_prelude(_decision_tree: &DecisionTree, f: &mut impl Write) -> std::io::
         #![allow(clippy::enum_variant_names)]
         #![allow(non_snake_case, non_camel_case_types)]
         #![allow(dead_code)]
+        #![allow(unused_imports)]
 
         use bitfield_struct::bitfield;
 

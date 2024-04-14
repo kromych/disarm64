@@ -67,6 +67,15 @@ println!("Instruction: {insn:?}");
 println!("Definition: {:?}", insn.definition());
 ```
 
+By default, the library is built to support the full known instruction set. There are also
+few subsets available as the crate features to save on the compilation time and the size of
+the code:
+
+```toml
+# Other features are `exception` and `system` 
+disarm64 = { version = "0.1", default_features = false, features = ["load_store"] }
+```
+
 ## Using the tools
 
 ### The decoder

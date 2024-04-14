@@ -5,8 +5,11 @@
 //! supplemented with a more structured approach while retaining the
 //! current string formatting instructions.
 
-use crate::decoder::Opcode;
-use crate::decoder::IC_SYSTEM;
+#![cfg_attr(
+    not(feature = "full"),
+    allow(unused_variables, dead_code, unused_imports)
+)]
+
 use crate::registers::get_fp_reg_name;
 use crate::registers::get_int_reg_name;
 use crate::registers::get_simd_reg_name;
@@ -15,8 +18,6 @@ use crate::registers::sys_reg_number;
 use crate::registers::FpRegSize;
 use crate::registers::SimdRegArrangement;
 use bitfield_struct::bitfield;
-use core::fmt::Display;
-use core::fmt::Formatter;
 use core::fmt::Write;
 use defn::InsnOpcode;
 use disarm64_defn::defn;
@@ -562,6 +563,7 @@ fn format_operand(
         | InsnOperandKind::Ft
         | InsnOperandKind::Ft2 => format_fp_reg(f, bits, operand, definition)?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::Sd
         | InsnOperandKind::Sn
         | InsnOperandKind::Sm
@@ -570,21 +572,26 @@ fn format_operand(
         | InsnOperandKind::SVE_Vm
         | InsnOperandKind::SVE_Vn => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::Va | InsnOperandKind::Vd | InsnOperandKind::Vn | InsnOperandKind::Vm => {
             format_simd_reg(f, bits, operand, definition)?
         }
 
+        #[cfg(feature = "full")]
         InsnOperandKind::Ed | InsnOperandKind::En | InsnOperandKind::Em | InsnOperandKind::Em16 => {
             write!(f, ":{kind:?}:")?
         }
 
+        #[cfg(feature = "full")]
         InsnOperandKind::VdD1 | InsnOperandKind::VnD1 => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::LVn
         | InsnOperandKind::LVt
         | InsnOperandKind::LVt_AL
         | InsnOperandKind::LEt => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_Pd
         | InsnOperandKind::SVE_Pg3
         | InsnOperandKind::SVE_Pg4_5
@@ -595,6 +602,7 @@ fn format_operand(
         | InsnOperandKind::SVE_Pt
         | InsnOperandKind::SME_Pm => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_PNd
         | InsnOperandKind::SVE_PNg4_10
         | InsnOperandKind::SVE_PNn
@@ -603,12 +611,15 @@ fn format_operand(
         | InsnOperandKind::SME_PNg3
         | InsnOperandKind::SME_PNn => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SME_Pdx2 | InsnOperandKind::SME_PdxN => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SME_PNn3_INDEX1 | InsnOperandKind::SME_PNn3_INDEX2 => {
             write!(f, ":{kind:?}:")?
         }
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_Za_5
         | InsnOperandKind::SVE_Za_16
         | InsnOperandKind::SVE_Zd
@@ -618,6 +629,7 @@ fn format_operand(
         | InsnOperandKind::SVE_Zt
         | InsnOperandKind::SME_Zm => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_ZnxN
         | InsnOperandKind::SVE_ZtxN
         | InsnOperandKind::SME_Zdnx2
@@ -632,6 +644,7 @@ fn format_operand(
         | InsnOperandKind::SME_Zt3
         | InsnOperandKind::SME_Zt4 => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_Zm3_INDEX
         | InsnOperandKind::SVE_Zm3_22_INDEX
         | InsnOperandKind::SVE_Zm3_19_INDEX
@@ -655,16 +668,20 @@ fn format_operand(
         | InsnOperandKind::SME_Zn_INDEX4_14
         | InsnOperandKind::SVE_Zm_imm4 => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SME_ZAda_2b | InsnOperandKind::SME_ZAda_3b => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SME_ZA_HV_idx_src
         | InsnOperandKind::SME_ZA_HV_idx_srcxN
         | InsnOperandKind::SME_ZA_HV_idx_dest
         | InsnOperandKind::SME_ZA_HV_idx_destxN
         | InsnOperandKind::SME_ZA_HV_idx_ldstr => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SME_list_of_64bit_tiles => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SME_ZA_array_off1x4
         | InsnOperandKind::SME_ZA_array_off2x2
         | InsnOperandKind::SME_ZA_array_off2x4
@@ -673,6 +690,7 @@ fn format_operand(
         | InsnOperandKind::SME_ZA_array_off3x2
         | InsnOperandKind::SME_ZA_array_off4 => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SME_ZA_array_vrsb_1
         | InsnOperandKind::SME_ZA_array_vrsh_1
         | InsnOperandKind::SME_ZA_array_vrss_1
@@ -682,15 +700,20 @@ fn format_operand(
         | InsnOperandKind::SME_ZA_array_vrss_2
         | InsnOperandKind::SME_ZA_array_vrsd_2 => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SME_SM_ZA => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SME_PnT_Wm_imm => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SME_VLxN_10 | InsnOperandKind::SME_VLxN_13 => write!(f, ":{kind:?}:")?,
 
+        #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::CRn => write!(f, "c{}", bit_range(bits, 12, 4))?,
         InsnOperandKind::CRm => write!(f, "c{}", bit_range(bits, 8, 4))?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::IMMR => {
             let immr = bit_range(bits, 16, 6);
             let n = bit_set(bits, 22);
@@ -701,6 +724,7 @@ fn format_operand(
             }
             write!(f, "#{}", immr)?;
         }
+        #[cfg(feature = "full")]
         InsnOperandKind::IMMS => {
             let imms = bit_range(bits, 10, 6);
             let n = bit_set(bits, 22);
@@ -712,15 +736,7 @@ fn format_operand(
             write!(f, "#{}", imms)?;
         }
 
-        InsnOperandKind::IMM_2 => {
-            let imm = bit_range(bits, 15, 6);
-            write!(f, "#{}", imm)?;
-        }
-        InsnOperandKind::MASK => {
-            let mask = bit_range(bits, 0, 4);
-            write!(f, "#{}", mask)?;
-        }
-
+        #[cfg(feature = "full")]
         InsnOperandKind::BIT_NUM => {
             let b5 = bit_range(bits, 31, 1);
             let b40 = bit_range(bits, 19, 5);
@@ -728,6 +744,7 @@ fn format_operand(
             write!(f, "#{}", bit_num)?;
         }
 
+        #[cfg(feature = "full")]
         InsnOperandKind::FBITS => {
             let ftype = bit_range(bits, 22, 2);
             if ftype == 0b10 {
@@ -741,9 +758,12 @@ fn format_operand(
             write!(f, "#{scale}")?;
         }
 
+        #[cfg(feature = "full")]
         InsnOperandKind::IMM0 => write!(f, "#0")?,
+        #[cfg(feature = "full")]
         InsnOperandKind::TME_UIMM16 => write!(f, "#{}", bit_range(bits, 5, 16))?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::IDX
         | InsnOperandKind::IMM
         | InsnOperandKind::WIDTH
@@ -774,26 +794,36 @@ fn format_operand(
         | InsnOperandKind::SVE_IMM_ROT2
         | InsnOperandKind::SVE_IMM_ROT3 => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::CSSC_SIMM8 => write!(f, "#{}", bit_range(bits, 10, 8) as i8)?,
+        #[cfg(feature = "full")]
         InsnOperandKind::CSSC_UIMM8 => write!(f, "#{}", bit_range(bits, 10, 8) as u8)?,
+        #[cfg(feature = "full")]
         InsnOperandKind::UIMM4_ADDG => write!(f, "#{}", bit_range(bits, 10, 4))?,
         // The 10 bit size comes from 6 bit in the instruction and the shift of 4.
+        #[cfg(feature = "full")]
         InsnOperandKind::UIMM10 => write!(f, "#{}", bit_range(bits, 16, 6) << LOG2_TAG_GRANULE)?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_I1_HALF_ONE
         | InsnOperandKind::SVE_I1_HALF_TWO
         | InsnOperandKind::SVE_I1_ZERO_ONE => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_PATTERN => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_PATTERN_SCALED => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_PRFOP => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::IMM_MOV => write!(f, ":{kind:?}:")?,
-
+        #[cfg(feature = "full")]
         InsnOperandKind::FPIMM0 => write!(f, "#{:.1}", 0.0)?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::AIMM => {
             let shift = bit_set(bits, 22);
             let imm12 = bit_range(bits, 10, 12);
@@ -804,6 +834,7 @@ fn format_operand(
             }
         }
 
+        #[cfg(feature = "full")]
         InsnOperandKind::HALF => {
             let hw = bit_range(bits, 21, 2);
             if !bit_set(bits, 31) && bit_set(hw, 1) {
@@ -816,6 +847,7 @@ fn format_operand(
             write!(f, "#{imm16:#x}, lsl #{shift:#x}")?
         }
 
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::LIMM => {
             let imms = bit_range(bits, 10, 6);
             let immr = bit_range(bits, 16, 6);
@@ -828,14 +860,17 @@ fn format_operand(
                 write!(f, "<undefined>")?;
             }
         }
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_INV_LIMM
         | InsnOperandKind::SVE_LIMM
         | InsnOperandKind::SVE_LIMM_MOV => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SIMD_IMM | InsnOperandKind::SIMD_IMM_SFT => write!(f, ":{kind:?}:")?,
-
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_AIMM | InsnOperandKind::SVE_ASIMM => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::FPIMM | InsnOperandKind::SIMD_FPIMM | InsnOperandKind::SVE_FPIMM8 => {
             let fp_type = bit_range(bits, 22, 2);
             let size = match fp_type {
@@ -853,84 +888,113 @@ fn format_operand(
             }
         }
 
+        #[cfg(any(feature = "full", feature = "exception"))]
         InsnOperandKind::EXCEPTION => {
             let imm16 = bit_range(bits, 5, 16);
             write!(f, "#{imm16:#x}")?
         }
+        #[cfg(any(feature = "full", feature = "exception"))]
         InsnOperandKind::UNDEFINED => {
             let imm16 = bit_range(bits, 0, 16);
             write!(f, "#{imm16:#x}")?;
         }
 
+        #[cfg(feature = "full")]
         InsnOperandKind::CCMP_IMM => {
             let imm5 = bit_range(bits, 16, 5);
             write!(f, "#{imm5:#x}")?
         }
 
+        #[cfg(feature = "full")]
         InsnOperandKind::NZCV => {
             let imm4 = bit_range(bits, 0, 4);
             write!(f, "#{imm4:#x}")?
         }
 
+        #[cfg(any(feature = "full", feature = "system"))]
+        InsnOperandKind::IMM_2 => {
+            let imm = bit_range(bits, 15, 6);
+            write!(f, "#{}", imm)?;
+        }
+        #[cfg(any(feature = "full", feature = "system"))]
+        InsnOperandKind::MASK => {
+            let mask = bit_range(bits, 0, 4);
+            write!(f, "#{}", mask)?;
+        }
+        #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::UIMM3_OP1 => {
             let imm = bit_range(bits, 16, 3);
             write!(f, "#{}", imm)?;
         }
+        #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::UIMM3_OP2 => {
             let imm = bit_range(bits, 5, 3);
             write!(f, "#{}", imm)?;
         }
+        #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::UIMM4 => {
             let imm4 = bit_range(bits, 8, 4);
             write!(f, "#{imm4:#x}")?
         }
+        #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER_ISB => {
             let imm4 = bit_range(bits, 8, 4);
             if imm4 != 0xf {
                 write!(f, "#{imm4:#x}")?
             }
         }
+        #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::UIMM7 => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::COND | InsnOperandKind::COND1 => {
             let cond = bit_range(bits, 12, 4);
             write!(f, "{}", cond_name(cond))?
         }
 
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL14 => {
             let offset = bit_range(bits, 5, 14);
             let offset = sign_extend(offset, 13) << 2;
             write!(f, "{:#x}", pc.wrapping_add(offset))?
         }
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL19 => {
             let offset = bit_range(bits, 5, 19);
             let offset = sign_extend(offset, 18) << 2;
             write!(f, "{:#x}", pc.wrapping_add(offset))?
         }
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL21 => {
             let offset = (bit_range(bits, 5, 19) << 2) | bit_range(bits, 29, 2);
             let offset = sign_extend(offset, 20);
             write!(f, "{:#x}", pc.wrapping_add(offset))?
         }
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_ADRP => {
             let offset = (bit_range(bits, 5, 19) << 2) | bit_range(bits, 29, 2);
             let offset = sign_extend(offset, 20) << 12;
             let pc = pc & !((1 << 12) - 1);
             write!(f, "{:#x}", pc.wrapping_add(offset))?
         }
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL26 => {
             let offset = bit_range(bits, 0, 26);
             let offset = sign_extend(offset, 25) << 2;
             write!(f, "{:#x}", pc.wrapping_add(offset))?
         }
 
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMPLE | InsnOperandKind::SIMD_ADDR_SIMPLE => {
             let reg_no = bit_range(bits, 5, 5);
             let reg_name = get_int_reg_name(true, reg_no as u8, false);
             write!(f, "[{reg_name}]")?
         }
+
+        #[cfg(feature = "full")]
         InsnOperandKind::SIMD_ADDR_POST => write!(f, ":{kind:?}:")?,
 
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_REGOFF => {
             let option = bit_range(bits, 13, 3);
             let size = bit_range(bits, 30, 2);
@@ -973,6 +1037,7 @@ fn format_operand(
             *stop = true;
         }
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_R
         | InsnOperandKind::SVE_ADDR_RR
         | InsnOperandKind::SVE_ADDR_RR_LSL1
@@ -984,8 +1049,10 @@ fn format_operand(
         | InsnOperandKind::SVE_ADDR_RX_LSL2
         | InsnOperandKind::SVE_ADDR_RX_LSL3 => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_ZX => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_RZ
         | InsnOperandKind::SVE_ADDR_RZ_LSL1
         | InsnOperandKind::SVE_ADDR_RZ_LSL2
@@ -999,6 +1066,7 @@ fn format_operand(
         | InsnOperandKind::SVE_ADDR_RZ_XTW3_14
         | InsnOperandKind::SVE_ADDR_RZ_XTW3_22 => write!(f, ":{kind:?}:")?,
 
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMM7 => {
             let opc = bit_range(bits, 30, 2);
             if opc == 0b11 {
@@ -1027,6 +1095,7 @@ fn format_operand(
             }
         }
 
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMM9
         | InsnOperandKind::ADDR_SIMM13
         | InsnOperandKind::ADDR_OFFSET => {
@@ -1059,6 +1128,7 @@ fn format_operand(
             }
             *stop = true;
         }
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_UIMM12 => {
             let fp = bit_set(bits, 26);
             let size = bit_range(bits, 30, 2);
@@ -1077,6 +1147,7 @@ fn format_operand(
             write!(f, "]")?;
         }
 
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMM10 => {
             let reg_n_no = bit_range(bits, 5, 5);
             let reg_n_name = get_int_reg_name(true, reg_n_no as u8, false);
@@ -1101,6 +1172,7 @@ fn format_operand(
             }
         }
 
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMM11 => {
             let reg_n_no = bit_range(bits, 5, 5);
             let reg_n_name = get_int_reg_name(true, reg_n_no as u8, false);
@@ -1125,6 +1197,7 @@ fn format_operand(
             }
         }
 
+        #[cfg(feature = "full")]
         InsnOperandKind::RCPC3_ADDR_OFFSET
         | InsnOperandKind::RCPC3_ADDR_OPT_POSTIND
         | InsnOperandKind::RCPC3_ADDR_OPT_PREIND_WB
@@ -1144,15 +1217,18 @@ fn format_operand(
         | InsnOperandKind::SVE_ADDR_RI_U6x4
         | InsnOperandKind::SVE_ADDR_RI_U6x8 => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_ZI_U5
         | InsnOperandKind::SVE_ADDR_ZI_U5x2
         | InsnOperandKind::SVE_ADDR_ZI_U5x4
         | InsnOperandKind::SVE_ADDR_ZI_U5x8 => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_ZZ_LSL
         | InsnOperandKind::SVE_ADDR_ZZ_SXTW
         | InsnOperandKind::SVE_ADDR_ZZ_UXTW => write!(f, ":{kind:?}:")?,
 
+        #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::SYSREG | InsnOperandKind::SYSREG128 => {
             let op0 = bit_range(bits, 19, 2) as u8;
             let op1 = bit_range(bits, 16, 3) as u8;
@@ -1167,6 +1243,7 @@ fn format_operand(
             }
         }
 
+        #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::PSTATEFIELD => {
             let op2 = bit_range(bits, 5, 3);
             let crm = bit_range(bits, 8, 4);
@@ -1198,6 +1275,7 @@ fn format_operand(
             write!(f, "{field}")?
         }
 
+        #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::SYSREG_AT
         | InsnOperandKind::SYSREG_DC
         | InsnOperandKind::SYSREG_IC
@@ -1205,6 +1283,7 @@ fn format_operand(
         | InsnOperandKind::SYSREG_TLBIP
         | InsnOperandKind::SYSREG_SR => write!(f, ":{kind:?}:")?,
 
+        #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER => {
             let barrier = bit_range(bits, 8, 4);
             let barrier = match barrier {
@@ -1224,6 +1303,7 @@ fn format_operand(
             };
             write!(f, "{barrier}")?
         }
+        #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER_DSB_NXS => {
             let barrier = bit_range(bits, 8, 4);
             let barrier = match barrier {
@@ -1236,6 +1316,7 @@ fn format_operand(
             write!(f, "{barrier}")?
         }
 
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::PRFOP => {
             let typ = match bit_range(bits, 3, 2) {
                 0b00 => Some("pld"),
@@ -1259,7 +1340,7 @@ fn format_operand(
                 write!(f, "#{:#x}", bit_range(bits, 0, 5))?
             }
         }
-
+        #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::RPRFMOP => {
             let b12 = bit_range(bits, 12, 1) << 3;
             let b13 = bit_range(bits, 13, 1) << 4;
@@ -1280,20 +1361,27 @@ fn format_operand(
             }
         }
 
+        #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER_PSB => write!(f, ":{kind:?}:")?,
 
         InsnOperandKind::X16 => write!(f, "x16")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SME_ZT0 => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SME_ZT0_INDEX => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::SME_ZT0_LIST => write!(f, ":{kind:?}:")?,
 
+        #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER_GCSB => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::BTI_TARGET => write!(f, ":{kind:?}:")?,
 
+        #[cfg(feature = "full")]
         InsnOperandKind::MOPS_ADDR_Rd
         | InsnOperandKind::MOPS_ADDR_Rs
         | InsnOperandKind::MOPS_WB_Rn => {
@@ -1323,11 +1411,15 @@ fn format_operand(
                 write!(f, "[{rd}]!, {rn}!, {rs}")?
             }
         }
+
+        #[cfg(not(feature = "full"))]
+        _ => write!(f, "<unknown>")?,
     };
 
     Ok(())
 }
 
+#[cfg(any(feature = "full", feature = "system"))]
 fn format_hint(f: &mut impl Write, bits: u32) -> core::fmt::Result {
     let hint = bit_range(bits, 5, 7);
 
@@ -1373,16 +1465,23 @@ fn format_hint(f: &mut impl Write, bits: u32) -> core::fmt::Result {
 /// and always emits the primary mnemonic.
 /// The program counter is useful for the PC-relative addressing to
 /// emit the target address in the disassembly rather than the offset.
-pub fn format_insn_pc(pc: u64, f: &mut impl Write, opcode: &Opcode) -> core::fmt::Result {
+pub fn format_insn_pc<O: InsnOpcode>(pc: u64, f: &mut impl Write, opcode: &O) -> core::fmt::Result {
     let definition = opcode.definition();
     let bits = opcode.bits();
 
     // Process hints
-    if let Opcode::IC_SYSTEM(IC_SYSTEM::HINT_UIMM7(hint)) = opcode {
-        return format_hint(f, hint.bits());
+    #[cfg(any(feature = "full", feature = "system"))]
+    if definition.class == disarm64_defn::InsnClass::IC_SYSTEM {
+        if let Some(op) = definition.operands.first() {
+            if op.kind == InsnOperandKind::UIMM7 {
+                return format_hint(f, bits);
+            }
+        }
     }
 
     write!(f, "{}", definition.mnemonic)?;
+
+    #[cfg(feature = "full")]
     if definition.flags.contains(InsnFlags::IS_COND) {
         // Conditional branch or the consistent conditional branch.
         let cond = bit_range(bits, 0, 4);
@@ -1404,13 +1503,4 @@ pub fn format_insn_pc(pc: u64, f: &mut impl Write, opcode: &Opcode) -> core::fmt
     }
 
     Ok(())
-}
-
-impl Display for Opcode {
-    /// The program counter is not used for the PC-relative addressing here.
-    /// Thus this default formattikng is not able to emit the target address
-    /// in the disassembly so it emits the offset.
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        format_insn_pc(0, f, self)
-    }
 }

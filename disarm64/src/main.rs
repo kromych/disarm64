@@ -1,7 +1,6 @@
 use clap::Parser;
 use clap::Subcommand;
 use clap_num::maybe_hex;
-use disarm64::decoder;
 use disarm64::format_insn;
 use disarm64_defn::defn::InsnOpcode;
 use memmap2::Mmap;
@@ -11,6 +10,16 @@ use std::io::BufReader;
 use std::io::IsTerminal;
 use std::io::Read;
 use std::path::PathBuf;
+
+#[cfg(feature = "full")]
+use disarm64::decoder;
+
+#[cfg(feature = "exception")]
+use disarm64::decoder_exception as decoder;
+#[cfg(feature = "load_store")]
+use disarm64::decoder_load_store as decoder;
+#[cfg(feature = "system")]
+use disarm64::decoder_system as decoder;
 
 #[derive(Subcommand, Debug, Clone, PartialEq, Eq)]
 enum Command {
@@ -122,6 +131,9 @@ fn main() -> anyhow::Result<()> {
     let opt = CommandLine::parse();
 
     init_logging(&opt);
+
+    #[cfg(not(feature = "full"))]
+    log::warn!("Decoder wasn't built with the support for the full instruction set");
 
     let decode_file = |file: &PathBuf,
                        reader: fn(
