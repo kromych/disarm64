@@ -6,9 +6,10 @@
 //! use disarm64::decoder;
 //! use disarm64_defn::defn::InsnOpcode;
 //!
-//! let insn = decoder::decode(0x94000000).unwrap();
+//! let insn = decoder::decode(0x11000000).unwrap();
 //!
 //! println!("Instruction: {insn:?}");
+//! println!("Formatted: {insn}");
 //! println!("Definition: {:?}", insn.definition());
 //! ```
 //!
