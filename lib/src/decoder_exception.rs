@@ -35,6 +35,18 @@ enum Decode {
 }
 #[doc = r" The decode table"]
 type DecodeTable = &'static [Decode];
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum Mnemonic {
+    brk,
+    dcps1,
+    dcps2,
+    dcps3,
+    hlt,
+    hvc,
+    smc,
+    svc,
+    udf,
+}
 #[bitfield(u32)]
 #[derive(PartialEq, Eq)]
 pub struct BRK_EXCEPTION {
@@ -136,8 +148,13 @@ pub enum EXCEPTION {
     UDF_UNDEFINED(UDF_UNDEFINED),
 }
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum Opcode {
+pub enum Operation {
     EXCEPTION(EXCEPTION),
+}
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub struct Opcode {
+    mnemonic: Mnemonic,
+    operation: Operation,
 }
 impl BRK_EXCEPTION {
     pub const DEFINITION: Insn = Insn {
@@ -160,7 +177,10 @@ impl BRK_EXCEPTION {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::EXCEPTION(EXCEPTION::BRK_EXCEPTION(BRK_EXCEPTION::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::brk,
+            operation: Operation::EXCEPTION(EXCEPTION::BRK_EXCEPTION(BRK_EXCEPTION::from(bits))),
+        }
     }
 }
 impl InsnOpcode for BRK_EXCEPTION {
@@ -192,7 +212,12 @@ impl DCPS1_EXCEPTION {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::EXCEPTION(EXCEPTION::DCPS1_EXCEPTION(DCPS1_EXCEPTION::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::dcps1,
+            operation: Operation::EXCEPTION(EXCEPTION::DCPS1_EXCEPTION(DCPS1_EXCEPTION::from(
+                bits,
+            ))),
+        }
     }
 }
 impl InsnOpcode for DCPS1_EXCEPTION {
@@ -224,7 +249,12 @@ impl DCPS2_EXCEPTION {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::EXCEPTION(EXCEPTION::DCPS2_EXCEPTION(DCPS2_EXCEPTION::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::dcps2,
+            operation: Operation::EXCEPTION(EXCEPTION::DCPS2_EXCEPTION(DCPS2_EXCEPTION::from(
+                bits,
+            ))),
+        }
     }
 }
 impl InsnOpcode for DCPS2_EXCEPTION {
@@ -256,7 +286,12 @@ impl DCPS3_EXCEPTION {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::EXCEPTION(EXCEPTION::DCPS3_EXCEPTION(DCPS3_EXCEPTION::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::dcps3,
+            operation: Operation::EXCEPTION(EXCEPTION::DCPS3_EXCEPTION(DCPS3_EXCEPTION::from(
+                bits,
+            ))),
+        }
     }
 }
 impl InsnOpcode for DCPS3_EXCEPTION {
@@ -288,7 +323,10 @@ impl HLT_EXCEPTION {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::EXCEPTION(EXCEPTION::HLT_EXCEPTION(HLT_EXCEPTION::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::hlt,
+            operation: Operation::EXCEPTION(EXCEPTION::HLT_EXCEPTION(HLT_EXCEPTION::from(bits))),
+        }
     }
 }
 impl InsnOpcode for HLT_EXCEPTION {
@@ -320,7 +358,10 @@ impl HVC_EXCEPTION {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::EXCEPTION(EXCEPTION::HVC_EXCEPTION(HVC_EXCEPTION::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::hvc,
+            operation: Operation::EXCEPTION(EXCEPTION::HVC_EXCEPTION(HVC_EXCEPTION::from(bits))),
+        }
     }
 }
 impl InsnOpcode for HVC_EXCEPTION {
@@ -352,7 +393,10 @@ impl SMC_EXCEPTION {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::EXCEPTION(EXCEPTION::SMC_EXCEPTION(SMC_EXCEPTION::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::smc,
+            operation: Operation::EXCEPTION(EXCEPTION::SMC_EXCEPTION(SMC_EXCEPTION::from(bits))),
+        }
     }
 }
 impl InsnOpcode for SMC_EXCEPTION {
@@ -384,7 +428,10 @@ impl SVC_EXCEPTION {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::EXCEPTION(EXCEPTION::SVC_EXCEPTION(SVC_EXCEPTION::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::svc,
+            operation: Operation::EXCEPTION(EXCEPTION::SVC_EXCEPTION(SVC_EXCEPTION::from(bits))),
+        }
     }
 }
 impl InsnOpcode for SVC_EXCEPTION {
@@ -416,7 +463,10 @@ impl UDF_UNDEFINED {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::EXCEPTION(EXCEPTION::UDF_UNDEFINED(UDF_UNDEFINED::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::udf,
+            operation: Operation::EXCEPTION(EXCEPTION::UDF_UNDEFINED(UDF_UNDEFINED::from(bits))),
+        }
     }
 }
 impl InsnOpcode for UDF_UNDEFINED {
@@ -455,16 +505,24 @@ impl InsnOpcode for EXCEPTION {
         }
     }
 }
-impl InsnOpcode for Opcode {
+impl InsnOpcode for Operation {
     fn definition(&self) -> &'static Insn {
         match self {
-            Opcode::EXCEPTION(class) => class.definition(),
+            Operation::EXCEPTION(class) => class.definition(),
         }
     }
     fn bits(&self) -> u32 {
         match self {
-            Opcode::EXCEPTION(class) => class.bits(),
+            Operation::EXCEPTION(class) => class.bits(),
         }
+    }
+}
+impl InsnOpcode for Opcode {
+    fn definition(&self) -> &'static Insn {
+        self.operation.definition()
+    }
+    fn bits(&self) -> u32 {
+        self.operation.bits()
     }
 }
 pub fn decode(insn: u32) -> Option<Opcode> {

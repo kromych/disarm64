@@ -35,6 +35,30 @@ enum Decode {
 }
 #[doc = r" The decode table"]
 type DecodeTable = &'static [Decode];
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum Mnemonic {
+    cfinv,
+    chkfeat,
+    clrex,
+    dgh,
+    dmb,
+    dsb,
+    hint,
+    isb,
+    mrrs,
+    mrs,
+    msr,
+    msrr,
+    rmif,
+    sb,
+    setf16,
+    setf8,
+    sys,
+    sysl,
+    sysp,
+    wfet,
+    wfit,
+}
 #[bitfield(u32)]
 #[derive(PartialEq, Eq)]
 pub struct CFINV {
@@ -276,8 +300,13 @@ pub enum IC_SYSTEM {
     WFIT_Rd(WFIT_Rd),
 }
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum Opcode {
+pub enum Operation {
     IC_SYSTEM(IC_SYSTEM),
+}
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub struct Opcode {
+    mnemonic: Mnemonic,
+    operation: Operation,
 }
 impl CFINV {
     pub const DEFINITION: Insn = Insn {
@@ -291,7 +320,10 @@ impl CFINV {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::CFINV(CFINV::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::cfinv,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::CFINV(CFINV::from(bits))),
+        }
     }
 }
 impl InsnOpcode for CFINV {
@@ -319,7 +351,10 @@ impl CHKFEAT_X16 {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::CHKFEAT_X16(CHKFEAT_X16::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::chkfeat,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::CHKFEAT_X16(CHKFEAT_X16::from(bits))),
+        }
     }
 }
 impl InsnOpcode for CHKFEAT_X16 {
@@ -351,7 +386,10 @@ impl CLREX_UIMM4 {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::CLREX_UIMM4(CLREX_UIMM4::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::clrex,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::CLREX_UIMM4(CLREX_UIMM4::from(bits))),
+        }
     }
 }
 impl InsnOpcode for CLREX_UIMM4 {
@@ -374,7 +412,10 @@ impl DGH {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::DGH(DGH::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::dgh,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::DGH(DGH::from(bits))),
+        }
     }
 }
 impl InsnOpcode for DGH {
@@ -402,7 +443,10 @@ impl DMB_BARRIER {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::DMB_BARRIER(DMB_BARRIER::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::dmb,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::DMB_BARRIER(DMB_BARRIER::from(bits))),
+        }
     }
 }
 impl InsnOpcode for DMB_BARRIER {
@@ -430,9 +474,12 @@ impl DSB_BARRIER_DSB_NXS {
         flags: InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::DSB_BARRIER_DSB_NXS(DSB_BARRIER_DSB_NXS::from(
-            bits,
-        )))
+        Opcode {
+            mnemonic: Mnemonic::dsb,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::DSB_BARRIER_DSB_NXS(
+                DSB_BARRIER_DSB_NXS::from(bits),
+            )),
+        }
     }
 }
 impl InsnOpcode for DSB_BARRIER_DSB_NXS {
@@ -460,7 +507,10 @@ impl DSB_BARRIER {
         flags: InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::DSB_BARRIER(DSB_BARRIER::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::dsb,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::DSB_BARRIER(DSB_BARRIER::from(bits))),
+        }
     }
 }
 impl InsnOpcode for DSB_BARRIER {
@@ -499,7 +549,10 @@ impl HINT_UIMM7 {
         flags: InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::HINT_UIMM7(HINT_UIMM7::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::hint,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::HINT_UIMM7(HINT_UIMM7::from(bits))),
+        }
     }
 }
 impl InsnOpcode for HINT_UIMM7 {
@@ -527,7 +580,12 @@ impl ISB_BARRIER_ISB {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::ISB_BARRIER_ISB(ISB_BARRIER_ISB::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::isb,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::ISB_BARRIER_ISB(ISB_BARRIER_ISB::from(
+                bits,
+            ))),
+        }
     }
 }
 impl InsnOpcode for ISB_BARRIER_ISB {
@@ -573,9 +631,12 @@ impl MRRS_Rt_PAIRREG_SYSREG128 {
         flags: InsnFlags::const_from_bits(InsnFlags::IS_SYS_READ.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::MRRS_Rt_PAIRREG_SYSREG128(
-            MRRS_Rt_PAIRREG_SYSREG128::from(bits),
-        ))
+        Opcode {
+            mnemonic: Mnemonic::mrrs,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::MRRS_Rt_PAIRREG_SYSREG128(
+                MRRS_Rt_PAIRREG_SYSREG128::from(bits),
+            )),
+        }
     }
 }
 impl InsnOpcode for MRRS_Rt_PAIRREG_SYSREG128 {
@@ -615,7 +676,10 @@ impl MRS_Rt_SYSREG {
         flags: InsnFlags::const_from_bits(InsnFlags::IS_SYS_READ.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::MRS_Rt_SYSREG(MRS_Rt_SYSREG::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::mrs,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::MRS_Rt_SYSREG(MRS_Rt_SYSREG::from(bits))),
+        }
     }
 }
 impl InsnOpcode for MRS_Rt_SYSREG {
@@ -655,9 +719,12 @@ impl MSR_PSTATEFIELD_UIMM4 {
         flags: InsnFlags::const_from_bits(InsnFlags::IS_SYS_WRITE.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::MSR_PSTATEFIELD_UIMM4(
-            MSR_PSTATEFIELD_UIMM4::from(bits),
-        ))
+        Opcode {
+            mnemonic: Mnemonic::msr,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::MSR_PSTATEFIELD_UIMM4(
+                MSR_PSTATEFIELD_UIMM4::from(bits),
+            )),
+        }
     }
 }
 impl InsnOpcode for MSR_PSTATEFIELD_UIMM4 {
@@ -697,7 +764,10 @@ impl MSR_SYSREG_Rt {
         flags: InsnFlags::const_from_bits(InsnFlags::IS_SYS_WRITE.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::MSR_SYSREG_Rt(MSR_SYSREG_Rt::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::msr,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::MSR_SYSREG_Rt(MSR_SYSREG_Rt::from(bits))),
+        }
     }
 }
 impl InsnOpcode for MSR_SYSREG_Rt {
@@ -743,9 +813,12 @@ impl MSRR_SYSREG128_Rt_PAIRREG {
         flags: InsnFlags::const_from_bits(InsnFlags::IS_SYS_WRITE.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::MSRR_SYSREG128_Rt_PAIRREG(
-            MSRR_SYSREG128_Rt_PAIRREG::from(bits),
-        ))
+        Opcode {
+            mnemonic: Mnemonic::msrr,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::MSRR_SYSREG128_Rt_PAIRREG(
+                MSRR_SYSREG128_Rt_PAIRREG::from(bits),
+            )),
+        }
     }
 }
 impl InsnOpcode for MSRR_SYSREG128_Rt_PAIRREG {
@@ -799,9 +872,12 @@ impl RMIF_Rn_IMM_2_MASK {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::RMIF_Rn_IMM_2_MASK(RMIF_Rn_IMM_2_MASK::from(
-            bits,
-        )))
+        Opcode {
+            mnemonic: Mnemonic::rmif,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::RMIF_Rn_IMM_2_MASK(
+                RMIF_Rn_IMM_2_MASK::from(bits),
+            )),
+        }
     }
 }
 impl InsnOpcode for RMIF_Rn_IMM_2_MASK {
@@ -824,7 +900,10 @@ impl SB {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::SB(SB::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::sb,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::SB(SB::from(bits))),
+        }
     }
 }
 impl InsnOpcode for SB {
@@ -856,7 +935,10 @@ impl SETF16_Rn {
         flags: InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::SETF16_Rn(SETF16_Rn::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::setf16,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::SETF16_Rn(SETF16_Rn::from(bits))),
+        }
     }
 }
 impl InsnOpcode for SETF16_Rn {
@@ -888,7 +970,10 @@ impl SETF8_Rn {
         flags: InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::SETF8_Rn(SETF8_Rn::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::setf8,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::SETF8_Rn(SETF8_Rn::from(bits))),
+        }
     }
 }
 impl InsnOpcode for SETF8_Rn {
@@ -962,9 +1047,12 @@ impl SYS_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt {
         flags: InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::SYS_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt(
-            SYS_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt::from(bits),
-        ))
+        Opcode {
+            mnemonic: Mnemonic::sys,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::SYS_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt(
+                SYS_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt::from(bits),
+            )),
+        }
     }
 }
 impl InsnOpcode for SYS_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt {
@@ -1038,9 +1126,12 @@ impl SYSL_Rt_UIMM3_OP1_CRn_CRm_UIMM3_OP2 {
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::SYSL_Rt_UIMM3_OP1_CRn_CRm_UIMM3_OP2(
-            SYSL_Rt_UIMM3_OP1_CRn_CRm_UIMM3_OP2::from(bits),
-        ))
+        Opcode {
+            mnemonic: Mnemonic::sysl,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::SYSL_Rt_UIMM3_OP1_CRn_CRm_UIMM3_OP2(
+                SYSL_Rt_UIMM3_OP1_CRn_CRm_UIMM3_OP2::from(bits),
+            )),
+        }
     }
 }
 impl InsnOpcode for SYSL_Rt_UIMM3_OP1_CRn_CRm_UIMM3_OP2 {
@@ -1122,11 +1213,14 @@ impl SYSP_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt_PAIRREG_OR_XZR {
         ),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(
-            IC_SYSTEM::SYSP_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt_PAIRREG_OR_XZR(
-                SYSP_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt_PAIRREG_OR_XZR::from(bits),
+        Opcode {
+            mnemonic: Mnemonic::sysp,
+            operation: Operation::IC_SYSTEM(
+                IC_SYSTEM::SYSP_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt_PAIRREG_OR_XZR(
+                    SYSP_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt_PAIRREG_OR_XZR::from(bits),
+                ),
             ),
-        )
+        }
     }
 }
 impl InsnOpcode for SYSP_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt_PAIRREG_OR_XZR {
@@ -1158,7 +1252,10 @@ impl WFET_Rd {
         flags: InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::WFET_Rd(WFET_Rd::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::wfet,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::WFET_Rd(WFET_Rd::from(bits))),
+        }
     }
 }
 impl InsnOpcode for WFET_Rd {
@@ -1190,7 +1287,10 @@ impl WFIT_Rd {
         flags: InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
-        Opcode::IC_SYSTEM(IC_SYSTEM::WFIT_Rd(WFIT_Rd::from(bits)))
+        Opcode {
+            mnemonic: Mnemonic::wfit,
+            operation: Operation::IC_SYSTEM(IC_SYSTEM::WFIT_Rd(WFIT_Rd::from(bits))),
+        }
     }
 }
 impl InsnOpcode for WFIT_Rd {
@@ -1259,16 +1359,24 @@ impl InsnOpcode for IC_SYSTEM {
         }
     }
 }
-impl InsnOpcode for Opcode {
+impl InsnOpcode for Operation {
     fn definition(&self) -> &'static Insn {
         match self {
-            Opcode::IC_SYSTEM(class) => class.definition(),
+            Operation::IC_SYSTEM(class) => class.definition(),
         }
     }
     fn bits(&self) -> u32 {
         match self {
-            Opcode::IC_SYSTEM(class) => class.bits(),
+            Operation::IC_SYSTEM(class) => class.bits(),
         }
+    }
+}
+impl InsnOpcode for Opcode {
+    fn definition(&self) -> &'static Insn {
+        self.operation.definition()
+    }
+    fn bits(&self) -> u32 {
+        self.operation.bits()
     }
 }
 pub fn decode(insn: u32) -> Option<Opcode> {

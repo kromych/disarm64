@@ -97,8 +97,27 @@ fn write_insn_structs(
     let mut insns = Vec::new();
     collect_insns_recursive(decision_tree, &mut insns);
     insns.sort_by_key(|insn| insn.mnemonic.clone());
+    let mnemonics = insns
+        .iter()
+        .map(|x| x.mnemonic.clone().to_lowercase().replace('.', "_"))
+        .collect::<HashSet<_>>();
+    let mut mnemonics = Vec::from_iter(mnemonics);
+    mnemonics.sort();
+    let mnemonics = mnemonics
+        .into_iter()
+        .map(|x| format_ident!("r#{x}"))
+        .collect::<Vec<_>>();
     let mut struct_definitions = quote! {};
     let mut struct_impls = quote! {};
+    let mnemonic_definitions = quote! {
+        #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+        pub enum Mnemonic {
+            #(
+                #mnemonics,
+            )*
+        }
+    };
+    struct_definitions.extend(mnemonic_definitions);
 
     let mut used_names = std::collections::HashSet::new();
     let mut opcode_to_used_name = std::collections::HashMap::new();
@@ -259,6 +278,7 @@ fn write_insn_structs(
             }
         });
 
+        let mnemonic_ident = format_ident!("r#{}", mnemonic.replace('.', "_"));
         struct_impls.extend(quote! {
             impl #opcode_struct_name {
                 pub const DEFINITION: Insn = Insn {
@@ -273,7 +293,7 @@ fn write_insn_structs(
                 };
 
                 fn make_opcode(bits: u32) -> Opcode {
-                    Opcode::#class(#class::#opcode_struct_name(#opcode_struct_name::from(bits)))
+                    Opcode { mnemonic: Mnemonic::#mnemonic_ident, operation: Operation::#class(#class::#opcode_struct_name(#opcode_struct_name::from(bits))) }
                 }
             }
 
@@ -341,19 +361,25 @@ fn write_insn_structs(
             #struct_definitions
 
             #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-            pub enum Opcode {
+            pub enum Operation {
                 #(
                     #classes_idents(#classes_idents),
                 )*
             }
 
+            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
+            pub struct Opcode {
+                mnemonic: Mnemonic,
+                operation: Operation
+            }
+
             #struct_impls
 
-            impl InsnOpcode for Opcode {
+            impl InsnOpcode for Operation {
                 fn definition(&self) -> &'static Insn {
                     match self {
                         #(
-                            Opcode::#classes_idents(class) => class.definition(),
+                            Operation::#classes_idents(class) => class.definition(),
                         )*
                     }
                 }
@@ -361,9 +387,18 @@ fn write_insn_structs(
                 fn bits(&self) -> u32 {
                     match self {
                         #(
-                            Opcode::#classes_idents(class) => class.bits(),
+                            Operation::#classes_idents(class) => class.bits(),
                         )*
                     }
+                }
+            }
+
+            impl InsnOpcode for Opcode {
+                fn definition(&self) -> &'static Insn {
+                    self.operation.definition()
+                }
+                fn bits(&self) -> u32 {
+                    self.operation.bits()
                 }
             }
         }
