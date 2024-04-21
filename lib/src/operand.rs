@@ -1,408 +1,181 @@
-//! Formatting instructions to human-readable strings
-//!
-//! Currently, the decoded instruction is converted straight to a string.
-//! Once the full known set of instructions is implemented, this will be
-//! supplemented with a more structured approach while retaining the
-//! current string formatting instructions.
-
-#![cfg_attr(
-    not(feature = "full"),
-    allow(unused_variables, dead_code, unused_imports)
-)]
+//! This module provides operand definitions used for structured matching
+//! after decoding.
 
 use crate::bit_range;
 use crate::bit_set;
 use crate::decode_limm;
 use crate::fp_expand_imm;
-use crate::registers::get_fp_reg_name;
-use crate::registers::get_int_reg_name;
-use crate::registers::get_simd_reg_name;
-use crate::registers::get_sys_reg_name;
-use crate::registers::sys_reg_number;
-use crate::registers::FpRegSize;
-use crate::registers::SimdRegArrangement;
+use crate::sign_extend;
 use crate::LOG2_TAG_GRANULE;
-use bitfield_struct::bitfield;
-use core::fmt::Write;
-use defn::InsnOpcode;
 use disarm64_defn::defn;
-use disarm64_defn::InsnClass;
+use disarm64_defn::defn::Insn;
+use disarm64_defn::defn::InsnOpcode;
 use disarm64_defn::InsnFlags;
 use disarm64_defn::InsnOperandKind;
-use disarm64_defn::InsnOperandQualifier;
 
-fn cond_name(cond: u32) -> &'static str {
-    const COND: [&str; 16] = [
-        "eq", "ne", "cs", "cc", "mi", "pl", "vs", "vc", "hi", "ls", "ge", "lt", "gt", "le", "al",
-        "nv",
-    ];
-    COND[(cond & 0b1111) as usize]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum RegKind {
+    GeneralPurpose,
+    System,
+    FloatingPoint,
+    Vector,
 }
 
-/// Format a floating-point register to a string
-fn format_fp_reg(
-    f: &mut impl Write,
-    bits: u32,
-    operand: &defn::InsnOperand,
-    definition: &defn::Insn,
-) -> core::fmt::Result {
-    let kind = operand.kind;
-
-    let reg_no = if let Some(bit_filed) = operand.bit_fields.first() {
-        bit_range(bits, bit_filed.lsb.into(), bit_filed.width.into())
-    } else {
-        return write!(f, ":{kind:?}:");
-    };
-
-    let fp_reg_name = match definition.class {
-        InsnClass::LDST_IMM9
-        | InsnClass::LDST_POS
-        | InsnClass::LDST_REGOFF
-        | InsnClass::LDST_UNSCALED => {
-            let size = bit_range(bits, 30, 2);
-            let opc = bit_range(bits, 22, 2);
-            if opc == 0 || opc == 1 {
-                let fp_size = match size {
-                    0b00 => FpRegSize::B8,
-                    0b01 => FpRegSize::H16,
-                    0b10 => FpRegSize::S32,
-                    0b11 => FpRegSize::D64,
-                    _ => unreachable!(),
-                };
-                get_fp_reg_name(fp_size, reg_no as usize)
-            } else if (opc == 0b10 || opc == 0b11) && size == 0 {
-                get_fp_reg_name(FpRegSize::Q128, reg_no as usize)
-            } else {
-                return write!(f, "<undefined>");
-            }
-        }
-        InsnClass::LDSTPAIR_OFF
-        | InsnClass::LDSTNAPAIR_OFFS
-        | InsnClass::LDSTPAIR_INDEXED
-        | InsnClass::LOADLIT => {
-            let opc = bit_range(bits, 30, 2);
-            if opc == 0 {
-                get_fp_reg_name(FpRegSize::S32, reg_no as usize)
-            } else if opc == 1 {
-                get_fp_reg_name(FpRegSize::D64, reg_no as usize)
-            } else if opc == 2 {
-                get_fp_reg_name(FpRegSize::Q128, reg_no as usize)
-            } else {
-                return write!(f, "<undefined>");
-            }
-        }
-        InsnClass::BFLOAT16 => match kind {
-            InsnOperandKind::Fd => get_fp_reg_name(FpRegSize::H16, reg_no as usize),
-            InsnOperandKind::Fn => get_fp_reg_name(FpRegSize::S32, reg_no as usize),
-            _ => {
-                return write!(f, "<undefined>");
-            }
-        },
-
-        _ => {
-            if definition.flags.contains(InsnFlags::HAS_FPTYPE_FIELD) {
-                let fp_type = bit_range(bits, 22, 2);
-                match fp_type {
-                    0b00 => get_fp_reg_name(FpRegSize::S32, reg_no as usize),
-                    0b01 => get_fp_reg_name(FpRegSize::D64, reg_no as usize),
-                    0b10 => "<undefined>",
-                    0b11 => get_fp_reg_name(FpRegSize::H16, reg_no as usize),
-                    _ => unreachable!(),
-                }
-            } else if let Some(qual) = operand.qualifiers.first() {
-                let size = match qual {
-                    InsnOperandQualifier::S_B => FpRegSize::B8,
-                    InsnOperandQualifier::S_H => FpRegSize::H16,
-                    InsnOperandQualifier::S_S => FpRegSize::S32,
-                    InsnOperandQualifier::S_D => FpRegSize::D64,
-                    InsnOperandQualifier::S_Q => FpRegSize::Q128,
-                    _ => {
-                        return write!(f, "<undefined>");
-                    }
-                };
-                get_fp_reg_name(size, reg_no as usize)
-            } else {
-                return write!(f, ":{kind:?}:");
-            }
-        }
-    };
-
-    write!(f, "{fp_reg_name}")
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum ImmediateKind {
+    Signed(i64),
+    Unsigned(u64),
+    FloatingPoint(u64),
 }
 
-/// Format an integer register (32-bit or 64-bit) to a string
-fn format_int_operand_reg_pair(
-    pair: bool,
-    f: &mut impl Write,
-    bits: u32,
-    operand: &defn::InsnOperand,
-    definition: &defn::Insn,
-    with_zr: bool,
-) -> core::fmt::Result {
-    let flags = definition.flags;
-    let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
-        bit_set(bits, 31)
-    } else if flags.contains(InsnFlags::HAS_LDS_SIZE_IN_BIT_22) {
-        !bit_set(bits, 22)
-    } else if (flags.contains(InsnFlags::HAS_LSE_SZ_FIELD)
-        && (operand.kind == InsnOperandKind::Rt || operand.kind == InsnOperandKind::Rs))
-        || (flags.contains(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q)
-            && (operand.kind == InsnOperandKind::Rt || operand.kind == InsnOperandKind::Rt2))
-    {
-        bit_set(bits, 30)
-    } else if operand.qualifiers.is_empty() || operand.qualifiers == [InsnOperandQualifier::X] {
-        true
-    } else if definition.class == InsnClass::LDST_IMM9
-        || definition.class == InsnClass::LDST_POS
-        || definition.class == InsnClass::LDST_REGOFF
-        || definition.class == InsnClass::LDST_UNPRIV
-        || definition.class == InsnClass::LDST_UNSCALED
-    {
-        let size = bit_range(bits, 30, 2);
-        let opc1 = bit_set(bits, 23);
-        let opc0 = bit_set(bits, 22);
-        if !opc1 {
-            // Store or zero-extending load, not signed.
-            // Bit 22 is set if this is a load.
-            size == 0b11
-        } else {
-            // Sign-extending load
-            if size == 0b10 && opc0 {
-                return write!(f, "<undefined>");
-            }
-            !opc0
-        }
-    } else {
-        false
-    };
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum AddressKind {
+    PcRelative(u64),
+    PostIndex,
+    PreIndex,
+}
 
-    if let Some(bit_field_spec) = operand.bit_fields.first() {
-        let reg_no = bit_range(bits, bit_field_spec.lsb.into(), bit_field_spec.width.into());
-        let reg_no = if pair {
-            if reg_no & 1 != 0 {
-                return write!(f, "<undefined>");
-            }
-            reg_no + 1
-        } else {
-            reg_no
-        };
-        let reg_name = get_int_reg_name(is_64, reg_no as u8, with_zr);
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[allow(non_camel_case_types)]
+pub enum SystemHintKind {
+    nop,
+    r#yield,
+    wfe,
+    wfi,
+    sev,
+    sevl,
+    dgh,
+    xpaclri,
+    pacia1716,
+    pacib1716,
+    autia1716,
+    autib1716,
+    esb,
+    psb_csync,
+    tsb_csync,
+    csdb,
+    clrbhb,
+    gcsb_dsync,
+    paciaz,
+    paciasp,
+    pacibz,
+    pacibsp,
+    autiaz,
+    autiasp,
+    autibz,
+    autibsp,
+    bti,
+    bti_c,
+    bti_j,
+    bti_jc,
+    hint(u8),
+}
 
-        write!(f, "{reg_name}")
-    } else {
-        write!(f, "<undefined>")
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[allow(non_camel_case_types)]
+pub enum ConditionKind {
+    eq,
+    ne,
+    cs,
+    cc,
+    mi,
+    pl,
+    vs,
+    vc,
+    hi,
+    ls,
+    ge,
+    lt,
+    gt,
+    le,
+    al,
+    nv,
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum Operand {
+    Register(RegKind),
+    Immediate(ImmediateKind),
+    Address(AddressKind),
+    SystemHint(SystemHintKind),
+    Condition(ConditionKind),
+    Unknown,
+    Other(&'static str),
+}
+
+#[cfg(any(feature = "full", feature = "system"))]
+fn operand_hint(bits: u32) -> SystemHintKind {
+    let hint = bit_range(bits, 5, 7) as u8;
+
+    #[allow(clippy::unusual_byte_groupings)]
+    match hint {
+        0b0000_000 => SystemHintKind::nop,
+        0b0000_001 => SystemHintKind::r#yield,
+        0b0000_010 => SystemHintKind::wfe,
+        0b0000_011 => SystemHintKind::wfi,
+        0b0000_100 => SystemHintKind::sev,
+        0b0000_101 => SystemHintKind::sevl,
+        0b0000_110 => SystemHintKind::dgh,
+        0b0000_111 => SystemHintKind::xpaclri,
+        0b0001_000 => SystemHintKind::pacia1716,
+        0b0001_010 => SystemHintKind::pacib1716,
+        0b0001_100 => SystemHintKind::autia1716,
+        0b0001_110 => SystemHintKind::autib1716,
+        0b0010_000 => SystemHintKind::esb,
+        0b0010_001 => SystemHintKind::psb_csync,
+        0b0010_010 => SystemHintKind::tsb_csync,
+        0b0010_100 => SystemHintKind::csdb,
+        0b0010_110 => SystemHintKind::clrbhb,
+        0b0010_011 => SystemHintKind::gcsb_dsync,
+        0b0011_000 => SystemHintKind::paciaz,
+        0b0011_001 => SystemHintKind::paciasp,
+        0b0011_010 => SystemHintKind::pacibz,
+        0b0011_011 => SystemHintKind::pacibsp,
+        0b0011_100 => SystemHintKind::autiaz,
+        0b0011_101 => SystemHintKind::autiasp,
+        0b0011_110 => SystemHintKind::autibz,
+        0b0011_111 => SystemHintKind::autibsp,
+        0b0100_000 => SystemHintKind::bti,
+        0b0100_010 => SystemHintKind::bti_c,
+        0b0100_100 => SystemHintKind::bti_j,
+        0b0100_110 => SystemHintKind::bti_jc,
+        _ => SystemHintKind::hint(hint),
     }
 }
 
-/// Format an integer register (32-bit or 64-bit) to a string
-fn format_int_operand_reg(
-    f: &mut impl Write,
-    bits: u32,
-    operand: &defn::InsnOperand,
-    definition: &defn::Insn,
-    with_zr: bool,
-) -> core::fmt::Result {
-    format_int_operand_reg_pair(false, f, bits, operand, definition, with_zr)
-}
-
-/// Format a register with extended shift operand to a string.
-/// This is a lot of logic and dependencies on the other registers
-/// for 4 instructions and 2 aliases.
-fn format_operand_reg_ext(f: &mut impl Write, bits: u32) -> core::fmt::Result {
-    // E.g. for ADD (extended register) instruction:
-    // https://developer.arm.com/documentation/ddi0602/2023-12/Base-Instructions/ADD--extended-register---Add--extended-register--
-
-    // The bitfields don't come from the operand (might fix up the description in the future).
-    #[bitfield(u32)]
-    struct RegExt {
-        #[bits(5)]
-        regd: u32,
-        #[bits(5)]
-        regn: u32,
-        #[bits(3)]
-        imm3: u32,
-        #[bits(3)]
-        option: u32,
-        #[bits(5)]
-        regm: u32,
-        #[bits(10)]
-        opcode_bits: u32,
-        #[bits(1)]
-        sf: bool,
-    }
-    let reg_ext = RegExt::from_bits(bits);
-
-    if reg_ext.imm3() > 4 {
-        write!(f, "<undefined>")?;
-        return Ok(());
-    }
-
-    let extend_use_lsl = if !reg_ext.sf() { 0b010 } else { 0b011 };
-    let extend =
-        if (reg_ext.regd() == 31 || reg_ext.regn() == 31) && reg_ext.option() == extend_use_lsl {
-            if reg_ext.imm3() != 0 {
-                // Logical Shift Left (LSL) by the immediate value.
-                "lsl"
-            } else {
-                ""
-            }
-        } else {
-            // Signed or Unsigned eXTend of a Byte, Halfword, Word, or (X) Doubleword.
-            match reg_ext.option() {
-                0b000 => "uxtb",
-                0b001 => "uxth",
-                0b010 => "uxtw",
-                0b011 => "uxtx",
-                0b100 => "sxtb",
-                0b101 => "sxth",
-                0b110 => "sxtw",
-                0b111 => "sxtx",
-                _ => unreachable!(),
-            }
-        };
-    let is_64bit = if reg_ext.sf() {
-        reg_ext.option() & 0b11 == 0b11
-    } else {
-        false
-    };
-
-    let reg_name = get_int_reg_name(is_64bit, reg_ext.regm() as u8, true);
-    write!(f, "{reg_name}")?;
-    if !extend.is_empty() {
-        write!(f, ", {}", extend)?;
-
-        if reg_ext.imm3() != 0 {
-            write!(f, " #{}", reg_ext.imm3())?;
-        }
-    }
-
-    Ok(())
-}
-
-/// Format a register with shift operand to a string.
-/// An example: https://developer.arm.com/documentation/ddi0602/2023-12/Base-Instructions/ADD--shifted-register---Add--shifted-register--
-fn format_operand_reg_shift(f: &mut impl Write, bits: u32) -> core::fmt::Result {
-    // The bitfields don't come from the operand (might fix up the description in the future).
-    #[bitfield(u32)]
-    struct RegShift {
-        #[bits(5)]
-        regd: u32,
-        #[bits(5)]
-        regn: u32,
-        #[bits(6)]
-        imm6: u32,
-        #[bits(5)]
-        regm: u32,
-        #[bits(1)]
-        zero: u32,
-        #[bits(2)]
-        shift: u32,
-        #[bits(7)]
-        opcode_bits: u32,
-        #[bits(1)]
-        sf: bool,
-    }
-    let reg_shift = RegShift::from_bits(bits);
-    if !reg_shift.sf() && reg_shift.imm6() & 0b100000 != 0 {
-        return write!(f, "<undefined>");
-    }
-
-    let shift = match reg_shift.shift() {
-        // Logical Shift Left (LSL) by the immediate value.
-        0b00 => "lsl",
-        // Logical Shift Right (LSR) by the immediate value.
-        0b01 => "lsr",
-        // Arithmetic Shift Right (ASL) by the immediate value.
-        0b10 => "asr",
-        // Rotate Right (ROR) by the immediate value.
-        0b11 => {
-            if !bit_set(bits, 24) {
-                // Logical insn
-                "ror"
-            } else {
-                // Arithmetic insn
-                return write!(f, "<undefined>");
-            }
-        }
+#[cfg(feature = "full")]
+fn operand_condition(bits: u32) -> ConditionKind {
+    let cond = bit_range(bits, 0, 4);
+    match cond {
+        0x0 => ConditionKind::eq,
+        0x1 => ConditionKind::ne,
+        0x2 => ConditionKind::cs,
+        0x3 => ConditionKind::cc,
+        0x4 => ConditionKind::mi,
+        0x5 => ConditionKind::pl,
+        0x6 => ConditionKind::vs,
+        0x7 => ConditionKind::vc,
+        0x8 => ConditionKind::hi,
+        0x9 => ConditionKind::ls,
+        0xa => ConditionKind::ge,
+        0xb => ConditionKind::lt,
+        0xc => ConditionKind::gt,
+        0xd => ConditionKind::le,
+        0xe => ConditionKind::al,
+        0xf => ConditionKind::nv,
         _ => unreachable!(),
-    };
-
-    let reg_name = get_int_reg_name(reg_shift.sf(), reg_shift.regm() as u8, true);
-    write!(f, "{reg_name}")?;
-    if reg_shift.imm6() != 0 || shift != "lsl" {
-        write!(f, ", {shift} #{}", reg_shift.imm6())?;
     }
-
-    Ok(())
 }
 
-/// Format a SIMD register to a string
-fn format_simd_reg(
-    f: &mut impl Write,
-    bits: u32,
-    operand: &defn::InsnOperand,
-    definition: &defn::Insn,
-) -> core::fmt::Result {
-    let kind = operand.kind;
-
-    let reg_no = if let Some(bit_filed) = operand.bit_fields.first() {
-        bit_range(bits, bit_filed.lsb.into(), bit_filed.width.into())
-    } else {
-        return write!(f, ":{kind:?}:");
-    } as u8;
-
-    let simd_reg_arrangement = if let Some(qual) = operand.qualifiers.first() {
-        let double = if definition.flags.contains(InsnFlags::HAS_SIZEQ_FIELD) {
-            bit_set(bits, 30)
-        } else {
-            false
-        };
-        if !double {
-            match qual {
-                InsnOperandQualifier::V_8B => SimdRegArrangement::Vector8B,
-                InsnOperandQualifier::V_16B => SimdRegArrangement::Vector16B,
-                InsnOperandQualifier::V_2H => SimdRegArrangement::Vector2H,
-                InsnOperandQualifier::V_4H => SimdRegArrangement::Vector4H,
-                InsnOperandQualifier::V_8H => SimdRegArrangement::Vector8H,
-                InsnOperandQualifier::V_2S => SimdRegArrangement::Vector2S,
-                InsnOperandQualifier::V_4S => SimdRegArrangement::Vector4S,
-                InsnOperandQualifier::V_1D => SimdRegArrangement::Vector1D,
-                InsnOperandQualifier::V_2D => SimdRegArrangement::Vector2D,
-                InsnOperandQualifier::V_1Q => SimdRegArrangement::Vector1Q,
-                _ => {
-                    return write!(f, "<undefined>");
-                }
-            }
-        } else {
-            match qual {
-                InsnOperandQualifier::V_8B => SimdRegArrangement::Vector16B,
-                InsnOperandQualifier::V_2H => SimdRegArrangement::Vector4H,
-                InsnOperandQualifier::V_4H => SimdRegArrangement::Vector8H,
-                InsnOperandQualifier::V_2S => SimdRegArrangement::Vector4S,
-                InsnOperandQualifier::V_1D => SimdRegArrangement::Vector2D,
-                _ => {
-                    return write!(f, "<undefined>");
-                }
-            }
-        }
-    } else {
-        return write!(f, "<undefined>");
-    };
-    let simd_reg_name = get_simd_reg_name(reg_no, simd_reg_arrangement);
-
-    write!(f, "{simd_reg_name}")
-}
-
-/// Format an operand to a string
-fn format_operand(
+/// Produce an operand from the instruction bits and the definition.
+fn operand_get_by_class(
     pos: usize,
     pc: u64,
-    f: &mut impl Write,
     bits: u32,
     operand: &defn::InsnOperand,
     definition: &defn::Insn,
     stop: &mut bool,
-) -> core::fmt::Result {
+) -> Operand {
     let kind = operand.kind;
     match kind {
         InsnOperandKind::Rd
@@ -423,7 +196,7 @@ fn format_operand(
 
         InsnOperandKind::PAIRREG | InsnOperandKind::PAIRREG_OR_XZR => {
             if pos == 0 {
-                return write!(f, "<undefined>");
+                return Operand::Unknown;
             }
 
             let prev_operand = &definition.operands[pos - 1];
@@ -458,7 +231,7 @@ fn format_operand(
         | InsnOperandKind::SVE_VZn
         | InsnOperandKind::SVE_Vd
         | InsnOperandKind::SVE_Vm
-        | InsnOperandKind::SVE_Vn => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SVE_Vn => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::Va | InsnOperandKind::Vd | InsnOperandKind::Vn | InsnOperandKind::Vm => {
@@ -467,17 +240,17 @@ fn format_operand(
 
         #[cfg(feature = "full")]
         InsnOperandKind::Ed | InsnOperandKind::En | InsnOperandKind::Em | InsnOperandKind::Em16 => {
-            write!(f, ":{kind:?}:")?
+            Operand::Other(kind.as_ref())
         }
 
         #[cfg(feature = "full")]
-        InsnOperandKind::VdD1 | InsnOperandKind::VnD1 => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::VdD1 | InsnOperandKind::VnD1 => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::LVn
         | InsnOperandKind::LVt
         | InsnOperandKind::LVt_AL
-        | InsnOperandKind::LEt => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::LEt => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_Pd
@@ -488,7 +261,7 @@ fn format_operand(
         | InsnOperandKind::SVE_Pm
         | InsnOperandKind::SVE_Pn
         | InsnOperandKind::SVE_Pt
-        | InsnOperandKind::SME_Pm => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SME_Pm => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_PNd
@@ -497,14 +270,14 @@ fn format_operand(
         | InsnOperandKind::SVE_PNt
         | InsnOperandKind::SME_PNd3
         | InsnOperandKind::SME_PNg3
-        | InsnOperandKind::SME_PNn => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SME_PNn => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_Pdx2 | InsnOperandKind::SME_PdxN => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SME_Pdx2 | InsnOperandKind::SME_PdxN => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SME_PNn3_INDEX1 | InsnOperandKind::SME_PNn3_INDEX2 => {
-            write!(f, ":{kind:?}:")?
+            Operand::Other(kind.as_ref())
         }
 
         #[cfg(feature = "full")]
@@ -515,7 +288,7 @@ fn format_operand(
         | InsnOperandKind::SVE_Zm_16
         | InsnOperandKind::SVE_Zn
         | InsnOperandKind::SVE_Zt
-        | InsnOperandKind::SME_Zm => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SME_Zm => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_ZnxN
@@ -530,7 +303,7 @@ fn format_operand(
         | InsnOperandKind::SME_Ztx4_STRIDED
         | InsnOperandKind::SME_Zt2
         | InsnOperandKind::SME_Zt3
-        | InsnOperandKind::SME_Zt4 => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SME_Zt4 => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_Zm3_INDEX
@@ -554,20 +327,22 @@ fn format_operand(
         | InsnOperandKind::SME_Zn_INDEX3_14
         | InsnOperandKind::SME_Zn_INDEX3_15
         | InsnOperandKind::SME_Zn_INDEX4_14
-        | InsnOperandKind::SVE_Zm_imm4 => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SVE_Zm_imm4 => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZAda_2b | InsnOperandKind::SME_ZAda_3b => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SME_ZAda_2b | InsnOperandKind::SME_ZAda_3b => {
+            Operand::Other(kind.as_ref())
+        }
 
         #[cfg(feature = "full")]
         InsnOperandKind::SME_ZA_HV_idx_src
         | InsnOperandKind::SME_ZA_HV_idx_srcxN
         | InsnOperandKind::SME_ZA_HV_idx_dest
         | InsnOperandKind::SME_ZA_HV_idx_destxN
-        | InsnOperandKind::SME_ZA_HV_idx_ldstr => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SME_ZA_HV_idx_ldstr => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_list_of_64bit_tiles => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SME_list_of_64bit_tiles => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SME_ZA_array_off1x4
@@ -576,7 +351,7 @@ fn format_operand(
         | InsnOperandKind::SME_ZA_array_off3_0
         | InsnOperandKind::SME_ZA_array_off3_5
         | InsnOperandKind::SME_ZA_array_off3x2
-        | InsnOperandKind::SME_ZA_array_off4 => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SME_ZA_array_off4 => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SME_ZA_array_vrsb_1
@@ -586,16 +361,18 @@ fn format_operand(
         | InsnOperandKind::SME_ZA_array_vrsb_2
         | InsnOperandKind::SME_ZA_array_vrsh_2
         | InsnOperandKind::SME_ZA_array_vrss_2
-        | InsnOperandKind::SME_ZA_array_vrsd_2 => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SME_ZA_array_vrsd_2 => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_SM_ZA => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SME_SM_ZA => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_PnT_Wm_imm => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SME_PnT_Wm_imm => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_VLxN_10 | InsnOperandKind::SME_VLxN_13 => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SME_VLxN_10 | InsnOperandKind::SME_VLxN_13 => {
+            Operand::Other(kind.as_ref())
+        }
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::CRn => write!(f, "c{}", bit_range(bits, 12, 4))?,
@@ -608,7 +385,7 @@ fn format_operand(
             let sf = bit_set(bits, 31);
 
             if (sf && !n) || (!sf && (n || bit_set(immr, 5))) {
-                return write!(f, "<undefined>");
+                return Operand::Unknown;
             }
             write!(f, "#{}", immr)?;
         }
@@ -619,7 +396,7 @@ fn format_operand(
             let sf = bit_set(bits, 31);
 
             if (sf && !n) || (!sf && (n || bit_set(imms, 5))) {
-                return write!(f, "<undefined>");
+                return Operand::Unknown;
             }
             write!(f, "#{}", imms)?;
         }
@@ -636,12 +413,12 @@ fn format_operand(
         InsnOperandKind::FBITS => {
             let ftype = bit_range(bits, 22, 2);
             if ftype == 0b10 {
-                return write!(f, "<undefined>");
+                return Operand::Unknown;
             }
             let sf = bit_set(bits, 31);
             let scale = 64 - bit_range(bits, 10, 6);
             if !sf && scale > 32 {
-                return write!(f, "<undefined>");
+                return Operand::Unknown;
             }
             write!(f, "#{scale}")?;
         }
@@ -680,7 +457,7 @@ fn format_operand(
         | InsnOperandKind::IMM_ROT3
         | InsnOperandKind::SVE_IMM_ROT1
         | InsnOperandKind::SVE_IMM_ROT2
-        | InsnOperandKind::SVE_IMM_ROT3 => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SVE_IMM_ROT3 => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::CSSC_SIMM8 => write!(f, "#{}", bit_range(bits, 10, 8) as i8)?,
@@ -695,19 +472,19 @@ fn format_operand(
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_I1_HALF_ONE
         | InsnOperandKind::SVE_I1_HALF_TWO
-        | InsnOperandKind::SVE_I1_ZERO_ONE => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SVE_I1_ZERO_ONE => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_PATTERN => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SVE_PATTERN => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_PATTERN_SCALED => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SVE_PATTERN_SCALED => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_PRFOP => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SVE_PRFOP => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::IMM_MOV => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::IMM_MOV => Operand::Other(kind.as_ref()),
         #[cfg(feature = "full")]
         InsnOperandKind::FPIMM0 => write!(f, "#{:.1}", 0.0)?,
 
@@ -726,7 +503,7 @@ fn format_operand(
         InsnOperandKind::HALF => {
             let hw = bit_range(bits, 21, 2);
             if !bit_set(bits, 31) && bit_set(hw, 1) {
-                return write!(f, "<undefined>");
+                return Operand::Unknown;
             }
 
             let imm16 = bit_range(bits, 5, 16);
@@ -745,18 +522,18 @@ fn format_operand(
             if let Some(imm) = decode_limm(byte_count, n, immr, imms) {
                 write!(f, "#{imm:#x}")?;
             } else {
-                write!(f, "<undefined>")?;
+                return Operand::Unknown;
             }
         }
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_INV_LIMM
         | InsnOperandKind::SVE_LIMM
-        | InsnOperandKind::SVE_LIMM_MOV => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SVE_LIMM_MOV => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SIMD_IMM | InsnOperandKind::SIMD_IMM_SFT => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SIMD_IMM | InsnOperandKind::SIMD_IMM_SFT => Operand::Other(kind.as_ref()),
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_AIMM | InsnOperandKind::SVE_ASIMM => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SVE_AIMM | InsnOperandKind::SVE_ASIMM => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::FPIMM | InsnOperandKind::SIMD_FPIMM | InsnOperandKind::SVE_FPIMM8 => {
@@ -764,7 +541,7 @@ fn format_operand(
             let size = match fp_type {
                 0b00 => 4,
                 0b01 => 8,
-                0b10 => return write!(f, "<undefined>"),
+                0b10 => return Operand::Unknown,
                 0b11 => 2,
                 _ => unreachable!(),
             };
@@ -772,7 +549,7 @@ fn format_operand(
             if let Some(imm) = fp_expand_imm(size, imm8) {
                 write!(f, "#{}", imm)?
             } else {
-                write!(f, "<undefined>")?
+                return Operand::Unknown;
             }
         }
 
@@ -832,7 +609,7 @@ fn format_operand(
             }
         }
         #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::UIMM7 => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::UIMM7 => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::COND | InsnOperandKind::COND1 => {
@@ -880,7 +657,7 @@ fn format_operand(
         }
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SIMD_ADDR_POST => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SIMD_ADDR_POST => Operand::Other(kind.as_ref()),
 
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_REGOFF => {
@@ -935,10 +712,10 @@ fn format_operand(
         | InsnOperandKind::SVE_ADDR_RX
         | InsnOperandKind::SVE_ADDR_RX_LSL1
         | InsnOperandKind::SVE_ADDR_RX_LSL2
-        | InsnOperandKind::SVE_ADDR_RX_LSL3 => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SVE_ADDR_RX_LSL3 => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_ADDR_ZX => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SVE_ADDR_ZX => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_RZ
@@ -952,13 +729,13 @@ fn format_operand(
         | InsnOperandKind::SVE_ADDR_RZ_XTW2_14
         | InsnOperandKind::SVE_ADDR_RZ_XTW2_22
         | InsnOperandKind::SVE_ADDR_RZ_XTW3_14
-        | InsnOperandKind::SVE_ADDR_RZ_XTW3_22 => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SVE_ADDR_RZ_XTW3_22 => Operand::Other(kind.as_ref()),
 
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMM7 => {
             let opc = bit_range(bits, 30, 2);
             if opc == 0b11 {
-                return write!(f, "<undefined>");
+                return Operand::Unknown;
             }
 
             let fp = bit_set(bits, 26);
@@ -1080,7 +857,7 @@ fn format_operand(
                     write!(f, "]")?;
                 }
                 _ => {
-                    write!(f, "<undefined>")?;
+                    return Operand::Unknown;
                 }
             }
         }
@@ -1103,18 +880,18 @@ fn format_operand(
         | InsnOperandKind::SVE_ADDR_RI_U6
         | InsnOperandKind::SVE_ADDR_RI_U6x2
         | InsnOperandKind::SVE_ADDR_RI_U6x4
-        | InsnOperandKind::SVE_ADDR_RI_U6x8 => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SVE_ADDR_RI_U6x8 => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_ZI_U5
         | InsnOperandKind::SVE_ADDR_ZI_U5x2
         | InsnOperandKind::SVE_ADDR_ZI_U5x4
-        | InsnOperandKind::SVE_ADDR_ZI_U5x8 => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SVE_ADDR_ZI_U5x8 => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_ZZ_LSL
         | InsnOperandKind::SVE_ADDR_ZZ_SXTW
-        | InsnOperandKind::SVE_ADDR_ZZ_UXTW => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SVE_ADDR_ZZ_UXTW => Operand::Other(kind.as_ref()),
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::SYSREG | InsnOperandKind::SYSREG128 => {
@@ -1169,7 +946,7 @@ fn format_operand(
         | InsnOperandKind::SYSREG_IC
         | InsnOperandKind::SYSREG_TLBI
         | InsnOperandKind::SYSREG_TLBIP
-        | InsnOperandKind::SYSREG_SR => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::SYSREG_SR => Operand::Other(kind.as_ref()),
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER => {
@@ -1250,24 +1027,24 @@ fn format_operand(
         }
 
         #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::BARRIER_PSB => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::BARRIER_PSB => Operand::Other(kind.as_ref()),
 
         InsnOperandKind::X16 => write!(f, "x16")?,
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZT0 => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SME_ZT0 => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZT0_INDEX => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SME_ZT0_INDEX => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZT0_LIST => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SME_ZT0_LIST => Operand::Other(kind.as_ref()),
 
         #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::BARRIER_GCSB => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::BARRIER_GCSB => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::BTI_TARGET => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::BTI_TARGET => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::MOPS_ADDR_Rd
@@ -1281,10 +1058,10 @@ fn format_operand(
             let op1 = bit_range(bits, 22, 2);
 
             if rd == rn || rd == rs || rs == rn {
-                return write!(f, "<undefined>");
+                return Operand::Unknown;
             }
             if rd == 31 || rn == 31 || (rs == 31 && op1 != 0b11) {
-                return write!(f, "<undefined>");
+                return Operand::Unknown;
             }
 
             let rd = get_int_reg_name(true, rd, true);
@@ -1301,94 +1078,97 @@ fn format_operand(
         }
 
         #[cfg(not(feature = "full"))]
-        _ => write!(f, "<unknown>")?,
+        _ => return Operand::Unknown,
     };
 
-    Ok(())
+    Operand::Unknown
 }
 
-#[cfg(any(feature = "full", feature = "system"))]
-fn format_hint(f: &mut impl Write, bits: u32) -> core::fmt::Result {
-    let hint = bit_range(bits, 5, 7);
-
-    #[allow(clippy::unusual_byte_groupings)]
-    let hint = match hint {
-        0b0000_000 => "nop",
-        0b0000_001 => "yield",
-        0b0000_010 => "wfe",
-        0b0000_011 => "wfi",
-        0b0000_100 => "sev",
-        0b0000_101 => "sevl",
-        0b0000_110 => "dgh",
-        0b0000_111 => "xpaclri",
-        0b0001_000 => "pacia1716",
-        0b0001_010 => "pacib1716",
-        0b0001_100 => "autia1716",
-        0b0001_110 => "autib1716",
-        0b0010_000 => "esb",
-        0b0010_001 => "psb\t\tcsync",
-        0b0010_010 => "tsb\t\tcsync",
-        0b0010_100 => "csdb",
-        0b0010_110 => "clrbhb",
-        0b0010_011 => "gcsb\t\tdsync",
-        0b0011_000 => "paciaz",
-        0b0011_001 => "paciasp",
-        0b0011_010 => "pacibz",
-        0b0011_011 => "pacibsp",
-        0b0011_100 => "autiaz",
-        0b0011_101 => "autiasp",
-        0b0011_110 => "autibz",
-        0b0011_111 => "autibsp",
-        0b0100_000 => "bti",
-        0b0100_010 => "bti\t\tc",
-        0b0100_100 => "bti\t\tj",
-        0b0100_110 => "bti\t\tjc",
-        _ => return write!(f, "hint\t\t#{:#x}", hint),
-    };
-
-    write!(f, "{}", hint)
+pub struct InsnOperandIter<'a, O>
+where
+    O: InsnOpcode,
+{
+    pc: u64,
+    opcode: &'a O,
+    insn_defn: &'static Insn,
+    bits: u32,
+    stop: bool,
+    pos_operand: core::iter::Enumerate<core::slice::Iter<'a, defn::InsnOperand>>,
 }
 
-/// Format an instruction to a string. It does not use the aliases yet
-/// and always emits the primary mnemonic.
-/// The program counter is useful for the PC-relative addressing to
-/// emit the target address in the disassembly rather than the offset.
-pub fn format_insn_pc<O: InsnOpcode>(pc: u64, f: &mut impl Write, opcode: &O) -> core::fmt::Result {
-    let definition = opcode.definition();
-    let bits = opcode.bits();
+impl<'a, O> InsnOperandIter<'a, O>
+where
+    O: InsnOpcode,
+{
+    fn new(pc: u64, opcode: &'a O) -> InsnOperandIter<'a, O> {
+        let insn_defn = opcode.definition();
+        let bits = opcode.bits();
+        let pos_operand = insn_defn.operands.iter().enumerate();
+        Self {
+            pc,
+            opcode,
+            insn_defn,
+            bits,
+            stop: false,
+            pos_operand,
+        }
+    }
+}
 
-    // Process hints
-    #[cfg(any(feature = "full", feature = "system"))]
-    if definition.class == disarm64_defn::InsnClass::IC_SYSTEM {
-        if let Some(op) = definition.operands.first() {
-            if op.kind == InsnOperandKind::UIMM7 {
-                return format_hint(f, bits);
+impl<'a, O> Iterator for InsnOperandIter<'a, O>
+where
+    O: InsnOpcode,
+{
+    type Item = Operand;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.stop {
+            return None;
+        }
+
+        let (pos, operand_defn) = self.pos_operand.next()?;
+
+        // Process hints
+        #[cfg(any(feature = "full", feature = "system"))]
+        if self.insn_defn.class == disarm64_defn::InsnClass::IC_SYSTEM {
+            if let Some(op) = self.insn_defn.operands.first() {
+                if op.kind == InsnOperandKind::UIMM7 {
+                    return Some(Operand::SystemHint(operand_hint(self.bits)));
+                }
             }
         }
-    }
 
-    write!(f, "{}", definition.mnemonic)?;
-
-    #[cfg(feature = "full")]
-    if definition.flags.contains(InsnFlags::IS_COND) {
-        // Conditional branch or the consistent conditional branch.
-        let cond = bit_range(bits, 0, 4);
-        let cond = cond_name(cond);
-        write!(f, "{} ", cond)?;
-    }
-    write!(f, "\t\t")?;
-
-    let op_count = definition.operands.len();
-    for (i, operand) in definition.operands.iter().enumerate() {
-        let mut stop = false;
-        format_operand(i, pc, f, bits, operand, definition, &mut stop)?;
-        if !stop && i + 1 < op_count {
-            write!(f, ", ")?;
+        #[cfg(feature = "full")]
+        // TODO: update json to eliminate `pos == 0`
+        if pos == 0 && self.insn_defn.flags.contains(InsnFlags::IS_COND) {
+            // Conditional branch or the consistent conditional branch.
+            return Some(Operand::Condition(operand_condition(self.bits)));
         }
-        if stop {
-            break;
-        }
-    }
 
-    Ok(())
+        Some(operand_get_by_class(
+            pos,
+            self.pc,
+            self.bits,
+            &operand_defn,
+            &self.insn_defn,
+            &mut self.stop,
+        ))
+    }
+}
+
+#[derive(Copy, Clone)]
+pub struct InsnOperands<'a, O>(u64, &'a O)
+where
+    O: InsnOpcode;
+
+impl<'a, O> IntoIterator for InsnOperands<'a, O>
+where
+    O: InsnOpcode,
+{
+    type Item = Operand;
+    type IntoIter = InsnOperandIter<'a, O>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        InsnOperandIter::new(self.0, self.1)
+    }
 }
