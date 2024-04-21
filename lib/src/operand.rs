@@ -5,13 +5,21 @@ use crate::bit_range;
 use crate::bit_set;
 use crate::decode_limm;
 use crate::fp_expand_imm;
+use crate::registers::get_int_reg_name;
+use crate::registers::get_simd_reg_name;
+use crate::registers::get_sys_reg_name;
+use crate::registers::sys_reg_number;
+use crate::registers::FpRegSize;
+use crate::registers::SimdRegArrangement;
 use crate::sign_extend;
 use crate::LOG2_TAG_GRANULE;
+use bitfield_struct::bitfield;
+use defn::InsnOpcode;
 use disarm64_defn::defn;
-use disarm64_defn::defn::Insn;
-use disarm64_defn::defn::InsnOpcode;
+use disarm64_defn::InsnClass;
 use disarm64_defn::InsnFlags;
 use disarm64_defn::InsnOperandKind;
+use disarm64_defn::InsnOperandQualifier;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum RegKind {
@@ -167,6 +175,348 @@ fn operand_condition(bits: u32) -> ConditionKind {
     }
 }
 
+/// Produce a floating-point register operand
+fn operand_fp_reg(bits: u32, operand: &defn::InsnOperand, definition: &defn::Insn) -> Operand {
+    let kind = operand.kind;
+
+    let reg_no = if let Some(bit_filed) = operand.bit_fields.first() {
+        bit_range(bits, bit_filed.lsb.into(), bit_filed.width.into())
+    } else {
+        return write!(f, ":{kind:?}:");
+    };
+
+    let fp_reg_name = match definition.class {
+        InsnClass::LDST_IMM9
+        | InsnClass::LDST_POS
+        | InsnClass::LDST_REGOFF
+        | InsnClass::LDST_UNSCALED => {
+            let size = bit_range(bits, 30, 2);
+            let opc = bit_range(bits, 22, 2);
+            if opc == 0 || opc == 1 {
+                let fp_size = match size {
+                    0b00 => FpRegSize::B8,
+                    0b01 => FpRegSize::H16,
+                    0b10 => FpRegSize::S32,
+                    0b11 => FpRegSize::D64,
+                    _ => unreachable!(),
+                };
+                get_fp_reg_name(fp_size, reg_no as usize)
+            } else if (opc == 0b10 || opc == 0b11) && size == 0 {
+                get_fp_reg_name(FpRegSize::Q128, reg_no as usize)
+            } else {
+                return write!(f, "<undefined>");
+            }
+        }
+        InsnClass::LDSTPAIR_OFF
+        | InsnClass::LDSTNAPAIR_OFFS
+        | InsnClass::LDSTPAIR_INDEXED
+        | InsnClass::LOADLIT => {
+            let opc = bit_range(bits, 30, 2);
+            if opc == 0 {
+                get_fp_reg_name(FpRegSize::S32, reg_no as usize)
+            } else if opc == 1 {
+                get_fp_reg_name(FpRegSize::D64, reg_no as usize)
+            } else if opc == 2 {
+                get_fp_reg_name(FpRegSize::Q128, reg_no as usize)
+            } else {
+                return write!(f, "<undefined>");
+            }
+        }
+        InsnClass::BFLOAT16 => match kind {
+            InsnOperandKind::Fd => get_fp_reg_name(FpRegSize::H16, reg_no as usize),
+            InsnOperandKind::Fn => get_fp_reg_name(FpRegSize::S32, reg_no as usize),
+            _ => {
+                return write!(f, "<undefined>");
+            }
+        },
+
+        _ => {
+            if definition.flags.contains(InsnFlags::HAS_FPTYPE_FIELD) {
+                let fp_type = bit_range(bits, 22, 2);
+                match fp_type {
+                    0b00 => get_fp_reg_name(FpRegSize::S32, reg_no as usize),
+                    0b01 => get_fp_reg_name(FpRegSize::D64, reg_no as usize),
+                    0b10 => "<undefined>",
+                    0b11 => get_fp_reg_name(FpRegSize::H16, reg_no as usize),
+                    _ => unreachable!(),
+                }
+            } else if let Some(qual) = operand.qualifiers.first() {
+                let size = match qual {
+                    InsnOperandQualifier::S_B => FpRegSize::B8,
+                    InsnOperandQualifier::S_H => FpRegSize::H16,
+                    InsnOperandQualifier::S_S => FpRegSize::S32,
+                    InsnOperandQualifier::S_D => FpRegSize::D64,
+                    InsnOperandQualifier::S_Q => FpRegSize::Q128,
+                    _ => {
+                        return write!(f, "<undefined>");
+                    }
+                };
+                get_fp_reg_name(size, reg_no as usize)
+            } else {
+                return write!(f, ":{kind:?}:");
+            }
+        }
+    };
+
+    write!(f, "{fp_reg_name}")
+}
+
+/// Produce an integer register (32-bit or 64-bit) operand
+fn operand_reg_int_pair(
+    pair: bool,
+    bits: u32,
+    operand: &defn::InsnOperand,
+    definition: &defn::Insn,
+    with_zr: bool,
+) -> core::fmt::Result {
+    let flags = definition.flags;
+    let is_64 = if flags.contains(InsnFlags::HAS_SF_FIELD) {
+        bit_set(bits, 31)
+    } else if flags.contains(InsnFlags::HAS_LDS_SIZE_IN_BIT_22) {
+        !bit_set(bits, 22)
+    } else if (flags.contains(InsnFlags::HAS_LSE_SZ_FIELD)
+        && (operand.kind == InsnOperandKind::Rt || operand.kind == InsnOperandKind::Rs))
+        || (flags.contains(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q)
+            && (operand.kind == InsnOperandKind::Rt || operand.kind == InsnOperandKind::Rt2))
+    {
+        bit_set(bits, 30)
+    } else if operand.qualifiers.is_empty() || operand.qualifiers == [InsnOperandQualifier::X] {
+        true
+    } else if definition.class == InsnClass::LDST_IMM9
+        || definition.class == InsnClass::LDST_POS
+        || definition.class == InsnClass::LDST_REGOFF
+        || definition.class == InsnClass::LDST_UNPRIV
+        || definition.class == InsnClass::LDST_UNSCALED
+    {
+        let size = bit_range(bits, 30, 2);
+        let opc1 = bit_set(bits, 23);
+        let opc0 = bit_set(bits, 22);
+        if !opc1 {
+            // Store or zero-extending load, not signed.
+            // Bit 22 is set if this is a load.
+            size == 0b11
+        } else {
+            // Sign-extending load
+            if size == 0b10 && opc0 {
+                return write!(f, "<undefined>");
+            }
+            !opc0
+        }
+    } else {
+        false
+    };
+
+    if let Some(bit_field_spec) = operand.bit_fields.first() {
+        let reg_no = bit_range(bits, bit_field_spec.lsb.into(), bit_field_spec.width.into());
+        let reg_no = if pair {
+            if reg_no & 1 != 0 {
+                return write!(f, "<undefined>");
+            }
+            reg_no + 1
+        } else {
+            reg_no
+        };
+        let reg_name = get_int_reg_name(is_64, reg_no as u8, with_zr);
+
+        write!(f, "{reg_name}")
+    } else {
+        write!(f, "<undefined>")
+    }
+}
+
+/// Produce an integer register (32-bit or 64-bit) operand
+fn operand_int_operand_reg(
+    bits: u32,
+    operand: &defn::InsnOperand,
+    definition: &defn::Insn,
+    with_zr: bool,
+) -> core::fmt::Result {
+    operand_int_reg_pair(false, bits, operand, definition, with_zr)
+}
+
+/// Produce a register operand with extended shift operand to a string.
+/// This is a lot of logic and dependencies on the other registers
+/// for 4 instructions and 2 aliases.
+fn operand_reg_ext(bits: u32) -> Operand {
+    // E.g. for ADD (extended register) instruction:
+    // https://developer.arm.com/documentation/ddi0602/2023-12/Base-Instructions/ADD--extended-register---Add--extended-register--
+
+    // The bitfields don't come from the operand (might fix up the description in the future).
+    #[bitfield(u32)]
+    struct RegExt {
+        #[bits(5)]
+        regd: u32,
+        #[bits(5)]
+        regn: u32,
+        #[bits(3)]
+        imm3: u32,
+        #[bits(3)]
+        option: u32,
+        #[bits(5)]
+        regm: u32,
+        #[bits(10)]
+        opcode_bits: u32,
+        #[bits(1)]
+        sf: bool,
+    }
+    let reg_ext = RegExt::from_bits(bits);
+
+    if reg_ext.imm3() > 4 {
+        write!(f, "<undefined>")?;
+        return Ok(());
+    }
+
+    let extend_use_lsl = if !reg_ext.sf() { 0b010 } else { 0b011 };
+    let extend =
+        if (reg_ext.regd() == 31 || reg_ext.regn() == 31) && reg_ext.option() == extend_use_lsl {
+            if reg_ext.imm3() != 0 {
+                // Logical Shift Left (LSL) by the immediate value.
+                "lsl"
+            } else {
+                ""
+            }
+        } else {
+            // Signed or Unsigned eXTend of a Byte, Halfword, Word, or (X) Doubleword.
+            match reg_ext.option() {
+                0b000 => "uxtb",
+                0b001 => "uxth",
+                0b010 => "uxtw",
+                0b011 => "uxtx",
+                0b100 => "sxtb",
+                0b101 => "sxth",
+                0b110 => "sxtw",
+                0b111 => "sxtx",
+                _ => unreachable!(),
+            }
+        };
+    let is_64bit = if reg_ext.sf() {
+        reg_ext.option() & 0b11 == 0b11
+    } else {
+        false
+    };
+
+    let reg_name = get_int_reg_name(is_64bit, reg_ext.regm() as u8, true);
+    write!(f, "{reg_name}")?;
+    if !extend.is_empty() {
+        write!(f, ", {}", extend)?;
+
+        if reg_ext.imm3() != 0 {
+            write!(f, " #{}", reg_ext.imm3())?;
+        }
+    }
+
+    Ok(())
+}
+
+/// Produce a register operand with shift operand to a string.
+/// An example: https://developer.arm.com/documentation/ddi0602/2023-12/Base-Instructions/ADD--shifted-register---Add--shifted-register--
+fn operand_reg_shift(bits: u32) -> Operand {
+    // The bitfields don't come from the operand (might fix up the description in the future).
+    #[bitfield(u32)]
+    struct RegShift {
+        #[bits(5)]
+        regd: u32,
+        #[bits(5)]
+        regn: u32,
+        #[bits(6)]
+        imm6: u32,
+        #[bits(5)]
+        regm: u32,
+        #[bits(1)]
+        zero: u32,
+        #[bits(2)]
+        shift: u32,
+        #[bits(7)]
+        opcode_bits: u32,
+        #[bits(1)]
+        sf: bool,
+    }
+    let reg_shift = RegShift::from_bits(bits);
+    if !reg_shift.sf() && reg_shift.imm6() & 0b100000 != 0 {
+        return write!(f, "<undefined>");
+    }
+
+    let shift = match reg_shift.shift() {
+        // Logical Shift Left (LSL) by the immediate value.
+        0b00 => "lsl",
+        // Logical Shift Right (LSR) by the immediate value.
+        0b01 => "lsr",
+        // Arithmetic Shift Right (ASL) by the immediate value.
+        0b10 => "asr",
+        // Rotate Right (ROR) by the immediate value.
+        0b11 => {
+            if !bit_set(bits, 24) {
+                // Logical insn
+                "ror"
+            } else {
+                // Arithmetic insn
+                return write!(f, "<undefined>");
+            }
+        }
+        _ => unreachable!(),
+    };
+
+    let reg_name = get_int_reg_name(reg_shift.sf(), reg_shift.regm() as u8, true);
+    write!(f, "{reg_name}")?;
+    if reg_shift.imm6() != 0 || shift != "lsl" {
+        write!(f, ", {shift} #{}", reg_shift.imm6())?;
+    }
+
+    Ok(())
+}
+
+/// Produce a SIMD register operand
+fn operand_simd_reg(bits: u32, operand: &defn::InsnOperand, definition: &defn::Insn) -> Operand {
+    let kind = operand.kind;
+
+    let reg_no = if let Some(bit_filed) = operand.bit_fields.first() {
+        bit_range(bits, bit_filed.lsb.into(), bit_filed.width.into())
+    } else {
+        return write!(f, ":{kind:?}:");
+    } as u8;
+
+    let simd_reg_arrangement = if let Some(qual) = operand.qualifiers.first() {
+        let double = if definition.flags.contains(InsnFlags::HAS_SIZEQ_FIELD) {
+            bit_set(bits, 30)
+        } else {
+            false
+        };
+        if !double {
+            match qual {
+                InsnOperandQualifier::V_8B => SimdRegArrangement::Vector8B,
+                InsnOperandQualifier::V_16B => SimdRegArrangement::Vector16B,
+                InsnOperandQualifier::V_2H => SimdRegArrangement::Vector2H,
+                InsnOperandQualifier::V_4H => SimdRegArrangement::Vector4H,
+                InsnOperandQualifier::V_8H => SimdRegArrangement::Vector8H,
+                InsnOperandQualifier::V_2S => SimdRegArrangement::Vector2S,
+                InsnOperandQualifier::V_4S => SimdRegArrangement::Vector4S,
+                InsnOperandQualifier::V_1D => SimdRegArrangement::Vector1D,
+                InsnOperandQualifier::V_2D => SimdRegArrangement::Vector2D,
+                InsnOperandQualifier::V_1Q => SimdRegArrangement::Vector1Q,
+                _ => {
+                    return write!(f, "<undefined>");
+                }
+            }
+        } else {
+            match qual {
+                InsnOperandQualifier::V_8B => SimdRegArrangement::Vector16B,
+                InsnOperandQualifier::V_2H => SimdRegArrangement::Vector4H,
+                InsnOperandQualifier::V_4H => SimdRegArrangement::Vector8H,
+                InsnOperandQualifier::V_2S => SimdRegArrangement::Vector4S,
+                InsnOperandQualifier::V_1D => SimdRegArrangement::Vector2D,
+                _ => {
+                    return write!(f, "<undefined>");
+                }
+            }
+        }
+    } else {
+        return write!(f, "<undefined>");
+    };
+    let simd_reg_name = get_simd_reg_name(reg_no, simd_reg_arrangement);
+
+    write!(f, "{simd_reg_name}")
+}
+
 /// Produce an operand from the instruction bits and the definition.
 fn operand_get_by_class(
     pos: usize,
@@ -191,7 +541,7 @@ fn operand_get_by_class(
         | InsnOperandKind::LSE128_Rt
         | InsnOperandKind::LSE128_Rt2 => {
             let with_zr = true;
-            format_int_operand_reg(f, bits, operand, definition, with_zr)?
+            operand_int_reg(bits, operand, definition, with_zr)
         }
 
         InsnOperandKind::PAIRREG | InsnOperandKind::PAIRREG_OR_XZR => {
@@ -201,7 +551,7 @@ fn operand_get_by_class(
 
             let prev_operand = &definition.operands[pos - 1];
             let pair = true;
-            format_int_operand_reg_pair(pair, f, bits, prev_operand, definition, true)?;
+            operand_reg_int_pair(pair, bits, prev_operand, definition, true);
         }
 
         InsnOperandKind::Rd_SP
@@ -210,19 +560,19 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_Rn_SP
         | InsnOperandKind::Rm_SP => {
             let with_zr = false;
-            format_int_operand_reg(f, bits, operand, definition, with_zr)?
+            operand_int_reg(bits, operand, definition, with_zr)
         }
 
-        InsnOperandKind::Rm_EXT => format_operand_reg_ext(f, bits)?,
+        InsnOperandKind::Rm_EXT => operand_reg_ext(bits),
 
-        InsnOperandKind::Rm_SFT => format_operand_reg_shift(f, bits)?,
+        InsnOperandKind::Rm_SFT => operand_reg_shift(bits),
 
         InsnOperandKind::Fd
         | InsnOperandKind::Fn
         | InsnOperandKind::Fm
         | InsnOperandKind::Fa
         | InsnOperandKind::Ft
-        | InsnOperandKind::Ft2 => format_fp_reg(f, bits, operand, definition)?,
+        | InsnOperandKind::Ft2 => operand_fp_reg(bits, operand, definition),
 
         #[cfg(feature = "full")]
         InsnOperandKind::Sd
@@ -235,7 +585,7 @@ fn operand_get_by_class(
 
         #[cfg(feature = "full")]
         InsnOperandKind::Va | InsnOperandKind::Vd | InsnOperandKind::Vn | InsnOperandKind::Vm => {
-            format_simd_reg(f, bits, operand, definition)?
+            operand_simd_reg(bits, operand, definition)
         }
 
         #[cfg(feature = "full")]
@@ -375,8 +725,8 @@ fn operand_get_by_class(
         }
 
         #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::CRn => write!(f, "c{}", bit_range(bits, 12, 4))?,
-        InsnOperandKind::CRm => write!(f, "c{}", bit_range(bits, 8, 4))?,
+        InsnOperandKind::CRn => Operand::Unknown("c{}", bit_range(bits, 12, 4)),
+        InsnOperandKind::CRm => Operand::Unknown("c{}", bit_range(bits, 8, 4)),
 
         #[cfg(feature = "full")]
         InsnOperandKind::IMMR => {
@@ -387,7 +737,7 @@ fn operand_get_by_class(
             if (sf && !n) || (!sf && (n || bit_set(immr, 5))) {
                 return Operand::Unknown;
             }
-            write!(f, "#{}", immr)?;
+            Operand::Unknown("#{}", immr)
         }
         #[cfg(feature = "full")]
         InsnOperandKind::IMMS => {
@@ -398,7 +748,7 @@ fn operand_get_by_class(
             if (sf && !n) || (!sf && (n || bit_set(imms, 5))) {
                 return Operand::Unknown;
             }
-            write!(f, "#{}", imms)?;
+            Operand::Unknown("#{}", imms)
         }
 
         #[cfg(feature = "full")]
@@ -406,7 +756,7 @@ fn operand_get_by_class(
             let b5 = bit_range(bits, 31, 1);
             let b40 = bit_range(bits, 19, 5);
             let bit_num = (b5 << 5) | b40;
-            write!(f, "#{}", bit_num)?;
+            Operand::Unknown("#{}", bit_num)
         }
 
         #[cfg(feature = "full")]
@@ -420,13 +770,13 @@ fn operand_get_by_class(
             if !sf && scale > 32 {
                 return Operand::Unknown;
             }
-            write!(f, "#{scale}")?;
+            Operand::Unknown("#{scale}")
         }
 
         #[cfg(feature = "full")]
-        InsnOperandKind::IMM0 => write!(f, "#0")?,
+        InsnOperandKind::IMM0 => Operand::Unknown("#0"),
         #[cfg(feature = "full")]
-        InsnOperandKind::TME_UIMM16 => write!(f, "#{}", bit_range(bits, 5, 16))?,
+        InsnOperandKind::TME_UIMM16 => Operand::Unknown("#{}", bit_range(bits, 5, 16)),
 
         #[cfg(feature = "full")]
         InsnOperandKind::IDX
@@ -460,14 +810,16 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_IMM_ROT3 => Operand::Other(kind.as_ref()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::CSSC_SIMM8 => write!(f, "#{}", bit_range(bits, 10, 8) as i8)?,
+        InsnOperandKind::CSSC_SIMM8 => Operand::Unknown("#{}", bit_range(bits, 10, 8) as i8),
         #[cfg(feature = "full")]
-        InsnOperandKind::CSSC_UIMM8 => write!(f, "#{}", bit_range(bits, 10, 8) as u8)?,
+        InsnOperandKind::CSSC_UIMM8 => Operand::Unknown("#{}", bit_range(bits, 10, 8) as u8),
         #[cfg(feature = "full")]
-        InsnOperandKind::UIMM4_ADDG => write!(f, "#{}", bit_range(bits, 10, 4))?,
+        InsnOperandKind::UIMM4_ADDG => Operand::Unknown("#{}", bit_range(bits, 10, 4)),
         // The 10 bit size comes from 6 bit in the instruction and the shift of 4.
         #[cfg(feature = "full")]
-        InsnOperandKind::UIMM10 => write!(f, "#{}", bit_range(bits, 16, 6) << LOG2_TAG_GRANULE)?,
+        InsnOperandKind::UIMM10 => {
+            Operand::Unknown("#{}", bit_range(bits, 16, 6) << LOG2_TAG_GRANULE)
+        }
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_I1_HALF_ONE
@@ -486,16 +838,16 @@ fn operand_get_by_class(
         #[cfg(feature = "full")]
         InsnOperandKind::IMM_MOV => Operand::Other(kind.as_ref()),
         #[cfg(feature = "full")]
-        InsnOperandKind::FPIMM0 => write!(f, "#{:.1}", 0.0)?,
+        InsnOperandKind::FPIMM0 => Operand::Unknown("#{:.1}", 0.0),
 
         #[cfg(feature = "full")]
         InsnOperandKind::AIMM => {
             let shift = bit_set(bits, 22);
             let imm12 = bit_range(bits, 10, 12);
-            write!(f, "#{imm12:#x}")?;
+            Operand::Unknown("#{imm12:#x}");
 
             if shift {
-                return write!(f, ", lsl #12");
+                return Operand::Unknown(", lsl #12");
             }
         }
 
@@ -509,7 +861,7 @@ fn operand_get_by_class(
             let imm16 = bit_range(bits, 5, 16);
             let shift = hw << 4;
 
-            write!(f, "#{imm16:#x}, lsl #{shift:#x}")?
+            Operand::Unknown("#{imm16:#x}, lsl #{shift:#x}")
         }
 
         #[cfg(any(feature = "full", feature = "load_store"))]
@@ -520,9 +872,9 @@ fn operand_get_by_class(
             let is_64bit = bit_set(bits, 31);
             let byte_count = if is_64bit { 8 } else { 4 };
             if let Some(imm) = decode_limm(byte_count, n, immr, imms) {
-                write!(f, "#{imm:#x}")?;
+                Operand::Unknown("#{imm:#x}")
             } else {
-                return Operand::Unknown;
+                Operand::Unknown
             }
         }
         #[cfg(feature = "full")]
@@ -547,65 +899,65 @@ fn operand_get_by_class(
             };
             let imm8 = bit_range(bits, 13, 8);
             if let Some(imm) = fp_expand_imm(size, imm8) {
-                write!(f, "#{}", imm)?
+                Operand::Unknown("#{}", imm)
             } else {
-                return Operand::Unknown;
+                Operand::Unknown
             }
         }
 
         #[cfg(any(feature = "full", feature = "exception"))]
         InsnOperandKind::EXCEPTION => {
             let imm16 = bit_range(bits, 5, 16);
-            write!(f, "#{imm16:#x}")?
+            Operand::Unknown("#{imm16:#x}")
         }
         #[cfg(any(feature = "full", feature = "exception"))]
         InsnOperandKind::UNDEFINED => {
             let imm16 = bit_range(bits, 0, 16);
-            write!(f, "#{imm16:#x}")?;
+            Operand::Unknown("#{imm16:#x}")
         }
 
         #[cfg(feature = "full")]
         InsnOperandKind::CCMP_IMM => {
             let imm5 = bit_range(bits, 16, 5);
-            write!(f, "#{imm5:#x}")?
+            Operand::Unknown("#{imm5:#x}")
         }
 
         #[cfg(feature = "full")]
         InsnOperandKind::NZCV => {
             let imm4 = bit_range(bits, 0, 4);
-            write!(f, "#{imm4:#x}")?
+            Operand::Unknown("#{imm4:#x}")
         }
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::IMM_2 => {
             let imm = bit_range(bits, 15, 6);
-            write!(f, "#{}", imm)?;
+            Operand::Unknown("#{}", imm)
         }
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::MASK => {
             let mask = bit_range(bits, 0, 4);
-            write!(f, "#{}", mask)?;
+            Operand::Unknown("#{}", mask)
         }
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::UIMM3_OP1 => {
             let imm = bit_range(bits, 16, 3);
-            write!(f, "#{}", imm)?;
+            Operand::Unknown("#{}", imm)
         }
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::UIMM3_OP2 => {
             let imm = bit_range(bits, 5, 3);
-            write!(f, "#{}", imm)?;
+            Operand::Unknown("#{}", imm)
         }
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::UIMM4 => {
             let imm4 = bit_range(bits, 8, 4);
-            write!(f, "#{imm4:#x}")?
+            Operand::Unknown("#{imm4:#x}")
         }
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER_ISB => {
             let imm4 = bit_range(bits, 8, 4);
             if imm4 != 0xf {
-                write!(f, "#{imm4:#x}")?
+                Operand::Unknown("#{imm4:#x}")
             }
         }
         #[cfg(any(feature = "full", feature = "system"))]
@@ -614,46 +966,46 @@ fn operand_get_by_class(
         #[cfg(feature = "full")]
         InsnOperandKind::COND | InsnOperandKind::COND1 => {
             let cond = bit_range(bits, 12, 4);
-            write!(f, "{}", cond_name(cond))?
+            Operand::Unknown("{}", cond_name(cond))
         }
 
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL14 => {
             let offset = bit_range(bits, 5, 14);
             let offset = sign_extend(offset, 13) << 2;
-            write!(f, "{:#x}", pc.wrapping_add(offset))?
+            Operand::Unknown("{:#x}", pc.wrapping_add(offset))
         }
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL19 => {
             let offset = bit_range(bits, 5, 19);
             let offset = sign_extend(offset, 18) << 2;
-            write!(f, "{:#x}", pc.wrapping_add(offset))?
+            Operand::Unknown("{:#x}", pc.wrapping_add(offset))
         }
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL21 => {
             let offset = (bit_range(bits, 5, 19) << 2) | bit_range(bits, 29, 2);
             let offset = sign_extend(offset, 20);
-            write!(f, "{:#x}", pc.wrapping_add(offset))?
+            Operand::Unknown("{:#x}", pc.wrapping_add(offset))
         }
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_ADRP => {
             let offset = (bit_range(bits, 5, 19) << 2) | bit_range(bits, 29, 2);
             let offset = sign_extend(offset, 20) << 12;
             let pc = pc & !((1 << 12) - 1);
-            write!(f, "{:#x}", pc.wrapping_add(offset))?
+            Operand::Unknown("{:#x}", pc.wrapping_add(offset))
         }
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL26 => {
             let offset = bit_range(bits, 0, 26);
             let offset = sign_extend(offset, 25) << 2;
-            write!(f, "{:#x}", pc.wrapping_add(offset))?
+            Operand::Unknown("{:#x}", pc.wrapping_add(offset))
         }
 
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMPLE | InsnOperandKind::SIMD_ADDR_SIMPLE => {
             let reg_no = bit_range(bits, 5, 5);
             let reg_name = get_int_reg_name(true, reg_no as u8, false);
-            write!(f, "[{reg_name}]")?
+            Operand::Unknown("[{reg_name}]")
         }
 
         #[cfg(feature = "full")]
@@ -686,18 +1038,18 @@ fn operand_get_by_class(
                 0b111 => "sxtx",
                 _ => "<undefined>",
             };
-            write!(f, "[{rn_reg_name}, {rm_reg_name}")?;
+            Operand::Unknown("[{rn_reg_name}, {rm_reg_name}");
             if option == 0b011 {
                 if shift {
-                    write!(f, ", lsl #{scale}")?;
+                    Operand::Unknown(", lsl #{scale}")
                 }
             } else if option != 0b011 {
-                write!(f, ", {extend}")?;
+                Operand::Unknown(", {extend}");
                 if shift {
-                    write!(f, " #{scale}")?;
+                    Operand::Unknown(" #{scale}")
                 }
             }
-            write!(f, "]")?;
+            Operand::Unknown("]");
 
             *stop = true;
         }
@@ -749,14 +1101,14 @@ fn operand_get_by_class(
 
             if bit_set(bits, 23) {
                 if bit_set(bits, 24) {
-                    write!(f, "[{reg_name}, #{imm}]!")?;
+                    Operand::Unknown("[{reg_name}, #{imm}]!")
                 } else {
-                    write!(f, "[{reg_name}], #{imm}")?;
+                    Operand::Unknown("[{reg_name}], #{imm}")
                 }
             } else if imm == 0 {
-                write!(f, "[{reg_name}]")?;
+                Operand::Unknown("[{reg_name}]")
             } else {
-                write!(f, "[{reg_name}, #{imm}]")?;
+                Operand::Unknown("[{reg_name}, #{imm}]")
             }
         }
 
@@ -778,18 +1130,18 @@ fn operand_get_by_class(
             let ldst_offset_only = definition.class == InsnClass::LDST_UNPRIV
                 || definition.class == InsnClass::LDST_UNSCALED;
             if ldst_offset_only {
-                write!(f, "[{reg_name}")?;
+                Operand::Unknown("[{reg_name}");
                 if imm != 0 {
-                    write!(f, ", #{imm}")?;
+                    Operand::Unknown(", #{imm}");
                 }
-                return write!(f, "]");
+                Operand::Unknown("]")
             }
 
             let post_index = !bit_set(bits, 11);
             if !post_index {
-                write!(f, "[{reg_name}, #{imm}]!")?;
+                Operand::Unknown("[{reg_name}, #{imm}]!");
             } else {
-                write!(f, "[{reg_name}], #{imm}")?;
+                Operand::Unknown("[{reg_name}], #{imm}");
             }
             *stop = true;
         }
@@ -805,11 +1157,11 @@ fn operand_get_by_class(
             let uimm12 = bit_range(bits, 10, 12) << scale;
             let reg_no = bit_range(bits, 5, 5);
             let reg_name = get_int_reg_name(true, reg_no as u8, false);
-            write!(f, "[{reg_name}")?;
+            Operand::Unknown("[{reg_name}");
             if uimm12 != 0 {
-                write!(f, ", #{uimm12:#x}")?;
+                Operand::Unknown(", #{uimm12:#x}");
             }
-            write!(f, "]")?;
+            Operand::Unknown("]");
         }
 
         #[cfg(any(feature = "full", feature = "load_store"))]
@@ -823,17 +1175,17 @@ fn operand_get_by_class(
             let imm10 = bit_range(bits, 12, 9) | (s << 9);
             let simm = (sign_extend(imm10, 9) << scale) as i64;
 
-            write!(f, "[{reg_n_name}")?;
+            Operand::Unknown("[{reg_n_name}");
             if pre_index {
                 if simm != 0 {
-                    write!(f, ", #{simm}")?;
+                    Operand::Unknown(", #{simm}");
                 }
-                write!(f, "]!")?;
+                Operand::Unknown("]!");
             } else {
                 if simm != 0 {
-                    write!(f, ", #{simm}")?;
+                    Operand::Unknown(", #{simm}");
                 }
-                write!(f, "]")?;
+                Operand::Unknown("]");
             }
         }
 
@@ -844,17 +1196,17 @@ fn operand_get_by_class(
             let simm = (sign_extend(bit_range(bits, 15, 7), 6) << LOG2_TAG_GRANULE) as i64;
             match bit_range(bits, 23, 2) {
                 0b01 => {
-                    write!(f, "[{reg_n_name}], #{simm}")?;
+                    Operand::Unknown("[{reg_n_name}], #{simm}");
                 }
                 0b11 => {
-                    write!(f, "[{reg_n_name}, #{simm}]!")?;
+                    Operand::Unknown("[{reg_n_name}, #{simm}]!");
                 }
                 0b10 => {
-                    write!(f, "[{reg_n_name}")?;
+                    Operand::Unknown("[{reg_n_name}");
                     if simm != 0 {
-                        write!(f, ", #{simm}")?;
+                        Operand::Unknown(", #{simm}");
                     }
-                    write!(f, "]")?;
+                    Operand::Unknown("]");
                 }
                 _ => {
                     return Operand::Unknown;
@@ -902,9 +1254,9 @@ fn operand_get_by_class(
             let op2 = bit_range(bits, 5, 3) as u8;
             if let Some(sys_reg) = get_sys_reg_name(sys_reg_number(op0, op1, crn, crm, op2)) {
                 let sys_reg = sys_reg.1;
-                write!(f, "{sys_reg}")?;
+                Operand::Unknown("{sys_reg}");
             } else {
-                write!(f, "s{op0}_{op1}_c{crn}_c{crm}_{op2}")?;
+                Operand::Unknown("s{op0}_{op1}_c{crn}_c{crm}_{op2}");
             }
         }
 
@@ -918,11 +1270,11 @@ fn operand_get_by_class(
                     0b011 => "uao",
                     0b100 => "pan",
                     0b101 => "spsel",
-                    _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}"),
+                    _ => return Operand::Unknown("s0_{op1}_c4_{crm}_{op2}"),
                 },
                 0b001 => match op2 {
                     0b000 if crm & 0b1110 == 0 => "allint",
-                    _ => return write!(f, "s0_{op1}_c4_c{crm}_{op2}"),
+                    _ => return Operand::Unknown("s0_{op1}_c4_c{crm}_{op2}"),
                 },
                 0b011 => match op2 {
                     0b011 if crm & 0b1110 == 0b0010 => "svcrsm",
@@ -933,11 +1285,11 @@ fn operand_get_by_class(
                     0b100 => "tco",
                     0b110 => "daifset",
                     0b111 => "daifclr",
-                    _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}"),
+                    _ => return Operand::Unknown("s0_{op1}_c4_{crm}_{op2}"),
                 },
-                _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}"),
+                _ => return Operand::Unknown("s0_{op1}_c4_{crm}_{op2}"),
             };
-            write!(f, "{field}")?
+            Operand::Unknown("{field}")
         }
 
         #[cfg(any(feature = "full", feature = "system"))]
@@ -964,9 +1316,9 @@ fn operand_get_by_class(
                 0b1101 => "ld",
                 0b1110 => "st",
                 0b1111 => "sy",
-                _ => return write!(f, "#{:#x}", barrier),
+                _ => return Operand::Unknown("#{:#x}", barrier),
             };
-            write!(f, "{barrier}")?
+            Operand::Unknown("{barrier}")
         }
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER_DSB_NXS => {
@@ -976,9 +1328,9 @@ fn operand_get_by_class(
                 0b0110 => "nshnxs",
                 0b1010 => "ishnxs",
                 0b1110 => "synxs",
-                _ => return write!(f, "#{:#x}", barrier),
+                _ => return Operand::Unknown("#{:#x}", barrier),
             };
-            write!(f, "{barrier}")?
+            Operand::Unknown("{barrier}")
         }
 
         #[cfg(any(feature = "full", feature = "load_store"))]
@@ -1000,9 +1352,9 @@ fn operand_get_by_class(
                 let policy = if !bit_set(bits, 0) { "keep" } else { "strm" };
                 let typ = typ.unwrap_or("<undefined>");
                 let target = target.unwrap_or("<undefined>");
-                write!(f, "{typ}{target}{policy}")?
+                Operand::Unknown("{typ}{target}{policy}")
             } else {
-                write!(f, "#{:#x}", bit_range(bits, 0, 5))?
+                Operand::Unknown("#{:#x}", bit_range(bits, 0, 5))
             }
         }
         #[cfg(any(feature = "full", feature = "load_store"))]
@@ -1020,16 +1372,16 @@ fn operand_get_by_class(
             };
 
             if let Some(op) = op {
-                write!(f, "{op}")?
+                Operand::Unknown("{op}")
             } else {
-                write!(f, "#{rprfmop:#x}")?
+                Operand::Unknown("#{rprfmop:#x}")
             }
         }
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER_PSB => Operand::Other(kind.as_ref()),
 
-        InsnOperandKind::X16 => write!(f, "x16")?,
+        InsnOperandKind::X16 => Operand::Unknown("x16"),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SME_ZT0 => Operand::Other(kind.as_ref()),
@@ -1070,10 +1422,10 @@ fn operand_get_by_class(
 
             if op1 != 0b11 {
                 // Memory copy forward only (cpyfm, ...)
-                write!(f, "[{rd}]!, [{rs}]!, {rn}!")?
+                Operand::Unknown("[{rd}]!, [{rs}]!, {rn}!")
             } else {
                 // Set memory (setp, setm, sete, ...)
-                write!(f, "[{rd}]!, {rn}!, {rs}")?
+                Operand::Unknown("[{rd}]!, {rn}!, {rs}")
             }
         }
 

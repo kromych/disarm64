@@ -21,6 +21,7 @@ use crate::registers::get_sys_reg_name;
 use crate::registers::sys_reg_number;
 use crate::registers::FpRegSize;
 use crate::registers::SimdRegArrangement;
+use crate::sign_extend;
 use crate::LOG2_TAG_GRANULE;
 use bitfield_struct::bitfield;
 use core::fmt::Write;
