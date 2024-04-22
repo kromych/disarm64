@@ -42,6 +42,9 @@ the instructions of the following groups:
 - [ ] SIMD, SVE
 - [ ] SME
 
+The current effort is directed at providing the ability to perform
+structural matching against the operands of the instruction.
+
 To install the tools:
 
 ```sh
