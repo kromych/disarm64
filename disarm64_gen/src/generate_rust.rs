@@ -137,7 +137,7 @@ fn write_insn_structs(
             if !used_names.contains(&opcode_struct_name) {
                 used_names.insert(opcode_struct_name.clone());
             } else {
-                opcode_struct_name = base_opcode_struct_name.clone();
+                opcode_struct_name.clone_from(&base_opcode_struct_name);
                 for operand in insn.operands.iter() {
                     opcode_struct_name.push_str(&format!("_{:?}", operand.kind));
                     if !operand.qualifiers.is_empty() {
