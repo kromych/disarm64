@@ -22,7 +22,7 @@ full = []
 load_store = []
 exception = []
 system = []
-default = ["full"]
+default = ["exception"]
 
 [lib]
 path = "lib/src/lib.rs"

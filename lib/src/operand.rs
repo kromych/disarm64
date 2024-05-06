@@ -94,38 +94,38 @@ pub enum RegisterBitMod {
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum FpRegister {
-    R0,
-    R1,
-    R2,
-    R3,
-    R4,
-    R5,
-    R6,
-    R7,
-    R8,
-    R9,
-    R10,
-    R11,
-    R12,
-    R13,
-    R14,
-    R15,
-    R16,
-    R17,
-    R18,
-    R19,
-    R20,
-    R21,
-    R22,
-    R23,
-    R24,
-    R25,
-    R26,
-    R27,
-    R28,
-    R29,
-    R30,
-    R31,
+    F0,
+    F1,
+    F2,
+    F3,
+    F4,
+    F5,
+    F6,
+    F7,
+    F8,
+    F9,
+    F10,
+    F11,
+    F12,
+    F13,
+    F14,
+    F15,
+    F16,
+    F17,
+    F18,
+    F19,
+    F20,
+    F21,
+    F22,
+    F23,
+    F24,
+    F25,
+    F26,
+    F27,
+    F28,
+    F29,
+    F30,
+    F31,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -135,6 +135,56 @@ pub enum FpRegisterSize {
     S32,
     D64,
     Q128,
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum SimdRegister {
+    V0,
+    V1,
+    V2,
+    V3,
+    V4,
+    V5,
+    V6,
+    V7,
+    V8,
+    V9,
+    V10,
+    V11,
+    V12,
+    V13,
+    V14,
+    V15,
+    V16,
+    V17,
+    V18,
+    V19,
+    V20,
+    V21,
+    V22,
+    V23,
+    V24,
+    V25,
+    V26,
+    V27,
+    V28,
+    V29,
+    V30,
+    V31,
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum SimdArrangement {
+    V_8B,
+    V_16B,
+    V_2H,
+    V_4H,
+    V_8H,
+    V_2S,
+    V_4S,
+    V_1D,
+    V_2D,
+    V_1Q,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -152,15 +202,18 @@ pub enum RegKind {
         reg: FpRegister,
         size: FpRegisterSize,
     },
-    Vector,
+    Simd {
+        reg: SimdRegister,
+        arrgmt: SimdArrangement,
+    },
     System,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ImmediateKind {
-    Signed(i64),
-    Unsigned(u64),
-    FloatingPoint(u64),
+    Signed,
+    Unsigned,
+    FloatingPoint,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -230,7 +283,11 @@ pub enum ConditionKind {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Operand {
     Register(RegKind),
-    Immediate(ImmediateKind),
+    Immediate {
+        kind: ImmediateKind,
+        bits: [u8; 16],
+        bit_size: u8,
+    },
     Address(AddressKind),
     SystemHint(SystemHintKind),
     Condition(ConditionKind),
@@ -304,38 +361,38 @@ fn operand_condition(bits: u32) -> ConditionKind {
 
 fn make_fp_reg(size: FpRegisterSize, reg_no: u8) -> Operand {
     let reg = match reg_no {
-        0 => FpRegister::R0,
-        1 => FpRegister::R1,
-        2 => FpRegister::R2,
-        3 => FpRegister::R3,
-        4 => FpRegister::R4,
-        5 => FpRegister::R5,
-        6 => FpRegister::R6,
-        7 => FpRegister::R7,
-        8 => FpRegister::R8,
-        9 => FpRegister::R9,
-        10 => FpRegister::R10,
-        11 => FpRegister::R11,
-        12 => FpRegister::R12,
-        13 => FpRegister::R13,
-        14 => FpRegister::R14,
-        15 => FpRegister::R15,
-        16 => FpRegister::R16,
-        17 => FpRegister::R17,
-        18 => FpRegister::R18,
-        19 => FpRegister::R19,
-        20 => FpRegister::R20,
-        21 => FpRegister::R21,
-        22 => FpRegister::R22,
-        23 => FpRegister::R23,
-        24 => FpRegister::R24,
-        25 => FpRegister::R25,
-        26 => FpRegister::R26,
-        27 => FpRegister::R27,
-        28 => FpRegister::R28,
-        29 => FpRegister::R29,
-        30 => FpRegister::R30,
-        31 => FpRegister::R31,
+        0 => FpRegister::F0,
+        1 => FpRegister::F1,
+        2 => FpRegister::F2,
+        3 => FpRegister::F3,
+        4 => FpRegister::F4,
+        5 => FpRegister::F5,
+        6 => FpRegister::F6,
+        7 => FpRegister::F7,
+        8 => FpRegister::F8,
+        9 => FpRegister::F9,
+        10 => FpRegister::F10,
+        11 => FpRegister::F11,
+        12 => FpRegister::F12,
+        13 => FpRegister::F13,
+        14 => FpRegister::F14,
+        15 => FpRegister::F15,
+        16 => FpRegister::F16,
+        17 => FpRegister::F17,
+        18 => FpRegister::F18,
+        19 => FpRegister::F19,
+        20 => FpRegister::F20,
+        21 => FpRegister::F21,
+        22 => FpRegister::F22,
+        23 => FpRegister::F23,
+        24 => FpRegister::F24,
+        25 => FpRegister::F25,
+        26 => FpRegister::F26,
+        27 => FpRegister::F27,
+        28 => FpRegister::F28,
+        29 => FpRegister::F29,
+        30 => FpRegister::F30,
+        31 => FpRegister::F31,
         _ => return Operand::Undefined,
     };
 
@@ -678,6 +735,46 @@ fn operand_reg_shift(bits: u32) -> Operand {
     )
 }
 
+fn make_simd_reg(reg_no: u8, arrgmt: SimdArrangement) -> Operand {
+    let reg = match reg_no {
+        0 => SimdRegister::V0,
+        1 => SimdRegister::V1,
+        2 => SimdRegister::V2,
+        3 => SimdRegister::V3,
+        4 => SimdRegister::V4,
+        5 => SimdRegister::V5,
+        6 => SimdRegister::V6,
+        7 => SimdRegister::V7,
+        8 => SimdRegister::V8,
+        9 => SimdRegister::V9,
+        10 => SimdRegister::V10,
+        11 => SimdRegister::V11,
+        12 => SimdRegister::V12,
+        13 => SimdRegister::V13,
+        14 => SimdRegister::V14,
+        15 => SimdRegister::V15,
+        16 => SimdRegister::V16,
+        17 => SimdRegister::V17,
+        18 => SimdRegister::V18,
+        19 => SimdRegister::V19,
+        20 => SimdRegister::V20,
+        21 => SimdRegister::V21,
+        22 => SimdRegister::V22,
+        23 => SimdRegister::V23,
+        24 => SimdRegister::V24,
+        25 => SimdRegister::V25,
+        26 => SimdRegister::V26,
+        27 => SimdRegister::V27,
+        28 => SimdRegister::V28,
+        29 => SimdRegister::V29,
+        30 => SimdRegister::V30,
+        31 => SimdRegister::V31,
+        _ => return Operand::Undefined,
+    };
+
+    Operand::Register(RegKind::Simd { reg, arrgmt })
+}
+
 /// Produce a SIMD register operand
 fn operand_simd_reg(bits: u32, operand: &defn::InsnOperand, definition: &defn::Insn) -> Operand {
     let kind = operand.kind;
@@ -696,27 +793,27 @@ fn operand_simd_reg(bits: u32, operand: &defn::InsnOperand, definition: &defn::I
         };
         if !double {
             match qual {
-                InsnOperandQualifier::V_8B => SimdRegArrangement::Vector8B,
-                InsnOperandQualifier::V_16B => SimdRegArrangement::Vector16B,
-                InsnOperandQualifier::V_2H => SimdRegArrangement::Vector2H,
-                InsnOperandQualifier::V_4H => SimdRegArrangement::Vector4H,
-                InsnOperandQualifier::V_8H => SimdRegArrangement::Vector8H,
-                InsnOperandQualifier::V_2S => SimdRegArrangement::Vector2S,
-                InsnOperandQualifier::V_4S => SimdRegArrangement::Vector4S,
-                InsnOperandQualifier::V_1D => SimdRegArrangement::Vector1D,
-                InsnOperandQualifier::V_2D => SimdRegArrangement::Vector2D,
-                InsnOperandQualifier::V_1Q => SimdRegArrangement::Vector1Q,
+                InsnOperandQualifier::V_8B => SimdArrangement::V_8B,
+                InsnOperandQualifier::V_16B => SimdArrangement::V_16B,
+                InsnOperandQualifier::V_2H => SimdArrangement::V_2H,
+                InsnOperandQualifier::V_4H => SimdArrangement::V_4H,
+                InsnOperandQualifier::V_8H => SimdArrangement::V_8H,
+                InsnOperandQualifier::V_2S => SimdArrangement::V_2S,
+                InsnOperandQualifier::V_4S => SimdArrangement::V_4S,
+                InsnOperandQualifier::V_1D => SimdArrangement::V_1D,
+                InsnOperandQualifier::V_2D => SimdArrangement::V_2D,
+                InsnOperandQualifier::V_1Q => SimdArrangement::V_1Q,
                 _ => {
                     return Operand::Undefined;
                 }
             }
         } else {
             match qual {
-                InsnOperandQualifier::V_8B => SimdRegArrangement::Vector16B,
-                InsnOperandQualifier::V_2H => SimdRegArrangement::Vector4H,
-                InsnOperandQualifier::V_4H => SimdRegArrangement::Vector8H,
-                InsnOperandQualifier::V_2S => SimdRegArrangement::Vector4S,
-                InsnOperandQualifier::V_1D => SimdRegArrangement::Vector2D,
+                InsnOperandQualifier::V_8B => SimdArrangement::V_16B,
+                InsnOperandQualifier::V_2H => SimdArrangement::V_4H,
+                InsnOperandQualifier::V_4H => SimdArrangement::V_8H,
+                InsnOperandQualifier::V_2S => SimdArrangement::V_4S,
+                InsnOperandQualifier::V_1D => SimdArrangement::V_2D,
                 _ => {
                     return Operand::Undefined;
                 }
@@ -725,9 +822,8 @@ fn operand_simd_reg(bits: u32, operand: &defn::InsnOperand, definition: &defn::I
     } else {
         return Operand::Undefined;
     };
-    let simd_reg_name = get_simd_reg_name(reg_no, simd_reg_arrangement);
 
-    Operand::NotSupported("{simd_reg_name}")
+    make_simd_reg(reg_no as u8, simd_reg_arrangement)
 }
 
 /// Produce an operand from the instruction bits and the definition.
@@ -939,7 +1035,28 @@ fn operand_get_by_class(
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::CRn => Operand::NotSupported("c{}", bit_range(bits, 12, 4)),
-        InsnOperandKind::CRm => Operand::NotSupported("c{}", bit_range(bits, 8, 4)),
+        InsnOperandKind::CRm => Operand::Immediate {
+            kind: ImmediateKind::Unsigned,
+            bits: [
+                bit_range(bits, 8, 4) as u8,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ],
+            bit_size: 4,
+        },
 
         #[cfg(feature = "full")]
         InsnOperandKind::IMMR => {
@@ -1125,12 +1242,54 @@ fn operand_get_by_class(
         #[cfg(any(feature = "full", feature = "exception"))]
         InsnOperandKind::EXCEPTION => {
             let imm16 = bit_range(bits, 5, 16);
-            Operand::NotSupported("#{imm16:#x}")
+            Operand::Immediate {
+                kind: ImmediateKind::Unsigned,
+                bits: [
+                    imm16 as u8,
+                    (imm16 >> 8) as u8,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                ],
+                bit_size: 16,
+            }
         }
         #[cfg(any(feature = "full", feature = "exception"))]
         InsnOperandKind::UNDEFINED => {
             let imm16 = bit_range(bits, 0, 16);
-            Operand::NotSupported("#{imm16:#x}")
+            Operand::Immediate {
+                kind: ImmediateKind::Unsigned,
+                bits: [
+                    imm16 as u8,
+                    (imm16 >> 8) as u8,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                ],
+                bit_size: 16,
+            }
         }
 
         #[cfg(feature = "full")]
@@ -1647,10 +1806,8 @@ fn operand_get_by_class(
         }
 
         #[cfg(not(feature = "full"))]
-        _ => return Operand::Undefined,
-    };
-
-    Operand::Undefined
+        _ => Operand::Undefined,
+    }
 }
 
 pub struct InsnOperandIter<'a, O>
@@ -1658,7 +1815,7 @@ where
     O: InsnOpcode,
 {
     pc: u64,
-    opcode: &'a O,
+    _opcode: &'a O,
     insn_defn: &'static Insn,
     bits: u32,
     stop: bool,
@@ -1675,7 +1832,7 @@ where
         let pos_operand = insn_defn.operands.iter().enumerate();
         Self {
             pc,
-            opcode,
+            _opcode: opcode,
             insn_defn,
             bits,
             stop: false,
@@ -1718,15 +1875,15 @@ where
             pos,
             self.pc,
             self.bits,
-            &operand_defn,
-            &self.insn_defn,
+            operand_defn,
+            self.insn_defn,
             &mut self.stop,
         ))
     }
 }
 
 #[derive(Copy, Clone)]
-pub struct InsnOperands<'a, O>(u64, &'a O)
+pub struct InsnOperands<'a, O>(pub u64, pub &'a O)
 where
     O: InsnOpcode;
 

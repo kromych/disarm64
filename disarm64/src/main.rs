@@ -20,6 +20,7 @@ use disarm64::decoder_exception as decoder;
 use disarm64::decoder_load_store as decoder;
 #[cfg(feature = "system")]
 use disarm64::decoder_system as decoder;
+use disarm64::operand::InsnOperands;
 
 #[derive(Subcommand, Debug, Clone, PartialEq, Eq)]
 enum Command {
@@ -230,6 +231,10 @@ fn print_insn(
 
         log::debug!("Decoded instruction: {:08x?}", opcode);
         log::debug!("{insn:#08x}: {:08x?}", opcode.definition());
+        log::debug!(
+            "operands: {:?}",
+            InsnOperands(pc, &opcode).into_iter().collect::<Vec<_>>()
+        );
         log::info!("{pc:#08x}: {insn:08x}\t{buffer}");
     } else {
         if benchmark == Some(BenchmarkMode::Format) {
