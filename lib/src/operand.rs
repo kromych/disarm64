@@ -12,6 +12,7 @@ use crate::LOG2_TAG_GRANULE;
 use bitfield_struct::bitfield;
 use defn::InsnOpcode;
 use disarm64_defn::defn;
+use disarm64_defn::defn::Insn;
 use disarm64_defn::InsnClass;
 use disarm64_defn::InsnFlags;
 use disarm64_defn::InsnOperandKind;
@@ -348,7 +349,7 @@ fn operand_fp_reg(bits: u32, operand: &defn::InsnOperand, definition: &defn::Ins
     let reg_no = if let Some(bit_filed) = operand.bit_fields.first() {
         bit_range(bits, bit_filed.lsb.into(), bit_filed.width.into())
     } else {
-        return Operand::Other(kind.as_ref());
+        return Operand::Other(kind.into());
     };
 
     match definition.class {
@@ -419,7 +420,7 @@ fn operand_fp_reg(bits: u32, operand: &defn::InsnOperand, definition: &defn::Ins
                 };
                 make_fp_reg(size, reg_no as u8)
             } else {
-                return Operand::Other(kind.as_ref());
+                return Operand::Other(kind.into());
             }
         }
     }
@@ -546,7 +547,7 @@ fn operand_int_reg_pair(
 }
 
 /// Produce an integer register (32-bit or 64-bit) operand
-fn operand_int_operand_reg(
+fn operand_int_reg(
     bits: u32,
     operand: &defn::InsnOperand,
     definition: &defn::Insn,
@@ -684,7 +685,7 @@ fn operand_simd_reg(bits: u32, operand: &defn::InsnOperand, definition: &defn::I
     let reg_no = if let Some(bit_filed) = operand.bit_fields.first() {
         bit_range(bits, bit_filed.lsb.into(), bit_filed.width.into())
     } else {
-        return Operand::Other(kind.as_ref());
+        return Operand::Other(kind.into());
     } as u8;
 
     let simd_reg_arrangement = if let Some(qual) = operand.qualifiers.first() {
@@ -753,7 +754,7 @@ fn operand_get_by_class(
         | InsnOperandKind::LSE128_Rt
         | InsnOperandKind::LSE128_Rt2 => {
             let with_zr = true;
-            operand_int_reg(bits, operand, definition, with_zr)
+            operand_int_reg(bits, operand, definition, with_zr, None)
         }
 
         InsnOperandKind::PAIRREG | InsnOperandKind::PAIRREG_OR_XZR => {
@@ -763,7 +764,7 @@ fn operand_get_by_class(
 
             let prev_operand = &definition.operands[pos - 1];
             let pair = true;
-            operand_reg_int_pair(pair, bits, prev_operand, definition, true);
+            operand_int_reg_pair(pair, bits, prev_operand, definition, true, None)
         }
 
         InsnOperandKind::Rd_SP
@@ -772,7 +773,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_Rn_SP
         | InsnOperandKind::Rm_SP => {
             let with_zr = false;
-            operand_int_reg(bits, operand, definition, with_zr)
+            operand_int_reg(bits, operand, definition, with_zr, None)
         }
 
         InsnOperandKind::Rm_EXT => operand_reg_ext(bits),
@@ -793,7 +794,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_VZn
         | InsnOperandKind::SVE_Vd
         | InsnOperandKind::SVE_Vm
-        | InsnOperandKind::SVE_Vn => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SVE_Vn => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::Va | InsnOperandKind::Vd | InsnOperandKind::Vn | InsnOperandKind::Vm => {
@@ -802,17 +803,17 @@ fn operand_get_by_class(
 
         #[cfg(feature = "full")]
         InsnOperandKind::Ed | InsnOperandKind::En | InsnOperandKind::Em | InsnOperandKind::Em16 => {
-            Operand::Other(kind.as_ref())
+            Operand::Other(kind.into())
         }
 
         #[cfg(feature = "full")]
-        InsnOperandKind::VdD1 | InsnOperandKind::VnD1 => Operand::Other(kind.as_ref()),
+        InsnOperandKind::VdD1 | InsnOperandKind::VnD1 => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::LVn
         | InsnOperandKind::LVt
         | InsnOperandKind::LVt_AL
-        | InsnOperandKind::LEt => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::LEt => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_Pd
@@ -823,7 +824,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_Pm
         | InsnOperandKind::SVE_Pn
         | InsnOperandKind::SVE_Pt
-        | InsnOperandKind::SME_Pm => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SME_Pm => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_PNd
@@ -832,14 +833,14 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_PNt
         | InsnOperandKind::SME_PNd3
         | InsnOperandKind::SME_PNg3
-        | InsnOperandKind::SME_PNn => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SME_PNn => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_Pdx2 | InsnOperandKind::SME_PdxN => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SME_Pdx2 | InsnOperandKind::SME_PdxN => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SME_PNn3_INDEX1 | InsnOperandKind::SME_PNn3_INDEX2 => {
-            Operand::Other(kind.as_ref())
+            Operand::Other(kind.into())
         }
 
         #[cfg(feature = "full")]
@@ -850,7 +851,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_Zm_16
         | InsnOperandKind::SVE_Zn
         | InsnOperandKind::SVE_Zt
-        | InsnOperandKind::SME_Zm => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SME_Zm => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_ZnxN
@@ -865,7 +866,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SME_Ztx4_STRIDED
         | InsnOperandKind::SME_Zt2
         | InsnOperandKind::SME_Zt3
-        | InsnOperandKind::SME_Zt4 => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SME_Zt4 => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_Zm3_INDEX
@@ -889,22 +890,20 @@ fn operand_get_by_class(
         | InsnOperandKind::SME_Zn_INDEX3_14
         | InsnOperandKind::SME_Zn_INDEX3_15
         | InsnOperandKind::SME_Zn_INDEX4_14
-        | InsnOperandKind::SVE_Zm_imm4 => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SVE_Zm_imm4 => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZAda_2b | InsnOperandKind::SME_ZAda_3b => {
-            Operand::Other(kind.as_ref())
-        }
+        InsnOperandKind::SME_ZAda_2b | InsnOperandKind::SME_ZAda_3b => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SME_ZA_HV_idx_src
         | InsnOperandKind::SME_ZA_HV_idx_srcxN
         | InsnOperandKind::SME_ZA_HV_idx_dest
         | InsnOperandKind::SME_ZA_HV_idx_destxN
-        | InsnOperandKind::SME_ZA_HV_idx_ldstr => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SME_ZA_HV_idx_ldstr => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_list_of_64bit_tiles => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SME_list_of_64bit_tiles => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SME_ZA_array_off1x4
@@ -913,7 +912,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SME_ZA_array_off3_0
         | InsnOperandKind::SME_ZA_array_off3_5
         | InsnOperandKind::SME_ZA_array_off3x2
-        | InsnOperandKind::SME_ZA_array_off4 => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SME_ZA_array_off4 => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SME_ZA_array_vrsb_1
@@ -923,18 +922,16 @@ fn operand_get_by_class(
         | InsnOperandKind::SME_ZA_array_vrsb_2
         | InsnOperandKind::SME_ZA_array_vrsh_2
         | InsnOperandKind::SME_ZA_array_vrss_2
-        | InsnOperandKind::SME_ZA_array_vrsd_2 => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SME_ZA_array_vrsd_2 => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_SM_ZA => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SME_SM_ZA => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_PnT_Wm_imm => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SME_PnT_Wm_imm => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_VLxN_10 | InsnOperandKind::SME_VLxN_13 => {
-            Operand::Other(kind.as_ref())
-        }
+        InsnOperandKind::SME_VLxN_10 | InsnOperandKind::SME_VLxN_13 => Operand::Other(kind.into()),
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::CRn => Operand::Undefined("c{}", bit_range(bits, 12, 4)),
@@ -1019,7 +1016,7 @@ fn operand_get_by_class(
         | InsnOperandKind::IMM_ROT3
         | InsnOperandKind::SVE_IMM_ROT1
         | InsnOperandKind::SVE_IMM_ROT2
-        | InsnOperandKind::SVE_IMM_ROT3 => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SVE_IMM_ROT3 => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::CSSC_SIMM8 => Operand::Undefined("#{}", bit_range(bits, 10, 8) as i8),
@@ -1036,19 +1033,19 @@ fn operand_get_by_class(
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_I1_HALF_ONE
         | InsnOperandKind::SVE_I1_HALF_TWO
-        | InsnOperandKind::SVE_I1_ZERO_ONE => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SVE_I1_ZERO_ONE => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_PATTERN => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SVE_PATTERN => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_PATTERN_SCALED => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SVE_PATTERN_SCALED => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_PRFOP => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SVE_PRFOP => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::IMM_MOV => Operand::Other(kind.as_ref()),
+        InsnOperandKind::IMM_MOV => Operand::Other(kind.into()),
         #[cfg(feature = "full")]
         InsnOperandKind::FPIMM0 => Operand::Undefined("#{:.1}", 0.0),
 
@@ -1092,12 +1089,12 @@ fn operand_get_by_class(
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_INV_LIMM
         | InsnOperandKind::SVE_LIMM
-        | InsnOperandKind::SVE_LIMM_MOV => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SVE_LIMM_MOV => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SIMD_IMM | InsnOperandKind::SIMD_IMM_SFT => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SIMD_IMM | InsnOperandKind::SIMD_IMM_SFT => Operand::Other(kind.into()),
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_AIMM | InsnOperandKind::SVE_ASIMM => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SVE_AIMM | InsnOperandKind::SVE_ASIMM => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::FPIMM | InsnOperandKind::SIMD_FPIMM | InsnOperandKind::SVE_FPIMM8 => {
@@ -1173,7 +1170,7 @@ fn operand_get_by_class(
             }
         }
         #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::UIMM7 => Operand::Other(kind.as_ref()),
+        InsnOperandKind::UIMM7 => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::COND | InsnOperandKind::COND1 => {
@@ -1216,12 +1213,12 @@ fn operand_get_by_class(
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMPLE | InsnOperandKind::SIMD_ADDR_SIMPLE => {
             let reg_no = bit_range(bits, 5, 5);
-            let reg_name = get_int_reg_name(true, reg_no as u8, false);
+            let reg_name = make_gp_reg(false, true, reg_no as u8, false, None);
             Operand::Undefined("[{reg_name}]")
         }
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SIMD_ADDR_POST => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SIMD_ADDR_POST => Operand::Other(kind.into()),
 
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_REGOFF => {
@@ -1239,9 +1236,9 @@ fn operand_get_by_class(
             };
 
             let rn_reg_no = bit_range(bits, 5, 5);
-            let rn_reg_name = get_int_reg_name(true, rn_reg_no as u8, false);
+            let rn_reg_name = make_gp_reg(false, true, rn_reg_no as u8, false, None);
             let rm_reg_no = bit_range(bits, 16, 5);
-            let rm_reg_name = get_int_reg_name(is_64bit, rm_reg_no as u8, true);
+            let rm_reg_name = make_gp_reg(false, is_64bit, rm_reg_no as u8, true, None);
 
             let extend = match option {
                 0b010 => "uxtw",
@@ -1276,10 +1273,10 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_ADDR_RX
         | InsnOperandKind::SVE_ADDR_RX_LSL1
         | InsnOperandKind::SVE_ADDR_RX_LSL2
-        | InsnOperandKind::SVE_ADDR_RX_LSL3 => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SVE_ADDR_RX_LSL3 => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_ADDR_ZX => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SVE_ADDR_ZX => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_RZ
@@ -1293,7 +1290,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_ADDR_RZ_XTW2_14
         | InsnOperandKind::SVE_ADDR_RZ_XTW2_22
         | InsnOperandKind::SVE_ADDR_RZ_XTW3_14
-        | InsnOperandKind::SVE_ADDR_RZ_XTW3_22 => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SVE_ADDR_RZ_XTW3_22 => Operand::Other(kind.into()),
 
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMM7 => {
@@ -1309,7 +1306,7 @@ fn operand_get_by_class(
             let imm = (sign_extend(imm7, 6) << scale) as i64;
 
             let reg_no = bit_range(bits, 5, 5);
-            let reg_name = get_int_reg_name(true, reg_no as u8, false);
+            let reg_name = make_gp_reg(false, true, reg_no as u8, false, None);
 
             if bit_set(bits, 23) {
                 if bit_set(bits, 24) {
@@ -1337,7 +1334,7 @@ fn operand_get_by_class(
             let imm = (sign_extend(imm9, 8) << scale) as i64;
 
             let reg_no = bit_range(bits, 5, 5);
-            let reg_name = get_int_reg_name(true, reg_no as u8, false);
+            let reg_name = make_gp_reg(false, true, reg_no as u8, false, None);
 
             let ldst_offset_only = definition.class == InsnClass::LDST_UNPRIV
                 || definition.class == InsnClass::LDST_UNSCALED;
@@ -1368,7 +1365,7 @@ fn operand_get_by_class(
             };
             let uimm12 = bit_range(bits, 10, 12) << scale;
             let reg_no = bit_range(bits, 5, 5);
-            let reg_name = get_int_reg_name(true, reg_no as u8, false);
+            let reg_name = make_gp_reg(false, true, reg_no as u8, false, None);
             Operand::Undefined("[{reg_name}");
             if uimm12 != 0 {
                 Operand::Undefined(", #{uimm12:#x}");
@@ -1379,7 +1376,7 @@ fn operand_get_by_class(
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMM10 => {
             let reg_n_no = bit_range(bits, 5, 5);
-            let reg_n_name = get_int_reg_name(true, reg_n_no as u8, false);
+            let reg_n_name = make_gp_reg(false, true, reg_n_no as u8, false, None);
 
             let scale = 3;
             let pre_index = bit_set(bits, 11);
@@ -1404,7 +1401,7 @@ fn operand_get_by_class(
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMM11 => {
             let reg_n_no = bit_range(bits, 5, 5);
-            let reg_n_name = get_int_reg_name(true, reg_n_no as u8, false);
+            let reg_n_name = make_gp_reg(false, true, reg_n_no as u8, false, None);
             let simm = (sign_extend(bit_range(bits, 15, 7), 6) << LOG2_TAG_GRANULE) as i64;
             match bit_range(bits, 23, 2) {
                 0b01 => {
@@ -1444,18 +1441,18 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_ADDR_RI_U6
         | InsnOperandKind::SVE_ADDR_RI_U6x2
         | InsnOperandKind::SVE_ADDR_RI_U6x4
-        | InsnOperandKind::SVE_ADDR_RI_U6x8 => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SVE_ADDR_RI_U6x8 => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_ZI_U5
         | InsnOperandKind::SVE_ADDR_ZI_U5x2
         | InsnOperandKind::SVE_ADDR_ZI_U5x4
-        | InsnOperandKind::SVE_ADDR_ZI_U5x8 => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SVE_ADDR_ZI_U5x8 => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_ZZ_LSL
         | InsnOperandKind::SVE_ADDR_ZZ_SXTW
-        | InsnOperandKind::SVE_ADDR_ZZ_UXTW => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SVE_ADDR_ZZ_UXTW => Operand::Other(kind.into()),
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::SYSREG | InsnOperandKind::SYSREG128 => {
@@ -1510,7 +1507,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SYSREG_IC
         | InsnOperandKind::SYSREG_TLBI
         | InsnOperandKind::SYSREG_TLBIP
-        | InsnOperandKind::SYSREG_SR => Operand::Other(kind.as_ref()),
+        | InsnOperandKind::SYSREG_SR => Operand::Other(kind.into()),
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER => {
@@ -1591,24 +1588,24 @@ fn operand_get_by_class(
         }
 
         #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::BARRIER_PSB => Operand::Other(kind.as_ref()),
+        InsnOperandKind::BARRIER_PSB => Operand::Other(kind.into()),
 
         InsnOperandKind::X16 => Operand::Undefined("x16"),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZT0 => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SME_ZT0 => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZT0_INDEX => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SME_ZT0_INDEX => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZT0_LIST => Operand::Other(kind.as_ref()),
+        InsnOperandKind::SME_ZT0_LIST => Operand::Other(kind.into()),
 
         #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::BARRIER_GCSB => Operand::Other(kind.as_ref()),
+        InsnOperandKind::BARRIER_GCSB => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::BTI_TARGET => Operand::Other(kind.as_ref()),
+        InsnOperandKind::BTI_TARGET => Operand::Other(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::MOPS_ADDR_Rd
@@ -1628,9 +1625,9 @@ fn operand_get_by_class(
                 return Operand::Undefined;
             }
 
-            let rd = get_int_reg_name(true, rd, true);
-            let rn = get_int_reg_name(true, rn, true);
-            let rs = get_int_reg_name(true, rs, true);
+            let rd = make_gp_reg(false, true, rd, true, None);
+            let rn = make_gp_reg(false, true, rn, true, None);
+            let rs = make_gp_reg(false, true, rs, true, None);
 
             if op1 != 0b11 {
                 // Memory copy forward only (cpyfm, ...)
