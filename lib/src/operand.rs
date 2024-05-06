@@ -235,7 +235,7 @@ pub enum Operand {
     SystemHint(SystemHintKind),
     Condition(ConditionKind),
     Undefined,
-    Other(&'static str),
+    NotSupported(&'static str),
 }
 
 #[cfg(any(feature = "full", feature = "system"))]
@@ -349,7 +349,7 @@ fn operand_fp_reg(bits: u32, operand: &defn::InsnOperand, definition: &defn::Ins
     let reg_no = if let Some(bit_filed) = operand.bit_fields.first() {
         bit_range(bits, bit_filed.lsb.into(), bit_filed.width.into())
     } else {
-        return Operand::Other(kind.into());
+        return Operand::NotSupported(kind.into());
     };
 
     match definition.class {
@@ -420,7 +420,7 @@ fn operand_fp_reg(bits: u32, operand: &defn::InsnOperand, definition: &defn::Ins
                 };
                 make_fp_reg(size, reg_no as u8)
             } else {
-                return Operand::Other(kind.into());
+                return Operand::NotSupported(kind.into());
             }
         }
     }
@@ -685,7 +685,7 @@ fn operand_simd_reg(bits: u32, operand: &defn::InsnOperand, definition: &defn::I
     let reg_no = if let Some(bit_filed) = operand.bit_fields.first() {
         bit_range(bits, bit_filed.lsb.into(), bit_filed.width.into())
     } else {
-        return Operand::Other(kind.into());
+        return Operand::NotSupported(kind.into());
     } as u8;
 
     let simd_reg_arrangement = if let Some(qual) = operand.qualifiers.first() {
@@ -727,7 +727,7 @@ fn operand_simd_reg(bits: u32, operand: &defn::InsnOperand, definition: &defn::I
     };
     let simd_reg_name = get_simd_reg_name(reg_no, simd_reg_arrangement);
 
-    Operand::Undefined("{simd_reg_name}")
+    Operand::NotSupported("{simd_reg_name}")
 }
 
 /// Produce an operand from the instruction bits and the definition.
@@ -794,7 +794,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_VZn
         | InsnOperandKind::SVE_Vd
         | InsnOperandKind::SVE_Vm
-        | InsnOperandKind::SVE_Vn => Operand::Other(kind.into()),
+        | InsnOperandKind::SVE_Vn => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::Va | InsnOperandKind::Vd | InsnOperandKind::Vn | InsnOperandKind::Vm => {
@@ -803,17 +803,17 @@ fn operand_get_by_class(
 
         #[cfg(feature = "full")]
         InsnOperandKind::Ed | InsnOperandKind::En | InsnOperandKind::Em | InsnOperandKind::Em16 => {
-            Operand::Other(kind.into())
+            Operand::NotSupported(kind.into())
         }
 
         #[cfg(feature = "full")]
-        InsnOperandKind::VdD1 | InsnOperandKind::VnD1 => Operand::Other(kind.into()),
+        InsnOperandKind::VdD1 | InsnOperandKind::VnD1 => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::LVn
         | InsnOperandKind::LVt
         | InsnOperandKind::LVt_AL
-        | InsnOperandKind::LEt => Operand::Other(kind.into()),
+        | InsnOperandKind::LEt => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_Pd
@@ -824,7 +824,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_Pm
         | InsnOperandKind::SVE_Pn
         | InsnOperandKind::SVE_Pt
-        | InsnOperandKind::SME_Pm => Operand::Other(kind.into()),
+        | InsnOperandKind::SME_Pm => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_PNd
@@ -833,14 +833,14 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_PNt
         | InsnOperandKind::SME_PNd3
         | InsnOperandKind::SME_PNg3
-        | InsnOperandKind::SME_PNn => Operand::Other(kind.into()),
+        | InsnOperandKind::SME_PNn => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_Pdx2 | InsnOperandKind::SME_PdxN => Operand::Other(kind.into()),
+        InsnOperandKind::SME_Pdx2 | InsnOperandKind::SME_PdxN => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SME_PNn3_INDEX1 | InsnOperandKind::SME_PNn3_INDEX2 => {
-            Operand::Other(kind.into())
+            Operand::NotSupported(kind.into())
         }
 
         #[cfg(feature = "full")]
@@ -851,7 +851,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_Zm_16
         | InsnOperandKind::SVE_Zn
         | InsnOperandKind::SVE_Zt
-        | InsnOperandKind::SME_Zm => Operand::Other(kind.into()),
+        | InsnOperandKind::SME_Zm => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_ZnxN
@@ -866,7 +866,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SME_Ztx4_STRIDED
         | InsnOperandKind::SME_Zt2
         | InsnOperandKind::SME_Zt3
-        | InsnOperandKind::SME_Zt4 => Operand::Other(kind.into()),
+        | InsnOperandKind::SME_Zt4 => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_Zm3_INDEX
@@ -890,20 +890,22 @@ fn operand_get_by_class(
         | InsnOperandKind::SME_Zn_INDEX3_14
         | InsnOperandKind::SME_Zn_INDEX3_15
         | InsnOperandKind::SME_Zn_INDEX4_14
-        | InsnOperandKind::SVE_Zm_imm4 => Operand::Other(kind.into()),
+        | InsnOperandKind::SVE_Zm_imm4 => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZAda_2b | InsnOperandKind::SME_ZAda_3b => Operand::Other(kind.into()),
+        InsnOperandKind::SME_ZAda_2b | InsnOperandKind::SME_ZAda_3b => {
+            Operand::NotSupported(kind.into())
+        }
 
         #[cfg(feature = "full")]
         InsnOperandKind::SME_ZA_HV_idx_src
         | InsnOperandKind::SME_ZA_HV_idx_srcxN
         | InsnOperandKind::SME_ZA_HV_idx_dest
         | InsnOperandKind::SME_ZA_HV_idx_destxN
-        | InsnOperandKind::SME_ZA_HV_idx_ldstr => Operand::Other(kind.into()),
+        | InsnOperandKind::SME_ZA_HV_idx_ldstr => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_list_of_64bit_tiles => Operand::Other(kind.into()),
+        InsnOperandKind::SME_list_of_64bit_tiles => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SME_ZA_array_off1x4
@@ -912,7 +914,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SME_ZA_array_off3_0
         | InsnOperandKind::SME_ZA_array_off3_5
         | InsnOperandKind::SME_ZA_array_off3x2
-        | InsnOperandKind::SME_ZA_array_off4 => Operand::Other(kind.into()),
+        | InsnOperandKind::SME_ZA_array_off4 => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SME_ZA_array_vrsb_1
@@ -922,20 +924,22 @@ fn operand_get_by_class(
         | InsnOperandKind::SME_ZA_array_vrsb_2
         | InsnOperandKind::SME_ZA_array_vrsh_2
         | InsnOperandKind::SME_ZA_array_vrss_2
-        | InsnOperandKind::SME_ZA_array_vrsd_2 => Operand::Other(kind.into()),
+        | InsnOperandKind::SME_ZA_array_vrsd_2 => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_SM_ZA => Operand::Other(kind.into()),
+        InsnOperandKind::SME_SM_ZA => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_PnT_Wm_imm => Operand::Other(kind.into()),
+        InsnOperandKind::SME_PnT_Wm_imm => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_VLxN_10 | InsnOperandKind::SME_VLxN_13 => Operand::Other(kind.into()),
+        InsnOperandKind::SME_VLxN_10 | InsnOperandKind::SME_VLxN_13 => {
+            Operand::NotSupported(kind.into())
+        }
 
         #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::CRn => Operand::Undefined("c{}", bit_range(bits, 12, 4)),
-        InsnOperandKind::CRm => Operand::Undefined("c{}", bit_range(bits, 8, 4)),
+        InsnOperandKind::CRn => Operand::NotSupported("c{}", bit_range(bits, 12, 4)),
+        InsnOperandKind::CRm => Operand::NotSupported("c{}", bit_range(bits, 8, 4)),
 
         #[cfg(feature = "full")]
         InsnOperandKind::IMMR => {
@@ -946,7 +950,7 @@ fn operand_get_by_class(
             if (sf && !n) || (!sf && (n || bit_set(immr, 5))) {
                 return Operand::Undefined;
             }
-            Operand::Undefined("#{}", immr)
+            Operand::NotSupported("#{}", immr)
         }
         #[cfg(feature = "full")]
         InsnOperandKind::IMMS => {
@@ -957,7 +961,7 @@ fn operand_get_by_class(
             if (sf && !n) || (!sf && (n || bit_set(imms, 5))) {
                 return Operand::Undefined;
             }
-            Operand::Undefined("#{}", imms)
+            Operand::NotSupported("#{}", imms)
         }
 
         #[cfg(feature = "full")]
@@ -965,7 +969,7 @@ fn operand_get_by_class(
             let b5 = bit_range(bits, 31, 1);
             let b40 = bit_range(bits, 19, 5);
             let bit_num = (b5 << 5) | b40;
-            Operand::Undefined("#{}", bit_num)
+            Operand::NotSupported("#{}", bit_num)
         }
 
         #[cfg(feature = "full")]
@@ -979,13 +983,13 @@ fn operand_get_by_class(
             if !sf && scale > 32 {
                 return Operand::Undefined;
             }
-            Operand::Undefined("#{scale}")
+            Operand::NotSupported("#{scale}")
         }
 
         #[cfg(feature = "full")]
-        InsnOperandKind::IMM0 => Operand::Undefined("#0"),
+        InsnOperandKind::IMM0 => Operand::NotSupported("#0"),
         #[cfg(feature = "full")]
-        InsnOperandKind::TME_UIMM16 => Operand::Undefined("#{}", bit_range(bits, 5, 16)),
+        InsnOperandKind::TME_UIMM16 => Operand::NotSupported("#{}", bit_range(bits, 5, 16)),
 
         #[cfg(feature = "full")]
         InsnOperandKind::IDX
@@ -1016,47 +1020,47 @@ fn operand_get_by_class(
         | InsnOperandKind::IMM_ROT3
         | InsnOperandKind::SVE_IMM_ROT1
         | InsnOperandKind::SVE_IMM_ROT2
-        | InsnOperandKind::SVE_IMM_ROT3 => Operand::Other(kind.into()),
+        | InsnOperandKind::SVE_IMM_ROT3 => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::CSSC_SIMM8 => Operand::Undefined("#{}", bit_range(bits, 10, 8) as i8),
+        InsnOperandKind::CSSC_SIMM8 => Operand::NotSupported("#{}", bit_range(bits, 10, 8) as i8),
         #[cfg(feature = "full")]
-        InsnOperandKind::CSSC_UIMM8 => Operand::Undefined("#{}", bit_range(bits, 10, 8) as u8),
+        InsnOperandKind::CSSC_UIMM8 => Operand::NotSupported("#{}", bit_range(bits, 10, 8) as u8),
         #[cfg(feature = "full")]
-        InsnOperandKind::UIMM4_ADDG => Operand::Undefined("#{}", bit_range(bits, 10, 4)),
+        InsnOperandKind::UIMM4_ADDG => Operand::NotSupported("#{}", bit_range(bits, 10, 4)),
         // The 10 bit size comes from 6 bit in the instruction and the shift of 4.
         #[cfg(feature = "full")]
         InsnOperandKind::UIMM10 => {
-            Operand::Undefined("#{}", bit_range(bits, 16, 6) << LOG2_TAG_GRANULE)
+            Operand::NotSupported("#{}", bit_range(bits, 16, 6) << LOG2_TAG_GRANULE)
         }
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_I1_HALF_ONE
         | InsnOperandKind::SVE_I1_HALF_TWO
-        | InsnOperandKind::SVE_I1_ZERO_ONE => Operand::Other(kind.into()),
+        | InsnOperandKind::SVE_I1_ZERO_ONE => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_PATTERN => Operand::Other(kind.into()),
+        InsnOperandKind::SVE_PATTERN => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_PATTERN_SCALED => Operand::Other(kind.into()),
+        InsnOperandKind::SVE_PATTERN_SCALED => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_PRFOP => Operand::Other(kind.into()),
+        InsnOperandKind::SVE_PRFOP => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::IMM_MOV => Operand::Other(kind.into()),
+        InsnOperandKind::IMM_MOV => Operand::NotSupported(kind.into()),
         #[cfg(feature = "full")]
-        InsnOperandKind::FPIMM0 => Operand::Undefined("#{:.1}", 0.0),
+        InsnOperandKind::FPIMM0 => Operand::NotSupported("#{:.1}", 0.0),
 
         #[cfg(feature = "full")]
         InsnOperandKind::AIMM => {
             let shift = bit_set(bits, 22);
             let imm12 = bit_range(bits, 10, 12);
-            Operand::Undefined("#{imm12:#x}");
+            Operand::NotSupported("#{imm12:#x}");
 
             if shift {
-                return Operand::Undefined(", lsl #12");
+                return Operand::NotSupported(", lsl #12");
             }
         }
 
@@ -1070,7 +1074,7 @@ fn operand_get_by_class(
             let imm16 = bit_range(bits, 5, 16);
             let shift = hw << 4;
 
-            Operand::Undefined("#{imm16:#x}, lsl #{shift:#x}")
+            Operand::NotSupported("#{imm16:#x}, lsl #{shift:#x}")
         }
 
         #[cfg(any(feature = "full", feature = "load_store"))]
@@ -1081,7 +1085,7 @@ fn operand_get_by_class(
             let is_64bit = bit_set(bits, 31);
             let byte_count = if is_64bit { 8 } else { 4 };
             if let Some(imm) = decode_limm(byte_count, n, immr, imms) {
-                Operand::Undefined("#{imm:#x}")
+                Operand::NotSupported("#{imm:#x}")
             } else {
                 Operand::Undefined
             }
@@ -1089,12 +1093,16 @@ fn operand_get_by_class(
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_INV_LIMM
         | InsnOperandKind::SVE_LIMM
-        | InsnOperandKind::SVE_LIMM_MOV => Operand::Other(kind.into()),
+        | InsnOperandKind::SVE_LIMM_MOV => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SIMD_IMM | InsnOperandKind::SIMD_IMM_SFT => Operand::Other(kind.into()),
+        InsnOperandKind::SIMD_IMM | InsnOperandKind::SIMD_IMM_SFT => {
+            Operand::NotSupported(kind.into())
+        }
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_AIMM | InsnOperandKind::SVE_ASIMM => Operand::Other(kind.into()),
+        InsnOperandKind::SVE_AIMM | InsnOperandKind::SVE_ASIMM => {
+            Operand::NotSupported(kind.into())
+        }
 
         #[cfg(feature = "full")]
         InsnOperandKind::FPIMM | InsnOperandKind::SIMD_FPIMM | InsnOperandKind::SVE_FPIMM8 => {
@@ -1108,7 +1116,7 @@ fn operand_get_by_class(
             };
             let imm8 = bit_range(bits, 13, 8);
             if let Some(imm) = fp_expand_imm(size, imm8) {
-                Operand::Undefined("#{}", imm)
+                Operand::NotSupported("#{}", imm)
             } else {
                 Operand::Undefined
             }
@@ -1117,108 +1125,108 @@ fn operand_get_by_class(
         #[cfg(any(feature = "full", feature = "exception"))]
         InsnOperandKind::EXCEPTION => {
             let imm16 = bit_range(bits, 5, 16);
-            Operand::Undefined("#{imm16:#x}")
+            Operand::NotSupported("#{imm16:#x}")
         }
         #[cfg(any(feature = "full", feature = "exception"))]
         InsnOperandKind::UNDEFINED => {
             let imm16 = bit_range(bits, 0, 16);
-            Operand::Undefined("#{imm16:#x}")
+            Operand::NotSupported("#{imm16:#x}")
         }
 
         #[cfg(feature = "full")]
         InsnOperandKind::CCMP_IMM => {
             let imm5 = bit_range(bits, 16, 5);
-            Operand::Undefined("#{imm5:#x}")
+            Operand::NotSupported("#{imm5:#x}")
         }
 
         #[cfg(feature = "full")]
         InsnOperandKind::NZCV => {
             let imm4 = bit_range(bits, 0, 4);
-            Operand::Undefined("#{imm4:#x}")
+            Operand::NotSupported("#{imm4:#x}")
         }
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::IMM_2 => {
             let imm = bit_range(bits, 15, 6);
-            Operand::Undefined("#{}", imm)
+            Operand::NotSupported("#{}", imm)
         }
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::MASK => {
             let mask = bit_range(bits, 0, 4);
-            Operand::Undefined("#{}", mask)
+            Operand::NotSupported("#{}", mask)
         }
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::UIMM3_OP1 => {
             let imm = bit_range(bits, 16, 3);
-            Operand::Undefined("#{}", imm)
+            Operand::NotSupported("#{}", imm)
         }
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::UIMM3_OP2 => {
             let imm = bit_range(bits, 5, 3);
-            Operand::Undefined("#{}", imm)
+            Operand::NotSupported("#{}", imm)
         }
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::UIMM4 => {
             let imm4 = bit_range(bits, 8, 4);
-            Operand::Undefined("#{imm4:#x}")
+            Operand::NotSupported("#{imm4:#x}")
         }
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER_ISB => {
             let imm4 = bit_range(bits, 8, 4);
             if imm4 != 0xf {
-                Operand::Undefined("#{imm4:#x}")
+                Operand::NotSupported("#{imm4:#x}")
             }
         }
         #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::UIMM7 => Operand::Other(kind.into()),
+        InsnOperandKind::UIMM7 => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::COND | InsnOperandKind::COND1 => {
             let cond = bit_range(bits, 12, 4);
-            Operand::Undefined("{}", cond_name(cond))
+            Operand::NotSupported("{}", cond_name(cond))
         }
 
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL14 => {
             let offset = bit_range(bits, 5, 14);
             let offset = sign_extend(offset, 13) << 2;
-            Operand::Undefined("{:#x}", pc.wrapping_add(offset))
+            Operand::NotSupported("{:#x}", pc.wrapping_add(offset))
         }
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL19 => {
             let offset = bit_range(bits, 5, 19);
             let offset = sign_extend(offset, 18) << 2;
-            Operand::Undefined("{:#x}", pc.wrapping_add(offset))
+            Operand::NotSupported("{:#x}", pc.wrapping_add(offset))
         }
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL21 => {
             let offset = (bit_range(bits, 5, 19) << 2) | bit_range(bits, 29, 2);
             let offset = sign_extend(offset, 20);
-            Operand::Undefined("{:#x}", pc.wrapping_add(offset))
+            Operand::NotSupported("{:#x}", pc.wrapping_add(offset))
         }
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_ADRP => {
             let offset = (bit_range(bits, 5, 19) << 2) | bit_range(bits, 29, 2);
             let offset = sign_extend(offset, 20) << 12;
             let pc = pc & !((1 << 12) - 1);
-            Operand::Undefined("{:#x}", pc.wrapping_add(offset))
+            Operand::NotSupported("{:#x}", pc.wrapping_add(offset))
         }
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL26 => {
             let offset = bit_range(bits, 0, 26);
             let offset = sign_extend(offset, 25) << 2;
-            Operand::Undefined("{:#x}", pc.wrapping_add(offset))
+            Operand::NotSupported("{:#x}", pc.wrapping_add(offset))
         }
 
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMPLE | InsnOperandKind::SIMD_ADDR_SIMPLE => {
             let reg_no = bit_range(bits, 5, 5);
             let reg_name = make_gp_reg(false, true, reg_no as u8, false, None);
-            Operand::Undefined("[{reg_name}]")
+            Operand::NotSupported("[{reg_name}]")
         }
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SIMD_ADDR_POST => Operand::Other(kind.into()),
+        InsnOperandKind::SIMD_ADDR_POST => Operand::NotSupported(kind.into()),
 
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_REGOFF => {
@@ -1247,18 +1255,18 @@ fn operand_get_by_class(
                 0b111 => "sxtx",
                 _ => "<undefined>",
             };
-            Operand::Undefined("[{rn_reg_name}, {rm_reg_name}");
+            Operand::NotSupported("[{rn_reg_name}, {rm_reg_name}");
             if option == 0b011 {
                 if shift {
-                    Operand::Undefined(", lsl #{scale}")
+                    Operand::NotSupported(", lsl #{scale}")
                 }
             } else if option != 0b011 {
-                Operand::Undefined(", {extend}");
+                Operand::NotSupported(", {extend}");
                 if shift {
-                    Operand::Undefined(" #{scale}")
+                    Operand::NotSupported(" #{scale}")
                 }
             }
-            Operand::Undefined("]");
+            Operand::NotSupported("]");
 
             *stop = true;
         }
@@ -1273,10 +1281,10 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_ADDR_RX
         | InsnOperandKind::SVE_ADDR_RX_LSL1
         | InsnOperandKind::SVE_ADDR_RX_LSL2
-        | InsnOperandKind::SVE_ADDR_RX_LSL3 => Operand::Other(kind.into()),
+        | InsnOperandKind::SVE_ADDR_RX_LSL3 => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_ADDR_ZX => Operand::Other(kind.into()),
+        InsnOperandKind::SVE_ADDR_ZX => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_RZ
@@ -1290,7 +1298,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_ADDR_RZ_XTW2_14
         | InsnOperandKind::SVE_ADDR_RZ_XTW2_22
         | InsnOperandKind::SVE_ADDR_RZ_XTW3_14
-        | InsnOperandKind::SVE_ADDR_RZ_XTW3_22 => Operand::Other(kind.into()),
+        | InsnOperandKind::SVE_ADDR_RZ_XTW3_22 => Operand::NotSupported(kind.into()),
 
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMM7 => {
@@ -1310,14 +1318,14 @@ fn operand_get_by_class(
 
             if bit_set(bits, 23) {
                 if bit_set(bits, 24) {
-                    Operand::Undefined("[{reg_name}, #{imm}]!")
+                    Operand::NotSupported("[{reg_name}, #{imm}]!")
                 } else {
-                    Operand::Undefined("[{reg_name}], #{imm}")
+                    Operand::NotSupported("[{reg_name}], #{imm}")
                 }
             } else if imm == 0 {
-                Operand::Undefined("[{reg_name}]")
+                Operand::NotSupported("[{reg_name}]")
             } else {
-                Operand::Undefined("[{reg_name}, #{imm}]")
+                Operand::NotSupported("[{reg_name}, #{imm}]")
             }
         }
 
@@ -1339,18 +1347,18 @@ fn operand_get_by_class(
             let ldst_offset_only = definition.class == InsnClass::LDST_UNPRIV
                 || definition.class == InsnClass::LDST_UNSCALED;
             if ldst_offset_only {
-                Operand::Undefined("[{reg_name}");
+                Operand::NotSupported("[{reg_name}");
                 if imm != 0 {
-                    Operand::Undefined(", #{imm}");
+                    Operand::NotSupported(", #{imm}");
                 }
-                Operand::Undefined("]")
+                Operand::NotSupported("]")
             }
 
             let post_index = !bit_set(bits, 11);
             if !post_index {
-                Operand::Undefined("[{reg_name}, #{imm}]!");
+                Operand::NotSupported("[{reg_name}, #{imm}]!");
             } else {
-                Operand::Undefined("[{reg_name}], #{imm}");
+                Operand::NotSupported("[{reg_name}], #{imm}");
             }
             *stop = true;
         }
@@ -1366,11 +1374,11 @@ fn operand_get_by_class(
             let uimm12 = bit_range(bits, 10, 12) << scale;
             let reg_no = bit_range(bits, 5, 5);
             let reg_name = make_gp_reg(false, true, reg_no as u8, false, None);
-            Operand::Undefined("[{reg_name}");
+            Operand::NotSupported("[{reg_name}");
             if uimm12 != 0 {
-                Operand::Undefined(", #{uimm12:#x}");
+                Operand::NotSupported(", #{uimm12:#x}");
             }
-            Operand::Undefined("]");
+            Operand::NotSupported("]");
         }
 
         #[cfg(any(feature = "full", feature = "load_store"))]
@@ -1384,17 +1392,17 @@ fn operand_get_by_class(
             let imm10 = bit_range(bits, 12, 9) | (s << 9);
             let simm = (sign_extend(imm10, 9) << scale) as i64;
 
-            Operand::Undefined("[{reg_n_name}");
+            Operand::NotSupported("[{reg_n_name}");
             if pre_index {
                 if simm != 0 {
-                    Operand::Undefined(", #{simm}");
+                    Operand::NotSupported(", #{simm}");
                 }
-                Operand::Undefined("]!");
+                Operand::NotSupported("]!");
             } else {
                 if simm != 0 {
-                    Operand::Undefined(", #{simm}");
+                    Operand::NotSupported(", #{simm}");
                 }
-                Operand::Undefined("]");
+                Operand::NotSupported("]");
             }
         }
 
@@ -1405,17 +1413,17 @@ fn operand_get_by_class(
             let simm = (sign_extend(bit_range(bits, 15, 7), 6) << LOG2_TAG_GRANULE) as i64;
             match bit_range(bits, 23, 2) {
                 0b01 => {
-                    Operand::Undefined("[{reg_n_name}], #{simm}");
+                    Operand::NotSupported("[{reg_n_name}], #{simm}");
                 }
                 0b11 => {
-                    Operand::Undefined("[{reg_n_name}, #{simm}]!");
+                    Operand::NotSupported("[{reg_n_name}, #{simm}]!");
                 }
                 0b10 => {
-                    Operand::Undefined("[{reg_n_name}");
+                    Operand::NotSupported("[{reg_n_name}");
                     if simm != 0 {
-                        Operand::Undefined(", #{simm}");
+                        Operand::NotSupported(", #{simm}");
                     }
-                    Operand::Undefined("]");
+                    Operand::NotSupported("]");
                 }
                 _ => {
                     return Operand::Undefined;
@@ -1441,18 +1449,18 @@ fn operand_get_by_class(
         | InsnOperandKind::SVE_ADDR_RI_U6
         | InsnOperandKind::SVE_ADDR_RI_U6x2
         | InsnOperandKind::SVE_ADDR_RI_U6x4
-        | InsnOperandKind::SVE_ADDR_RI_U6x8 => Operand::Other(kind.into()),
+        | InsnOperandKind::SVE_ADDR_RI_U6x8 => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_ZI_U5
         | InsnOperandKind::SVE_ADDR_ZI_U5x2
         | InsnOperandKind::SVE_ADDR_ZI_U5x4
-        | InsnOperandKind::SVE_ADDR_ZI_U5x8 => Operand::Other(kind.into()),
+        | InsnOperandKind::SVE_ADDR_ZI_U5x8 => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_ADDR_ZZ_LSL
         | InsnOperandKind::SVE_ADDR_ZZ_SXTW
-        | InsnOperandKind::SVE_ADDR_ZZ_UXTW => Operand::Other(kind.into()),
+        | InsnOperandKind::SVE_ADDR_ZZ_UXTW => Operand::NotSupported(kind.into()),
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::SYSREG | InsnOperandKind::SYSREG128 => {
@@ -1463,9 +1471,9 @@ fn operand_get_by_class(
             let op2 = bit_range(bits, 5, 3) as u8;
             if let Some(sys_reg) = get_sys_reg_name(sys_reg_number(op0, op1, crn, crm, op2)) {
                 let sys_reg = sys_reg.1;
-                Operand::Undefined("{sys_reg}");
+                Operand::NotSupported("{sys_reg}");
             } else {
-                Operand::Undefined("s{op0}_{op1}_c{crn}_c{crm}_{op2}");
+                Operand::NotSupported("s{op0}_{op1}_c{crn}_c{crm}_{op2}");
             }
         }
 
@@ -1479,11 +1487,11 @@ fn operand_get_by_class(
                     0b011 => "uao",
                     0b100 => "pan",
                     0b101 => "spsel",
-                    _ => return Operand::Undefined("s0_{op1}_c4_{crm}_{op2}"),
+                    _ => return Operand::NotSupported("s0_{op1}_c4_{crm}_{op2}"),
                 },
                 0b001 => match op2 {
                     0b000 if crm & 0b1110 == 0 => "allint",
-                    _ => return Operand::Undefined("s0_{op1}_c4_c{crm}_{op2}"),
+                    _ => return Operand::NotSupported("s0_{op1}_c4_c{crm}_{op2}"),
                 },
                 0b011 => match op2 {
                     0b011 if crm & 0b1110 == 0b0010 => "svcrsm",
@@ -1494,11 +1502,11 @@ fn operand_get_by_class(
                     0b100 => "tco",
                     0b110 => "daifset",
                     0b111 => "daifclr",
-                    _ => return Operand::Undefined("s0_{op1}_c4_{crm}_{op2}"),
+                    _ => return Operand::NotSupported("s0_{op1}_c4_{crm}_{op2}"),
                 },
-                _ => return Operand::Undefined("s0_{op1}_c4_{crm}_{op2}"),
+                _ => return Operand::NotSupported("s0_{op1}_c4_{crm}_{op2}"),
             };
-            Operand::Undefined("{field}")
+            Operand::NotSupported("{field}")
         }
 
         #[cfg(any(feature = "full", feature = "system"))]
@@ -1507,7 +1515,7 @@ fn operand_get_by_class(
         | InsnOperandKind::SYSREG_IC
         | InsnOperandKind::SYSREG_TLBI
         | InsnOperandKind::SYSREG_TLBIP
-        | InsnOperandKind::SYSREG_SR => Operand::Other(kind.into()),
+        | InsnOperandKind::SYSREG_SR => Operand::NotSupported(kind.into()),
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER => {
@@ -1525,9 +1533,9 @@ fn operand_get_by_class(
                 0b1101 => "ld",
                 0b1110 => "st",
                 0b1111 => "sy",
-                _ => return Operand::Undefined("#{:#x}", barrier),
+                _ => return Operand::NotSupported("#{:#x}", barrier),
             };
-            Operand::Undefined("{barrier}")
+            Operand::NotSupported("{barrier}")
         }
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER_DSB_NXS => {
@@ -1537,9 +1545,9 @@ fn operand_get_by_class(
                 0b0110 => "nshnxs",
                 0b1010 => "ishnxs",
                 0b1110 => "synxs",
-                _ => return Operand::Undefined("#{:#x}", barrier),
+                _ => return Operand::NotSupported("#{:#x}", barrier),
             };
-            Operand::Undefined("{barrier}")
+            Operand::NotSupported("{barrier}")
         }
 
         #[cfg(any(feature = "full", feature = "load_store"))]
@@ -1561,9 +1569,9 @@ fn operand_get_by_class(
                 let policy = if !bit_set(bits, 0) { "keep" } else { "strm" };
                 let typ = typ.unwrap_or("<undefined>");
                 let target = target.unwrap_or("<undefined>");
-                Operand::Undefined("{typ}{target}{policy}")
+                Operand::NotSupported("{typ}{target}{policy}")
             } else {
-                Operand::Undefined("#{:#x}", bit_range(bits, 0, 5))
+                Operand::NotSupported("#{:#x}", bit_range(bits, 0, 5))
             }
         }
         #[cfg(any(feature = "full", feature = "load_store"))]
@@ -1581,31 +1589,31 @@ fn operand_get_by_class(
             };
 
             if let Some(op) = op {
-                Operand::Undefined("{op}")
+                Operand::NotSupported("{op}")
             } else {
-                Operand::Undefined("#{rprfmop:#x}")
+                Operand::NotSupported("#{rprfmop:#x}")
             }
         }
 
         #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::BARRIER_PSB => Operand::Other(kind.into()),
+        InsnOperandKind::BARRIER_PSB => Operand::NotSupported(kind.into()),
 
-        InsnOperandKind::X16 => Operand::Undefined("x16"),
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZT0 => Operand::Other(kind.into()),
+        InsnOperandKind::X16 => Operand::NotSupported("x16"),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZT0_INDEX => Operand::Other(kind.into()),
+        InsnOperandKind::SME_ZT0 => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZT0_LIST => Operand::Other(kind.into()),
+        InsnOperandKind::SME_ZT0_INDEX => Operand::NotSupported(kind.into()),
+
+        #[cfg(feature = "full")]
+        InsnOperandKind::SME_ZT0_LIST => Operand::NotSupported(kind.into()),
 
         #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::BARRIER_GCSB => Operand::Other(kind.into()),
+        InsnOperandKind::BARRIER_GCSB => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
-        InsnOperandKind::BTI_TARGET => Operand::Other(kind.into()),
+        InsnOperandKind::BTI_TARGET => Operand::NotSupported(kind.into()),
 
         #[cfg(feature = "full")]
         InsnOperandKind::MOPS_ADDR_Rd
@@ -1631,10 +1639,10 @@ fn operand_get_by_class(
 
             if op1 != 0b11 {
                 // Memory copy forward only (cpyfm, ...)
-                Operand::Undefined("[{rd}]!, [{rs}]!, {rn}!")
+                Operand::NotSupported("[{rd}]!, [{rs}]!, {rn}!")
             } else {
                 // Set memory (setp, setm, sete, ...)
-                Operand::Undefined("[{rd}]!, {rn}!, {rs}")
+                Operand::NotSupported("[{rd}]!, {rn}!, {rs}")
             }
         }
 
