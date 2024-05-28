@@ -491,7 +491,9 @@ fn format_simd_reg(
                 InsnOperandQualifier::V_2H => SimdRegArrangement::Vector4H,
                 InsnOperandQualifier::V_4H => SimdRegArrangement::Vector8H,
                 InsnOperandQualifier::V_2S => SimdRegArrangement::Vector4S,
-                InsnOperandQualifier::V_1D => SimdRegArrangement::Vector2D,
+                InsnOperandQualifier::V_1D | InsnOperandQualifier::V_2D => {
+                    SimdRegArrangement::Vector2D
+                }
                 _ => {
                     return write!(f, "<undefined>");
                 }
@@ -561,21 +563,22 @@ fn format_operand(
         | InsnOperandKind::Fm
         | InsnOperandKind::Fa
         | InsnOperandKind::Ft
-        | InsnOperandKind::Ft2 => format_fp_reg(f, bits, operand, definition)?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::Sd
+        | InsnOperandKind::Ft2
+        | InsnOperandKind::Sd
         | InsnOperandKind::Sn
-        | InsnOperandKind::Sm
-        | InsnOperandKind::SVE_VZn
-        | InsnOperandKind::SVE_Vd
-        | InsnOperandKind::SVE_Vm
-        | InsnOperandKind::SVE_Vn => write!(f, ":{kind:?}:")?,
+        | InsnOperandKind::Sm => format_fp_reg(f, bits, operand, definition)?,
 
         #[cfg(feature = "full")]
-        InsnOperandKind::Va | InsnOperandKind::Vd | InsnOperandKind::Vn | InsnOperandKind::Vm => {
-            format_simd_reg(f, bits, operand, definition)?
-        }
+        InsnOperandKind::SVE_VZn => write!(f, ":{kind:?}:")?,
+
+        #[cfg(feature = "full")]
+        InsnOperandKind::SVE_Vd
+        | InsnOperandKind::SVE_Vm
+        | InsnOperandKind::SVE_Vn
+        | InsnOperandKind::Va
+        | InsnOperandKind::Vd
+        | InsnOperandKind::Vn
+        | InsnOperandKind::Vm => format_simd_reg(f, bits, operand, definition)?,
 
         #[cfg(feature = "full")]
         InsnOperandKind::Ed | InsnOperandKind::En | InsnOperandKind::Em | InsnOperandKind::Em16 => {
@@ -866,12 +869,68 @@ fn format_operand(
         | InsnOperandKind::SVE_LIMM_MOV => write!(f, ":{kind:?}:")?,
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SIMD_IMM | InsnOperandKind::SIMD_IMM_SFT => write!(f, ":{kind:?}:")?,
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_AIMM | InsnOperandKind::SVE_ASIMM => write!(f, ":{kind:?}:")?,
+        InsnOperandKind::SIMD_IMM => {
+            let imm8 = (bit_range(bits, 16, 3) << 5) | bit_range(bits, 5, 5);
+            let mut imm = 0u64;
+            for i in 0..8 {
+                let byte = if imm8 & (1 << i) != 0 { 0xff } else { 0x00 };
+                imm |= byte << (i * 8);
+            }
+
+            write!(f, "#{imm:#x}")?
+        }
 
         #[cfg(feature = "full")]
-        InsnOperandKind::FPIMM | InsnOperandKind::SIMD_FPIMM | InsnOperandKind::SVE_FPIMM8 => {
+        InsnOperandKind::SIMD_IMM_SFT => {
+            let imm8 = (bit_range(bits, 16, 3) << 5) | bit_range(bits, 5, 5);
+            let cmode = bit_range(bits, 12, 4);
+
+            *stop = true;
+            // 32-bit shifting ones (op == 0 && cmode == 110x),
+            // e.g. MOVI <Vd>.<T>, #<imm8>, MSL #<amount>
+            if cmode >> 1 == 0b110 {
+                let msl = if bit_set(cmode, 0) { 16 } else { 8 };
+                return write!(f, "#{imm8:#x}, MSL #{msl}");
+            }
+            // 32-bit shifted immediate (op == 0 && cmode == 0xx0),
+            // e.g. MOVI <Vd>.<T>, #<imm8>{, LSL #<amount>}
+            if cmode & 0b1001 == 0 || cmode & 0b1001 == 0b0001 {
+                let lsl = bit_range(cmode, 1, 2) * 8;
+                if lsl != 0 {
+                    return write!(f, "#{imm8:#x}, LSL #{lsl}");
+                } else {
+                    return write!(f, "#{imm8:#x}");
+                }
+            }
+            // 16-bit shifted immediate (op == 0 && cmode == 10x0),
+            // e.g. MOVI <Vd>.<T>, #<imm8>{, LSL #<amount>}
+            if cmode & 0b1101 == 0b1000 || cmode & 0b1101 == 0b1001 {
+                let lsl = if bit_set(cmode, 1) { 8 } else { 0 };
+                if lsl != 0 {
+                    return write!(f, "#{imm8:#x}, LSL #{lsl}");
+                } else {
+                    return write!(f, "#{imm8:#x}");
+                }
+            }
+            // 8-bit (op == 0 && cmode == 111x),
+            // e.g. MOVI <Vd>.<T>, #<imm8>{, LSL #0}
+            if cmode >> 1 == 0b111 {
+                return write!(f, "#{imm8:#x}");
+            }
+        }
+
+        #[cfg(feature = "full")]
+        InsnOperandKind::SIMD_FPIMM => {
+            let imm8 = (bit_range(bits, 16, 3) << 5) | bit_range(bits, 5, 5);
+            if let Some(imm) = fp_expand_imm(8, imm8) {
+                write!(f, "#{}", imm)?
+            } else {
+                write!(f, "<undefined>")?
+            }
+        }
+
+        #[cfg(feature = "full")]
+        InsnOperandKind::FPIMM => {
             let fp_type = bit_range(bits, 22, 2);
             let size = match fp_type {
                 0b00 => 4,
@@ -886,6 +945,11 @@ fn format_operand(
             } else {
                 write!(f, "<undefined>")?
             }
+        }
+
+        #[cfg(feature = "full")]
+        InsnOperandKind::SVE_AIMM | InsnOperandKind::SVE_ASIMM | InsnOperandKind::SVE_FPIMM8 => {
+            write!(f, ":{kind:?}:")?
         }
 
         #[cfg(any(feature = "full", feature = "exception"))]
