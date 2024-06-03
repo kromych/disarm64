@@ -305,8 +305,8 @@ pub enum Operation {
 }
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub struct Opcode {
-    mnemonic: Mnemonic,
-    operation: Operation,
+    pub mnemonic: Mnemonic,
+    pub operation: Operation,
 }
 impl CFINV {
     pub const DEFINITION: Insn = Insn {

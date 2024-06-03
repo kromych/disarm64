@@ -369,8 +369,8 @@ fn write_insn_structs(
 
             #[derive(Debug, PartialEq, Eq, Copy, Clone)]
             pub struct Opcode {
-                mnemonic: Mnemonic,
-                operation: Operation
+                pub mnemonic: Mnemonic,
+                pub operation: Operation
             }
 
             #struct_impls
