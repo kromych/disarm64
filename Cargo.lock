@@ -148,7 +148,7 @@ checksum = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
 
 [[package]]
 name = "disarm64"
-version = "0.1.17"
+version = "0.1.18"
 dependencies = [
  "anyhow",
  "bitfield-struct",
@@ -168,9 +168,9 @@ dependencies = [
 
 [[package]]
 name = "disarm64_defn"
-version = "0.1.7"
+version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "526091eb419d9cbb82bbdbf133486e1cb494ae7be84eb5461bfba8b28b5e2bbb"
+checksum = "f55f2962d408162f747fc35140e56801632a9235dff39157077988327d53f354"
 dependencies = [
  "bitflags",
  "serde",

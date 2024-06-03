@@ -1,6 +1,6 @@
 [package]
 name = "disarm64"
-version = "0.1.17"
+version = "0.1.18"
 edition = "2021"
 authors = ["kromych <kromych@users.noreply.github.com>"]
 description = """
@@ -36,7 +36,7 @@ name = "disarm64_gen"
 path = "disarm64_gen/src/main.rs"
 
 [dependencies]
-disarm64_defn = "0.1.7"
+disarm64_defn = "0.1.8"
 
 anyhow = "1"
 bitfield-struct = "0.6"
