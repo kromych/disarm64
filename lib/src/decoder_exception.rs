@@ -37,15 +37,15 @@ enum Decode {
 type DecodeTable = &'static [Decode];
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Mnemonic {
-    brk,
-    dcps1,
-    dcps2,
-    dcps3,
-    hlt,
-    hvc,
-    smc,
-    svc,
-    udf,
+    r#brk,
+    r#dcps1,
+    r#dcps2,
+    r#dcps3,
+    r#hlt,
+    r#hvc,
+    r#smc,
+    r#svc,
+    r#udf,
 }
 #[bitfield(u32)]
 #[derive(PartialEq, Eq)]
@@ -178,7 +178,7 @@ impl BRK_EXCEPTION {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::brk,
+            mnemonic: Mnemonic::r#brk,
             operation: Operation::EXCEPTION(EXCEPTION::BRK_EXCEPTION(BRK_EXCEPTION::from(bits))),
         }
     }
@@ -213,7 +213,7 @@ impl DCPS1_EXCEPTION {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::dcps1,
+            mnemonic: Mnemonic::r#dcps1,
             operation: Operation::EXCEPTION(EXCEPTION::DCPS1_EXCEPTION(DCPS1_EXCEPTION::from(
                 bits,
             ))),
@@ -250,7 +250,7 @@ impl DCPS2_EXCEPTION {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::dcps2,
+            mnemonic: Mnemonic::r#dcps2,
             operation: Operation::EXCEPTION(EXCEPTION::DCPS2_EXCEPTION(DCPS2_EXCEPTION::from(
                 bits,
             ))),
@@ -287,7 +287,7 @@ impl DCPS3_EXCEPTION {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::dcps3,
+            mnemonic: Mnemonic::r#dcps3,
             operation: Operation::EXCEPTION(EXCEPTION::DCPS3_EXCEPTION(DCPS3_EXCEPTION::from(
                 bits,
             ))),
@@ -324,7 +324,7 @@ impl HLT_EXCEPTION {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::hlt,
+            mnemonic: Mnemonic::r#hlt,
             operation: Operation::EXCEPTION(EXCEPTION::HLT_EXCEPTION(HLT_EXCEPTION::from(bits))),
         }
     }
@@ -359,7 +359,7 @@ impl HVC_EXCEPTION {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::hvc,
+            mnemonic: Mnemonic::r#hvc,
             operation: Operation::EXCEPTION(EXCEPTION::HVC_EXCEPTION(HVC_EXCEPTION::from(bits))),
         }
     }
@@ -394,7 +394,7 @@ impl SMC_EXCEPTION {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::smc,
+            mnemonic: Mnemonic::r#smc,
             operation: Operation::EXCEPTION(EXCEPTION::SMC_EXCEPTION(SMC_EXCEPTION::from(bits))),
         }
     }
@@ -429,7 +429,7 @@ impl SVC_EXCEPTION {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::svc,
+            mnemonic: Mnemonic::r#svc,
             operation: Operation::EXCEPTION(EXCEPTION::SVC_EXCEPTION(SVC_EXCEPTION::from(bits))),
         }
     }
@@ -464,7 +464,7 @@ impl UDF_UNDEFINED {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::udf,
+            mnemonic: Mnemonic::r#udf,
             operation: Operation::EXCEPTION(EXCEPTION::UDF_UNDEFINED(UDF_UNDEFINED::from(bits))),
         }
     }

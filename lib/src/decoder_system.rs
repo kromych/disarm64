@@ -37,27 +37,27 @@ enum Decode {
 type DecodeTable = &'static [Decode];
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Mnemonic {
-    cfinv,
-    chkfeat,
-    clrex,
-    dgh,
-    dmb,
-    dsb,
-    hint,
-    isb,
-    mrrs,
-    mrs,
-    msr,
-    msrr,
-    rmif,
-    sb,
-    setf16,
-    setf8,
-    sys,
-    sysl,
-    sysp,
-    wfet,
-    wfit,
+    r#cfinv,
+    r#chkfeat,
+    r#clrex,
+    r#dgh,
+    r#dmb,
+    r#dsb,
+    r#hint,
+    r#isb,
+    r#mrrs,
+    r#mrs,
+    r#msr,
+    r#msrr,
+    r#rmif,
+    r#sb,
+    r#setf16,
+    r#setf8,
+    r#sys,
+    r#sysl,
+    r#sysp,
+    r#wfet,
+    r#wfit,
 }
 #[bitfield(u32)]
 #[derive(PartialEq, Eq)]
@@ -321,7 +321,7 @@ impl CFINV {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::cfinv,
+            mnemonic: Mnemonic::r#cfinv,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::CFINV(CFINV::from(bits))),
         }
     }
@@ -345,14 +345,14 @@ impl CHKFEAT_X16 {
         operands: &[InsnOperand {
             kind: InsnOperandKind::X16,
             class: InsnOperandClass::INT_REG,
-            qualifiers: &[],
+            qualifiers: &[InsnOperandQualifier::X],
             bit_fields: &[],
         }],
         flags: InsnFlags::empty(),
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::chkfeat,
+            mnemonic: Mnemonic::r#chkfeat,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::CHKFEAT_X16(CHKFEAT_X16::from(bits))),
         }
     }
@@ -387,7 +387,7 @@ impl CLREX_UIMM4 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::clrex,
+            mnemonic: Mnemonic::r#clrex,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::CLREX_UIMM4(CLREX_UIMM4::from(bits))),
         }
     }
@@ -413,7 +413,7 @@ impl DGH {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::dgh,
+            mnemonic: Mnemonic::r#dgh,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::DGH(DGH::from(bits))),
         }
     }
@@ -444,7 +444,7 @@ impl DMB_BARRIER {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::dmb,
+            mnemonic: Mnemonic::r#dmb,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::DMB_BARRIER(DMB_BARRIER::from(bits))),
         }
     }
@@ -475,7 +475,7 @@ impl DSB_BARRIER_DSB_NXS {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::dsb,
+            mnemonic: Mnemonic::r#dsb,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::DSB_BARRIER_DSB_NXS(
                 DSB_BARRIER_DSB_NXS::from(bits),
             )),
@@ -508,7 +508,7 @@ impl DSB_BARRIER {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::dsb,
+            mnemonic: Mnemonic::r#dsb,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::DSB_BARRIER(DSB_BARRIER::from(bits))),
         }
     }
@@ -550,7 +550,7 @@ impl HINT_UIMM7 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::hint,
+            mnemonic: Mnemonic::r#hint,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::HINT_UIMM7(HINT_UIMM7::from(bits))),
         }
     }
@@ -581,7 +581,7 @@ impl ISB_BARRIER_ISB {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::isb,
+            mnemonic: Mnemonic::r#isb,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::ISB_BARRIER_ISB(ISB_BARRIER_ISB::from(
                 bits,
             ))),
@@ -632,7 +632,7 @@ impl MRRS_Rt_PAIRREG_SYSREG128 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::mrrs,
+            mnemonic: Mnemonic::r#mrrs,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::MRRS_Rt_PAIRREG_SYSREG128(
                 MRRS_Rt_PAIRREG_SYSREG128::from(bits),
             )),
@@ -677,7 +677,7 @@ impl MRS_Rt_SYSREG {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::mrs,
+            mnemonic: Mnemonic::r#mrs,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::MRS_Rt_SYSREG(MRS_Rt_SYSREG::from(bits))),
         }
     }
@@ -720,7 +720,7 @@ impl MSR_PSTATEFIELD_UIMM4 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::msr,
+            mnemonic: Mnemonic::r#msr,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::MSR_PSTATEFIELD_UIMM4(
                 MSR_PSTATEFIELD_UIMM4::from(bits),
             )),
@@ -765,7 +765,7 @@ impl MSR_SYSREG_Rt {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::msr,
+            mnemonic: Mnemonic::r#msr,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::MSR_SYSREG_Rt(MSR_SYSREG_Rt::from(bits))),
         }
     }
@@ -814,7 +814,7 @@ impl MSRR_SYSREG128_Rt_PAIRREG {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::msrr,
+            mnemonic: Mnemonic::r#msrr,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::MSRR_SYSREG128_Rt_PAIRREG(
                 MSRR_SYSREG128_Rt_PAIRREG::from(bits),
             )),
@@ -873,7 +873,7 @@ impl RMIF_Rn_IMM_2_MASK {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::rmif,
+            mnemonic: Mnemonic::r#rmif,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::RMIF_Rn_IMM_2_MASK(
                 RMIF_Rn_IMM_2_MASK::from(bits),
             )),
@@ -901,7 +901,7 @@ impl SB {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::sb,
+            mnemonic: Mnemonic::r#sb,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::SB(SB::from(bits))),
         }
     }
@@ -925,7 +925,7 @@ impl SETF16_Rn {
         operands: &[InsnOperand {
             kind: InsnOperandKind::Rn,
             class: InsnOperandClass::INT_REG,
-            qualifiers: &[],
+            qualifiers: &[InsnOperandQualifier::W],
             bit_fields: &[BitfieldSpec {
                 bitfield: InsnBitField::Rn,
                 lsb: 5,
@@ -936,7 +936,7 @@ impl SETF16_Rn {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::setf16,
+            mnemonic: Mnemonic::r#setf16,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::SETF16_Rn(SETF16_Rn::from(bits))),
         }
     }
@@ -960,7 +960,7 @@ impl SETF8_Rn {
         operands: &[InsnOperand {
             kind: InsnOperandKind::Rn,
             class: InsnOperandClass::INT_REG,
-            qualifiers: &[],
+            qualifiers: &[InsnOperandQualifier::W],
             bit_fields: &[BitfieldSpec {
                 bitfield: InsnBitField::Rn,
                 lsb: 5,
@@ -971,7 +971,7 @@ impl SETF8_Rn {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::setf8,
+            mnemonic: Mnemonic::r#setf8,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::SETF8_Rn(SETF8_Rn::from(bits))),
         }
     }
@@ -1048,7 +1048,7 @@ impl SYS_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::sys,
+            mnemonic: Mnemonic::r#sys,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::SYS_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt(
                 SYS_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt::from(bits),
             )),
@@ -1127,7 +1127,7 @@ impl SYSL_Rt_UIMM3_OP1_CRn_CRm_UIMM3_OP2 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::sysl,
+            mnemonic: Mnemonic::r#sysl,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::SYSL_Rt_UIMM3_OP1_CRn_CRm_UIMM3_OP2(
                 SYSL_Rt_UIMM3_OP1_CRn_CRm_UIMM3_OP2::from(bits),
             )),
@@ -1214,7 +1214,7 @@ impl SYSP_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt_PAIRREG_OR_XZR {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::sysp,
+            mnemonic: Mnemonic::r#sysp,
             operation: Operation::IC_SYSTEM(
                 IC_SYSTEM::SYSP_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt_PAIRREG_OR_XZR(
                     SYSP_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt_PAIRREG_OR_XZR::from(bits),
@@ -1242,7 +1242,7 @@ impl WFET_Rd {
         operands: &[InsnOperand {
             kind: InsnOperandKind::Rd,
             class: InsnOperandClass::INT_REG,
-            qualifiers: &[],
+            qualifiers: &[InsnOperandQualifier::X],
             bit_fields: &[BitfieldSpec {
                 bitfield: InsnBitField::Rd,
                 lsb: 0,
@@ -1253,7 +1253,7 @@ impl WFET_Rd {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::wfet,
+            mnemonic: Mnemonic::r#wfet,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::WFET_Rd(WFET_Rd::from(bits))),
         }
     }
@@ -1277,7 +1277,7 @@ impl WFIT_Rd {
         operands: &[InsnOperand {
             kind: InsnOperandKind::Rd,
             class: InsnOperandClass::INT_REG,
-            qualifiers: &[],
+            qualifiers: &[InsnOperandQualifier::X],
             bit_fields: &[BitfieldSpec {
                 bitfield: InsnBitField::Rd,
                 lsb: 0,
@@ -1288,7 +1288,7 @@ impl WFIT_Rd {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::wfit,
+            mnemonic: Mnemonic::r#wfit,
             operation: Operation::IC_SYSTEM(IC_SYSTEM::WFIT_Rd(WFIT_Rd::from(bits))),
         }
     }

@@ -37,239 +37,239 @@ enum Decode {
 type DecodeTable = &'static [Decode];
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Mnemonic {
-    and,
-    ands,
-    bic,
-    bics,
-    cas,
-    casa,
-    casab,
-    casah,
-    casal,
-    casalb,
-    casalh,
-    casb,
-    cash,
-    casl,
-    caslb,
-    caslh,
-    casp,
-    caspa,
-    caspal,
-    caspl,
-    eon,
-    eor,
-    ld64b,
-    ldadd,
-    ldadda,
-    ldaddab,
-    ldaddah,
-    ldaddal,
-    ldaddalb,
-    ldaddalh,
-    ldaddb,
-    ldaddh,
-    ldaddl,
-    ldaddlb,
-    ldaddlh,
-    ldapr,
-    ldaprb,
-    ldaprh,
-    ldapur,
-    ldapurb,
-    ldapurh,
-    ldapursb,
-    ldapursh,
-    ldapursw,
-    ldar,
-    ldarb,
-    ldarh,
-    ldaxp,
-    ldaxr,
-    ldaxrb,
-    ldaxrh,
-    ldclr,
-    ldclra,
-    ldclrab,
-    ldclrah,
-    ldclral,
-    ldclralb,
-    ldclralh,
-    ldclrb,
-    ldclrh,
-    ldclrl,
-    ldclrlb,
-    ldclrlh,
-    ldclrp,
-    ldclrpa,
-    ldclrpal,
-    ldclrpl,
-    ldeor,
-    ldeora,
-    ldeorab,
-    ldeorah,
-    ldeoral,
-    ldeoralb,
-    ldeoralh,
-    ldeorb,
-    ldeorh,
-    ldeorl,
-    ldeorlb,
-    ldeorlh,
-    ldg,
-    ldgm,
-    ldlar,
-    ldlarb,
-    ldlarh,
-    ldnp,
-    ldp,
-    ldpsw,
-    ldr,
-    ldraa,
-    ldrab,
-    ldrb,
-    ldrh,
-    ldrsb,
-    ldrsh,
-    ldrsw,
-    ldset,
-    ldseta,
-    ldsetab,
-    ldsetah,
-    ldsetal,
-    ldsetalb,
-    ldsetalh,
-    ldsetb,
-    ldseth,
-    ldsetl,
-    ldsetlb,
-    ldsetlh,
-    ldsetp,
-    ldsetpa,
-    ldsetpal,
-    ldsetpl,
-    ldsmax,
-    ldsmaxa,
-    ldsmaxab,
-    ldsmaxah,
-    ldsmaxal,
-    ldsmaxalb,
-    ldsmaxalh,
-    ldsmaxb,
-    ldsmaxh,
-    ldsmaxl,
-    ldsmaxlb,
-    ldsmaxlh,
-    ldsmin,
-    ldsmina,
-    ldsminab,
-    ldsminah,
-    ldsminal,
-    ldsminalb,
-    ldsminalh,
-    ldsminb,
-    ldsminh,
-    ldsminl,
-    ldsminlb,
-    ldsminlh,
-    ldtr,
-    ldtrb,
-    ldtrh,
-    ldtrsb,
-    ldtrsh,
-    ldtrsw,
-    ldumax,
-    ldumaxa,
-    ldumaxab,
-    ldumaxah,
-    ldumaxal,
-    ldumaxalb,
-    ldumaxalh,
-    ldumaxb,
-    ldumaxh,
-    ldumaxl,
-    ldumaxlb,
-    ldumaxlh,
-    ldumin,
-    ldumina,
-    lduminab,
-    lduminah,
-    lduminal,
-    lduminalb,
-    lduminalh,
-    lduminb,
-    lduminh,
-    lduminl,
-    lduminlb,
-    lduminlh,
-    ldur,
-    ldurb,
-    ldurh,
-    ldursb,
-    ldursh,
-    ldursw,
-    ldxp,
-    ldxr,
-    ldxrb,
-    ldxrh,
-    orn,
-    orr,
-    prfm,
-    prfum,
-    st2g,
-    st64b,
-    st64bv,
-    st64bv0,
-    stg,
-    stgm,
-    stgp,
-    stllr,
-    stllrb,
-    stllrh,
-    stlr,
-    stlrb,
-    stlrh,
-    stlur,
-    stlurb,
-    stlurh,
-    stlxp,
-    stlxr,
-    stlxrb,
-    stlxrh,
-    stnp,
-    stp,
-    str,
-    strb,
-    strh,
-    sttr,
-    sttrb,
-    sttrh,
-    stur,
-    sturb,
-    sturh,
-    stxp,
-    stxr,
-    stxrb,
-    stxrh,
-    stz2g,
-    stzg,
-    stzgm,
-    swp,
-    swpa,
-    swpab,
-    swpah,
-    swpal,
-    swpalb,
-    swpalh,
-    swpb,
-    swph,
-    swpl,
-    swplb,
-    swplh,
-    swpp,
-    swppa,
-    swppal,
-    swppl,
+    r#and,
+    r#ands,
+    r#bic,
+    r#bics,
+    r#cas,
+    r#casa,
+    r#casab,
+    r#casah,
+    r#casal,
+    r#casalb,
+    r#casalh,
+    r#casb,
+    r#cash,
+    r#casl,
+    r#caslb,
+    r#caslh,
+    r#casp,
+    r#caspa,
+    r#caspal,
+    r#caspl,
+    r#eon,
+    r#eor,
+    r#ld64b,
+    r#ldadd,
+    r#ldadda,
+    r#ldaddab,
+    r#ldaddah,
+    r#ldaddal,
+    r#ldaddalb,
+    r#ldaddalh,
+    r#ldaddb,
+    r#ldaddh,
+    r#ldaddl,
+    r#ldaddlb,
+    r#ldaddlh,
+    r#ldapr,
+    r#ldaprb,
+    r#ldaprh,
+    r#ldapur,
+    r#ldapurb,
+    r#ldapurh,
+    r#ldapursb,
+    r#ldapursh,
+    r#ldapursw,
+    r#ldar,
+    r#ldarb,
+    r#ldarh,
+    r#ldaxp,
+    r#ldaxr,
+    r#ldaxrb,
+    r#ldaxrh,
+    r#ldclr,
+    r#ldclra,
+    r#ldclrab,
+    r#ldclrah,
+    r#ldclral,
+    r#ldclralb,
+    r#ldclralh,
+    r#ldclrb,
+    r#ldclrh,
+    r#ldclrl,
+    r#ldclrlb,
+    r#ldclrlh,
+    r#ldclrp,
+    r#ldclrpa,
+    r#ldclrpal,
+    r#ldclrpl,
+    r#ldeor,
+    r#ldeora,
+    r#ldeorab,
+    r#ldeorah,
+    r#ldeoral,
+    r#ldeoralb,
+    r#ldeoralh,
+    r#ldeorb,
+    r#ldeorh,
+    r#ldeorl,
+    r#ldeorlb,
+    r#ldeorlh,
+    r#ldg,
+    r#ldgm,
+    r#ldlar,
+    r#ldlarb,
+    r#ldlarh,
+    r#ldnp,
+    r#ldp,
+    r#ldpsw,
+    r#ldr,
+    r#ldraa,
+    r#ldrab,
+    r#ldrb,
+    r#ldrh,
+    r#ldrsb,
+    r#ldrsh,
+    r#ldrsw,
+    r#ldset,
+    r#ldseta,
+    r#ldsetab,
+    r#ldsetah,
+    r#ldsetal,
+    r#ldsetalb,
+    r#ldsetalh,
+    r#ldsetb,
+    r#ldseth,
+    r#ldsetl,
+    r#ldsetlb,
+    r#ldsetlh,
+    r#ldsetp,
+    r#ldsetpa,
+    r#ldsetpal,
+    r#ldsetpl,
+    r#ldsmax,
+    r#ldsmaxa,
+    r#ldsmaxab,
+    r#ldsmaxah,
+    r#ldsmaxal,
+    r#ldsmaxalb,
+    r#ldsmaxalh,
+    r#ldsmaxb,
+    r#ldsmaxh,
+    r#ldsmaxl,
+    r#ldsmaxlb,
+    r#ldsmaxlh,
+    r#ldsmin,
+    r#ldsmina,
+    r#ldsminab,
+    r#ldsminah,
+    r#ldsminal,
+    r#ldsminalb,
+    r#ldsminalh,
+    r#ldsminb,
+    r#ldsminh,
+    r#ldsminl,
+    r#ldsminlb,
+    r#ldsminlh,
+    r#ldtr,
+    r#ldtrb,
+    r#ldtrh,
+    r#ldtrsb,
+    r#ldtrsh,
+    r#ldtrsw,
+    r#ldumax,
+    r#ldumaxa,
+    r#ldumaxab,
+    r#ldumaxah,
+    r#ldumaxal,
+    r#ldumaxalb,
+    r#ldumaxalh,
+    r#ldumaxb,
+    r#ldumaxh,
+    r#ldumaxl,
+    r#ldumaxlb,
+    r#ldumaxlh,
+    r#ldumin,
+    r#ldumina,
+    r#lduminab,
+    r#lduminah,
+    r#lduminal,
+    r#lduminalb,
+    r#lduminalh,
+    r#lduminb,
+    r#lduminh,
+    r#lduminl,
+    r#lduminlb,
+    r#lduminlh,
+    r#ldur,
+    r#ldurb,
+    r#ldurh,
+    r#ldursb,
+    r#ldursh,
+    r#ldursw,
+    r#ldxp,
+    r#ldxr,
+    r#ldxrb,
+    r#ldxrh,
+    r#orn,
+    r#orr,
+    r#prfm,
+    r#prfum,
+    r#st2g,
+    r#st64b,
+    r#st64bv,
+    r#st64bv0,
+    r#stg,
+    r#stgm,
+    r#stgp,
+    r#stllr,
+    r#stllrb,
+    r#stllrh,
+    r#stlr,
+    r#stlrb,
+    r#stlrh,
+    r#stlur,
+    r#stlurb,
+    r#stlurh,
+    r#stlxp,
+    r#stlxr,
+    r#stlxrb,
+    r#stlxrh,
+    r#stnp,
+    r#stp,
+    r#str,
+    r#strb,
+    r#strh,
+    r#sttr,
+    r#sttrb,
+    r#sttrh,
+    r#stur,
+    r#sturb,
+    r#sturh,
+    r#stxp,
+    r#stxr,
+    r#stxrb,
+    r#stxrh,
+    r#stz2g,
+    r#stzg,
+    r#stzgm,
+    r#swp,
+    r#swpa,
+    r#swpab,
+    r#swpah,
+    r#swpal,
+    r#swpalb,
+    r#swpalh,
+    r#swpb,
+    r#swph,
+    r#swpl,
+    r#swplb,
+    r#swplh,
+    r#swpp,
+    r#swppa,
+    r#swppal,
+    r#swppl,
 }
 #[bitfield(u32)]
 #[derive(PartialEq, Eq)]
@@ -4205,7 +4205,7 @@ impl AND_Rd_SP_Rn_LIMM {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::and,
+            mnemonic: Mnemonic::r#and,
             operation: Operation::LOG_IMM(LOG_IMM::AND_Rd_SP_Rn_LIMM(AND_Rd_SP_Rn_LIMM::from(
                 bits,
             ))),
@@ -4260,7 +4260,7 @@ impl AND_Rd_Rn_Rm_SFT {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::and,
+            mnemonic: Mnemonic::r#and,
             operation: Operation::LOG_SHIFT(LOG_SHIFT::AND_Rd_Rn_Rm_SFT(AND_Rd_Rn_Rm_SFT::from(
                 bits,
             ))),
@@ -4333,7 +4333,7 @@ impl ANDS_Rd_Rn_LIMM {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ands,
+            mnemonic: Mnemonic::r#ands,
             operation: Operation::LOG_IMM(LOG_IMM::ANDS_Rd_Rn_LIMM(ANDS_Rd_Rn_LIMM::from(bits))),
         }
     }
@@ -4388,7 +4388,7 @@ impl ANDS_Rd_Rn_Rm_SFT {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ands,
+            mnemonic: Mnemonic::r#ands,
             operation: Operation::LOG_SHIFT(LOG_SHIFT::ANDS_Rd_Rn_Rm_SFT(ANDS_Rd_Rn_Rm_SFT::from(
                 bits,
             ))),
@@ -4443,7 +4443,7 @@ impl BIC_Rd_Rn_Rm_SFT {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::bic,
+            mnemonic: Mnemonic::r#bic,
             operation: Operation::LOG_SHIFT(LOG_SHIFT::BIC_Rd_Rn_Rm_SFT(BIC_Rd_Rn_Rm_SFT::from(
                 bits,
             ))),
@@ -4498,7 +4498,7 @@ impl BICS_Rd_Rn_Rm_SFT {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::bics,
+            mnemonic: Mnemonic::r#bics,
             operation: Operation::LOG_SHIFT(LOG_SHIFT::BICS_Rd_Rn_Rm_SFT(BICS_Rd_Rn_Rm_SFT::from(
                 bits,
             ))),
@@ -4553,7 +4553,7 @@ impl CAS_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::cas,
+            mnemonic: Mnemonic::r#cas,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CAS_Rs_Rt_ADDR_SIMPLE(
                 CAS_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -4608,7 +4608,7 @@ impl CASA_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::casa,
+            mnemonic: Mnemonic::r#casa,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASA_Rs_Rt_ADDR_SIMPLE(
                 CASA_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -4663,7 +4663,7 @@ impl CASAB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::casab,
+            mnemonic: Mnemonic::r#casab,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASAB_Rs_Rt_ADDR_SIMPLE(
                 CASAB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -4718,7 +4718,7 @@ impl CASAH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::casah,
+            mnemonic: Mnemonic::r#casah,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASAH_Rs_Rt_ADDR_SIMPLE(
                 CASAH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -4773,7 +4773,7 @@ impl CASAL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::casal,
+            mnemonic: Mnemonic::r#casal,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASAL_Rs_Rt_ADDR_SIMPLE(
                 CASAL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -4828,7 +4828,7 @@ impl CASALB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::casalb,
+            mnemonic: Mnemonic::r#casalb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASALB_Rs_Rt_ADDR_SIMPLE(
                 CASALB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -4883,7 +4883,7 @@ impl CASALH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::casalh,
+            mnemonic: Mnemonic::r#casalh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASALH_Rs_Rt_ADDR_SIMPLE(
                 CASALH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -4938,7 +4938,7 @@ impl CASB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::casb,
+            mnemonic: Mnemonic::r#casb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASB_Rs_Rt_ADDR_SIMPLE(
                 CASB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -4993,7 +4993,7 @@ impl CASH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::cash,
+            mnemonic: Mnemonic::r#cash,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASH_Rs_Rt_ADDR_SIMPLE(
                 CASH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -5048,7 +5048,7 @@ impl CASL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::casl,
+            mnemonic: Mnemonic::r#casl,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASL_Rs_Rt_ADDR_SIMPLE(
                 CASL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -5103,7 +5103,7 @@ impl CASLB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::caslb,
+            mnemonic: Mnemonic::r#caslb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASLB_Rs_Rt_ADDR_SIMPLE(
                 CASLB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -5158,7 +5158,7 @@ impl CASLH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::caslh,
+            mnemonic: Mnemonic::r#caslh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASLH_Rs_Rt_ADDR_SIMPLE(
                 CASLH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -5225,7 +5225,7 @@ impl CASP_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::casp,
+            mnemonic: Mnemonic::r#casp,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASP_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE(
                 CASP_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE::from(bits),
             )),
@@ -5292,7 +5292,7 @@ impl CASPA_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::caspa,
+            mnemonic: Mnemonic::r#caspa,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASPA_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE(
                 CASPA_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE::from(bits),
             )),
@@ -5359,7 +5359,7 @@ impl CASPAL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::caspal,
+            mnemonic: Mnemonic::r#caspal,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASPAL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE(
                 CASPAL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE::from(bits),
             )),
@@ -5426,7 +5426,7 @@ impl CASPL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::caspl,
+            mnemonic: Mnemonic::r#caspl,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::CASPL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE(
                 CASPL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE::from(bits),
             )),
@@ -5481,7 +5481,7 @@ impl EON_Rd_Rn_Rm_SFT {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::eon,
+            mnemonic: Mnemonic::r#eon,
             operation: Operation::LOG_SHIFT(LOG_SHIFT::EON_Rd_Rn_Rm_SFT(EON_Rd_Rn_Rm_SFT::from(
                 bits,
             ))),
@@ -5552,7 +5552,7 @@ impl EOR_Rd_SP_Rn_LIMM {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::eor,
+            mnemonic: Mnemonic::r#eor,
             operation: Operation::LOG_IMM(LOG_IMM::EOR_Rd_SP_Rn_LIMM(EOR_Rd_SP_Rn_LIMM::from(
                 bits,
             ))),
@@ -5607,7 +5607,7 @@ impl EOR_Rd_Rn_Rm_SFT {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::eor,
+            mnemonic: Mnemonic::r#eor,
             operation: Operation::LOG_SHIFT(LOG_SHIFT::EOR_Rd_Rn_Rm_SFT(EOR_Rd_Rn_Rm_SFT::from(
                 bits,
             ))),
@@ -5652,7 +5652,7 @@ impl LD64B_Rt_LS64_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ld64b,
+            mnemonic: Mnemonic::r#ld64b,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LD64B_Rt_LS64_ADDR_SIMPLE(
                 LD64B_Rt_LS64_ADDR_SIMPLE::from(bits),
             )),
@@ -5709,7 +5709,7 @@ impl LDADD_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldadd,
+            mnemonic: Mnemonic::r#ldadd,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDADD_Rs_Rt_ADDR_SIMPLE(
                 LDADD_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -5764,7 +5764,7 @@ impl LDADDA_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldadda,
+            mnemonic: Mnemonic::r#ldadda,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDADDA_Rs_Rt_ADDR_SIMPLE(
                 LDADDA_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -5819,7 +5819,7 @@ impl LDADDAB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaddab,
+            mnemonic: Mnemonic::r#ldaddab,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDADDAB_Rs_Rt_ADDR_SIMPLE(
                 LDADDAB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -5874,7 +5874,7 @@ impl LDADDAH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaddah,
+            mnemonic: Mnemonic::r#ldaddah,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDADDAH_Rs_Rt_ADDR_SIMPLE(
                 LDADDAH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -5929,7 +5929,7 @@ impl LDADDAL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaddal,
+            mnemonic: Mnemonic::r#ldaddal,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDADDAL_Rs_Rt_ADDR_SIMPLE(
                 LDADDAL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -5984,7 +5984,7 @@ impl LDADDALB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaddalb,
+            mnemonic: Mnemonic::r#ldaddalb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDADDALB_Rs_Rt_ADDR_SIMPLE(
                 LDADDALB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -6039,7 +6039,7 @@ impl LDADDALH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaddalh,
+            mnemonic: Mnemonic::r#ldaddalh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDADDALH_Rs_Rt_ADDR_SIMPLE(
                 LDADDALH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -6094,7 +6094,7 @@ impl LDADDB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaddb,
+            mnemonic: Mnemonic::r#ldaddb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDADDB_Rs_Rt_ADDR_SIMPLE(
                 LDADDB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -6149,7 +6149,7 @@ impl LDADDH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaddh,
+            mnemonic: Mnemonic::r#ldaddh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDADDH_Rs_Rt_ADDR_SIMPLE(
                 LDADDH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -6206,7 +6206,7 @@ impl LDADDL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaddl,
+            mnemonic: Mnemonic::r#ldaddl,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDADDL_Rs_Rt_ADDR_SIMPLE(
                 LDADDL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -6261,7 +6261,7 @@ impl LDADDLB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaddlb,
+            mnemonic: Mnemonic::r#ldaddlb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDADDLB_Rs_Rt_ADDR_SIMPLE(
                 LDADDLB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -6316,7 +6316,7 @@ impl LDADDLH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaddlh,
+            mnemonic: Mnemonic::r#ldaddlh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDADDLH_Rs_Rt_ADDR_SIMPLE(
                 LDADDLH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -6343,7 +6343,7 @@ impl LDAPR_Rt_ADDR_SIMPLE {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -6361,7 +6361,7 @@ impl LDAPR_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldapr,
+            mnemonic: Mnemonic::r#ldapr,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDAPR_Rt_ADDR_SIMPLE(
                 LDAPR_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -6406,7 +6406,7 @@ impl LDAPRB_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaprb,
+            mnemonic: Mnemonic::r#ldaprb,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDAPRB_Rt_ADDR_SIMPLE(
                 LDAPRB_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -6451,7 +6451,7 @@ impl LDAPRH_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaprh,
+            mnemonic: Mnemonic::r#ldaprh,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDAPRH_Rt_ADDR_SIMPLE(
                 LDAPRH_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -6512,7 +6512,7 @@ impl LDAPUR_Rt_ADDR_OFFSET {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldapur,
+            mnemonic: Mnemonic::r#ldapur,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDAPUR_Rt_ADDR_OFFSET(
                 LDAPUR_Rt_ADDR_OFFSET::from(bits),
             )),
@@ -6573,7 +6573,7 @@ impl LDAPUR_Rt_X_ADDR_OFFSET {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldapur,
+            mnemonic: Mnemonic::r#ldapur,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDAPUR_Rt_X_ADDR_OFFSET(
                 LDAPUR_Rt_X_ADDR_OFFSET::from(bits),
             )),
@@ -6634,7 +6634,7 @@ impl LDAPURB_Rt_ADDR_OFFSET {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldapurb,
+            mnemonic: Mnemonic::r#ldapurb,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDAPURB_Rt_ADDR_OFFSET(
                 LDAPURB_Rt_ADDR_OFFSET::from(bits),
             )),
@@ -6695,7 +6695,7 @@ impl LDAPURH_Rt_ADDR_OFFSET {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldapurh,
+            mnemonic: Mnemonic::r#ldapurh,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDAPURH_Rt_ADDR_OFFSET(
                 LDAPURH_Rt_ADDR_OFFSET::from(bits),
             )),
@@ -6756,7 +6756,7 @@ impl LDAPURSB_Rt_ADDR_OFFSET {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldapursb,
+            mnemonic: Mnemonic::r#ldapursb,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDAPURSB_Rt_ADDR_OFFSET(
                 LDAPURSB_Rt_ADDR_OFFSET::from(bits),
             )),
@@ -6817,7 +6817,7 @@ impl LDAPURSB_Rt_W_ADDR_OFFSET {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldapursb,
+            mnemonic: Mnemonic::r#ldapursb,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDAPURSB_Rt_W_ADDR_OFFSET(
                 LDAPURSB_Rt_W_ADDR_OFFSET::from(bits),
             )),
@@ -6878,7 +6878,7 @@ impl LDAPURSH_Rt_ADDR_OFFSET {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldapursh,
+            mnemonic: Mnemonic::r#ldapursh,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDAPURSH_Rt_ADDR_OFFSET(
                 LDAPURSH_Rt_ADDR_OFFSET::from(bits),
             )),
@@ -6939,7 +6939,7 @@ impl LDAPURSH_Rt_W_ADDR_OFFSET {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldapursh,
+            mnemonic: Mnemonic::r#ldapursh,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDAPURSH_Rt_W_ADDR_OFFSET(
                 LDAPURSH_Rt_W_ADDR_OFFSET::from(bits),
             )),
@@ -7000,7 +7000,7 @@ impl LDAPURSW_Rt_ADDR_OFFSET {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldapursw,
+            mnemonic: Mnemonic::r#ldapursw,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDAPURSW_Rt_ADDR_OFFSET(
                 LDAPURSW_Rt_ADDR_OFFSET::from(bits),
             )),
@@ -7027,7 +7027,7 @@ impl LDAR_Rt_ADDR_SIMPLE {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -7045,7 +7045,7 @@ impl LDAR_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldar,
+            mnemonic: Mnemonic::r#ldar,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDAR_Rt_ADDR_SIMPLE(
                 LDAR_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7090,7 +7090,7 @@ impl LDARB_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldarb,
+            mnemonic: Mnemonic::r#ldarb,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDARB_Rt_ADDR_SIMPLE(
                 LDARB_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7135,7 +7135,7 @@ impl LDARH_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldarh,
+            mnemonic: Mnemonic::r#ldarh,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDARH_Rt_ADDR_SIMPLE(
                 LDARH_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7190,7 +7190,7 @@ impl LDAXP_Rt_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaxp,
+            mnemonic: Mnemonic::r#ldaxp,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDAXP_Rt_Rt2_ADDR_SIMPLE(
                 LDAXP_Rt_Rt2_ADDR_SIMPLE::from(bits),
             )),
@@ -7217,7 +7217,7 @@ impl LDAXR_Rt_ADDR_SIMPLE {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -7235,7 +7235,7 @@ impl LDAXR_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaxr,
+            mnemonic: Mnemonic::r#ldaxr,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDAXR_Rt_ADDR_SIMPLE(
                 LDAXR_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7280,7 +7280,7 @@ impl LDAXRB_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaxrb,
+            mnemonic: Mnemonic::r#ldaxrb,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDAXRB_Rt_ADDR_SIMPLE(
                 LDAXRB_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7325,7 +7325,7 @@ impl LDAXRH_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldaxrh,
+            mnemonic: Mnemonic::r#ldaxrh,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDAXRH_Rt_ADDR_SIMPLE(
                 LDAXRH_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7382,7 +7382,7 @@ impl LDCLR_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclr,
+            mnemonic: Mnemonic::r#ldclr,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDCLR_Rs_Rt_ADDR_SIMPLE(
                 LDCLR_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7437,7 +7437,7 @@ impl LDCLRA_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclra,
+            mnemonic: Mnemonic::r#ldclra,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDCLRA_Rs_Rt_ADDR_SIMPLE(
                 LDCLRA_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7492,7 +7492,7 @@ impl LDCLRAB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclrab,
+            mnemonic: Mnemonic::r#ldclrab,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDCLRAB_Rs_Rt_ADDR_SIMPLE(
                 LDCLRAB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7547,7 +7547,7 @@ impl LDCLRAH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclrah,
+            mnemonic: Mnemonic::r#ldclrah,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDCLRAH_Rs_Rt_ADDR_SIMPLE(
                 LDCLRAH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7602,7 +7602,7 @@ impl LDCLRAL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclral,
+            mnemonic: Mnemonic::r#ldclral,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDCLRAL_Rs_Rt_ADDR_SIMPLE(
                 LDCLRAL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7657,7 +7657,7 @@ impl LDCLRALB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclralb,
+            mnemonic: Mnemonic::r#ldclralb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDCLRALB_Rs_Rt_ADDR_SIMPLE(
                 LDCLRALB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7712,7 +7712,7 @@ impl LDCLRALH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclralh,
+            mnemonic: Mnemonic::r#ldclralh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDCLRALH_Rs_Rt_ADDR_SIMPLE(
                 LDCLRALH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7767,7 +7767,7 @@ impl LDCLRB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclrb,
+            mnemonic: Mnemonic::r#ldclrb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDCLRB_Rs_Rt_ADDR_SIMPLE(
                 LDCLRB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7822,7 +7822,7 @@ impl LDCLRH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclrh,
+            mnemonic: Mnemonic::r#ldclrh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDCLRH_Rs_Rt_ADDR_SIMPLE(
                 LDCLRH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7879,7 +7879,7 @@ impl LDCLRL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclrl,
+            mnemonic: Mnemonic::r#ldclrl,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDCLRL_Rs_Rt_ADDR_SIMPLE(
                 LDCLRL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7934,7 +7934,7 @@ impl LDCLRLB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclrlb,
+            mnemonic: Mnemonic::r#ldclrlb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDCLRLB_Rs_Rt_ADDR_SIMPLE(
                 LDCLRLB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -7989,7 +7989,7 @@ impl LDCLRLH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclrlh,
+            mnemonic: Mnemonic::r#ldclrlh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDCLRLH_Rs_Rt_ADDR_SIMPLE(
                 LDCLRLH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -8044,7 +8044,7 @@ impl LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclrp,
+            mnemonic: Mnemonic::r#ldclrp,
             operation: Operation::LSE128_ATOMIC(
                 LSE128_ATOMIC::LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
                     LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE::from(bits),
@@ -8101,7 +8101,7 @@ impl LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclrpa,
+            mnemonic: Mnemonic::r#ldclrpa,
             operation: Operation::LSE128_ATOMIC(
                 LSE128_ATOMIC::LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
                     LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE::from(bits),
@@ -8158,7 +8158,7 @@ impl LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclrpal,
+            mnemonic: Mnemonic::r#ldclrpal,
             operation: Operation::LSE128_ATOMIC(
                 LSE128_ATOMIC::LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
                     LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE::from(bits),
@@ -8215,7 +8215,7 @@ impl LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldclrpl,
+            mnemonic: Mnemonic::r#ldclrpl,
             operation: Operation::LSE128_ATOMIC(
                 LSE128_ATOMIC::LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
                     LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE::from(bits),
@@ -8274,7 +8274,7 @@ impl LDEOR_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldeor,
+            mnemonic: Mnemonic::r#ldeor,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDEOR_Rs_Rt_ADDR_SIMPLE(
                 LDEOR_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -8329,7 +8329,7 @@ impl LDEORA_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldeora,
+            mnemonic: Mnemonic::r#ldeora,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDEORA_Rs_Rt_ADDR_SIMPLE(
                 LDEORA_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -8384,7 +8384,7 @@ impl LDEORAB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldeorab,
+            mnemonic: Mnemonic::r#ldeorab,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDEORAB_Rs_Rt_ADDR_SIMPLE(
                 LDEORAB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -8439,7 +8439,7 @@ impl LDEORAH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldeorah,
+            mnemonic: Mnemonic::r#ldeorah,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDEORAH_Rs_Rt_ADDR_SIMPLE(
                 LDEORAH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -8494,7 +8494,7 @@ impl LDEORAL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldeoral,
+            mnemonic: Mnemonic::r#ldeoral,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDEORAL_Rs_Rt_ADDR_SIMPLE(
                 LDEORAL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -8549,7 +8549,7 @@ impl LDEORALB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldeoralb,
+            mnemonic: Mnemonic::r#ldeoralb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDEORALB_Rs_Rt_ADDR_SIMPLE(
                 LDEORALB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -8604,7 +8604,7 @@ impl LDEORALH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldeoralh,
+            mnemonic: Mnemonic::r#ldeoralh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDEORALH_Rs_Rt_ADDR_SIMPLE(
                 LDEORALH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -8659,7 +8659,7 @@ impl LDEORB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldeorb,
+            mnemonic: Mnemonic::r#ldeorb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDEORB_Rs_Rt_ADDR_SIMPLE(
                 LDEORB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -8714,7 +8714,7 @@ impl LDEORH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldeorh,
+            mnemonic: Mnemonic::r#ldeorh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDEORH_Rs_Rt_ADDR_SIMPLE(
                 LDEORH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -8771,7 +8771,7 @@ impl LDEORL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldeorl,
+            mnemonic: Mnemonic::r#ldeorl,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDEORL_Rs_Rt_ADDR_SIMPLE(
                 LDEORL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -8826,7 +8826,7 @@ impl LDEORLB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldeorlb,
+            mnemonic: Mnemonic::r#ldeorlb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDEORLB_Rs_Rt_ADDR_SIMPLE(
                 LDEORLB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -8881,7 +8881,7 @@ impl LDEORLH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldeorlh,
+            mnemonic: Mnemonic::r#ldeorlh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDEORLH_Rs_Rt_ADDR_SIMPLE(
                 LDEORLH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -8937,7 +8937,7 @@ impl LDG_Rt_ADDR_SIMM13 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldg,
+            mnemonic: Mnemonic::r#ldg,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDG_Rt_ADDR_SIMM13(
                 LDG_Rt_ADDR_SIMM13::from(bits),
             )),
@@ -8982,7 +8982,7 @@ impl LDGM_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldgm,
+            mnemonic: Mnemonic::r#ldgm,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDGM_Rt_ADDR_SIMPLE(
                 LDGM_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -9009,7 +9009,7 @@ impl LDLAR_Rt_ADDR_SIMPLE {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -9027,7 +9027,7 @@ impl LDLAR_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldlar,
+            mnemonic: Mnemonic::r#ldlar,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDLAR_Rt_ADDR_SIMPLE(
                 LDLAR_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -9072,7 +9072,7 @@ impl LDLARB_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldlarb,
+            mnemonic: Mnemonic::r#ldlarb,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDLARB_Rt_ADDR_SIMPLE(
                 LDLARB_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -9117,7 +9117,7 @@ impl LDLARH_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldlarh,
+            mnemonic: Mnemonic::r#ldlarh,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDLARH_Rt_ADDR_SIMPLE(
                 LDLARH_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -9183,7 +9183,7 @@ impl LDNP_Rt_Rt2_ADDR_SIMM7 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldnp,
+            mnemonic: Mnemonic::r#ldnp,
             operation: Operation::LDSTNAPAIR_OFFS(LDSTNAPAIR_OFFS::LDNP_Rt_Rt2_ADDR_SIMM7(
                 LDNP_Rt_Rt2_ADDR_SIMM7::from(bits),
             )),
@@ -9210,7 +9210,11 @@ impl LDNP_Ft_Ft2_ADDR_SIMM7 {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -9220,7 +9224,11 @@ impl LDNP_Ft_Ft2_ADDR_SIMM7 {
             InsnOperand {
                 kind: InsnOperandKind::Ft2,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt2,
                     lsb: 10,
@@ -9230,7 +9238,11 @@ impl LDNP_Ft_Ft2_ADDR_SIMM7 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM7,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm7,
@@ -9249,7 +9261,7 @@ impl LDNP_Ft_Ft2_ADDR_SIMM7 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldnp,
+            mnemonic: Mnemonic::r#ldnp,
             operation: Operation::LDSTNAPAIR_OFFS(LDSTNAPAIR_OFFS::LDNP_Ft_Ft2_ADDR_SIMM7(
                 LDNP_Ft_Ft2_ADDR_SIMM7::from(bits),
             )),
@@ -9315,7 +9327,7 @@ impl LDP_Rt_Rt2_ADDR_SIMM7 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldp,
+            mnemonic: Mnemonic::r#ldp,
             operation: Operation::LDSTPAIR_OFF(LDSTPAIR_OFF::LDP_Rt_Rt2_ADDR_SIMM7(
                 LDP_Rt_Rt2_ADDR_SIMM7::from(bits),
             )),
@@ -9381,7 +9393,7 @@ impl LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldp,
+            mnemonic: Mnemonic::r#ldp,
             operation: Operation::LDSTPAIR_INDEXED(
                 LDSTPAIR_INDEXED::LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(
                     LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S::from(bits),
@@ -9410,7 +9422,11 @@ impl LDP_Ft_Ft2_ADDR_SIMM7 {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -9420,7 +9436,11 @@ impl LDP_Ft_Ft2_ADDR_SIMM7 {
             InsnOperand {
                 kind: InsnOperandKind::Ft2,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt2,
                     lsb: 10,
@@ -9430,7 +9450,11 @@ impl LDP_Ft_Ft2_ADDR_SIMM7 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM7,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm7,
@@ -9449,7 +9473,7 @@ impl LDP_Ft_Ft2_ADDR_SIMM7 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldp,
+            mnemonic: Mnemonic::r#ldp,
             operation: Operation::LDSTPAIR_OFF(LDSTPAIR_OFF::LDP_Ft_Ft2_ADDR_SIMM7(
                 LDP_Ft_Ft2_ADDR_SIMM7::from(bits),
             )),
@@ -9476,7 +9500,11 @@ impl LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -9486,7 +9514,11 @@ impl LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S {
             InsnOperand {
                 kind: InsnOperandKind::Ft2,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt2,
                     lsb: 10,
@@ -9496,7 +9528,11 @@ impl LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM7,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm7,
@@ -9515,7 +9551,7 @@ impl LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldp,
+            mnemonic: Mnemonic::r#ldp,
             operation: Operation::LDSTPAIR_INDEXED(
                 LDSTPAIR_INDEXED::LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(
                     LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S::from(bits),
@@ -9583,7 +9619,7 @@ impl LDPSW_Rt_Rt2_ADDR_SIMM7 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldpsw,
+            mnemonic: Mnemonic::r#ldpsw,
             operation: Operation::LDSTPAIR_OFF(LDSTPAIR_OFF::LDPSW_Rt_Rt2_ADDR_SIMM7(
                 LDPSW_Rt_Rt2_ADDR_SIMM7::from(bits),
             )),
@@ -9649,7 +9685,7 @@ impl LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldpsw,
+            mnemonic: Mnemonic::r#ldpsw,
             operation: Operation::LDSTPAIR_INDEXED(
                 LDSTPAIR_INDEXED::LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S(
                     LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S::from(bits),
@@ -9678,7 +9714,7 @@ impl LDR_Rt_ADDR_PCREL19 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -9700,7 +9736,7 @@ impl LDR_Rt_ADDR_PCREL19 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldr,
+            mnemonic: Mnemonic::r#ldr,
             operation: Operation::LOADLIT(LOADLIT::LDR_Rt_ADDR_PCREL19(LDR_Rt_ADDR_PCREL19::from(
                 bits,
             ))),
@@ -9727,7 +9763,7 @@ impl LDR_Rt_ADDR_REGOFF {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -9737,7 +9773,7 @@ impl LDR_Rt_ADDR_REGOFF {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_REGOFF,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S],
+                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
                 bit_fields: &[],
             },
         ],
@@ -9745,7 +9781,7 @@ impl LDR_Rt_ADDR_REGOFF {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldr,
+            mnemonic: Mnemonic::r#ldr,
             operation: Operation::LDST_REGOFF(LDST_REGOFF::LDR_Rt_ADDR_REGOFF(
                 LDR_Rt_ADDR_REGOFF::from(bits),
             )),
@@ -9772,7 +9808,7 @@ impl LDR_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -9782,7 +9818,7 @@ impl LDR_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S],
+                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -9801,7 +9837,7 @@ impl LDR_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldr,
+            mnemonic: Mnemonic::r#ldr,
             operation: Operation::LDST_IMM9(LDST_IMM9::LDR_Rt_ADDR_SIMM9(LDR_Rt_ADDR_SIMM9::from(
                 bits,
             ))),
@@ -9828,7 +9864,7 @@ impl LDR_Rt_ADDR_UIMM12 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -9838,7 +9874,7 @@ impl LDR_Rt_ADDR_UIMM12 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_UIMM12,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S],
+                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::Rn,
@@ -9857,7 +9893,7 @@ impl LDR_Rt_ADDR_UIMM12 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldr,
+            mnemonic: Mnemonic::r#ldr,
             operation: Operation::LDST_POS(LDST_POS::LDR_Rt_ADDR_UIMM12(LDR_Rt_ADDR_UIMM12::from(
                 bits,
             ))),
@@ -9884,7 +9920,11 @@ impl LDR_Ft_ADDR_PCREL19 {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_S],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -9906,7 +9946,7 @@ impl LDR_Ft_ADDR_PCREL19 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldr,
+            mnemonic: Mnemonic::r#ldr,
             operation: Operation::LOADLIT(LOADLIT::LDR_Ft_ADDR_PCREL19(LDR_Ft_ADDR_PCREL19::from(
                 bits,
             ))),
@@ -9933,7 +9973,13 @@ impl LDR_Ft_ADDR_REGOFF {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -9943,7 +9989,13 @@ impl LDR_Ft_ADDR_REGOFF {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_REGOFF,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[],
             },
         ],
@@ -9951,7 +10003,7 @@ impl LDR_Ft_ADDR_REGOFF {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldr,
+            mnemonic: Mnemonic::r#ldr,
             operation: Operation::LDST_REGOFF(LDST_REGOFF::LDR_Ft_ADDR_REGOFF(
                 LDR_Ft_ADDR_REGOFF::from(bits),
             )),
@@ -9978,7 +10030,13 @@ impl LDR_Ft_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -9988,7 +10046,13 @@ impl LDR_Ft_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -10007,7 +10071,7 @@ impl LDR_Ft_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldr,
+            mnemonic: Mnemonic::r#ldr,
             operation: Operation::LDST_IMM9(LDST_IMM9::LDR_Ft_ADDR_SIMM9(LDR_Ft_ADDR_SIMM9::from(
                 bits,
             ))),
@@ -10034,7 +10098,13 @@ impl LDR_Ft_ADDR_UIMM12 {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -10044,7 +10114,13 @@ impl LDR_Ft_ADDR_UIMM12 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_UIMM12,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::Rn,
@@ -10063,7 +10139,7 @@ impl LDR_Ft_ADDR_UIMM12 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldr,
+            mnemonic: Mnemonic::r#ldr,
             operation: Operation::LDST_POS(LDST_POS::LDR_Ft_ADDR_UIMM12(LDR_Ft_ADDR_UIMM12::from(
                 bits,
             ))),
@@ -10129,7 +10205,7 @@ impl LDRAA_Rt_ADDR_SIMM10 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldraa,
+            mnemonic: Mnemonic::r#ldraa,
             operation: Operation::LDST_IMM10(LDST_IMM10::LDRAA_Rt_ADDR_SIMM10(
                 LDRAA_Rt_ADDR_SIMM10::from(bits),
             )),
@@ -10195,7 +10271,7 @@ impl LDRAB_Rt_ADDR_SIMM10 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrab,
+            mnemonic: Mnemonic::r#ldrab,
             operation: Operation::LDST_IMM10(LDST_IMM10::LDRAB_Rt_ADDR_SIMM10(
                 LDRAB_Rt_ADDR_SIMM10::from(bits),
             )),
@@ -10240,7 +10316,7 @@ impl LDRB_Rt_ADDR_REGOFF {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrb,
+            mnemonic: Mnemonic::r#ldrb,
             operation: Operation::LDST_REGOFF(LDST_REGOFF::LDRB_Rt_ADDR_REGOFF(
                 LDRB_Rt_ADDR_REGOFF::from(bits),
             )),
@@ -10296,7 +10372,7 @@ impl LDRB_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrb,
+            mnemonic: Mnemonic::r#ldrb,
             operation: Operation::LDST_IMM9(LDST_IMM9::LDRB_Rt_ADDR_SIMM9(
                 LDRB_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -10352,7 +10428,7 @@ impl LDRB_Rt_ADDR_UIMM12 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrb,
+            mnemonic: Mnemonic::r#ldrb,
             operation: Operation::LDST_POS(LDST_POS::LDRB_Rt_ADDR_UIMM12(
                 LDRB_Rt_ADDR_UIMM12::from(bits),
             )),
@@ -10397,7 +10473,7 @@ impl LDRH_Rt_ADDR_REGOFF {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrh,
+            mnemonic: Mnemonic::r#ldrh,
             operation: Operation::LDST_REGOFF(LDST_REGOFF::LDRH_Rt_ADDR_REGOFF(
                 LDRH_Rt_ADDR_REGOFF::from(bits),
             )),
@@ -10453,7 +10529,7 @@ impl LDRH_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrh,
+            mnemonic: Mnemonic::r#ldrh,
             operation: Operation::LDST_IMM9(LDST_IMM9::LDRH_Rt_ADDR_SIMM9(
                 LDRH_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -10509,7 +10585,7 @@ impl LDRH_Rt_ADDR_UIMM12 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrh,
+            mnemonic: Mnemonic::r#ldrh,
             operation: Operation::LDST_POS(LDST_POS::LDRH_Rt_ADDR_UIMM12(
                 LDRH_Rt_ADDR_UIMM12::from(bits),
             )),
@@ -10536,7 +10612,7 @@ impl LDRSB_Rt_ADDR_REGOFF {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -10546,7 +10622,7 @@ impl LDRSB_Rt_ADDR_REGOFF {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_REGOFF,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
                 bit_fields: &[],
             },
         ],
@@ -10554,7 +10630,7 @@ impl LDRSB_Rt_ADDR_REGOFF {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrsb,
+            mnemonic: Mnemonic::r#ldrsb,
             operation: Operation::LDST_REGOFF(LDST_REGOFF::LDRSB_Rt_ADDR_REGOFF(
                 LDRSB_Rt_ADDR_REGOFF::from(bits),
             )),
@@ -10581,7 +10657,7 @@ impl LDRSB_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -10591,7 +10667,7 @@ impl LDRSB_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -10610,7 +10686,7 @@ impl LDRSB_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrsb,
+            mnemonic: Mnemonic::r#ldrsb,
             operation: Operation::LDST_IMM9(LDST_IMM9::LDRSB_Rt_ADDR_SIMM9(
                 LDRSB_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -10637,7 +10713,7 @@ impl LDRSB_Rt_ADDR_UIMM12 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -10647,7 +10723,7 @@ impl LDRSB_Rt_ADDR_UIMM12 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_UIMM12,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::Rn,
@@ -10666,7 +10742,7 @@ impl LDRSB_Rt_ADDR_UIMM12 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrsb,
+            mnemonic: Mnemonic::r#ldrsb,
             operation: Operation::LDST_POS(LDST_POS::LDRSB_Rt_ADDR_UIMM12(
                 LDRSB_Rt_ADDR_UIMM12::from(bits),
             )),
@@ -10693,7 +10769,7 @@ impl LDRSH_Rt_ADDR_REGOFF {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -10703,7 +10779,7 @@ impl LDRSH_Rt_ADDR_REGOFF {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_REGOFF,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H],
+                qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
                 bit_fields: &[],
             },
         ],
@@ -10711,7 +10787,7 @@ impl LDRSH_Rt_ADDR_REGOFF {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrsh,
+            mnemonic: Mnemonic::r#ldrsh,
             operation: Operation::LDST_REGOFF(LDST_REGOFF::LDRSH_Rt_ADDR_REGOFF(
                 LDRSH_Rt_ADDR_REGOFF::from(bits),
             )),
@@ -10738,7 +10814,7 @@ impl LDRSH_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -10748,7 +10824,7 @@ impl LDRSH_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H],
+                qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -10767,7 +10843,7 @@ impl LDRSH_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrsh,
+            mnemonic: Mnemonic::r#ldrsh,
             operation: Operation::LDST_IMM9(LDST_IMM9::LDRSH_Rt_ADDR_SIMM9(
                 LDRSH_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -10794,7 +10870,7 @@ impl LDRSH_Rt_ADDR_UIMM12 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -10804,7 +10880,7 @@ impl LDRSH_Rt_ADDR_UIMM12 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_UIMM12,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H],
+                qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::Rn,
@@ -10823,7 +10899,7 @@ impl LDRSH_Rt_ADDR_UIMM12 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrsh,
+            mnemonic: Mnemonic::r#ldrsh,
             operation: Operation::LDST_POS(LDST_POS::LDRSH_Rt_ADDR_UIMM12(
                 LDRSH_Rt_ADDR_UIMM12::from(bits),
             )),
@@ -10872,7 +10948,7 @@ impl LDRSW_Rt_ADDR_PCREL19 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrsw,
+            mnemonic: Mnemonic::r#ldrsw,
             operation: Operation::LOADLIT(LOADLIT::LDRSW_Rt_ADDR_PCREL19(
                 LDRSW_Rt_ADDR_PCREL19::from(bits),
             )),
@@ -10917,7 +10993,7 @@ impl LDRSW_Rt_ADDR_REGOFF {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrsw,
+            mnemonic: Mnemonic::r#ldrsw,
             operation: Operation::LDST_REGOFF(LDST_REGOFF::LDRSW_Rt_ADDR_REGOFF(
                 LDRSW_Rt_ADDR_REGOFF::from(bits),
             )),
@@ -10973,7 +11049,7 @@ impl LDRSW_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrsw,
+            mnemonic: Mnemonic::r#ldrsw,
             operation: Operation::LDST_IMM9(LDST_IMM9::LDRSW_Rt_ADDR_SIMM9(
                 LDRSW_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -11029,7 +11105,7 @@ impl LDRSW_Rt_ADDR_UIMM12 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldrsw,
+            mnemonic: Mnemonic::r#ldrsw,
             operation: Operation::LDST_POS(LDST_POS::LDRSW_Rt_ADDR_UIMM12(
                 LDRSW_Rt_ADDR_UIMM12::from(bits),
             )),
@@ -11086,7 +11162,7 @@ impl LDSET_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldset,
+            mnemonic: Mnemonic::r#ldset,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSET_Rs_Rt_ADDR_SIMPLE(
                 LDSET_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -11141,7 +11217,7 @@ impl LDSETA_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldseta,
+            mnemonic: Mnemonic::r#ldseta,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSETA_Rs_Rt_ADDR_SIMPLE(
                 LDSETA_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -11196,7 +11272,7 @@ impl LDSETAB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsetab,
+            mnemonic: Mnemonic::r#ldsetab,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSETAB_Rs_Rt_ADDR_SIMPLE(
                 LDSETAB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -11251,7 +11327,7 @@ impl LDSETAH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsetah,
+            mnemonic: Mnemonic::r#ldsetah,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSETAH_Rs_Rt_ADDR_SIMPLE(
                 LDSETAH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -11306,7 +11382,7 @@ impl LDSETAL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsetal,
+            mnemonic: Mnemonic::r#ldsetal,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSETAL_Rs_Rt_ADDR_SIMPLE(
                 LDSETAL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -11361,7 +11437,7 @@ impl LDSETALB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsetalb,
+            mnemonic: Mnemonic::r#ldsetalb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSETALB_Rs_Rt_ADDR_SIMPLE(
                 LDSETALB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -11416,7 +11492,7 @@ impl LDSETALH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsetalh,
+            mnemonic: Mnemonic::r#ldsetalh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSETALH_Rs_Rt_ADDR_SIMPLE(
                 LDSETALH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -11471,7 +11547,7 @@ impl LDSETB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsetb,
+            mnemonic: Mnemonic::r#ldsetb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSETB_Rs_Rt_ADDR_SIMPLE(
                 LDSETB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -11526,7 +11602,7 @@ impl LDSETH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldseth,
+            mnemonic: Mnemonic::r#ldseth,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSETH_Rs_Rt_ADDR_SIMPLE(
                 LDSETH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -11583,7 +11659,7 @@ impl LDSETL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsetl,
+            mnemonic: Mnemonic::r#ldsetl,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSETL_Rs_Rt_ADDR_SIMPLE(
                 LDSETL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -11638,7 +11714,7 @@ impl LDSETLB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsetlb,
+            mnemonic: Mnemonic::r#ldsetlb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSETLB_Rs_Rt_ADDR_SIMPLE(
                 LDSETLB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -11693,7 +11769,7 @@ impl LDSETLH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsetlh,
+            mnemonic: Mnemonic::r#ldsetlh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSETLH_Rs_Rt_ADDR_SIMPLE(
                 LDSETLH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -11748,7 +11824,7 @@ impl LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsetp,
+            mnemonic: Mnemonic::r#ldsetp,
             operation: Operation::LSE128_ATOMIC(
                 LSE128_ATOMIC::LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
                     LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE::from(bits),
@@ -11805,7 +11881,7 @@ impl LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsetpa,
+            mnemonic: Mnemonic::r#ldsetpa,
             operation: Operation::LSE128_ATOMIC(
                 LSE128_ATOMIC::LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
                     LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE::from(bits),
@@ -11862,7 +11938,7 @@ impl LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsetpal,
+            mnemonic: Mnemonic::r#ldsetpal,
             operation: Operation::LSE128_ATOMIC(
                 LSE128_ATOMIC::LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
                     LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE::from(bits),
@@ -11919,7 +11995,7 @@ impl LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsetpl,
+            mnemonic: Mnemonic::r#ldsetpl,
             operation: Operation::LSE128_ATOMIC(
                 LSE128_ATOMIC::LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
                     LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE::from(bits),
@@ -11978,7 +12054,7 @@ impl LDSMAX_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmax,
+            mnemonic: Mnemonic::r#ldsmax,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMAX_Rs_Rt_ADDR_SIMPLE(
                 LDSMAX_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12033,7 +12109,7 @@ impl LDSMAXA_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmaxa,
+            mnemonic: Mnemonic::r#ldsmaxa,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMAXA_Rs_Rt_ADDR_SIMPLE(
                 LDSMAXA_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12088,7 +12164,7 @@ impl LDSMAXAB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmaxab,
+            mnemonic: Mnemonic::r#ldsmaxab,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMAXAB_Rs_Rt_ADDR_SIMPLE(
                 LDSMAXAB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12143,7 +12219,7 @@ impl LDSMAXAH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmaxah,
+            mnemonic: Mnemonic::r#ldsmaxah,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMAXAH_Rs_Rt_ADDR_SIMPLE(
                 LDSMAXAH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12198,7 +12274,7 @@ impl LDSMAXAL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmaxal,
+            mnemonic: Mnemonic::r#ldsmaxal,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMAXAL_Rs_Rt_ADDR_SIMPLE(
                 LDSMAXAL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12253,7 +12329,7 @@ impl LDSMAXALB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmaxalb,
+            mnemonic: Mnemonic::r#ldsmaxalb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMAXALB_Rs_Rt_ADDR_SIMPLE(
                 LDSMAXALB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12308,7 +12384,7 @@ impl LDSMAXALH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmaxalh,
+            mnemonic: Mnemonic::r#ldsmaxalh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMAXALH_Rs_Rt_ADDR_SIMPLE(
                 LDSMAXALH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12363,7 +12439,7 @@ impl LDSMAXB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmaxb,
+            mnemonic: Mnemonic::r#ldsmaxb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMAXB_Rs_Rt_ADDR_SIMPLE(
                 LDSMAXB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12418,7 +12494,7 @@ impl LDSMAXH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmaxh,
+            mnemonic: Mnemonic::r#ldsmaxh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMAXH_Rs_Rt_ADDR_SIMPLE(
                 LDSMAXH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12475,7 +12551,7 @@ impl LDSMAXL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmaxl,
+            mnemonic: Mnemonic::r#ldsmaxl,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMAXL_Rs_Rt_ADDR_SIMPLE(
                 LDSMAXL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12530,7 +12606,7 @@ impl LDSMAXLB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmaxlb,
+            mnemonic: Mnemonic::r#ldsmaxlb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMAXLB_Rs_Rt_ADDR_SIMPLE(
                 LDSMAXLB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12585,7 +12661,7 @@ impl LDSMAXLH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmaxlh,
+            mnemonic: Mnemonic::r#ldsmaxlh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMAXLH_Rs_Rt_ADDR_SIMPLE(
                 LDSMAXLH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12642,7 +12718,7 @@ impl LDSMIN_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmin,
+            mnemonic: Mnemonic::r#ldsmin,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMIN_Rs_Rt_ADDR_SIMPLE(
                 LDSMIN_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12697,7 +12773,7 @@ impl LDSMINA_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsmina,
+            mnemonic: Mnemonic::r#ldsmina,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMINA_Rs_Rt_ADDR_SIMPLE(
                 LDSMINA_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12752,7 +12828,7 @@ impl LDSMINAB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsminab,
+            mnemonic: Mnemonic::r#ldsminab,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMINAB_Rs_Rt_ADDR_SIMPLE(
                 LDSMINAB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12807,7 +12883,7 @@ impl LDSMINAH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsminah,
+            mnemonic: Mnemonic::r#ldsminah,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMINAH_Rs_Rt_ADDR_SIMPLE(
                 LDSMINAH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12862,7 +12938,7 @@ impl LDSMINAL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsminal,
+            mnemonic: Mnemonic::r#ldsminal,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMINAL_Rs_Rt_ADDR_SIMPLE(
                 LDSMINAL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12917,7 +12993,7 @@ impl LDSMINALB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsminalb,
+            mnemonic: Mnemonic::r#ldsminalb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMINALB_Rs_Rt_ADDR_SIMPLE(
                 LDSMINALB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -12972,7 +13048,7 @@ impl LDSMINALH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsminalh,
+            mnemonic: Mnemonic::r#ldsminalh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMINALH_Rs_Rt_ADDR_SIMPLE(
                 LDSMINALH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -13027,7 +13103,7 @@ impl LDSMINB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsminb,
+            mnemonic: Mnemonic::r#ldsminb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMINB_Rs_Rt_ADDR_SIMPLE(
                 LDSMINB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -13082,7 +13158,7 @@ impl LDSMINH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsminh,
+            mnemonic: Mnemonic::r#ldsminh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMINH_Rs_Rt_ADDR_SIMPLE(
                 LDSMINH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -13139,7 +13215,7 @@ impl LDSMINL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsminl,
+            mnemonic: Mnemonic::r#ldsminl,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMINL_Rs_Rt_ADDR_SIMPLE(
                 LDSMINL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -13194,7 +13270,7 @@ impl LDSMINLB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsminlb,
+            mnemonic: Mnemonic::r#ldsminlb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMINLB_Rs_Rt_ADDR_SIMPLE(
                 LDSMINLB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -13249,7 +13325,7 @@ impl LDSMINLH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldsminlh,
+            mnemonic: Mnemonic::r#ldsminlh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDSMINLH_Rs_Rt_ADDR_SIMPLE(
                 LDSMINLH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -13276,7 +13352,7 @@ impl LDTR_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -13286,7 +13362,7 @@ impl LDTR_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S],
+                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -13305,7 +13381,7 @@ impl LDTR_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldtr,
+            mnemonic: Mnemonic::r#ldtr,
             operation: Operation::LDST_UNPRIV(LDST_UNPRIV::LDTR_Rt_ADDR_SIMM9(
                 LDTR_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -13361,7 +13437,7 @@ impl LDTRB_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldtrb,
+            mnemonic: Mnemonic::r#ldtrb,
             operation: Operation::LDST_UNPRIV(LDST_UNPRIV::LDTRB_Rt_ADDR_SIMM9(
                 LDTRB_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -13417,7 +13493,7 @@ impl LDTRH_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldtrh,
+            mnemonic: Mnemonic::r#ldtrh,
             operation: Operation::LDST_UNPRIV(LDST_UNPRIV::LDTRH_Rt_ADDR_SIMM9(
                 LDTRH_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -13444,7 +13520,7 @@ impl LDTRSB_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -13454,7 +13530,7 @@ impl LDTRSB_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -13473,7 +13549,7 @@ impl LDTRSB_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldtrsb,
+            mnemonic: Mnemonic::r#ldtrsb,
             operation: Operation::LDST_UNPRIV(LDST_UNPRIV::LDTRSB_Rt_ADDR_SIMM9(
                 LDTRSB_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -13500,7 +13576,7 @@ impl LDTRSH_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -13510,7 +13586,7 @@ impl LDTRSH_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H],
+                qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -13529,7 +13605,7 @@ impl LDTRSH_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldtrsh,
+            mnemonic: Mnemonic::r#ldtrsh,
             operation: Operation::LDST_UNPRIV(LDST_UNPRIV::LDTRSH_Rt_ADDR_SIMM9(
                 LDTRSH_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -13585,7 +13661,7 @@ impl LDTRSW_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldtrsw,
+            mnemonic: Mnemonic::r#ldtrsw,
             operation: Operation::LDST_UNPRIV(LDST_UNPRIV::LDTRSW_Rt_ADDR_SIMM9(
                 LDTRSW_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -13642,7 +13718,7 @@ impl LDUMAX_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumax,
+            mnemonic: Mnemonic::r#ldumax,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMAX_Rs_Rt_ADDR_SIMPLE(
                 LDUMAX_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -13697,7 +13773,7 @@ impl LDUMAXA_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumaxa,
+            mnemonic: Mnemonic::r#ldumaxa,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMAXA_Rs_Rt_ADDR_SIMPLE(
                 LDUMAXA_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -13752,7 +13828,7 @@ impl LDUMAXAB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumaxab,
+            mnemonic: Mnemonic::r#ldumaxab,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMAXAB_Rs_Rt_ADDR_SIMPLE(
                 LDUMAXAB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -13807,7 +13883,7 @@ impl LDUMAXAH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumaxah,
+            mnemonic: Mnemonic::r#ldumaxah,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMAXAH_Rs_Rt_ADDR_SIMPLE(
                 LDUMAXAH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -13862,7 +13938,7 @@ impl LDUMAXAL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumaxal,
+            mnemonic: Mnemonic::r#ldumaxal,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMAXAL_Rs_Rt_ADDR_SIMPLE(
                 LDUMAXAL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -13917,7 +13993,7 @@ impl LDUMAXALB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumaxalb,
+            mnemonic: Mnemonic::r#ldumaxalb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMAXALB_Rs_Rt_ADDR_SIMPLE(
                 LDUMAXALB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -13972,7 +14048,7 @@ impl LDUMAXALH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumaxalh,
+            mnemonic: Mnemonic::r#ldumaxalh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMAXALH_Rs_Rt_ADDR_SIMPLE(
                 LDUMAXALH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14027,7 +14103,7 @@ impl LDUMAXB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumaxb,
+            mnemonic: Mnemonic::r#ldumaxb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMAXB_Rs_Rt_ADDR_SIMPLE(
                 LDUMAXB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14082,7 +14158,7 @@ impl LDUMAXH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumaxh,
+            mnemonic: Mnemonic::r#ldumaxh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMAXH_Rs_Rt_ADDR_SIMPLE(
                 LDUMAXH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14139,7 +14215,7 @@ impl LDUMAXL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumaxl,
+            mnemonic: Mnemonic::r#ldumaxl,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMAXL_Rs_Rt_ADDR_SIMPLE(
                 LDUMAXL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14194,7 +14270,7 @@ impl LDUMAXLB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumaxlb,
+            mnemonic: Mnemonic::r#ldumaxlb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMAXLB_Rs_Rt_ADDR_SIMPLE(
                 LDUMAXLB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14249,7 +14325,7 @@ impl LDUMAXLH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumaxlh,
+            mnemonic: Mnemonic::r#ldumaxlh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMAXLH_Rs_Rt_ADDR_SIMPLE(
                 LDUMAXLH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14306,7 +14382,7 @@ impl LDUMIN_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumin,
+            mnemonic: Mnemonic::r#ldumin,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMIN_Rs_Rt_ADDR_SIMPLE(
                 LDUMIN_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14361,7 +14437,7 @@ impl LDUMINA_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldumina,
+            mnemonic: Mnemonic::r#ldumina,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMINA_Rs_Rt_ADDR_SIMPLE(
                 LDUMINA_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14416,7 +14492,7 @@ impl LDUMINAB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::lduminab,
+            mnemonic: Mnemonic::r#lduminab,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMINAB_Rs_Rt_ADDR_SIMPLE(
                 LDUMINAB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14471,7 +14547,7 @@ impl LDUMINAH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::lduminah,
+            mnemonic: Mnemonic::r#lduminah,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMINAH_Rs_Rt_ADDR_SIMPLE(
                 LDUMINAH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14526,7 +14602,7 @@ impl LDUMINAL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::lduminal,
+            mnemonic: Mnemonic::r#lduminal,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMINAL_Rs_Rt_ADDR_SIMPLE(
                 LDUMINAL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14581,7 +14657,7 @@ impl LDUMINALB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::lduminalb,
+            mnemonic: Mnemonic::r#lduminalb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMINALB_Rs_Rt_ADDR_SIMPLE(
                 LDUMINALB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14636,7 +14712,7 @@ impl LDUMINALH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::lduminalh,
+            mnemonic: Mnemonic::r#lduminalh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMINALH_Rs_Rt_ADDR_SIMPLE(
                 LDUMINALH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14691,7 +14767,7 @@ impl LDUMINB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::lduminb,
+            mnemonic: Mnemonic::r#lduminb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMINB_Rs_Rt_ADDR_SIMPLE(
                 LDUMINB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14746,7 +14822,7 @@ impl LDUMINH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::lduminh,
+            mnemonic: Mnemonic::r#lduminh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMINH_Rs_Rt_ADDR_SIMPLE(
                 LDUMINH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14803,7 +14879,7 @@ impl LDUMINL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::lduminl,
+            mnemonic: Mnemonic::r#lduminl,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMINL_Rs_Rt_ADDR_SIMPLE(
                 LDUMINL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14858,7 +14934,7 @@ impl LDUMINLB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::lduminlb,
+            mnemonic: Mnemonic::r#lduminlb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMINLB_Rs_Rt_ADDR_SIMPLE(
                 LDUMINLB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14913,7 +14989,7 @@ impl LDUMINLH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::lduminlh,
+            mnemonic: Mnemonic::r#lduminlh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::LDUMINLH_Rs_Rt_ADDR_SIMPLE(
                 LDUMINLH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -14940,7 +15016,7 @@ impl LDUR_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -14950,7 +15026,7 @@ impl LDUR_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S],
+                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -14969,7 +15045,7 @@ impl LDUR_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldur,
+            mnemonic: Mnemonic::r#ldur,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDUR_Rt_ADDR_SIMM9(
                 LDUR_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -14996,7 +15072,13 @@ impl LDUR_Ft_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -15006,7 +15088,13 @@ impl LDUR_Ft_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -15025,7 +15113,7 @@ impl LDUR_Ft_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldur,
+            mnemonic: Mnemonic::r#ldur,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDUR_Ft_ADDR_SIMM9(
                 LDUR_Ft_ADDR_SIMM9::from(bits),
             )),
@@ -15081,7 +15169,7 @@ impl LDURB_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldurb,
+            mnemonic: Mnemonic::r#ldurb,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDURB_Rt_ADDR_SIMM9(
                 LDURB_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -15137,7 +15225,7 @@ impl LDURH_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldurh,
+            mnemonic: Mnemonic::r#ldurh,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDURH_Rt_ADDR_SIMM9(
                 LDURH_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -15164,7 +15252,7 @@ impl LDURSB_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -15174,7 +15262,7 @@ impl LDURSB_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -15193,7 +15281,7 @@ impl LDURSB_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldursb,
+            mnemonic: Mnemonic::r#ldursb,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDURSB_Rt_ADDR_SIMM9(
                 LDURSB_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -15220,7 +15308,7 @@ impl LDURSH_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -15230,7 +15318,7 @@ impl LDURSH_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H],
+                qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -15249,7 +15337,7 @@ impl LDURSH_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldursh,
+            mnemonic: Mnemonic::r#ldursh,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDURSH_Rt_ADDR_SIMM9(
                 LDURSH_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -15305,7 +15393,7 @@ impl LDURSW_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldursw,
+            mnemonic: Mnemonic::r#ldursw,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::LDURSW_Rt_ADDR_SIMM9(
                 LDURSW_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -15360,7 +15448,7 @@ impl LDXP_Rt_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldxp,
+            mnemonic: Mnemonic::r#ldxp,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDXP_Rt_Rt2_ADDR_SIMPLE(
                 LDXP_Rt_Rt2_ADDR_SIMPLE::from(bits),
             )),
@@ -15387,7 +15475,7 @@ impl LDXR_Rt_ADDR_SIMPLE {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -15405,7 +15493,7 @@ impl LDXR_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldxr,
+            mnemonic: Mnemonic::r#ldxr,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDXR_Rt_ADDR_SIMPLE(
                 LDXR_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -15450,7 +15538,7 @@ impl LDXRB_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldxrb,
+            mnemonic: Mnemonic::r#ldxrb,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDXRB_Rt_ADDR_SIMPLE(
                 LDXRB_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -15495,7 +15583,7 @@ impl LDXRH_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::ldxrh,
+            mnemonic: Mnemonic::r#ldxrh,
             operation: Operation::LDSTEXCL(LDSTEXCL::LDXRH_Rt_ADDR_SIMPLE(
                 LDXRH_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -15552,7 +15640,7 @@ impl ORN_Rd_Rn_Rm_SFT {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::orn,
+            mnemonic: Mnemonic::r#orn,
             operation: Operation::LOG_SHIFT(LOG_SHIFT::ORN_Rd_Rn_Rm_SFT(ORN_Rd_Rn_Rm_SFT::from(
                 bits,
             ))),
@@ -15625,7 +15713,7 @@ impl ORR_Rd_SP_Rn_LIMM {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::orr,
+            mnemonic: Mnemonic::r#orr,
             operation: Operation::LOG_IMM(LOG_IMM::ORR_Rd_SP_Rn_LIMM(ORR_Rd_SP_Rn_LIMM::from(
                 bits,
             ))),
@@ -15682,7 +15770,7 @@ impl ORR_Rd_Rn_Rm_SFT {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::orr,
+            mnemonic: Mnemonic::r#orr,
             operation: Operation::LOG_SHIFT(LOG_SHIFT::ORR_Rd_Rn_Rm_SFT(ORR_Rd_Rn_Rm_SFT::from(
                 bits,
             ))),
@@ -15727,7 +15815,7 @@ impl PRFM_PRFOP_ADDR_PCREL19 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::prfm,
+            mnemonic: Mnemonic::r#prfm,
             operation: Operation::LOADLIT(LOADLIT::PRFM_PRFOP_ADDR_PCREL19(
                 PRFM_PRFOP_ADDR_PCREL19::from(bits),
             )),
@@ -15768,7 +15856,7 @@ impl PRFM_PRFOP_ADDR_REGOFF {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::prfm,
+            mnemonic: Mnemonic::r#prfm,
             operation: Operation::LDST_REGOFF(LDST_REGOFF::PRFM_PRFOP_ADDR_REGOFF(
                 PRFM_PRFOP_ADDR_REGOFF::from(bits),
             )),
@@ -15820,7 +15908,7 @@ impl PRFM_PRFOP_ADDR_UIMM12 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::prfm,
+            mnemonic: Mnemonic::r#prfm,
             operation: Operation::LDST_POS(LDST_POS::PRFM_PRFOP_ADDR_UIMM12(
                 PRFM_PRFOP_ADDR_UIMM12::from(bits),
             )),
@@ -15872,7 +15960,7 @@ impl PRFUM_PRFOP_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::prfum,
+            mnemonic: Mnemonic::r#prfum,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::PRFUM_PRFOP_ADDR_SIMM9(
                 PRFUM_PRFOP_ADDR_SIMM9::from(bits),
             )),
@@ -15899,7 +15987,7 @@ impl ST2G_Rt_SP_ADDR_SIMM13 {
             InsnOperand {
                 kind: InsnOperandKind::Rt_SP,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X],
+                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -15909,7 +15997,7 @@ impl ST2G_Rt_SP_ADDR_SIMM13 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM13,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag],
+                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -15928,7 +16016,7 @@ impl ST2G_Rt_SP_ADDR_SIMM13 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::st2g,
+            mnemonic: Mnemonic::r#st2g,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::ST2G_Rt_SP_ADDR_SIMM13(
                 ST2G_Rt_SP_ADDR_SIMM13::from(bits),
             )),
@@ -15955,7 +16043,7 @@ impl ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag {
             InsnOperand {
                 kind: InsnOperandKind::Rt_SP,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X],
+                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -15965,7 +16053,7 @@ impl ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM13,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag],
+                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -15984,7 +16072,7 @@ impl ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::st2g,
+            mnemonic: Mnemonic::r#st2g,
             operation: Operation::LDST_IMM9(LDST_IMM9::ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag(
                 ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag::from(bits),
             )),
@@ -16029,7 +16117,7 @@ impl ST64B_Rt_LS64_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::st64b,
+            mnemonic: Mnemonic::r#st64b,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::ST64B_Rt_LS64_ADDR_SIMPLE(
                 ST64B_Rt_LS64_ADDR_SIMPLE::from(bits),
             )),
@@ -16084,7 +16172,7 @@ impl ST64BV_Rs_Rt_LS64_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::st64bv,
+            mnemonic: Mnemonic::r#st64bv,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::ST64BV_Rs_Rt_LS64_ADDR_SIMPLE(
                 ST64BV_Rs_Rt_LS64_ADDR_SIMPLE::from(bits),
             )),
@@ -16139,7 +16227,7 @@ impl ST64BV0_Rs_Rt_LS64_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::st64bv0,
+            mnemonic: Mnemonic::r#st64bv0,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::ST64BV0_Rs_Rt_LS64_ADDR_SIMPLE(
                 ST64BV0_Rs_Rt_LS64_ADDR_SIMPLE::from(bits),
             )),
@@ -16166,7 +16254,7 @@ impl STG_Rt_SP_ADDR_SIMM13 {
             InsnOperand {
                 kind: InsnOperandKind::Rt_SP,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X],
+                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -16176,7 +16264,7 @@ impl STG_Rt_SP_ADDR_SIMM13 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM13,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag],
+                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -16195,7 +16283,7 @@ impl STG_Rt_SP_ADDR_SIMM13 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stg,
+            mnemonic: Mnemonic::r#stg,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::STG_Rt_SP_ADDR_SIMM13(
                 STG_Rt_SP_ADDR_SIMM13::from(bits),
             )),
@@ -16222,7 +16310,7 @@ impl STG_Rt_SP_X_ADDR_SIMM13_imm_tag {
             InsnOperand {
                 kind: InsnOperandKind::Rt_SP,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X],
+                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -16232,7 +16320,7 @@ impl STG_Rt_SP_X_ADDR_SIMM13_imm_tag {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM13,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag],
+                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -16251,7 +16339,7 @@ impl STG_Rt_SP_X_ADDR_SIMM13_imm_tag {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stg,
+            mnemonic: Mnemonic::r#stg,
             operation: Operation::LDST_IMM9(LDST_IMM9::STG_Rt_SP_X_ADDR_SIMM13_imm_tag(
                 STG_Rt_SP_X_ADDR_SIMM13_imm_tag::from(bits),
             )),
@@ -16296,7 +16384,7 @@ impl STGM_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stgm,
+            mnemonic: Mnemonic::r#stgm,
             operation: Operation::LDSTEXCL(LDSTEXCL::STGM_Rt_ADDR_SIMPLE(
                 STGM_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -16362,7 +16450,7 @@ impl STGP_Rt_Rt2_ADDR_SIMM11 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stgp,
+            mnemonic: Mnemonic::r#stgp,
             operation: Operation::LDSTPAIR_OFF(LDSTPAIR_OFF::STGP_Rt_Rt2_ADDR_SIMM11(
                 STGP_Rt_Rt2_ADDR_SIMM11::from(bits),
             )),
@@ -16428,7 +16516,7 @@ impl STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stgp,
+            mnemonic: Mnemonic::r#stgp,
             operation: Operation::LDSTPAIR_INDEXED(
                 LDSTPAIR_INDEXED::STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag(
                     STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag::from(bits),
@@ -16457,7 +16545,7 @@ impl STLLR_Rt_ADDR_SIMPLE {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -16475,7 +16563,7 @@ impl STLLR_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stllr,
+            mnemonic: Mnemonic::r#stllr,
             operation: Operation::LDSTEXCL(LDSTEXCL::STLLR_Rt_ADDR_SIMPLE(
                 STLLR_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -16520,7 +16608,7 @@ impl STLLRB_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stllrb,
+            mnemonic: Mnemonic::r#stllrb,
             operation: Operation::LDSTEXCL(LDSTEXCL::STLLRB_Rt_ADDR_SIMPLE(
                 STLLRB_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -16565,7 +16653,7 @@ impl STLLRH_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stllrh,
+            mnemonic: Mnemonic::r#stllrh,
             operation: Operation::LDSTEXCL(LDSTEXCL::STLLRH_Rt_ADDR_SIMPLE(
                 STLLRH_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -16592,7 +16680,7 @@ impl STLR_Rt_ADDR_SIMPLE {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -16610,7 +16698,7 @@ impl STLR_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stlr,
+            mnemonic: Mnemonic::r#stlr,
             operation: Operation::LDSTEXCL(LDSTEXCL::STLR_Rt_ADDR_SIMPLE(
                 STLR_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -16655,7 +16743,7 @@ impl STLRB_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stlrb,
+            mnemonic: Mnemonic::r#stlrb,
             operation: Operation::LDSTEXCL(LDSTEXCL::STLRB_Rt_ADDR_SIMPLE(
                 STLRB_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -16700,7 +16788,7 @@ impl STLRH_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stlrh,
+            mnemonic: Mnemonic::r#stlrh,
             operation: Operation::LDSTEXCL(LDSTEXCL::STLRH_Rt_ADDR_SIMPLE(
                 STLRH_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -16761,7 +16849,7 @@ impl STLUR_Rt_ADDR_OFFSET {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stlur,
+            mnemonic: Mnemonic::r#stlur,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::STLUR_Rt_ADDR_OFFSET(
                 STLUR_Rt_ADDR_OFFSET::from(bits),
             )),
@@ -16822,7 +16910,7 @@ impl STLUR_Rt_X_ADDR_OFFSET {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stlur,
+            mnemonic: Mnemonic::r#stlur,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::STLUR_Rt_X_ADDR_OFFSET(
                 STLUR_Rt_X_ADDR_OFFSET::from(bits),
             )),
@@ -16883,7 +16971,7 @@ impl STLURB_Rt_ADDR_OFFSET {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stlurb,
+            mnemonic: Mnemonic::r#stlurb,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::STLURB_Rt_ADDR_OFFSET(
                 STLURB_Rt_ADDR_OFFSET::from(bits),
             )),
@@ -16944,7 +17032,7 @@ impl STLURH_Rt_ADDR_OFFSET {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stlurh,
+            mnemonic: Mnemonic::r#stlurh,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::STLURH_Rt_ADDR_OFFSET(
                 STLURH_Rt_ADDR_OFFSET::from(bits),
             )),
@@ -17009,7 +17097,7 @@ impl STLXP_Rs_Rt_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stlxp,
+            mnemonic: Mnemonic::r#stlxp,
             operation: Operation::LDSTEXCL(LDSTEXCL::STLXP_Rs_Rt_Rt2_ADDR_SIMPLE(
                 STLXP_Rs_Rt_Rt2_ADDR_SIMPLE::from(bits),
             )),
@@ -17064,7 +17152,7 @@ impl STLXR_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stlxr,
+            mnemonic: Mnemonic::r#stlxr,
             operation: Operation::LDSTEXCL(LDSTEXCL::STLXR_Rs_Rt_ADDR_SIMPLE(
                 STLXR_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -17119,7 +17207,7 @@ impl STLXRB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stlxrb,
+            mnemonic: Mnemonic::r#stlxrb,
             operation: Operation::LDSTEXCL(LDSTEXCL::STLXRB_Rs_Rt_ADDR_SIMPLE(
                 STLXRB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -17174,7 +17262,7 @@ impl STLXRH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stlxrh,
+            mnemonic: Mnemonic::r#stlxrh,
             operation: Operation::LDSTEXCL(LDSTEXCL::STLXRH_Rs_Rt_ADDR_SIMPLE(
                 STLXRH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -17240,7 +17328,7 @@ impl STNP_Rt_Rt2_ADDR_SIMM7 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stnp,
+            mnemonic: Mnemonic::r#stnp,
             operation: Operation::LDSTNAPAIR_OFFS(LDSTNAPAIR_OFFS::STNP_Rt_Rt2_ADDR_SIMM7(
                 STNP_Rt_Rt2_ADDR_SIMM7::from(bits),
             )),
@@ -17267,7 +17355,11 @@ impl STNP_Ft_Ft2_ADDR_SIMM7 {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -17277,7 +17369,11 @@ impl STNP_Ft_Ft2_ADDR_SIMM7 {
             InsnOperand {
                 kind: InsnOperandKind::Ft2,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt2,
                     lsb: 10,
@@ -17287,7 +17383,11 @@ impl STNP_Ft_Ft2_ADDR_SIMM7 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM7,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm7,
@@ -17306,7 +17406,7 @@ impl STNP_Ft_Ft2_ADDR_SIMM7 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stnp,
+            mnemonic: Mnemonic::r#stnp,
             operation: Operation::LDSTNAPAIR_OFFS(LDSTNAPAIR_OFFS::STNP_Ft_Ft2_ADDR_SIMM7(
                 STNP_Ft_Ft2_ADDR_SIMM7::from(bits),
             )),
@@ -17372,7 +17472,7 @@ impl STP_Rt_Rt2_ADDR_SIMM7 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stp,
+            mnemonic: Mnemonic::r#stp,
             operation: Operation::LDSTPAIR_OFF(LDSTPAIR_OFF::STP_Rt_Rt2_ADDR_SIMM7(
                 STP_Rt_Rt2_ADDR_SIMM7::from(bits),
             )),
@@ -17438,7 +17538,7 @@ impl STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stp,
+            mnemonic: Mnemonic::r#stp,
             operation: Operation::LDSTPAIR_INDEXED(
                 LDSTPAIR_INDEXED::STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(
                     STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S::from(bits),
@@ -17467,7 +17567,11 @@ impl STP_Ft_Ft2_ADDR_SIMM7 {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -17477,7 +17581,11 @@ impl STP_Ft_Ft2_ADDR_SIMM7 {
             InsnOperand {
                 kind: InsnOperandKind::Ft2,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt2,
                     lsb: 10,
@@ -17487,7 +17595,11 @@ impl STP_Ft_Ft2_ADDR_SIMM7 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM7,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm7,
@@ -17506,7 +17618,7 @@ impl STP_Ft_Ft2_ADDR_SIMM7 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stp,
+            mnemonic: Mnemonic::r#stp,
             operation: Operation::LDSTPAIR_OFF(LDSTPAIR_OFF::STP_Ft_Ft2_ADDR_SIMM7(
                 STP_Ft_Ft2_ADDR_SIMM7::from(bits),
             )),
@@ -17533,7 +17645,11 @@ impl STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -17543,7 +17659,11 @@ impl STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S {
             InsnOperand {
                 kind: InsnOperandKind::Ft2,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt2,
                     lsb: 10,
@@ -17553,7 +17673,11 @@ impl STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM7,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+                qualifiers: &[
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm7,
@@ -17572,7 +17696,7 @@ impl STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stp,
+            mnemonic: Mnemonic::r#stp,
             operation: Operation::LDSTPAIR_INDEXED(
                 LDSTPAIR_INDEXED::STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(
                     STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S::from(bits),
@@ -17601,7 +17725,7 @@ impl STR_Rt_ADDR_REGOFF {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -17611,7 +17735,7 @@ impl STR_Rt_ADDR_REGOFF {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_REGOFF,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S],
+                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
                 bit_fields: &[],
             },
         ],
@@ -17619,7 +17743,7 @@ impl STR_Rt_ADDR_REGOFF {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::str,
+            mnemonic: Mnemonic::r#str,
             operation: Operation::LDST_REGOFF(LDST_REGOFF::STR_Rt_ADDR_REGOFF(
                 STR_Rt_ADDR_REGOFF::from(bits),
             )),
@@ -17646,7 +17770,7 @@ impl STR_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -17656,7 +17780,7 @@ impl STR_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S],
+                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -17675,7 +17799,7 @@ impl STR_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::str,
+            mnemonic: Mnemonic::r#str,
             operation: Operation::LDST_IMM9(LDST_IMM9::STR_Rt_ADDR_SIMM9(STR_Rt_ADDR_SIMM9::from(
                 bits,
             ))),
@@ -17702,7 +17826,7 @@ impl STR_Rt_ADDR_UIMM12 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -17712,7 +17836,7 @@ impl STR_Rt_ADDR_UIMM12 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_UIMM12,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S],
+                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::Rn,
@@ -17731,7 +17855,7 @@ impl STR_Rt_ADDR_UIMM12 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::str,
+            mnemonic: Mnemonic::r#str,
             operation: Operation::LDST_POS(LDST_POS::STR_Rt_ADDR_UIMM12(STR_Rt_ADDR_UIMM12::from(
                 bits,
             ))),
@@ -17758,7 +17882,13 @@ impl STR_Ft_ADDR_REGOFF {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -17768,7 +17898,13 @@ impl STR_Ft_ADDR_REGOFF {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_REGOFF,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[],
             },
         ],
@@ -17776,7 +17912,7 @@ impl STR_Ft_ADDR_REGOFF {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::str,
+            mnemonic: Mnemonic::r#str,
             operation: Operation::LDST_REGOFF(LDST_REGOFF::STR_Ft_ADDR_REGOFF(
                 STR_Ft_ADDR_REGOFF::from(bits),
             )),
@@ -17803,7 +17939,13 @@ impl STR_Ft_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -17813,7 +17955,13 @@ impl STR_Ft_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -17832,7 +17980,7 @@ impl STR_Ft_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::str,
+            mnemonic: Mnemonic::r#str,
             operation: Operation::LDST_IMM9(LDST_IMM9::STR_Ft_ADDR_SIMM9(STR_Ft_ADDR_SIMM9::from(
                 bits,
             ))),
@@ -17859,7 +18007,13 @@ impl STR_Ft_ADDR_UIMM12 {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -17869,7 +18023,13 @@ impl STR_Ft_ADDR_UIMM12 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_UIMM12,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::Rn,
@@ -17888,7 +18048,7 @@ impl STR_Ft_ADDR_UIMM12 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::str,
+            mnemonic: Mnemonic::r#str,
             operation: Operation::LDST_POS(LDST_POS::STR_Ft_ADDR_UIMM12(STR_Ft_ADDR_UIMM12::from(
                 bits,
             ))),
@@ -17933,7 +18093,7 @@ impl STRB_Rt_ADDR_REGOFF {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::strb,
+            mnemonic: Mnemonic::r#strb,
             operation: Operation::LDST_REGOFF(LDST_REGOFF::STRB_Rt_ADDR_REGOFF(
                 STRB_Rt_ADDR_REGOFF::from(bits),
             )),
@@ -17989,7 +18149,7 @@ impl STRB_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::strb,
+            mnemonic: Mnemonic::r#strb,
             operation: Operation::LDST_IMM9(LDST_IMM9::STRB_Rt_ADDR_SIMM9(
                 STRB_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -18045,7 +18205,7 @@ impl STRB_Rt_ADDR_UIMM12 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::strb,
+            mnemonic: Mnemonic::r#strb,
             operation: Operation::LDST_POS(LDST_POS::STRB_Rt_ADDR_UIMM12(
                 STRB_Rt_ADDR_UIMM12::from(bits),
             )),
@@ -18090,7 +18250,7 @@ impl STRH_Rt_ADDR_REGOFF {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::strh,
+            mnemonic: Mnemonic::r#strh,
             operation: Operation::LDST_REGOFF(LDST_REGOFF::STRH_Rt_ADDR_REGOFF(
                 STRH_Rt_ADDR_REGOFF::from(bits),
             )),
@@ -18146,7 +18306,7 @@ impl STRH_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::strh,
+            mnemonic: Mnemonic::r#strh,
             operation: Operation::LDST_IMM9(LDST_IMM9::STRH_Rt_ADDR_SIMM9(
                 STRH_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -18202,7 +18362,7 @@ impl STRH_Rt_ADDR_UIMM12 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::strh,
+            mnemonic: Mnemonic::r#strh,
             operation: Operation::LDST_POS(LDST_POS::STRH_Rt_ADDR_UIMM12(
                 STRH_Rt_ADDR_UIMM12::from(bits),
             )),
@@ -18229,7 +18389,7 @@ impl STTR_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -18239,7 +18399,7 @@ impl STTR_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S],
+                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -18258,7 +18418,7 @@ impl STTR_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::sttr,
+            mnemonic: Mnemonic::r#sttr,
             operation: Operation::LDST_UNPRIV(LDST_UNPRIV::STTR_Rt_ADDR_SIMM9(
                 STTR_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -18314,7 +18474,7 @@ impl STTRB_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::sttrb,
+            mnemonic: Mnemonic::r#sttrb,
             operation: Operation::LDST_UNPRIV(LDST_UNPRIV::STTRB_Rt_ADDR_SIMM9(
                 STTRB_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -18370,7 +18530,7 @@ impl STTRH_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::sttrh,
+            mnemonic: Mnemonic::r#sttrh,
             operation: Operation::LDST_UNPRIV(LDST_UNPRIV::STTRH_Rt_ADDR_SIMM9(
                 STTRH_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -18397,7 +18557,7 @@ impl STUR_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Rt,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W],
+                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -18407,7 +18567,7 @@ impl STUR_Rt_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S],
+                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -18426,7 +18586,7 @@ impl STUR_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stur,
+            mnemonic: Mnemonic::r#stur,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::STUR_Rt_ADDR_SIMM9(
                 STUR_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -18453,7 +18613,13 @@ impl STUR_Ft_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::Ft,
                 class: InsnOperandClass::FP_REG,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -18463,7 +18629,13 @@ impl STUR_Ft_ADDR_SIMM9 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM9,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B],
+                qualifiers: &[
+                    InsnOperandQualifier::S_B,
+                    InsnOperandQualifier::S_H,
+                    InsnOperandQualifier::S_S,
+                    InsnOperandQualifier::S_D,
+                    InsnOperandQualifier::S_Q,
+                ],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -18482,7 +18654,7 @@ impl STUR_Ft_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stur,
+            mnemonic: Mnemonic::r#stur,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::STUR_Ft_ADDR_SIMM9(
                 STUR_Ft_ADDR_SIMM9::from(bits),
             )),
@@ -18538,7 +18710,7 @@ impl STURB_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::sturb,
+            mnemonic: Mnemonic::r#sturb,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::STURB_Rt_ADDR_SIMM9(
                 STURB_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -18594,7 +18766,7 @@ impl STURH_Rt_ADDR_SIMM9 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::sturh,
+            mnemonic: Mnemonic::r#sturh,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::STURH_Rt_ADDR_SIMM9(
                 STURH_Rt_ADDR_SIMM9::from(bits),
             )),
@@ -18659,7 +18831,7 @@ impl STXP_Rs_Rt_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stxp,
+            mnemonic: Mnemonic::r#stxp,
             operation: Operation::LDSTEXCL(LDSTEXCL::STXP_Rs_Rt_Rt2_ADDR_SIMPLE(
                 STXP_Rs_Rt_Rt2_ADDR_SIMPLE::from(bits),
             )),
@@ -18714,7 +18886,7 @@ impl STXR_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stxr,
+            mnemonic: Mnemonic::r#stxr,
             operation: Operation::LDSTEXCL(LDSTEXCL::STXR_Rs_Rt_ADDR_SIMPLE(
                 STXR_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -18769,7 +18941,7 @@ impl STXRB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stxrb,
+            mnemonic: Mnemonic::r#stxrb,
             operation: Operation::LDSTEXCL(LDSTEXCL::STXRB_Rs_Rt_ADDR_SIMPLE(
                 STXRB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -18824,7 +18996,7 @@ impl STXRH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stxrh,
+            mnemonic: Mnemonic::r#stxrh,
             operation: Operation::LDSTEXCL(LDSTEXCL::STXRH_Rs_Rt_ADDR_SIMPLE(
                 STXRH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -18851,7 +19023,7 @@ impl STZ2G_Rt_SP_ADDR_SIMM13 {
             InsnOperand {
                 kind: InsnOperandKind::Rt_SP,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X],
+                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -18861,7 +19033,7 @@ impl STZ2G_Rt_SP_ADDR_SIMM13 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM13,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag],
+                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -18876,11 +19048,11 @@ impl STZ2G_Rt_SP_ADDR_SIMM13 {
                 ],
             },
         ],
-        flags: InsnFlags::empty(),
+        flags: InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stz2g,
+            mnemonic: Mnemonic::r#stz2g,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::STZ2G_Rt_SP_ADDR_SIMM13(
                 STZ2G_Rt_SP_ADDR_SIMM13::from(bits),
             )),
@@ -18907,7 +19079,7 @@ impl STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag {
             InsnOperand {
                 kind: InsnOperandKind::Rt_SP,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X],
+                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -18917,7 +19089,7 @@ impl STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM13,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag],
+                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -18932,11 +19104,11 @@ impl STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag {
                 ],
             },
         ],
-        flags: InsnFlags::empty(),
+        flags: InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stz2g,
+            mnemonic: Mnemonic::r#stz2g,
             operation: Operation::LDST_IMM9(LDST_IMM9::STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag(
                 STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag::from(bits),
             )),
@@ -18963,7 +19135,7 @@ impl STZG_Rt_SP_ADDR_SIMM13 {
             InsnOperand {
                 kind: InsnOperandKind::Rt_SP,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X],
+                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -18973,7 +19145,7 @@ impl STZG_Rt_SP_ADDR_SIMM13 {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM13,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag],
+                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -18992,7 +19164,7 @@ impl STZG_Rt_SP_ADDR_SIMM13 {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stzg,
+            mnemonic: Mnemonic::r#stzg,
             operation: Operation::LDST_UNSCALED(LDST_UNSCALED::STZG_Rt_SP_ADDR_SIMM13(
                 STZG_Rt_SP_ADDR_SIMM13::from(bits),
             )),
@@ -19019,7 +19191,7 @@ impl STZG_Rt_SP_X_ADDR_SIMM13_imm_tag {
             InsnOperand {
                 kind: InsnOperandKind::Rt_SP,
                 class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X],
+                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP],
                 bit_fields: &[BitfieldSpec {
                     bitfield: InsnBitField::Rt,
                     lsb: 0,
@@ -19029,7 +19201,7 @@ impl STZG_Rt_SP_X_ADDR_SIMM13_imm_tag {
             InsnOperand {
                 kind: InsnOperandKind::ADDR_SIMM13,
                 class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag],
+                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag],
                 bit_fields: &[
                     BitfieldSpec {
                         bitfield: InsnBitField::imm9,
@@ -19048,7 +19220,7 @@ impl STZG_Rt_SP_X_ADDR_SIMM13_imm_tag {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stzg,
+            mnemonic: Mnemonic::r#stzg,
             operation: Operation::LDST_IMM9(LDST_IMM9::STZG_Rt_SP_X_ADDR_SIMM13_imm_tag(
                 STZG_Rt_SP_X_ADDR_SIMM13_imm_tag::from(bits),
             )),
@@ -19093,7 +19265,7 @@ impl STZGM_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::stzgm,
+            mnemonic: Mnemonic::r#stzgm,
             operation: Operation::LDSTEXCL(LDSTEXCL::STZGM_Rt_ADDR_SIMPLE(
                 STZGM_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -19148,7 +19320,7 @@ impl SWP_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swp,
+            mnemonic: Mnemonic::r#swp,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::SWP_Rs_Rt_ADDR_SIMPLE(
                 SWP_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -19203,7 +19375,7 @@ impl SWPA_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swpa,
+            mnemonic: Mnemonic::r#swpa,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::SWPA_Rs_Rt_ADDR_SIMPLE(
                 SWPA_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -19258,7 +19430,7 @@ impl SWPAB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swpab,
+            mnemonic: Mnemonic::r#swpab,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::SWPAB_Rs_Rt_ADDR_SIMPLE(
                 SWPAB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -19313,7 +19485,7 @@ impl SWPAH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swpah,
+            mnemonic: Mnemonic::r#swpah,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::SWPAH_Rs_Rt_ADDR_SIMPLE(
                 SWPAH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -19368,7 +19540,7 @@ impl SWPAL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swpal,
+            mnemonic: Mnemonic::r#swpal,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::SWPAL_Rs_Rt_ADDR_SIMPLE(
                 SWPAL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -19423,7 +19595,7 @@ impl SWPALB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swpalb,
+            mnemonic: Mnemonic::r#swpalb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::SWPALB_Rs_Rt_ADDR_SIMPLE(
                 SWPALB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -19478,7 +19650,7 @@ impl SWPALH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swpalh,
+            mnemonic: Mnemonic::r#swpalh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::SWPALH_Rs_Rt_ADDR_SIMPLE(
                 SWPALH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -19533,7 +19705,7 @@ impl SWPB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swpb,
+            mnemonic: Mnemonic::r#swpb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::SWPB_Rs_Rt_ADDR_SIMPLE(
                 SWPB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -19588,7 +19760,7 @@ impl SWPH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swph,
+            mnemonic: Mnemonic::r#swph,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::SWPH_Rs_Rt_ADDR_SIMPLE(
                 SWPH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -19643,7 +19815,7 @@ impl SWPL_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swpl,
+            mnemonic: Mnemonic::r#swpl,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::SWPL_Rs_Rt_ADDR_SIMPLE(
                 SWPL_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -19698,7 +19870,7 @@ impl SWPLB_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swplb,
+            mnemonic: Mnemonic::r#swplb,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::SWPLB_Rs_Rt_ADDR_SIMPLE(
                 SWPLB_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -19753,7 +19925,7 @@ impl SWPLH_Rs_Rt_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swplh,
+            mnemonic: Mnemonic::r#swplh,
             operation: Operation::LSE_ATOMIC(LSE_ATOMIC::SWPLH_Rs_Rt_ADDR_SIMPLE(
                 SWPLH_Rs_Rt_ADDR_SIMPLE::from(bits),
             )),
@@ -19808,7 +19980,7 @@ impl SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swpp,
+            mnemonic: Mnemonic::r#swpp,
             operation: Operation::LSE128_ATOMIC(
                 LSE128_ATOMIC::SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
                     SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE::from(bits),
@@ -19865,7 +20037,7 @@ impl SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swppa,
+            mnemonic: Mnemonic::r#swppa,
             operation: Operation::LSE128_ATOMIC(
                 LSE128_ATOMIC::SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
                     SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE::from(bits),
@@ -19922,7 +20094,7 @@ impl SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swppal,
+            mnemonic: Mnemonic::r#swppal,
             operation: Operation::LSE128_ATOMIC(
                 LSE128_ATOMIC::SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
                     SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE::from(bits),
@@ -19979,7 +20151,7 @@ impl SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE {
     };
     fn make_opcode(bits: u32) -> Opcode {
         Opcode {
-            mnemonic: Mnemonic::swppl,
+            mnemonic: Mnemonic::r#swppl,
             operation: Operation::LSE128_ATOMIC(
                 LSE128_ATOMIC::SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
                     SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE::from(bits),
