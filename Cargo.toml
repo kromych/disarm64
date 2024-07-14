@@ -1,6 +1,6 @@
 [package]
 name = "disarm64"
-version = "0.1.19"
+version = "0.1.20"
 edition = "2021"
 authors = ["kromych <kromych@users.noreply.github.com>"]
 description = """
@@ -36,10 +36,10 @@ name = "disarm64_gen"
 path = "disarm64_gen/src/main.rs"
 
 [dependencies]
-disarm64_defn = "0.1.8"
+disarm64_defn = "0.1.9"
 
 anyhow = "1"
-bitfield-struct = "0.6"
+bitfield-struct = "0.8"
 bitflags = { version = "2.4", features = ["serde"] }
 clap = { version = "4", features = ["derive"] }
 clap-num = "1"
