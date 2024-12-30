@@ -36,15 +36,15 @@ name = "disarm64_gen"
 path = "disarm64_gen/src/main.rs"
 
 [dependencies]
-disarm64_defn = "0.1.9"
+disarm64_defn = "0.1.10"
 
 anyhow = "1"
-bitfield-struct = "0.8"
+bitfield-struct = "0.10"
 bitflags = { version = "2.4", features = ["serde"] }
 clap = { version = "4", features = ["derive"] }
 clap-num = "1"
 env_logger = "0.11"
-goblin = { version = "0.8", features = ["elf64", "pe64", "mach64"] }
+goblin = { version = "0.9", features = ["elf64", "pe64", "mach64"] }
 log = "0.4"
 memmap2 = "0.9"
 proc-macro2 = { version = "1", default-features = false }
