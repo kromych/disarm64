@@ -179,6 +179,16 @@ fn format_fp_reg(
                 return write!(f, "<undefined>");
             }
         },
+        InsnClass::ASIMDALL => {
+            let size = bit_range(bits, 22, 2);
+            match size {
+                0b00 => get_fp_reg_name(FpRegSize::H16, reg_no as usize),
+                0b01 => get_fp_reg_name(FpRegSize::S32, reg_no as usize),
+                0b10 => get_fp_reg_name(FpRegSize::D64, reg_no as usize),
+                0b11 => return write!(f, "<undefined>"),
+                _ => unreachable!(),
+            }
+        }
 
         _ => {
             if definition.flags.contains(InsnFlags::HAS_FPTYPE_FIELD) {
@@ -463,45 +473,63 @@ fn format_simd_reg(
         return write!(f, ":{kind:?}:");
     } as u8;
 
-    let simd_reg_arrangement = if let Some(qual) = operand.qualifiers.first() {
-        let double = if definition.flags.contains(InsnFlags::HAS_SIZEQ_FIELD) {
-            bit_set(bits, 30)
-        } else {
-            false
-        };
-        if !double {
-            match qual {
-                InsnOperandQualifier::V_8B => SimdRegArrangement::Vector8B,
-                InsnOperandQualifier::V_16B => SimdRegArrangement::Vector16B,
-                InsnOperandQualifier::V_2H => SimdRegArrangement::Vector2H,
-                InsnOperandQualifier::V_4H => SimdRegArrangement::Vector4H,
-                InsnOperandQualifier::V_8H => SimdRegArrangement::Vector8H,
-                InsnOperandQualifier::V_2S => SimdRegArrangement::Vector2S,
-                InsnOperandQualifier::V_4S => SimdRegArrangement::Vector4S,
-                InsnOperandQualifier::V_1D => SimdRegArrangement::Vector1D,
-                InsnOperandQualifier::V_2D => SimdRegArrangement::Vector2D,
-                InsnOperandQualifier::V_1Q => SimdRegArrangement::Vector1Q,
-                _ => {
-                    return write!(f, "<undefined>");
-                }
-            }
-        } else {
-            match qual {
-                InsnOperandQualifier::V_8B => SimdRegArrangement::Vector16B,
-                InsnOperandQualifier::V_2H => SimdRegArrangement::Vector4H,
-                InsnOperandQualifier::V_4H => SimdRegArrangement::Vector8H,
-                InsnOperandQualifier::V_2S => SimdRegArrangement::Vector4S,
-                InsnOperandQualifier::V_1D | InsnOperandQualifier::V_2D => {
-                    SimdRegArrangement::Vector2D
-                }
-                _ => {
-                    return write!(f, "<undefined>");
-                }
+    let simd_reg_arrangement = match definition.class {
+        InsnClass::ASIMDALL => {
+            let size = bit_range(bits, 22, 2);
+            let q = bit_set(bits, 30) as u32;
+            match size << 1 | q {
+                0b000 => SimdRegArrangement::Vector8B,
+                0b001 => SimdRegArrangement::Vector16B,
+                0b010 => SimdRegArrangement::Vector4H,
+                0b011 => SimdRegArrangement::Vector8H,
+                0b101 => SimdRegArrangement::Vector4S,
+                _ => return write!(f, "<undefined>"),
             }
         }
-    } else {
-        return write!(f, "<undefined>");
+
+        _ => {
+            if let Some(qual) = operand.qualifiers.first() {
+                let double = if definition.flags.contains(InsnFlags::HAS_SIZEQ_FIELD) {
+                    bit_set(bits, 30)
+                } else {
+                    false
+                };
+                if !double {
+                    match qual {
+                        InsnOperandQualifier::V_8B => SimdRegArrangement::Vector8B,
+                        InsnOperandQualifier::V_16B => SimdRegArrangement::Vector16B,
+                        InsnOperandQualifier::V_2H => SimdRegArrangement::Vector2H,
+                        InsnOperandQualifier::V_4H => SimdRegArrangement::Vector4H,
+                        InsnOperandQualifier::V_8H => SimdRegArrangement::Vector8H,
+                        InsnOperandQualifier::V_2S => SimdRegArrangement::Vector2S,
+                        InsnOperandQualifier::V_4S => SimdRegArrangement::Vector4S,
+                        InsnOperandQualifier::V_1D => SimdRegArrangement::Vector1D,
+                        InsnOperandQualifier::V_2D => SimdRegArrangement::Vector2D,
+                        InsnOperandQualifier::V_1Q => SimdRegArrangement::Vector1Q,
+                        _ => {
+                            return write!(f, "<undefined>");
+                        }
+                    }
+                } else {
+                    match qual {
+                        InsnOperandQualifier::V_8B => SimdRegArrangement::Vector16B,
+                        InsnOperandQualifier::V_2H => SimdRegArrangement::Vector4H,
+                        InsnOperandQualifier::V_4H => SimdRegArrangement::Vector8H,
+                        InsnOperandQualifier::V_2S => SimdRegArrangement::Vector4S,
+                        InsnOperandQualifier::V_1D | InsnOperandQualifier::V_2D => {
+                            SimdRegArrangement::Vector2D
+                        }
+                        _ => {
+                            return write!(f, "<undefined>");
+                        }
+                    }
+                }
+            } else {
+                return write!(f, "<undefined>");
+            }
+        }
     };
+
     let simd_reg_name = get_simd_reg_name(reg_no, simd_reg_arrangement);
 
     write!(f, "{simd_reg_name}")
