@@ -181,12 +181,23 @@ fn format_fp_reg(
         },
         InsnClass::ASIMDALL => {
             let size = bit_range(bits, 22, 2);
-            match size {
-                0b00 => get_fp_reg_name(FpRegSize::H16, reg_no as usize),
-                0b01 => get_fp_reg_name(FpRegSize::S32, reg_no as usize),
-                0b10 => get_fp_reg_name(FpRegSize::D64, reg_no as usize),
-                0b11 => return write!(f, "<undefined>"),
-                _ => unreachable!(),
+            let cross_lane = bit_set(bits, 15);
+            if cross_lane {
+                match size {
+                    0b00 => get_fp_reg_name(FpRegSize::B8, reg_no as usize),
+                    0b01 => get_fp_reg_name(FpRegSize::H16, reg_no as usize),
+                    0b10 => get_fp_reg_name(FpRegSize::S32, reg_no as usize),
+                    0b11 => return write!(f, "<undefined>"),
+                    _ => unreachable!(),
+                }
+            } else {
+                match size {
+                    0b00 => get_fp_reg_name(FpRegSize::H16, reg_no as usize),
+                    0b01 => get_fp_reg_name(FpRegSize::S32, reg_no as usize),
+                    0b10 => get_fp_reg_name(FpRegSize::D64, reg_no as usize),
+                    0b11 => return write!(f, "<undefined>"),
+                    _ => unreachable!(),
+                }
             }
         }
 
