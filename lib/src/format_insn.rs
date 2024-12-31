@@ -498,6 +498,29 @@ fn format_simd_reg(
             }
         }
 
+        InsnClass::ASIMDDIFF => {
+            let size = bit_range(bits, 22, 2);
+            let q = bit_set(bits, 30) as u32;
+            match kind {
+                InsnOperandKind::Vd => match size {
+                    0b00 => SimdRegArrangement::Vector8H,
+                    0b01 => SimdRegArrangement::Vector4S,
+                    0b10 => SimdRegArrangement::Vector2D,
+                    _ => return write!(f, "<undefined>"),
+                },
+                InsnOperandKind::Vn | InsnOperandKind::Vm => match size << 1 | q {
+                    0b000 => SimdRegArrangement::Vector8B,
+                    0b001 => SimdRegArrangement::Vector16B,
+                    0b010 => SimdRegArrangement::Vector4H,
+                    0b011 => SimdRegArrangement::Vector8H,
+                    0b100 => SimdRegArrangement::Vector2S,
+                    0b101 => SimdRegArrangement::Vector4S,
+                    _ => return write!(f, "<undefined>"),
+                },
+                _ => return write!(f, "<undefined>"),
+            }
+        }
+
         _ => {
             if let Some(qual) = operand.qualifiers.first() {
                 let double = if definition.flags.contains(InsnFlags::HAS_SIZEQ_FIELD) {
