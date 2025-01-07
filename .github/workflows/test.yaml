@@ -2,7 +2,7 @@ name: Test Build
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
@@ -46,10 +46,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - uses: Swatinem/rust-cache@v2
-        with:
-          prefix-key: ${{ matrix.target }}-main
-          save-if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Set Profiling flags
+        shell: bash
+        run: |
+          mkdir -p .cargo
+          echo "[build]" > .cargo/config.toml
+          echo 'rustflags = "-Z self-profile"' >> .cargo/config.toml
 
       - name: Build binary
         uses: houseabsolute/actions-rust-cross@v0
@@ -57,3 +59,14 @@ jobs:
           toolchain: nightly
           target: ${{ matrix.target }}
           args: "--locked --release --package disarm64"
+
+      - name: Prepare assets
+        shell: bash
+        run: |
+          tar -cvzf ${{ matrix.target }}.tar.gz *.mm_profdata
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: ${{ matrix.target }}.tar.gz
