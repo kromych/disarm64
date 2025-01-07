@@ -152,7 +152,6 @@ name = "disarm64"
 version = "0.1.21"
 dependencies = [
  "bitfield-struct",
- "bitflags",
  "disarm64_defn",
  "goblin",
  "proc-macro2",
