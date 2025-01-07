@@ -45,8 +45,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # fix revision count
 
       - uses: Swatinem/rust-cache@v2
         with:
@@ -59,4 +57,3 @@ jobs:
           toolchain: nightly
           target: ${{ matrix.target }}
           args: "--locked --release --package disarm64"
-          strip: true
