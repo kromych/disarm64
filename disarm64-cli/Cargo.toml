@@ -1,0 +1,28 @@
+[package]
+name = "disarm64-cli"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1"
+
+disarm64 = { path = "../disarm64" }
+disarm64_defn = "0.1.10"
+
+clap = { version = "4", features = ["derive"] }
+clap-num = "1"
+memmap2 = "0.9"
+env_logger = "0.11"
+log = "0.4"
+
+
+[[bin]]
+name = "disarm64"
+path = "src/main.rs"
+
+[features]
+full = ["disarm64/full"]
+load_store = ["disarm64/load_store"]
+exception = ["disarm64/exception"]
+system = ["disarm64/system"]
+default = ["full"]
