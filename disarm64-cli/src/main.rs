@@ -112,11 +112,14 @@ fn init_logging(opt: &CommandLine) {
         .format_timestamp(None)
         .format_module_path(false)
         .format_target(false)
-        .filter(None, match opt.verbosity {
-            0 => log::LevelFilter::Info,
-            1 => log::LevelFilter::Debug,
-            _ => log::LevelFilter::Trace,
-        });
+        .filter(
+            None,
+            match opt.verbosity {
+                0 => log::LevelFilter::Info,
+                1 => log::LevelFilter::Debug,
+                _ => log::LevelFilter::Trace,
+            },
+        );
 
     if !std::io::stdout().is_terminal() {
         builder = builder
