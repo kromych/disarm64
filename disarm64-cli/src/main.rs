@@ -11,6 +11,8 @@ use std::io::IsTerminal;
 use std::io::Read;
 use std::path::PathBuf;
 
+use disarm64::goblin;
+
 #[cfg(feature = "full")]
 use disarm64::decoder;
 
@@ -110,14 +112,11 @@ fn init_logging(opt: &CommandLine) {
         .format_timestamp(None)
         .format_module_path(false)
         .format_target(false)
-        .filter(
-            None,
-            match opt.verbosity {
-                0 => log::LevelFilter::Info,
-                1 => log::LevelFilter::Debug,
-                _ => log::LevelFilter::Trace,
-            },
-        );
+        .filter(None, match opt.verbosity {
+            0 => log::LevelFilter::Info,
+            1 => log::LevelFilter::Debug,
+            _ => log::LevelFilter::Trace,
+        });
 
     if !std::io::stdout().is_terminal() {
         builder = builder
@@ -195,11 +194,11 @@ fn main() -> anyhow::Result<()> {
 
     if let Some(benchmark) = opt.benchmark {
         eprintln!(
-                    "Benchmark mode {benchmark:?}. Processing has taken {elapsed:?} for {processed_size} bytes, {mib_per_second} MiB/s",
-                    elapsed = stats.elapsed,
-                    processed_size = stats.processed_size,
-                    mib_per_second = stats.mib_per_second()
-                );
+            "Benchmark mode {benchmark:?}. Processing has taken {elapsed:?} for {processed_size} bytes, {mib_per_second} MiB/s",
+            elapsed = stats.elapsed,
+            processed_size = stats.processed_size,
+            mib_per_second = stats.mib_per_second()
+        );
     }
 
     Ok(())

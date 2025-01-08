@@ -1,5 +1,4 @@
 use clap::Parser;
-use decision_tree::build_decision_tree;
 use disarm64_defn::deser::Insn;
 use disarm64_defn::InsnClass;
 use disarm64_defn::InsnFeatureSet;
@@ -10,6 +9,7 @@ use std::rc::Rc;
 
 use crate::generate_graphviz_dot::decistion_tree_to_graphviz_dot;
 use crate::generate_rust::decision_tree_to_rust;
+use decision_tree::build_decision_tree;
 use decision_tree::DecisionTreeIndexing;
 
 mod decision_tree;

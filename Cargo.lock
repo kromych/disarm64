@@ -151,20 +151,24 @@ checksum = "5b63caa9aa9397e2d9480a9b13673856c78d8ac123288526c37d7839f2a86990"
 name = "disarm64"
 version = "0.1.21"
 dependencies = [
- "anyhow",
  "bitfield-struct",
- "bitflags",
+ "disarm64_defn",
+ "goblin",
+ "proc-macro2",
+]
+
+[[package]]
+name = "disarm64-cli"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
  "clap",
  "clap-num",
+ "disarm64",
  "disarm64_defn",
  "env_logger",
- "goblin",
  "log",
  "memmap2",
- "proc-macro2",
- "quote",
- "serde",
- "serde_json",
 ]
 
 [[package]]
@@ -177,6 +181,21 @@ dependencies = [
  "serde",
  "strum",
  "strum_macros",
+]
+
+[[package]]
+name = "disarm64_gen"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "disarm64_defn",
+ "env_logger",
+ "log",
+ "memmap2",
+ "proc-macro2",
+ "quote",
+ "serde_json",
 ]
 
 [[package]]

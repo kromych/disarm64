@@ -85,3 +85,6 @@ impl Display for SystemOpcode {
 
 pub mod format_insn;
 pub mod registers;
+
+/// re-export of goblin.
+pub use goblin;
