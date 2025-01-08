@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1"
 
-disarm64 = { path = "../disarm64" }
+disarm64 = "0.1.22"
 disarm64_defn = "0.1.10"
 
 clap = { version = "4", features = ["derive"] }
