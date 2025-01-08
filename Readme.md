@@ -48,7 +48,7 @@ structural matching against the operands of the instruction.
 To install the tools:
 
 ```sh
-cargo install disarm64
+cargo install disarm64-cli
 ```
 
 To use as a library:
