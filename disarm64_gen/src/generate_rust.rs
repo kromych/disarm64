@@ -475,8 +475,8 @@ fn decision_tree_to_rust_indexed(
         node_tokens: &mut HashMap<usize, TokenStream>,
         opcode_to_used_name: &HashMap<(Opcode, Mask), String>,
     ) {
-        match decision_tree {
-            Some(node) => match node.as_ref() {
+        if let Some(node) = decision_tree {
+            match node.as_ref() {
                 DecisionTreeNode::Leaf { index, insns } => {
                     let index = index.expect("index must be present");
                     assert!(!node_tokens.contains_key(&index));
@@ -535,8 +535,7 @@ fn decision_tree_to_rust_indexed(
                     decision_tree_to_rust_indexed_recursive(zero, node_tokens, opcode_to_used_name);
                     decision_tree_to_rust_indexed_recursive(one, node_tokens, opcode_to_used_name);
                 }
-            },
-            None => {}
+            }
         }
     }
 
