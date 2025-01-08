@@ -149,7 +149,7 @@ checksum = "5b63caa9aa9397e2d9480a9b13673856c78d8ac123288526c37d7839f2a86990"
 
 [[package]]
 name = "disarm64"
-version = "0.1.21"
+version = "0.1.22"
 dependencies = [
  "bitfield-struct",
  "disarm64_defn",
@@ -159,7 +159,7 @@ dependencies = [
 
 [[package]]
 name = "disarm64-cli"
-version = "0.1.0"
+version = "0.1.22"
 dependencies = [
  "anyhow",
  "clap",
