@@ -28,5 +28,4 @@ default = ["full"]
 disarm64_defn = "0.1.10"
 
 bitfield-struct = "0.10"
-goblin = { version = "0.9", features = ["elf64", "pe64", "mach64"] }
 proc-macro2 = { version = "1", default-features = false }

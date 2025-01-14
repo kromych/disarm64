@@ -11,8 +11,6 @@ use std::io::IsTerminal;
 use std::io::Read;
 use std::path::PathBuf;
 
-use disarm64::goblin;
-
 #[cfg(feature = "full")]
 use disarm64::decoder;
 

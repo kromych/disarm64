@@ -153,7 +153,6 @@ version = "0.1.22"
 dependencies = [
  "bitfield-struct",
  "disarm64_defn",
- "goblin",
  "proc-macro2",
 ]
 
@@ -179,6 +178,7 @@ dependencies = [
  "disarm64 0.1.22 (registry+https://github.com/rust-lang/crates.io-index)",
  "disarm64_defn",
  "env_logger",
+ "goblin",
  "log",
  "memmap2",
 ]
