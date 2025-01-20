@@ -1,6 +1,6 @@
 [package]
 name = "disarm64-cli"
-version = "0.1.22"
+version = "0.1.23"
 edition = "2021"
 
 authors = ["kromych <kromych@users.noreply.github.com>"]
@@ -19,7 +19,7 @@ license = "Unlicense OR MIT"
 readme = "../Readme.md"
 
 [dependencies]
-disarm64 = "0.1.22"
+disarm64 = "0.1.23"
 disarm64_defn = "0.1.10"
 
 anyhow = "1"
