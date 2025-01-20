@@ -19,19 +19,16 @@ license = "Unlicense OR MIT"
 readme = "../Readme.md"
 
 [dependencies]
-anyhow = "1"
-
 disarm64 = "0.1.22"
 disarm64_defn = "0.1.10"
 
+anyhow = "1"
 clap = { version = "4", features = ["derive"] }
 clap-num = "1"
-memmap2 = "0.9"
 env_logger = "0.11"
-log = "0.4"
-
 goblin = { version = "0.9", features = ["elf64", "pe64", "mach64"] }
-
+log = "0.4"
+memmap2 = "0.9"
 
 [[bin]]
 name = "disarm64"
