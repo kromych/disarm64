@@ -150,18 +150,6 @@ checksum = "5b63caa9aa9397e2d9480a9b13673856c78d8ac123288526c37d7839f2a86990"
 
 [[package]]
 name = "disarm64"
-version = "0.1.22"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "30e581620769518fc0e35b6bb4a1dc51a4d8dba16b44d655ab649b42922c2169"
-dependencies = [
- "bitfield-struct",
- "disarm64_defn",
- "goblin",
- "proc-macro2",
-]
-
-[[package]]
-name = "disarm64"
 version = "0.1.23"
 dependencies = [
  "bitfield-struct",
@@ -170,13 +158,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "disarm64"
+version = "0.1.23"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a38e07794c3d317f62e72f05a5ac55b95acdedf4d536acc9ab0818f6af3ea93a"
+dependencies = [
+ "bitfield-struct",
+ "disarm64_defn",
+ "proc-macro2",
+]
+
+[[package]]
 name = "disarm64-cli"
-version = "0.1.22"
+version = "0.1.23"
 dependencies = [
  "anyhow",
  "clap",
  "clap-num",
- "disarm64 0.1.22",
+ "disarm64 0.1.23 (registry+https://github.com/rust-lang/crates.io-index)",
  "disarm64_defn",
  "env_logger",
  "goblin",
