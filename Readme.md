@@ -255,10 +255,10 @@ are instructions and opcodes to check against.
 
 Examples (Aarch64):
 
-- exception instructions: [dt-exception.png](./img/dt-exception.png)
-- V8 instructions (no SIMD, no aliases): [dt-v8.png](./img/dt-v8.png)
-- system instructions: [dt-system.png](./img/dt-system.png)
-- V8 load and store instructions: [dt-ldst.png](./img/dt-ldst.png)
+- exception instructions: [dt-exception.png](https://github.com/kromych/disarm64/blob/master/img/dt-exception.png)
+- V8 instructions (no SIMD, no aliases): [dt-v8.png](https://github.com/kromych/disarm64/blob/master/img/dt-v8.png)
+- system instructions: [dt-system.png](https://github.com/kromych/disarm64/blob/master/img/dt-system.png)
+- V8 load and store instructions: [dt-ldst.png](https://github.com/kromych/disarm64/blob/master/img/dt-ldst.png)
 
 ### Debug output
 
