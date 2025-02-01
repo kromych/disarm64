@@ -1,6 +1,6 @@
 [package]
 name = "disarm64"
-version = "0.1.23"
+version = "0.1.24"
 edition = "2021"
 authors = ["kromych <kromych@users.noreply.github.com>"]
 description = """
@@ -25,7 +25,6 @@ system = []
 default = ["full"]
 
 [dependencies]
-disarm64_defn = "0.1.10"
+disarm64_defn = { version = "0.1.11", default-features = false }
 
 bitfield-struct = "0.10"
-proc-macro2 = { version = "1", default-features = false }

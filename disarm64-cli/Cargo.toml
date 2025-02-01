@@ -1,6 +1,6 @@
 [package]
 name = "disarm64-cli"
-version = "0.1.23"
+version = "0.1.24"
 edition = "2021"
 
 authors = ["kromych <kromych@users.noreply.github.com>"]
@@ -20,7 +20,7 @@ readme = "../Readme.md"
 
 [dependencies]
 disarm64 = "0.1.23"
-disarm64_defn = "0.1.10"
+disarm64_defn = "0.1.11"
 
 anyhow = "1"
 clap = { version = "4", features = ["derive"] }

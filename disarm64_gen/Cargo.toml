@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1"
 
-disarm64_defn = "0.1.10"
+disarm64_defn = "0.1.11"
 clap = { version = "4", features = ["derive"] }
 log = "0.4"
 env_logger = "0.11"
