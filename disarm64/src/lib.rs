@@ -16,12 +16,6 @@
 
 #![no_std]
 
-#[cfg(all(
-    feature = "full",
-    any(feature = "load_store", feature = "system", feature = "exception")
-))]
-compile_error!("Cannot use the 'full' feature with any of 'load_store', 'system', 'exception'");
-
 use core::fmt::Display;
 use core::fmt::Formatter;
 
