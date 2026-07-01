@@ -361,7 +361,6 @@ pub const SYS_REGS: &[SysReg] = &[
     SysReg(sys_reg_number(2, 1, 0x0, 0x7, 7), "trcimspec7"),
     SysReg(sys_reg_number(2, 1, 0x0, 0x8, 0), "trceventctl0r"),
     SysReg(sys_reg_number(2, 1, 0x0, 0x8, 2), "trcvdctlr"),
-    SysReg(sys_reg_number(2, 1, 0x0, 0x8, 4), "trcextinselr"),
     SysReg(sys_reg_number(2, 1, 0x0, 0x8, 4), "trcextinselr0"),
     SysReg(sys_reg_number(2, 1, 0x0, 0x8, 5), "trccntvr0"),
     SysReg(sys_reg_number(2, 1, 0x0, 0x8, 7), "trcidr0"),
@@ -1337,4 +1336,24 @@ pub fn get_sys_reg_name(sys_reg: u32) -> Option<&'static SysReg> {
         .binary_search_by_key(&sys_reg, |&SysReg(num, _)| num)
         .ok()
         .map(|idx| &SYS_REGS[idx])
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn sys_regs_strictly_sorted() {
+        // get_sys_reg_name binary-searches SYS_REGS, which requires the keys to be
+        // strictly increasing; a strict comparison also rejects duplicate keys.
+        for pair in SYS_REGS.windows(2) {
+            assert!(
+                pair[0].0 < pair[1].0,
+                "SYS_REGS not strictly sorted at {:#x} ({} then {})",
+                pair[0].0,
+                pair[0].1,
+                pair[1].1
+            );
+        }
+    }
 }
