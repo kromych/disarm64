@@ -22,7 +22,38 @@ fn dbg_ident(value: impl std::fmt::Debug) -> Ident {
     format_ident!("{}", format!("{value:?}"))
 }
 
-fn write_prelude(_decision_tree: &DecisionTree, f: &mut impl Write) -> std::io::Result<()> {
+fn write_prelude(
+    indexing: decision_tree::DecisionTreeIndexing,
+    f: &mut impl Write,
+) -> std::io::Result<()> {
+    // The Leaf/Decode/DecodeTable types back the table-driven decoders only; the
+    // conditionals decoder never references them.
+    let table_types = match indexing {
+        decision_tree::DecisionTreeIndexing::DFS | decision_tree::DecisionTreeIndexing::BFS => {
+            quote! {
+                /// Leaf nodes in the decision tree
+                struct Leaf {
+                    insn: &'static Insn,
+                    factory: fn(u32) -> Opcode,
+                }
+
+                /// The decision tree node
+                enum Decode {
+                    /// Branch in the decision tree
+                    Branch {
+                        mask: u32,
+                        next: [Option<u16>; 2],
+                    },
+                    Leaf(&'static [Leaf]),
+                }
+
+                /// The decode table
+                type DecodeTable = &'static [Decode];
+            }
+        }
+        decision_tree::DecisionTreeIndexing::None => quote! {},
+    };
+
     let prelude = quote! {
         #![allow(clippy::collapsible_else_if)]
         #![allow(clippy::upper_case_acronyms)]
@@ -44,24 +75,7 @@ fn write_prelude(_decision_tree: &DecisionTree, f: &mut impl Write) -> std::io::
         use disarm64_defn::defn::Insn;
         use disarm64_defn::defn::InsnOpcode;
 
-        /// Leaf nodes in the decision tree
-        struct Leaf {
-            insn: &'static Insn,
-            factory: fn(u32) -> Opcode,
-        }
-
-        /// The decision tree node
-        enum Decode {
-            /// Branch in the decision tree
-            Branch {
-                mask: u32,
-                next: [Option<u16>; 2],
-            },
-            Leaf(&'static [Leaf]),
-        }
-
-        /// The decode table
-        type DecodeTable = &'static [Decode];
+        #table_types
 
         /// Define instruction newtype structs with Debug impl.
         macro_rules! define_insn_types {
@@ -574,7 +588,7 @@ pub fn decision_tree_to_rust(
 ) -> std::io::Result<()> {
     let mut f = std::io::BufWriter::new(f);
 
-    write_prelude(decision_tree, &mut f)?;
+    write_prelude(decision_tree_indexing, &mut f)?;
 
     let opcode_to_used_name = write_insn_structs(decision_tree, &mut f)?;
     let decoder = match decision_tree_indexing {

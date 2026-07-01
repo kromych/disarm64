@@ -19,22 +19,6 @@ use disarm64_defn::InsnFlags;
 use disarm64_defn::InsnOperandClass;
 use disarm64_defn::InsnOperandKind;
 use disarm64_defn::InsnOperandQualifier;
-#[doc = r" Leaf nodes in the decision tree"]
-struct Leaf {
-    insn: &'static Insn,
-    factory: fn(u32) -> Opcode,
-}
-#[doc = r" The decision tree node"]
-enum Decode {
-    #[doc = r" Branch in the decision tree"]
-    Branch {
-        mask: u32,
-        next: [Option<u16>; 2],
-    },
-    Leaf(&'static [Leaf]),
-}
-#[doc = r" The decode table"]
-type DecodeTable = &'static [Decode];
 #[doc = r" Define instruction newtype structs with Debug impl."]
 macro_rules ! define_insn_types { ($ ($ name : ident) , * $ (,) ?) => { $ (# [derive (Copy , Clone , PartialEq , Eq)] pub struct $ name (pub u32) ; impl core :: fmt :: Debug for $ name { fn fmt (& self , f : & mut core :: fmt :: Formatter < '_ >) -> core :: fmt :: Result { write ! (f , "{}({:#010x})" , stringify ! ($ name) , self . 0) } }) * } ; }
 #[doc = r" Define DEFINITION, make_opcode, and InsnOpcode for each instruction struct."]
