@@ -19,6 +19,14 @@ categories = ["command-line-utilities", "development-tools", "embedded"]
 license = "Unlicense OR MIT"
 readme = "Readme.md"
 
+# disarm64_defn is a separate crate published to crates.io. During development it
+# is edited in the sibling checkout so schema changes and their tests land
+# together; released builds still resolve the published version (a patch applies
+# only to this workspace). Building from a lone disarm64 checkout therefore needs
+# ../disarm64_defn present; CI checks it out alongside.
+[patch.crates-io]
+disarm64_defn = { path = "../disarm64_defn" }
+
 [workspace.dependencies]
 disarm64 = { path = "disarm64", version = "0.1.26" }
 

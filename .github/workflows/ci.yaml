@@ -9,12 +9,24 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+# The root manifest patches disarm64_defn to ../disarm64_defn, so every job checks
+# out that sibling repository next to this one and runs cargo from this checkout.
+defaults:
+  run:
+    working-directory: disarm64
+
 jobs:
   lint:
     name: Format and clippy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: disarm64
+      - uses: actions/checkout@v4
+        with:
+          repository: kromych/disarm64_defn
+          path: disarm64_defn
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
@@ -26,6 +38,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: disarm64
+      - uses: actions/checkout@v4
+        with:
+          repository: kromych/disarm64_defn
+          path: disarm64_defn
       - uses: dtolnay/rust-toolchain@stable
       # The corpus test needs the external disarm64_test_data repo, which is not
       # present here; it skips with a notice. The smoke suite always runs.
@@ -40,6 +58,12 @@ jobs:
         feature: [full, load_store, exception, system]
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: disarm64
+      - uses: actions/checkout@v4
+        with:
+          repository: kromych/disarm64_defn
+          path: disarm64_defn
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo build -p disarm64 --no-default-features --features ${{ matrix.feature }}
       # Doctests demonstrate the full-feature API, so build lib and integration
@@ -55,6 +79,12 @@ jobs:
         feature: [full, load_store, exception, system]
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: disarm64
+      - uses: actions/checkout@v4
+        with:
+          repository: kromych/disarm64_defn
+          path: disarm64_defn
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-unknown-none
@@ -66,6 +96,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: disarm64
+      - uses: actions/checkout@v4
+        with:
+          repository: kromych/disarm64_defn
+          path: disarm64_defn
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt

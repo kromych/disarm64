@@ -174,8 +174,6 @@ dependencies = [
 [[package]]
 name = "disarm64_defn"
 version = "0.1.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a23d4e51fceb4cc011f0591ac0dfd91f2d5529640c2b37785741b5247bb65cb"
 dependencies = [
  "bitflags",
  "serde",
