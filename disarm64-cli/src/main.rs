@@ -356,10 +356,12 @@ fn decode_mach(data: &[u8], benchmark: Option<BenchmarkMode>) -> anyhow::Result<
     for segment in &mach.segments {
         if let Ok(sections) = segment.sections() {
             for (section, data) in sections {
-                if section.flags & 0x80000000 != 0 {
+                // S_ATTR_PURE_INSTRUCTIONS: the section holds only machine code.
+                const MACHO_PURE_INSTRUCTIONS: u32 = 0x8000_0000;
+                if section.flags & MACHO_PURE_INSTRUCTIONS != 0 {
                     log::info!(
                         "// Decoding section {:?} @ {:#x}",
-                        section.name().unwrap_or("<unknwon>"),
+                        section.name().unwrap_or("<unknown>"),
                         section.addr
                     );
 
@@ -385,7 +387,9 @@ fn decode_pe(data: &[u8], benchmark: Option<BenchmarkMode>) -> anyhow::Result<Pr
     let mut proc_stats = ProcessingStats::default();
     let mut buffer = String::new();
     for section in &pe.sections {
-        if section.characteristics & 0x20000000 != 0 {
+        // IMAGE_SCN_MEM_EXECUTE: the section can be executed as code.
+        const PE_MEM_EXECUTE: u32 = 0x2000_0000;
+        if section.characteristics & PE_MEM_EXECUTE != 0 {
             let vbase = pe.image_base + section.virtual_address as u64;
             log::info!(
                 "// Decoding section {:?} @ {vbase:#x}",
