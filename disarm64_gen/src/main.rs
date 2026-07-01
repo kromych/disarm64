@@ -14,6 +14,7 @@ use decision_tree::DecisionTreeIndexing;
 
 mod decision_tree;
 mod generate_graphviz_dot;
+mod generate_registers;
 mod generate_rust;
 mod generate_test_bin;
 
@@ -53,6 +54,9 @@ struct CommandLine {
     /// Generate the decoder implemented in Rust.
     #[clap(short, long)]
     rs_file: Option<PathBuf>,
+    /// Generate the mechanical register-name tables (integer, fp, SVE, SIMD).
+    #[clap(long)]
+    registers: Option<PathBuf>,
     /// Generate a test binary.
     #[clap(short, long)]
     test_bin: Option<PathBuf>,
@@ -95,6 +99,12 @@ fn main() -> anyhow::Result<()> {
     let opt = CommandLine::parse();
 
     init_logging(&opt);
+
+    if let Some(registers) = &opt.registers {
+        log::info!("Writing register tables to a Rust file {registers:?}");
+        let mut f = std::fs::File::create(registers)?;
+        generate_registers::generate_registers(&mut f)?;
+    }
 
     let filter_feature_sets = HashSet::from_iter(opt.feature_sets.unwrap_or_default());
     let filter_insn_class = HashSet::from_iter(opt.insn_class.unwrap_or_default());

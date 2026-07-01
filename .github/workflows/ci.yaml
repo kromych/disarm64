@@ -112,6 +112,7 @@ jobs:
           gen ./aarch64.json -c ic_system -r disarm64/src/decoder_system.rs
           gen ./aarch64.json -c exception -r disarm64/src/decoder_exception.rs
           gen ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit,log_imm,log_shift,lse128_atomic,lse_atomic -r disarm64/src/decoder_load_store.rs
+          gen ./aarch64.json --registers disarm64/src/register_tables.rs
           cargo fmt
       - name: Fail if the committed decoders differ from a fresh regeneration
-        run: git diff --exit-code -- disarm64/src/decoder_full.rs disarm64/src/decoder_system.rs disarm64/src/decoder_exception.rs disarm64/src/decoder_load_store.rs
+        run: git diff --exit-code -- disarm64/src/decoder_full.rs disarm64/src/decoder_system.rs disarm64/src/decoder_exception.rs disarm64/src/decoder_load_store.rs disarm64/src/register_tables.rs

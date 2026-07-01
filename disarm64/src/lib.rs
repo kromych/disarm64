@@ -60,4 +60,5 @@ pub use decoder_system::Opcode as SystemOpcode;
 impl_opcode_display!("system", SystemOpcode);
 
 pub mod format_insn;
+mod register_tables;
 pub mod registers;
