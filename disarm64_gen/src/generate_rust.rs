@@ -8,7 +8,6 @@ use proc_macro2::TokenStream;
 use quote::format_ident;
 use quote::quote;
 use std::collections::HashMap;
-use std::collections::HashSet;
 use std::io::Write;
 use std::rc::Rc;
 
@@ -62,7 +61,6 @@ fn write_prelude(
                 /// Leaf nodes in the decision tree
                 struct Leaf {
                     insn: &'static Insn,
-                    factory: fn(u32) -> Opcode,
                 }
 
                 /// The decision tree node
@@ -89,7 +87,6 @@ fn write_prelude(
         #![allow(non_snake_case, non_camel_case_types)]
         #![allow(dead_code)]
         #![allow(unused_imports)]
-        #![allow(unused_macro_rules)]
 
         use disarm64_defn::InsnClass;
         use disarm64_defn::InsnFeatureSet;
@@ -103,67 +100,30 @@ fn write_prelude(
         use disarm64_defn::defn::Insn;
         use disarm64_defn::defn::InsnOpcode;
 
+        /// A decoded instruction: its raw bits and a reference to its definition.
+        #[derive(Copy, Clone, PartialEq, Eq)]
+        pub struct Opcode {
+            bits: u32,
+            def: &'static Insn,
+        }
+
+        impl core::fmt::Debug for Opcode {
+            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+                write!(f, "{}({:#010x})", self.def.mnemonic, self.bits)
+            }
+        }
+
+        impl InsnOpcode for Opcode {
+            fn definition(&self) -> &'static Insn {
+                self.def
+            }
+
+            fn bits(&self) -> u32 {
+                self.bits
+            }
+        }
+
         #table_types
-
-        /// Define instruction newtype structs with Debug impl.
-        macro_rules! define_insn_types {
-            ($($name:ident),* $(,)?) => {
-                $(
-                    #[derive(Copy, Clone, PartialEq, Eq)]
-                    pub struct $name(pub u32);
-                    impl core::fmt::Debug for $name {
-                        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-                            write!(f, "{}({:#010x})", stringify!($name), self.0)
-                        }
-                    }
-                )*
-            };
-        }
-
-        /// Define DEFINITION, make_opcode, and InsnOpcode for each instruction struct.
-        macro_rules! define_insn_impls {
-            ($(
-                $name:ident(
-                    $mnemonic_str:expr, $mnemonic_ident:ident,
-                    $opcode:expr, $mask:expr,
-                    $class:ident, $feature_set:ident,
-                    $flags:expr, $operands:expr
-                )
-            ),* $(,)?) => {
-                $(
-                    impl $name {
-                        pub const DEFINITION: Insn = Insn {
-                            mnemonic: $mnemonic_str,
-                            aliases: &[],
-                            opcode: $opcode,
-                            mask: $mask,
-                            class: InsnClass::$class,
-                            feature_set: InsnFeatureSet::$feature_set,
-                            operands: $operands,
-                            flags: $flags,
-                        };
-
-                        fn make_opcode(bits: u32) -> Opcode {
-                            Opcode {
-                                mnemonic: Mnemonic::$mnemonic_ident,
-                                operation: Operation::$class($class::$name($name(bits)))
-                            }
-                        }
-                    }
-
-                    impl InsnOpcode for $name {
-                        fn definition(&self) -> &'static Insn {
-                            &Self::DEFINITION
-                        }
-
-                        fn bits(&self) -> u32 {
-                            self.0
-                        }
-                    }
-                )*
-            };
-        }
-
     };
 
     writeln!(
@@ -184,7 +144,7 @@ struct Opcode(u32);
 fn write_insn_structs(
     decision_tree: &DecisionTree,
     f: &mut impl Write,
-) -> std::io::Result<HashMap<(Opcode, Mask), String>> {
+) -> std::io::Result<HashMap<(Opcode, Mask), usize>> {
     fn collect_insns_recursive(decision_tree: &DecisionTree, insns: &mut Vec<Rc<Insn>>) {
         if decision_tree.is_none() {
             return;
@@ -208,35 +168,6 @@ fn write_insn_structs(
     let mut insns = Vec::new();
     collect_insns_recursive(decision_tree, &mut insns);
     insns.sort_by_key(|insn| insn.mnemonic.clone());
-    let mnemonics = insns
-        .iter()
-        .map(|x| x.mnemonic.clone().to_lowercase().replace('.', "_"))
-        .collect::<HashSet<_>>();
-    let mut mnemonics = Vec::from_iter(mnemonics);
-    mnemonics.sort();
-    let mnemonics = mnemonics
-        .into_iter()
-        .map(|x| format_ident!("r#{x}"))
-        .collect::<Vec<_>>();
-    let mut struct_definitions = quote! {};
-    let mut struct_impls = quote! {};
-    let mnemonic_definitions = quote! {
-        #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-        pub enum Mnemonic {
-            #(
-                #mnemonics,
-            )*
-        }
-    };
-    struct_definitions.extend(mnemonic_definitions);
-
-    let mut used_names = std::collections::HashSet::new();
-    let mut opcode_to_used_name = std::collections::HashMap::new();
-    let mut classes = HashMap::new();
-
-    // Collect all struct names and their impl data for batched macro invocations
-    let mut all_struct_names: Vec<proc_macro2::Ident> = Vec::new();
-    let mut all_impl_entries: Vec<TokenStream> = Vec::new();
 
     // Operand and bitfield lists are heavily duplicated across instructions, so
     // intern them into shared const pools referenced by each definition.
@@ -245,50 +176,13 @@ fn write_insn_structs(
     let mut operands_pool: HashMap<String, usize> = HashMap::new();
     let mut operands_defs: Vec<TokenStream> = Vec::new();
 
-    for insn in insns {
-        let mut opcode_struct_name = insn.mnemonic.to_string();
-        opcode_struct_name.make_ascii_uppercase();
+    let mut opcode_to_index = HashMap::new();
+    let mut insn_entries: Vec<TokenStream> = Vec::new();
 
-        let mut opcode_struct_name = opcode_struct_name.replace('.', "_");
-        let base_opcode_struct_name = opcode_struct_name.clone();
-        {
-            for operand in insn.operands.iter() {
-                opcode_struct_name.push_str(&format!("_{:?}", operand.kind));
-            }
+    for insn in &insns {
+        let index = insn_entries.len();
+        opcode_to_index.insert((Opcode(insn.opcode), Mask(insn.mask)), index);
 
-            if !used_names.contains(&opcode_struct_name) {
-                used_names.insert(opcode_struct_name.clone());
-            } else {
-                opcode_struct_name.clone_from(&base_opcode_struct_name);
-                for operand in insn.operands.iter() {
-                    opcode_struct_name.push_str(&format!("_{:?}", operand.kind));
-                    if !operand.qualifiers.is_empty() {
-                        opcode_struct_name.push_str(&format!("_{:?}", operand.qualifiers[0]));
-                    }
-                }
-                if !used_names.contains(&opcode_struct_name) {
-                    used_names.insert(opcode_struct_name.clone());
-                } else {
-                    opcode_struct_name.push_str(&format!("_{:08x}", insn.opcode));
-                    used_names.insert(opcode_struct_name.clone());
-                }
-            }
-        }
-        opcode_to_used_name.insert(
-            (Opcode(insn.opcode), Mask(insn.mask)),
-            opcode_struct_name.clone(),
-        );
-
-        if let std::collections::hash_map::Entry::Vacant(e) = classes.entry(insn.class) {
-            e.insert(vec![opcode_struct_name.clone()]);
-        } else {
-            classes
-                .get_mut(&insn.class)
-                .unwrap()
-                .push(opcode_struct_name.clone());
-        }
-
-        let opcode_struct_name_ident = format_ident!("{}", opcode_struct_name);
         let opcode_hex = hex_lit(insn.opcode);
         let mask_hex = hex_lit(insn.mask);
         let mnemonic = insn.mnemonic.as_str();
@@ -354,134 +248,41 @@ fn write_insn_structs(
             }
         };
 
-        all_struct_names.push(opcode_struct_name_ident.clone());
-
-        let mnemonic_ident = format_ident!("r#{}", mnemonic.replace('.', "_"));
-        all_impl_entries.push(quote! {
-            #opcode_struct_name_ident(
-                #mnemonic, #mnemonic_ident,
-                #opcode_hex, #mask_hex,
-                #class, #feature_set,
-                #flags, #operands
-            )
-        });
-    }
-
-    // Emit batched struct type definitions via macro
-    struct_definitions.extend(quote! {
-        define_insn_types!(#(#all_struct_names),*);
-    });
-
-    // Emit the interned operand and bitfield pools (bitfields first, since the
-    // operand pool references them).
-    struct_definitions.extend(quote! {
-        #(#bitfields_defs)*
-        #(#operands_defs)*
-    });
-
-    // Emit batched impl blocks via macro (after enums are defined)
-    struct_impls.extend(quote! {
-        define_insn_impls!(#(#all_impl_entries),*);
-    });
-
-    let mut sorted_classes = classes.keys().collect::<Vec<_>>();
-    sorted_classes.sort_by_key(|x| x.to_string());
-    for class in &sorted_classes {
-        let class_name = dbg_ident(class);
-        let mut class_opcode_idents = classes.get(class).unwrap().to_vec();
-        class_opcode_idents.sort();
-        let class_opcode_idents = class_opcode_idents
-            .iter()
-            .map(|name| format_ident!("{name}"))
-            .collect::<Vec<_>>();
-
-        struct_definitions.extend(quote! {
-            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-            pub enum #class_name {
-                #(
-                    #class_opcode_idents(#class_opcode_idents),
-                )*
-            }
-        });
-        struct_impls.extend(quote! {
-            impl InsnOpcode for #class_name {
-                fn definition(&self) -> &'static Insn {
-                    match self {
-                        #(
-                            #class_name::#class_opcode_idents(opcode) => opcode.definition(),
-                        )*
-                    }
-                }
-
-                fn bits(&self) -> u32 {
-                    match self {
-                        #(
-                            #class_name::#class_opcode_idents(opcode) => opcode.bits(),
-                        )*
-                    }
-                }
+        insn_entries.push(quote! {
+            Insn {
+                mnemonic: #mnemonic,
+                aliases: &[],
+                opcode: #opcode_hex,
+                mask: #mask_hex,
+                class: InsnClass::#class,
+                feature_set: InsnFeatureSet::#feature_set,
+                operands: #operands,
+                flags: #flags,
             }
         });
     }
 
-    let classes_idents = sorted_classes.iter().map(dbg_ident).collect::<Vec<_>>();
-
+    let insn_count = Literal::usize_unsuffixed(insn_entries.len());
     writeln!(
         f,
         "{}",
         quote! {
-            #struct_definitions
+            #(#bitfields_defs)*
+            #(#operands_defs)*
 
-            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-            pub enum Operation {
-                #(
-                    #classes_idents(#classes_idents),
-                )*
-            }
-
-            #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-            pub struct Opcode {
-                pub mnemonic: Mnemonic,
-                pub operation: Operation
-            }
-
-            #struct_impls
-
-            impl InsnOpcode for Operation {
-                fn definition(&self) -> &'static Insn {
-                    match self {
-                        #(
-                            Operation::#classes_idents(class) => class.definition(),
-                        )*
-                    }
-                }
-
-                fn bits(&self) -> u32 {
-                    match self {
-                        #(
-                            Operation::#classes_idents(class) => class.bits(),
-                        )*
-                    }
-                }
-            }
-
-            impl InsnOpcode for Opcode {
-                fn definition(&self) -> &'static Insn {
-                    self.operation.definition()
-                }
-                fn bits(&self) -> u32 {
-                    self.operation.bits()
-                }
-            }
+            /// The decoded instruction definitions referenced by the decoder.
+            static INSNS: [Insn; #insn_count] = [
+                #(#insn_entries),*
+            ];
         }
     )?;
 
-    Ok(opcode_to_used_name)
+    Ok(opcode_to_index)
 }
 
 fn decision_tree_to_rust_recursive_conditionals(
     decision_tree: &DecisionTree,
-    opcode_to_used_name: &HashMap<(Opcode, Mask), String>,
+    opcode_to_index: &HashMap<(Opcode, Mask), usize>,
 ) -> TokenStream {
     if decision_tree.is_none() {
         return quote! {};
@@ -493,21 +294,20 @@ fn decision_tree_to_rust_recursive_conditionals(
             for insn in insns {
                 let opcode_hex = hex_lit(insn.insn.opcode);
                 let mask_hex = hex_lit(insn.insn.mask);
-                let opcode_type = format_ident!(
-                    "{}",
-                    opcode_to_used_name[&(Opcode(insn.insn.opcode), Mask(insn.insn.mask))]
+                let index = Literal::usize_unsuffixed(
+                    opcode_to_index[&(Opcode(insn.insn.opcode), Mask(insn.insn.mask))],
                 );
 
                 if insn.insn.mask == !0 {
                     tokens.extend(quote! {
                         if insn == #opcode_hex {
-                            return Some(#opcode_type::make_opcode(insn));
+                            return Some(Opcode { bits: insn, def: &INSNS[#index] });
                         }
                     });
                 } else {
                     tokens.extend(quote! {
                         if insn & #mask_hex == #opcode_hex {
-                            return Some(#opcode_type::make_opcode(insn));
+                            return Some(Opcode { bits: insn, def: &INSNS[#index] });
                         }
                     });
                 }
@@ -521,9 +321,8 @@ fn decision_tree_to_rust_recursive_conditionals(
             one,
             ..
         } => {
-            let zero_branch =
-                decision_tree_to_rust_recursive_conditionals(zero, opcode_to_used_name);
-            let one_branch = decision_tree_to_rust_recursive_conditionals(one, opcode_to_used_name);
+            let zero_branch = decision_tree_to_rust_recursive_conditionals(zero, opcode_to_index);
+            let one_branch = decision_tree_to_rust_recursive_conditionals(one, opcode_to_index);
             let decision_mask_lit = hex_lit(1u32 << *decision_bit);
 
             quote! {
@@ -539,12 +338,12 @@ fn decision_tree_to_rust_recursive_conditionals(
 
 fn decision_tree_to_rust_indexed(
     decision_tree: &DecisionTree,
-    opcode_to_used_name: &HashMap<(Opcode, Mask), String>,
+    opcode_to_index: &HashMap<(Opcode, Mask), usize>,
 ) -> TokenStream {
     fn decision_tree_to_rust_indexed_recursive(
         decision_tree: &DecisionTree,
         node_tokens: &mut HashMap<usize, TokenStream>,
-        opcode_to_used_name: &HashMap<(Opcode, Mask), String>,
+        opcode_to_index: &HashMap<(Opcode, Mask), usize>,
     ) {
         if let Some(node) = decision_tree {
             match node.as_ref() {
@@ -554,15 +353,11 @@ fn decision_tree_to_rust_indexed(
 
                     let mut leafs = vec![];
                     for insn in insns {
-                        let opcode_type = format_ident!(
-                            "{}",
-                            opcode_to_used_name[&(Opcode(insn.insn.opcode), Mask(insn.insn.mask))]
+                        let index = Literal::usize_unsuffixed(
+                            opcode_to_index[&(Opcode(insn.insn.opcode), Mask(insn.insn.mask))],
                         );
                         leafs.push(quote! {
-                            Leaf {
-                                insn: &#opcode_type::DEFINITION,
-                                factory: #opcode_type::make_opcode
-                            }
+                            Leaf { insn: &INSNS[#index] }
                         });
                     }
                     let tokens = quote! {
@@ -592,15 +387,15 @@ fn decision_tree_to_rust_indexed(
                     };
                     node_tokens.insert(index, tokens);
 
-                    decision_tree_to_rust_indexed_recursive(zero, node_tokens, opcode_to_used_name);
-                    decision_tree_to_rust_indexed_recursive(one, node_tokens, opcode_to_used_name);
+                    decision_tree_to_rust_indexed_recursive(zero, node_tokens, opcode_to_index);
+                    decision_tree_to_rust_indexed_recursive(one, node_tokens, opcode_to_index);
                 }
             }
         }
     }
 
     let mut node_tokens = HashMap::new();
-    decision_tree_to_rust_indexed_recursive(decision_tree, &mut node_tokens, opcode_to_used_name);
+    decision_tree_to_rust_indexed_recursive(decision_tree, &mut node_tokens, opcode_to_index);
 
     let mut node_tokens_table = vec![];
     for i in 0..node_tokens.len() {
@@ -631,7 +426,7 @@ fn decision_tree_to_rust_indexed(
                 Decode::Leaf(leafs) => {
                     for leaf in leafs.iter() {
                         if insn & leaf.insn.mask == leaf.insn.opcode {
-                            return Some((leaf.factory)(insn));
+                            return Some(Opcode { bits: insn, def: leaf.insn });
                         }
                     }
                     break;
@@ -650,13 +445,13 @@ pub fn decision_tree_to_rust(
 
     write_prelude(decision_tree_indexing, &mut f)?;
 
-    let opcode_to_used_name = write_insn_structs(decision_tree, &mut f)?;
+    let opcode_to_index = write_insn_structs(decision_tree, &mut f)?;
     let decoder = match decision_tree_indexing {
         decision_tree::DecisionTreeIndexing::None => {
-            decision_tree_to_rust_recursive_conditionals(decision_tree, &opcode_to_used_name)
+            decision_tree_to_rust_recursive_conditionals(decision_tree, &opcode_to_index)
         }
         decision_tree::DecisionTreeIndexing::DFS | decision_tree::DecisionTreeIndexing::BFS => {
-            decision_tree_to_rust_indexed(decision_tree, &opcode_to_used_name)
+            decision_tree_to_rust_indexed(decision_tree, &opcode_to_index)
         }
     };
 
