@@ -40,6 +40,14 @@ use simd::{
 
 const LOG2_TAG_GRANULE: u32 = 4;
 
+/// Whether formatting an operand also consumed the remaining operand slots;
+/// `Stop` suppresses the separator and ends the operand loop.
+#[derive(Clone, Copy)]
+enum Flow {
+    Continue,
+    Stop,
+}
+
 /// Format an operand to a string.
 fn format_operand(
     pos: usize,
@@ -48,9 +56,9 @@ fn format_operand(
     bits: u32,
     operand: &defn::InsnOperand,
     definition: &defn::Insn,
-    stop: &mut bool,
-) -> core::fmt::Result {
+) -> Result<Flow, core::fmt::Error> {
     let kind = operand.kind;
+    let mut flow = Flow::Continue;
     match kind {
         InsnOperandKind::Rd
         | InsnOperandKind::Rn
@@ -70,7 +78,7 @@ fn format_operand(
 
         InsnOperandKind::PAIRREG | InsnOperandKind::PAIRREG_OR_XZR => {
             if pos == 0 {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
 
             let prev_operand = &definition.operands[pos - 1];
@@ -161,7 +169,7 @@ fn format_operand(
             let sf = bit_set(bits, 31);
 
             if (sf && !n) || (!sf && (n || bit_set(immr, 5))) {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
             write!(f, "#{}", immr)?;
         }
@@ -172,7 +180,7 @@ fn format_operand(
             let sf = bit_set(bits, 31);
 
             if (sf && !n) || (!sf && (n || bit_set(imms, 5))) {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
             write!(f, "#{}", imms)?;
         }
@@ -189,12 +197,12 @@ fn format_operand(
         InsnOperandKind::FBITS => {
             let ftype = bit_range(bits, 22, 2);
             if ftype == 0b10 {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
             let sf = bit_set(bits, 31);
             let scale = 64 - bit_range(bits, 10, 6);
             if !sf && scale > 32 {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
             write!(f, "#{scale}")?;
         }
@@ -299,7 +307,7 @@ fn format_operand(
             write!(f, "#{imm12:#x}")?;
 
             if shift {
-                return write!(f, ", lsl #12");
+                return write!(f, ", lsl #12").map(|()| flow);
             }
         }
 
@@ -307,7 +315,7 @@ fn format_operand(
         InsnOperandKind::HALF => {
             let hw = bit_range(bits, 21, 2);
             if !bit_set(bits, 31) && bit_set(hw, 1) {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
 
             let imm16 = bit_range(bits, 5, 16);
@@ -346,29 +354,29 @@ fn format_operand(
             let imm8 = (bit_range(bits, 16, 3) << 5) | bit_range(bits, 5, 5);
             let cmode = bit_range(bits, 12, 4);
 
-            *stop = true;
+            flow = Flow::Stop;
             if cmode >> 1 == 0b110 {
                 let msl = if bit_set(cmode, 0) { 16 } else { 8 };
-                return write!(f, "#{imm8:#x}, MSL #{msl}");
+                return write!(f, "#{imm8:#x}, MSL #{msl}").map(|()| flow);
             }
             if cmode & 0b1001 == 0 || cmode & 0b1001 == 0b0001 {
                 let lsl = bit_range(cmode, 1, 2) * 8;
                 if lsl != 0 {
-                    return write!(f, "#{imm8:#x}, LSL #{lsl}");
+                    return write!(f, "#{imm8:#x}, LSL #{lsl}").map(|()| flow);
                 } else {
-                    return write!(f, "#{imm8:#x}");
+                    return write!(f, "#{imm8:#x}").map(|()| flow);
                 }
             }
             if cmode & 0b1101 == 0b1000 || cmode & 0b1101 == 0b1001 {
                 let lsl = if bit_set(cmode, 1) { 8 } else { 0 };
                 if lsl != 0 {
-                    return write!(f, "#{imm8:#x}, LSL #{lsl}");
+                    return write!(f, "#{imm8:#x}, LSL #{lsl}").map(|()| flow);
                 } else {
-                    return write!(f, "#{imm8:#x}");
+                    return write!(f, "#{imm8:#x}").map(|()| flow);
                 }
             }
             if cmode >> 1 == 0b111 {
-                return write!(f, "#{imm8:#x}");
+                return write!(f, "#{imm8:#x}").map(|()| flow);
             }
         }
 
@@ -388,7 +396,7 @@ fn format_operand(
             let size = match fp_type {
                 0b00 => 4,
                 0b01 => 8,
-                0b10 => return write!(f, "<undefined>"),
+                0b10 => return write!(f, "<undefined>").map(|()| flow),
                 0b11 => 2,
                 _ => unreachable!(),
             };
@@ -508,7 +516,7 @@ fn format_operand(
         #[cfg(feature = "full")]
         InsnOperandKind::SIMD_ADDR_POST => {
             format_simd_addr_post(f, bits, definition)?;
-            *stop = true;
+            flow = Flow::Stop;
         }
 
         #[cfg(any(feature = "full", feature = "load_store"))]
@@ -551,14 +559,14 @@ fn format_operand(
             }
             write!(f, "]")?;
 
-            *stop = true;
+            flow = Flow::Stop;
         }
 
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMM7 => {
             let opc = bit_range(bits, 30, 2);
             if opc == 0b11 {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
 
             let fp = bit_set(bits, 26);
@@ -605,7 +613,7 @@ fn format_operand(
                 if imm != 0 {
                     write!(f, ", #{imm}")?;
                 }
-                return write!(f, "]");
+                return write!(f, "]").map(|()| flow);
             }
 
             let post_index = !bit_set(bits, 11);
@@ -614,7 +622,7 @@ fn format_operand(
             } else {
                 write!(f, "[{reg_name}], #{imm}")?;
             }
-            *stop = true;
+            flow = Flow::Stop;
         }
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_UIMM12 => {
@@ -710,11 +718,11 @@ fn format_operand(
                     0b011 => "uao",
                     0b100 => "pan",
                     0b101 => "spsel",
-                    _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}"),
+                    _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}").map(|()| flow),
                 },
                 0b001 => match op2 {
                     0b000 if crm & 0b1110 == 0 => "allint",
-                    _ => return write!(f, "s0_{op1}_c4_c{crm}_{op2}"),
+                    _ => return write!(f, "s0_{op1}_c4_c{crm}_{op2}").map(|()| flow),
                 },
                 0b011 => match op2 {
                     0b011 if crm & 0b1110 == 0b0010 => "svcrsm",
@@ -725,9 +733,9 @@ fn format_operand(
                     0b100 => "tco",
                     0b110 => "daifset",
                     0b111 => "daifclr",
-                    _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}"),
+                    _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}").map(|()| flow),
                 },
-                _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}"),
+                _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}").map(|()| flow),
             };
             write!(f, "{field}")?
         }
@@ -748,7 +756,7 @@ fn format_operand(
                 0b1101 => "ld",
                 0b1110 => "st",
                 0b1111 => "sy",
-                _ => return write!(f, "#{:#x}", barrier),
+                _ => return write!(f, "#{:#x}", barrier).map(|()| flow),
             };
             write!(f, "{barrier}")?
         }
@@ -760,7 +768,7 @@ fn format_operand(
                 0b0110 => "nshnxs",
                 0b1010 => "ishnxs",
                 0b1110 => "synxs",
-                _ => return write!(f, "#{:#x}", barrier),
+                _ => return write!(f, "#{:#x}", barrier).map(|()| flow),
             };
             write!(f, "{barrier}")?
         }
@@ -816,7 +824,7 @@ fn format_operand(
         InsnOperandKind::MOPS_ADDR_Rd
         | InsnOperandKind::MOPS_ADDR_Rs
         | InsnOperandKind::MOPS_WB_Rn => {
-            *stop = true;
+            flow = Flow::Stop;
 
             let rd = bit_range(bits, 0, 5) as u8;
             let rn = bit_range(bits, 5, 5) as u8;
@@ -824,10 +832,10 @@ fn format_operand(
             let op1 = bit_range(bits, 22, 2);
 
             if rd == rn || rd == rs || rs == rn {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
             if rd == 31 || rn == 31 || (rs == 31 && op1 != 0b11) {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
 
             let rd = get_int_reg_name(true, rd, true);
@@ -1030,7 +1038,7 @@ fn format_operand(
         _ => write!(f, "<unknown>")?,
     };
 
-    Ok(())
+    Ok(flow)
 }
 
 #[cfg(any(feature = "full", feature = "system"))]
@@ -1105,12 +1113,11 @@ pub fn format_insn_pc<O: InsnOpcode>(pc: u64, f: &mut impl Write, opcode: &O) ->
 
     let op_count = definition.operands.len();
     for (i, operand) in definition.operands.iter().enumerate() {
-        let mut stop = false;
-        format_operand(i, pc, f, bits, operand, definition, &mut stop)?;
-        if !stop && i + 1 < op_count {
+        let flow = format_operand(i, pc, f, bits, operand, definition)?;
+        if matches!(flow, Flow::Continue) && i + 1 < op_count {
             write!(f, ", ")?;
         }
-        if stop {
+        if matches!(flow, Flow::Stop) {
             break;
         }
     }
