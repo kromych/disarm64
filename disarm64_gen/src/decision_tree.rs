@@ -1,6 +1,7 @@
 #![allow(clippy::upper_case_acronyms)]
 
 use disarm64_defn::deser::Insn;
+use std::collections::VecDeque;
 use std::ops::Shl;
 use std::rc::Rc;
 
@@ -25,6 +26,21 @@ pub enum DecisionTreeNode {
 }
 
 pub type DecisionTree = Option<Box<DecisionTreeNode>>;
+
+impl DecisionTreeNode {
+    /// The node's assigned table index, if one has been assigned.
+    pub fn index(&self) -> Option<usize> {
+        match self {
+            DecisionTreeNode::Leaf { index, .. } | DecisionTreeNode::Branch { index, .. } => *index,
+        }
+    }
+
+    fn index_mut(&mut self) -> &mut Option<usize> {
+        match self {
+            DecisionTreeNode::Leaf { index, .. } | DecisionTreeNode::Branch { index, .. } => index,
+        }
+    }
+}
 
 fn build_decision_tree_recursive(
     decision_tree: &mut DecisionTree,
@@ -124,49 +140,27 @@ fn build_decision_tree_recursive(
 
 fn assign_indexes_dfs(decision_tree: &mut DecisionTree, index: &mut usize) {
     if let Some(node) = decision_tree {
-        match &mut **node {
-            DecisionTreeNode::Leaf { index: i, .. } => {
-                *i = Some(*index);
-                *index += 1;
-            }
-            DecisionTreeNode::Branch {
-                index: i,
-                zero,
-                one,
-                ..
-            } => {
-                *i = Some(*index);
-                *index += 1;
-                assign_indexes_dfs(zero, index);
-                assign_indexes_dfs(one, index);
-            }
+        *node.index_mut() = Some(*index);
+        *index += 1;
+        if let DecisionTreeNode::Branch { zero, one, .. } = &mut **node {
+            assign_indexes_dfs(zero, index);
+            assign_indexes_dfs(one, index);
         }
     }
 }
 
 fn assign_indexes_bfs(decision_tree: &mut DecisionTree) {
     let mut index = 0;
-    let mut queue = Vec::new();
-    queue.push(decision_tree);
+    let mut queue = VecDeque::new();
+    queue.push_back(decision_tree);
 
-    while let Some(node) = queue.pop() {
+    while let Some(node) = queue.pop_front() {
         if let Some(node) = node {
-            match &mut **node {
-                DecisionTreeNode::Leaf { index: i, .. } => {
-                    *i = Some(index);
-                    index += 1;
-                }
-                DecisionTreeNode::Branch {
-                    index: i,
-                    zero,
-                    one,
-                    ..
-                } => {
-                    *i = Some(index);
-                    index += 1;
-                    queue.push(zero);
-                    queue.push(one);
-                }
+            *node.index_mut() = Some(index);
+            index += 1;
+            if let DecisionTreeNode::Branch { zero, one, .. } = &mut **node {
+                queue.push_back(zero);
+                queue.push_back(one);
             }
         }
     }
@@ -211,4 +205,65 @@ pub fn build_decision_tree(insns: &[Rc<Insn>], indexing: DecisionTreeIndexing) -
     log::trace!("Decision tree: {:x?}", decision_tree);
 
     decision_tree
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn leaf() -> DecisionTree {
+        Some(Box::new(DecisionTreeNode::Leaf {
+            index: None,
+            insns: vec![],
+        }))
+    }
+
+    fn branch(zero: DecisionTree, one: DecisionTree) -> DecisionTree {
+        Some(Box::new(DecisionTreeNode::Branch {
+            index: None,
+            decision_bit: 0,
+            zero,
+            one,
+        }))
+    }
+
+    fn children(t: &DecisionTree) -> (&DecisionTree, &DecisionTree) {
+        match t.as_ref().unwrap().as_ref() {
+            DecisionTreeNode::Branch { zero, one, .. } => (zero, one),
+            DecisionTreeNode::Leaf { .. } => panic!("expected a branch"),
+        }
+    }
+
+    fn idx(t: &DecisionTree) -> Option<usize> {
+        t.as_ref().and_then(|n| n.index())
+    }
+
+    // root -> (a -> (c, d)), b
+    fn sample() -> DecisionTree {
+        branch(branch(leaf(), leaf()), leaf())
+    }
+
+    #[test]
+    fn dfs_numbers_nodes_in_preorder() {
+        let mut t = sample();
+        assign_indexes(&mut t, DecisionTreeIndexing::DFS);
+        let (a, b) = children(&t);
+        let (c, d) = children(a);
+        assert_eq!(
+            [idx(&t), idx(a), idx(c), idx(d), idx(b)],
+            [Some(0), Some(1), Some(2), Some(3), Some(4)]
+        );
+    }
+
+    #[test]
+    fn bfs_numbers_nodes_in_level_order() {
+        let mut t = sample();
+        assign_indexes(&mut t, DecisionTreeIndexing::BFS);
+        let (a, b) = children(&t);
+        let (c, d) = children(a);
+        assert_eq!(
+            [idx(&t), idx(a), idx(b), idx(c), idx(d)],
+            [Some(0), Some(1), Some(2), Some(3), Some(4)]
+        );
+    }
 }

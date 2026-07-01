@@ -502,20 +502,9 @@ fn decision_tree_to_rust_indexed(
                     assert!(!node_tokens.contains_key(&index));
 
                     let mask: TokenStream = format!("{:#x}", 1 << decision_bit).parse().unwrap();
-                    let get_next_index = |n: &Option<Box<DecisionTreeNode>>| -> Option<usize> {
-                        if let Some(n) = n {
-                            match n.as_ref() {
-                                DecisionTreeNode::Leaf { index, .. } => *index,
-                                DecisionTreeNode::Branch { index, .. } => *index,
-                            }
-                        } else {
-                            None
-                        }
-                    };
-                    let zero_next: TokenStream =
-                        format!("{:?}", get_next_index(zero)).parse().unwrap();
-                    let one_next: TokenStream =
-                        format!("{:?}", get_next_index(one)).parse().unwrap();
+                    let next_index = |n: &DecisionTree| n.as_ref().and_then(|n| n.index());
+                    let zero_next: TokenStream = format!("{:?}", next_index(zero)).parse().unwrap();
+                    let one_next: TokenStream = format!("{:?}", next_index(one)).parse().unwrap();
 
                     let tokens = quote! {
                         Decode::Branch {
