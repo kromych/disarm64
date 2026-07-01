@@ -21,6 +21,10 @@
 //!   notice, so a checkout without the data still builds and tests cleanly.
 //!   `DISARM64_TEST_ONLY=class1,class2` restricts the run to named classes;
 //!   `DISARM64_TEST_MAX=N` caps the encodings checked per class.
+//!
+//! The recorded listings are produced by the full decoder, so the suite is
+//! compiled only for the `full` feature.
+#![cfg(feature = "full")]
 
 use disarm64::decoder;
 use disarm64::format_insn::format_insn_pc;
@@ -206,7 +210,10 @@ fn corpus() {
         checked_classes += 1;
         checked_insns += i as u64;
         if class_fails > 5 {
-            failures.push(format!("{name}: ... and {} more mismatches", class_fails - 5));
+            failures.push(format!(
+                "{name}: ... and {} more mismatches",
+                class_fails - 5
+            ));
         }
     }
 
