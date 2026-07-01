@@ -104,6 +104,9 @@ pub fn generate_test_bin(
     let mut written = 0;
     let mut insn_processed = 0;
     for insn in insns {
+        if written >= size_limit {
+            break;
+        }
         let encoding_iter = MaskedU32Iter::new(insn.opcode, insn.mask, Some(encodings_limit));
         log::info!(
             "{}({:#08x}): {} possible encodings, generating {} encodings",
