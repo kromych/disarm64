@@ -45,15 +45,12 @@ impl DecisionTreeNode {
 fn build_decision_tree_recursive(
     decision_tree: &mut DecisionTree,
     insns: &[LeafNode],
-    depth: &mut usize,
+    depth: usize,
 ) {
-    *depth += 1;
-
     log::debug!("Building decision tree at depth {}", depth);
     log::trace!("{} instructions", insns.len());
 
     if insns.is_empty() {
-        *depth -= 1;
         log::debug!("No instructions at depth {}", depth);
         return;
     }
@@ -63,7 +60,6 @@ fn build_decision_tree_recursive(
             insns: insns.to_vec(),
             index: None,
         }));
-        *depth -= 1;
         log::debug!("One instruction at depth {}", depth);
         return;
     }
@@ -122,8 +118,8 @@ fn build_decision_tree_recursive(
 
         let mut zero_tree = None;
         let mut one_tree = None;
-        build_decision_tree_recursive(&mut zero_tree, zero.as_mut_slice(), depth);
-        build_decision_tree_recursive(&mut one_tree, one.as_mut_slice(), depth);
+        build_decision_tree_recursive(&mut zero_tree, zero.as_mut_slice(), depth + 1);
+        build_decision_tree_recursive(&mut one_tree, one.as_mut_slice(), depth + 1);
 
         *decision_tree = Some(Box::new(DecisionTreeNode::Branch {
             decision_bit,
@@ -134,7 +130,6 @@ fn build_decision_tree_recursive(
         break;
     }
 
-    *depth -= 1;
     log::debug!("Decision tree built at depth {}", depth);
 }
 
@@ -188,7 +183,6 @@ fn assign_indexes(decision_tree: &mut DecisionTree, indexing: DecisionTreeIndexi
 
 pub fn build_decision_tree(insns: &[Rc<Insn>], indexing: DecisionTreeIndexing) -> DecisionTree {
     let mut decision_tree = None;
-    let mut depth = 0;
 
     let insns = insns
         .iter()
@@ -198,7 +192,7 @@ pub fn build_decision_tree(insns: &[Rc<Insn>], indexing: DecisionTreeIndexing) -
         })
         .collect::<Vec<_>>();
 
-    build_decision_tree_recursive(&mut decision_tree, insns.as_slice(), &mut depth);
+    build_decision_tree_recursive(&mut decision_tree, insns.as_slice(), 0);
     assign_indexes(&mut decision_tree, indexing);
 
     log::info!("Decision tree generated");

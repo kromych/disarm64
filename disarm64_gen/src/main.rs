@@ -106,15 +106,12 @@ fn main() -> anyhow::Result<()> {
         generate_registers::generate_registers(&mut f)?;
     }
 
-    let filter_feature_sets = HashSet::from_iter(opt.feature_sets.unwrap_or_default());
-    let filter_insn_class = HashSet::from_iter(opt.insn_class.unwrap_or_default());
-    let filter_mnemonic = HashSet::from_iter(opt.mnemonic.unwrap_or_default());
-    let insns = parse_insn_description(
-        opt.description_json,
-        filter_feature_sets,
-        filter_insn_class,
-        filter_mnemonic,
-    )?;
+    let filters = Filters {
+        feature_sets: HashSet::from_iter(opt.feature_sets.unwrap_or_default()),
+        classes: HashSet::from_iter(opt.insn_class.unwrap_or_default()),
+        mnemonics: HashSet::from_iter(opt.mnemonic.unwrap_or_default()),
+    };
+    let insns = parse_insn_description(opt.description_json, &filters)?;
 
     let decision_tree_indexing = match opt.algo {
         Some(DecoderAlgo::Cond) | None => DecisionTreeIndexing::None,
@@ -152,92 +149,86 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn parse_insn_description(
-    path: PathBuf,
-    feature_sets_filter: HashSet<InsnFeatureSet>,
-    insn_class_filter: HashSet<InsnClass>,
-    mnemonic_filter: HashSet<String>,
-) -> anyhow::Result<Vec<Rc<Insn>>> {
-    log::info!("Loading {path:?}");
+/// Include filters for the instruction set; an empty set matches everything.
+struct Filters {
+    feature_sets: HashSet<InsnFeatureSet>,
+    classes: HashSet<InsnClass>,
+    mnemonics: HashSet<String>,
+}
 
-    if !feature_sets_filter.is_empty() {
-        log::info!("Including instructions from feature sets {feature_sets_filter:?}");
-    } else {
-        log::info!("Including instructions from all feature sets");
+impl Filters {
+    fn accepts(&self, insn: &Insn) -> bool {
+        (self.feature_sets.is_empty() || self.feature_sets.contains(&insn.feature_set))
+            && (self.classes.is_empty() || self.classes.contains(&insn.class))
+            && (self.mnemonics.is_empty() || self.mnemonics.contains(&insn.mnemonic))
     }
-    if !insn_class_filter.is_empty() {
-        log::info!("Including instructions from classes {insn_class_filter:?}");
-    } else {
-        log::info!("Including instructions from all classes");
+
+    fn log(&self) {
+        fn describe<T: std::fmt::Debug>(noun: &str, set: &HashSet<T>) {
+            if set.is_empty() {
+                log::info!("Including instructions from all {noun}");
+            } else {
+                log::info!("Including instructions from {noun} {set:?}");
+            }
+        }
+        describe("feature sets", &self.feature_sets);
+        describe("classes", &self.classes);
+        describe("mnemonics", &self.mnemonics);
     }
-    if !mnemonic_filter.is_empty() {
-        log::info!("Including instructions with mnemonics {mnemonic_filter:?}");
-    } else {
-        log::info!("Including instructions with all mnemonics");
-    }
+}
+
+fn parse_insn_description(path: PathBuf, filters: &Filters) -> anyhow::Result<Vec<Rc<Insn>>> {
+    log::info!("Loading {path:?}");
+    filters.log();
 
     let data = std::fs::read_to_string(path)?;
     let insns = serde_json::from_str::<Vec<Insn>>(&data)?;
-    let mut filtered_insns = Vec::new();
 
     let mut aliases = 0;
-    let mut insn_classes = HashSet::new();
-    let mut insn_feature_sets = HashSet::new();
-    let mut i = 0;
+    let mut classes = HashSet::new();
+    let mut feature_sets = HashSet::new();
+    let mut filtered = Vec::new();
 
-    loop {
-        if i >= insns.len() {
-            break;
-        }
-
-        let insn = &insns[i];
-        let opcode = insn.opcode;
-        let mask = insn.mask;
-
+    for insn in &insns {
         if insn.flags.contains(InsnFlags::IS_ALIAS) {
             log::trace!("skipping alias {insn:x?}");
-
             aliases += 1;
-        } else if (feature_sets_filter.is_empty()
-            || feature_sets_filter.contains(&insn.feature_set))
-            && (insn_class_filter.is_empty() || insn_class_filter.contains(&insn.class))
-            && (mnemonic_filter.is_empty() || mnemonic_filter.contains(&insn.mnemonic))
-        {
-            log::debug!("instruction {insn:x?}");
-
-            // If opcode == opcode & mask, then additional_dont_care == 0 and opcode & !mask == 0
-            let additional_dont_care = opcode ^ (mask & opcode); // == opcode & !mask
-            if additional_dont_care != 0 {
-                anyhow::bail!("Invalid mask for {insn:x?}, opcode & mask != mask, extra bits: {additional_dont_care:#b}");
-            }
-
-            if mask == 0 {
-                anyhow::bail!("Empty mask for {insn:x?}");
-            }
-
-            insn_classes.insert(&insn.class);
-            insn_feature_sets.insert(&insn.feature_set);
-
-            filtered_insns.push(Rc::new(insn.clone()));
-        } else {
+            continue;
+        }
+        if !filters.accepts(insn) {
             log::trace!("Skipping {insn:x?}");
+            continue;
         }
 
-        i += 1;
+        log::debug!("instruction {insn:x?}");
+
+        let extra_bits = insn.opcode & !insn.mask;
+        if extra_bits != 0 {
+            anyhow::bail!(
+                "Invalid mask for {insn:x?}, opcode & mask != mask, extra bits: {extra_bits:#b}"
+            );
+        }
+        if insn.mask == 0 {
+            anyhow::bail!("Empty mask for {insn:x?}");
+        }
+
+        classes.insert(&insn.class);
+        feature_sets.insert(&insn.feature_set);
+        filtered.push(Rc::new(insn.clone()));
     }
 
-    log::debug!("Classes {insn_classes:?}");
-    log::debug!("Feature sets {insn_feature_sets:?}");
+    log::debug!("Classes {classes:?}");
+    log::debug!("Feature sets {feature_sets:?}");
 
     log::info!(
         "Processed {} instructions, skipped {aliases} aliases, {} classes, {} feature sets filtered out {} instructions",
         insns.len(),
-        insn_classes.len(),
-        insn_feature_sets.len(),
-        insns.len() - filtered_insns.len()
+        classes.len(),
+        feature_sets.len(),
+        insns.len() - filtered.len()
     );
 
-    log::info!("Loaded {} instructions", filtered_insns.len());
+    log::info!("Loaded {} instructions", filtered.len());
 
-    Ok(filtered_insns)
+    Ok(filtered)
 }
