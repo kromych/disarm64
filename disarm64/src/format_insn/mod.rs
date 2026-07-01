@@ -1117,3 +1117,27 @@ pub fn format_insn_pc<O: InsnOpcode>(pc: u64, f: &mut impl Write, opcode: &O) ->
 
     Ok(())
 }
+
+/// An opcode paired with a program counter so that `Display` renders PC-relative
+/// operands as absolute target addresses. Created by [`InsnDisplay::display_at`].
+pub struct DisplayAt<'a, O: InsnOpcode> {
+    pc: u64,
+    opcode: &'a O,
+}
+
+impl<O: InsnOpcode> core::fmt::Display for DisplayAt<'_, O> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        format_insn_pc(self.pc, f, self.opcode)
+    }
+}
+
+/// Formatting helpers for any decoded opcode.
+pub trait InsnDisplay: InsnOpcode + Sized {
+    /// Format the instruction with `pc` as the address of the instruction itself,
+    /// so PC-relative operands render as absolute targets rather than offsets.
+    fn display_at(&self, pc: u64) -> DisplayAt<'_, Self> {
+        DisplayAt { pc, opcode: self }
+    }
+}
+
+impl<O: InsnOpcode> InsnDisplay for O {}

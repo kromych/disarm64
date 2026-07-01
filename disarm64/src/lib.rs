@@ -4,17 +4,26 @@
 //!
 //! ```
 //! use disarm64::decoder;
-//! use disarm64_defn::defn::InsnOpcode;
+//! use disarm64::{InsnDisplay, InsnOpcode};
 //!
 //! let insn = decoder::decode(0x11000000).unwrap();
 //!
 //! println!("Instruction: {insn:?}");
 //! println!("Formatted: {insn}");
+//! println!("At 0x1000: {}", insn.display_at(0x1000));
 //! println!("Definition: {:?}", insn.definition());
 //! ```
 //!
 
 #![no_std]
+
+// The instruction model lives in disarm64_defn; re-export the types a consumer
+// needs so decoding and inspecting instructions needs only this crate.
+pub use disarm64_defn::defn::Insn;
+pub use disarm64_defn::defn::InsnOpcode;
+pub use disarm64_defn::defn::InsnOperand;
+pub use format_insn::DisplayAt;
+pub use format_insn::InsnDisplay;
 
 /// Give a decoder's `Opcode` alias a `Display` that formats the instruction
 /// without a program counter. The module declaration and re-export are kept out
