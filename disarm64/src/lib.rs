@@ -16,66 +16,34 @@
 
 #![no_std]
 
-use core::fmt::Display;
-use core::fmt::Formatter;
+/// Declare a decoder module for one feature: bring in the generated module,
+/// re-export its `Opcode` under the given alias, and give the alias a `Display`
+/// that formats the instruction without a program counter.
+macro_rules! decoder_module {
+    ($feat:literal, $module:ident, $alias:ident) => {
+        #[cfg(feature = $feat)]
+        pub mod $module;
+        #[cfg(feature = $feat)]
+        pub use $module::Opcode as $alias;
+        #[cfg(feature = $feat)]
+        impl core::fmt::Display for $alias {
+            /// The program counter is not used for PC-relative addressing here, so
+            /// the default formatting emits the offset rather than the target
+            /// address.
+            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+                crate::format_insn::format_insn_pc(0, f, self)
+            }
+        }
+    };
+}
 
-#[cfg(feature = "full")]
-pub mod decoder_full;
+decoder_module!("full", decoder_full, Opcode);
 #[cfg(feature = "full")]
 pub use decoder_full as decoder;
-#[cfg(feature = "full")]
-pub use decoder_full::Opcode;
-#[cfg(feature = "full")]
-impl Display for Opcode {
-    /// The program counter is not used for the PC-relative addressing here.
-    /// Thus this default formattikng is not able to emit the target address
-    /// in the disassembly so it emits the offset.
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        crate::format_insn::format_insn_pc(0, f, self)
-    }
-}
 
-#[cfg(feature = "exception")]
-pub mod decoder_exception;
-#[cfg(feature = "exception")]
-pub use decoder_exception::Opcode as ExceptionOpcode;
-#[cfg(feature = "exception")]
-impl Display for ExceptionOpcode {
-    /// The program counter is not used for the PC-relative addressing here.
-    /// Thus this default formattikng is not able to emit the target address
-    /// in the disassembly so it emits the offset.
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        crate::format_insn::format_insn_pc(0, f, self)
-    }
-}
-
-#[cfg(feature = "load_store")]
-pub mod decoder_load_store;
-#[cfg(feature = "load_store")]
-pub use decoder_load_store::Opcode as LoadStoreOpcode;
-#[cfg(feature = "load_store")]
-impl Display for LoadStoreOpcode {
-    /// The program counter is not used for the PC-relative addressing here.
-    /// Thus this default formattikng is not able to emit the target address
-    /// in the disassembly so it emits the offset.
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        crate::format_insn::format_insn_pc(0, f, self)
-    }
-}
-
-#[cfg(feature = "system")]
-pub mod decoder_system;
-#[cfg(feature = "system")]
-pub use decoder_system::Opcode as SystemOpcode;
-#[cfg(feature = "system")]
-impl Display for SystemOpcode {
-    /// The program counter is not used for the PC-relative addressing here.
-    /// Thus this default formattikng is not able to emit the target address
-    /// in the disassembly so it emits the offset.
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        crate::format_insn::format_insn_pc(0, f, self)
-    }
-}
+decoder_module!("exception", decoder_exception, ExceptionOpcode);
+decoder_module!("load_store", decoder_load_store, LoadStoreOpcode);
+decoder_module!("system", decoder_system, SystemOpcode);
 
 pub mod format_insn;
 pub mod registers;
