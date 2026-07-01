@@ -28,6 +28,7 @@
 
 use disarm64::decoder;
 use disarm64::format_insn::format_insn_pc;
+use disarm64::InsnOpcode;
 
 /// The formatted operand text for an instruction, or `None` if it does not decode.
 fn text(pc: u64, insn: u32) -> Option<String> {
@@ -127,6 +128,19 @@ fn smoke() {
         }
     }
     assert!(fails.is_empty(), "smoke regressions:\n{}", fails.join("\n"));
+}
+
+#[test]
+fn id_maps_to_definition() {
+    // The id indexes the definition table and is matchable via InsnId.
+    let op = decoder::decode(0x11000000).expect("add decodes");
+    assert_eq!(op.definition().mnemonic, "add");
+    assert!(format!("{:?}", op.id()).starts_with("ADD"));
+
+    // Distinct encodings sharing a mnemonic get distinct ids.
+    let add_imm = decoder::decode(0x11000000).unwrap().id();
+    let add_shift = decoder::decode(0x0b000000).unwrap().id();
+    assert_ne!(add_imm, add_shift);
 }
 
 #[test]

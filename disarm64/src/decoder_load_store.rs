@@ -18,11 +18,19 @@ use disarm64_defn::InsnFlags;
 use disarm64_defn::InsnOperandClass;
 use disarm64_defn::InsnOperandKind;
 use disarm64_defn::InsnOperandQualifier;
-#[doc = r" A decoded instruction: its raw bits and a reference to its definition."]
+#[doc = r" A decoded instruction: its raw bits, its definition, and its matchable"]
+#[doc = r" identity."]
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub struct Opcode {
     bits: u32,
     def: &'static Insn,
+    id: InsnId,
+}
+impl Opcode {
+    #[doc = r" The instruction's identity, for matching against `InsnId`."]
+    pub fn id(&self) -> InsnId {
+        self.id
+    }
 }
 impl core::fmt::Debug for Opcode {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -1057,7 +1065,588 @@ const OPERANDS_51: &[InsnOperand] = &[
         bit_fields: &[],
     },
 ];
-#[doc = r" The decoded instruction definitions referenced by the decoder."]
+#[doc = r" A matchable identity for each instruction. The discriminant is the"]
+#[doc = r" index into INSNS and INSN_IDS."]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[repr(u16)]
+pub enum InsnId {
+    AND_Rd_SP_Rn_LIMM,
+    AND_Rd_Rn_Rm_SFT,
+    ANDS_Rd_Rn_LIMM,
+    ANDS_Rd_Rn_Rm_SFT,
+    BIC_Rd_Rn_Rm_SFT,
+    BICS_Rd_Rn_Rm_SFT,
+    CAS_Rs_Rt_ADDR_SIMPLE,
+    CASA_Rs_Rt_ADDR_SIMPLE,
+    CASAB_Rs_Rt_ADDR_SIMPLE,
+    CASAH_Rs_Rt_ADDR_SIMPLE,
+    CASAL_Rs_Rt_ADDR_SIMPLE,
+    CASALB_Rs_Rt_ADDR_SIMPLE,
+    CASALH_Rs_Rt_ADDR_SIMPLE,
+    CASB_Rs_Rt_ADDR_SIMPLE,
+    CASH_Rs_Rt_ADDR_SIMPLE,
+    CASL_Rs_Rt_ADDR_SIMPLE,
+    CASLB_Rs_Rt_ADDR_SIMPLE,
+    CASLH_Rs_Rt_ADDR_SIMPLE,
+    CASP_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    CASPA_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    CASPAL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    CASPL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    EON_Rd_Rn_Rm_SFT,
+    EOR_Rd_SP_Rn_LIMM,
+    EOR_Rd_Rn_Rm_SFT,
+    LD64B_Rt_LS64_ADDR_SIMPLE,
+    LDADD_Rs_Rt_ADDR_SIMPLE,
+    LDADDA_Rs_Rt_ADDR_SIMPLE,
+    LDADDAB_Rs_Rt_ADDR_SIMPLE,
+    LDADDAH_Rs_Rt_ADDR_SIMPLE,
+    LDADDAL_Rs_Rt_ADDR_SIMPLE,
+    LDADDALB_Rs_Rt_ADDR_SIMPLE,
+    LDADDALH_Rs_Rt_ADDR_SIMPLE,
+    LDADDB_Rs_Rt_ADDR_SIMPLE,
+    LDADDH_Rs_Rt_ADDR_SIMPLE,
+    LDADDL_Rs_Rt_ADDR_SIMPLE,
+    LDADDLB_Rs_Rt_ADDR_SIMPLE,
+    LDADDLH_Rs_Rt_ADDR_SIMPLE,
+    LDAPR_Rt_ADDR_SIMPLE,
+    LDAPRB_Rt_ADDR_SIMPLE,
+    LDAPRH_Rt_ADDR_SIMPLE,
+    LDAPUR_Rt_ADDR_OFFSET,
+    LDAPUR_Rt_X_ADDR_OFFSET,
+    LDAPURB_Rt_ADDR_OFFSET,
+    LDAPURH_Rt_ADDR_OFFSET,
+    LDAPURSB_Rt_ADDR_OFFSET,
+    LDAPURSB_Rt_W_ADDR_OFFSET,
+    LDAPURSH_Rt_ADDR_OFFSET,
+    LDAPURSH_Rt_W_ADDR_OFFSET,
+    LDAPURSW_Rt_ADDR_OFFSET,
+    LDAR_Rt_ADDR_SIMPLE,
+    LDARB_Rt_ADDR_SIMPLE,
+    LDARH_Rt_ADDR_SIMPLE,
+    LDAXP_Rt_Rt2_ADDR_SIMPLE,
+    LDAXR_Rt_ADDR_SIMPLE,
+    LDAXRB_Rt_ADDR_SIMPLE,
+    LDAXRH_Rt_ADDR_SIMPLE,
+    LDCLR_Rs_Rt_ADDR_SIMPLE,
+    LDCLRA_Rs_Rt_ADDR_SIMPLE,
+    LDCLRAB_Rs_Rt_ADDR_SIMPLE,
+    LDCLRAH_Rs_Rt_ADDR_SIMPLE,
+    LDCLRAL_Rs_Rt_ADDR_SIMPLE,
+    LDCLRALB_Rs_Rt_ADDR_SIMPLE,
+    LDCLRALH_Rs_Rt_ADDR_SIMPLE,
+    LDCLRB_Rs_Rt_ADDR_SIMPLE,
+    LDCLRH_Rs_Rt_ADDR_SIMPLE,
+    LDCLRL_Rs_Rt_ADDR_SIMPLE,
+    LDCLRLB_Rs_Rt_ADDR_SIMPLE,
+    LDCLRLH_Rs_Rt_ADDR_SIMPLE,
+    LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    LDEOR_Rs_Rt_ADDR_SIMPLE,
+    LDEORA_Rs_Rt_ADDR_SIMPLE,
+    LDEORAB_Rs_Rt_ADDR_SIMPLE,
+    LDEORAH_Rs_Rt_ADDR_SIMPLE,
+    LDEORAL_Rs_Rt_ADDR_SIMPLE,
+    LDEORALB_Rs_Rt_ADDR_SIMPLE,
+    LDEORALH_Rs_Rt_ADDR_SIMPLE,
+    LDEORB_Rs_Rt_ADDR_SIMPLE,
+    LDEORH_Rs_Rt_ADDR_SIMPLE,
+    LDEORL_Rs_Rt_ADDR_SIMPLE,
+    LDEORLB_Rs_Rt_ADDR_SIMPLE,
+    LDEORLH_Rs_Rt_ADDR_SIMPLE,
+    LDG_Rt_ADDR_SIMM13,
+    LDGM_Rt_ADDR_SIMPLE,
+    LDLAR_Rt_ADDR_SIMPLE,
+    LDLARB_Rt_ADDR_SIMPLE,
+    LDLARH_Rt_ADDR_SIMPLE,
+    LDNP_Rt_Rt2_ADDR_SIMM7,
+    LDNP_Ft_Ft2_ADDR_SIMM7,
+    LDP_Rt_Rt2_ADDR_SIMM7,
+    LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S,
+    LDP_Ft_Ft2_ADDR_SIMM7,
+    LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S,
+    LDPSW_Rt_Rt2_ADDR_SIMM7,
+    LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S,
+    LDR_Rt_ADDR_PCREL19,
+    LDR_Rt_ADDR_REGOFF,
+    LDR_Rt_ADDR_SIMM9,
+    LDR_Rt_ADDR_UIMM12,
+    LDR_Ft_ADDR_PCREL19,
+    LDR_Ft_ADDR_REGOFF,
+    LDR_Ft_ADDR_SIMM9,
+    LDR_Ft_ADDR_UIMM12,
+    LDRAA_Rt_ADDR_SIMM10,
+    LDRAB_Rt_ADDR_SIMM10,
+    LDRB_Rt_ADDR_REGOFF,
+    LDRB_Rt_ADDR_SIMM9,
+    LDRB_Rt_ADDR_UIMM12,
+    LDRH_Rt_ADDR_REGOFF,
+    LDRH_Rt_ADDR_SIMM9,
+    LDRH_Rt_ADDR_UIMM12,
+    LDRSB_Rt_ADDR_REGOFF,
+    LDRSB_Rt_ADDR_SIMM9,
+    LDRSB_Rt_ADDR_UIMM12,
+    LDRSH_Rt_ADDR_REGOFF,
+    LDRSH_Rt_ADDR_SIMM9,
+    LDRSH_Rt_ADDR_UIMM12,
+    LDRSW_Rt_ADDR_PCREL19,
+    LDRSW_Rt_ADDR_REGOFF,
+    LDRSW_Rt_ADDR_SIMM9,
+    LDRSW_Rt_ADDR_UIMM12,
+    LDSET_Rs_Rt_ADDR_SIMPLE,
+    LDSETA_Rs_Rt_ADDR_SIMPLE,
+    LDSETAB_Rs_Rt_ADDR_SIMPLE,
+    LDSETAH_Rs_Rt_ADDR_SIMPLE,
+    LDSETAL_Rs_Rt_ADDR_SIMPLE,
+    LDSETALB_Rs_Rt_ADDR_SIMPLE,
+    LDSETALH_Rs_Rt_ADDR_SIMPLE,
+    LDSETB_Rs_Rt_ADDR_SIMPLE,
+    LDSETH_Rs_Rt_ADDR_SIMPLE,
+    LDSETL_Rs_Rt_ADDR_SIMPLE,
+    LDSETLB_Rs_Rt_ADDR_SIMPLE,
+    LDSETLH_Rs_Rt_ADDR_SIMPLE,
+    LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    LDSMAX_Rs_Rt_ADDR_SIMPLE,
+    LDSMAXA_Rs_Rt_ADDR_SIMPLE,
+    LDSMAXAB_Rs_Rt_ADDR_SIMPLE,
+    LDSMAXAH_Rs_Rt_ADDR_SIMPLE,
+    LDSMAXAL_Rs_Rt_ADDR_SIMPLE,
+    LDSMAXALB_Rs_Rt_ADDR_SIMPLE,
+    LDSMAXALH_Rs_Rt_ADDR_SIMPLE,
+    LDSMAXB_Rs_Rt_ADDR_SIMPLE,
+    LDSMAXH_Rs_Rt_ADDR_SIMPLE,
+    LDSMAXL_Rs_Rt_ADDR_SIMPLE,
+    LDSMAXLB_Rs_Rt_ADDR_SIMPLE,
+    LDSMAXLH_Rs_Rt_ADDR_SIMPLE,
+    LDSMIN_Rs_Rt_ADDR_SIMPLE,
+    LDSMINA_Rs_Rt_ADDR_SIMPLE,
+    LDSMINAB_Rs_Rt_ADDR_SIMPLE,
+    LDSMINAH_Rs_Rt_ADDR_SIMPLE,
+    LDSMINAL_Rs_Rt_ADDR_SIMPLE,
+    LDSMINALB_Rs_Rt_ADDR_SIMPLE,
+    LDSMINALH_Rs_Rt_ADDR_SIMPLE,
+    LDSMINB_Rs_Rt_ADDR_SIMPLE,
+    LDSMINH_Rs_Rt_ADDR_SIMPLE,
+    LDSMINL_Rs_Rt_ADDR_SIMPLE,
+    LDSMINLB_Rs_Rt_ADDR_SIMPLE,
+    LDSMINLH_Rs_Rt_ADDR_SIMPLE,
+    LDTR_Rt_ADDR_SIMM9,
+    LDTRB_Rt_ADDR_SIMM9,
+    LDTRH_Rt_ADDR_SIMM9,
+    LDTRSB_Rt_ADDR_SIMM9,
+    LDTRSH_Rt_ADDR_SIMM9,
+    LDTRSW_Rt_ADDR_SIMM9,
+    LDUMAX_Rs_Rt_ADDR_SIMPLE,
+    LDUMAXA_Rs_Rt_ADDR_SIMPLE,
+    LDUMAXAB_Rs_Rt_ADDR_SIMPLE,
+    LDUMAXAH_Rs_Rt_ADDR_SIMPLE,
+    LDUMAXAL_Rs_Rt_ADDR_SIMPLE,
+    LDUMAXALB_Rs_Rt_ADDR_SIMPLE,
+    LDUMAXALH_Rs_Rt_ADDR_SIMPLE,
+    LDUMAXB_Rs_Rt_ADDR_SIMPLE,
+    LDUMAXH_Rs_Rt_ADDR_SIMPLE,
+    LDUMAXL_Rs_Rt_ADDR_SIMPLE,
+    LDUMAXLB_Rs_Rt_ADDR_SIMPLE,
+    LDUMAXLH_Rs_Rt_ADDR_SIMPLE,
+    LDUMIN_Rs_Rt_ADDR_SIMPLE,
+    LDUMINA_Rs_Rt_ADDR_SIMPLE,
+    LDUMINAB_Rs_Rt_ADDR_SIMPLE,
+    LDUMINAH_Rs_Rt_ADDR_SIMPLE,
+    LDUMINAL_Rs_Rt_ADDR_SIMPLE,
+    LDUMINALB_Rs_Rt_ADDR_SIMPLE,
+    LDUMINALH_Rs_Rt_ADDR_SIMPLE,
+    LDUMINB_Rs_Rt_ADDR_SIMPLE,
+    LDUMINH_Rs_Rt_ADDR_SIMPLE,
+    LDUMINL_Rs_Rt_ADDR_SIMPLE,
+    LDUMINLB_Rs_Rt_ADDR_SIMPLE,
+    LDUMINLH_Rs_Rt_ADDR_SIMPLE,
+    LDUR_Rt_ADDR_SIMM9,
+    LDUR_Ft_ADDR_SIMM9,
+    LDURB_Rt_ADDR_SIMM9,
+    LDURH_Rt_ADDR_SIMM9,
+    LDURSB_Rt_ADDR_SIMM9,
+    LDURSH_Rt_ADDR_SIMM9,
+    LDURSW_Rt_ADDR_SIMM9,
+    LDXP_Rt_Rt2_ADDR_SIMPLE,
+    LDXR_Rt_ADDR_SIMPLE,
+    LDXRB_Rt_ADDR_SIMPLE,
+    LDXRH_Rt_ADDR_SIMPLE,
+    ORN_Rd_Rn_Rm_SFT,
+    ORR_Rd_SP_Rn_LIMM,
+    ORR_Rd_Rn_Rm_SFT,
+    PRFM_PRFOP_ADDR_PCREL19,
+    PRFM_PRFOP_ADDR_REGOFF,
+    PRFM_PRFOP_ADDR_UIMM12,
+    PRFUM_PRFOP_ADDR_SIMM9,
+    ST2G_Rt_SP_ADDR_SIMM13,
+    ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag,
+    ST64B_Rt_LS64_ADDR_SIMPLE,
+    ST64BV_Rs_Rt_LS64_ADDR_SIMPLE,
+    ST64BV0_Rs_Rt_LS64_ADDR_SIMPLE,
+    STG_Rt_SP_ADDR_SIMM13,
+    STG_Rt_SP_X_ADDR_SIMM13_imm_tag,
+    STGM_Rt_ADDR_SIMPLE,
+    STGP_Rt_Rt2_ADDR_SIMM11,
+    STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag,
+    STLLR_Rt_ADDR_SIMPLE,
+    STLLRB_Rt_ADDR_SIMPLE,
+    STLLRH_Rt_ADDR_SIMPLE,
+    STLR_Rt_ADDR_SIMPLE,
+    STLRB_Rt_ADDR_SIMPLE,
+    STLRH_Rt_ADDR_SIMPLE,
+    STLUR_Rt_ADDR_OFFSET,
+    STLUR_Rt_X_ADDR_OFFSET,
+    STLURB_Rt_ADDR_OFFSET,
+    STLURH_Rt_ADDR_OFFSET,
+    STLXP_Rs_Rt_Rt2_ADDR_SIMPLE,
+    STLXR_Rs_Rt_ADDR_SIMPLE,
+    STLXRB_Rs_Rt_ADDR_SIMPLE,
+    STLXRH_Rs_Rt_ADDR_SIMPLE,
+    STNP_Rt_Rt2_ADDR_SIMM7,
+    STNP_Ft_Ft2_ADDR_SIMM7,
+    STP_Rt_Rt2_ADDR_SIMM7,
+    STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S,
+    STP_Ft_Ft2_ADDR_SIMM7,
+    STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S,
+    STR_Rt_ADDR_REGOFF,
+    STR_Rt_ADDR_SIMM9,
+    STR_Rt_ADDR_UIMM12,
+    STR_Ft_ADDR_REGOFF,
+    STR_Ft_ADDR_SIMM9,
+    STR_Ft_ADDR_UIMM12,
+    STRB_Rt_ADDR_REGOFF,
+    STRB_Rt_ADDR_SIMM9,
+    STRB_Rt_ADDR_UIMM12,
+    STRH_Rt_ADDR_REGOFF,
+    STRH_Rt_ADDR_SIMM9,
+    STRH_Rt_ADDR_UIMM12,
+    STTR_Rt_ADDR_SIMM9,
+    STTRB_Rt_ADDR_SIMM9,
+    STTRH_Rt_ADDR_SIMM9,
+    STUR_Rt_ADDR_SIMM9,
+    STUR_Ft_ADDR_SIMM9,
+    STURB_Rt_ADDR_SIMM9,
+    STURH_Rt_ADDR_SIMM9,
+    STXP_Rs_Rt_Rt2_ADDR_SIMPLE,
+    STXR_Rs_Rt_ADDR_SIMPLE,
+    STXRB_Rs_Rt_ADDR_SIMPLE,
+    STXRH_Rs_Rt_ADDR_SIMPLE,
+    STZ2G_Rt_SP_ADDR_SIMM13,
+    STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag,
+    STZG_Rt_SP_ADDR_SIMM13,
+    STZG_Rt_SP_X_ADDR_SIMM13_imm_tag,
+    STZGM_Rt_ADDR_SIMPLE,
+    SWP_Rs_Rt_ADDR_SIMPLE,
+    SWPA_Rs_Rt_ADDR_SIMPLE,
+    SWPAB_Rs_Rt_ADDR_SIMPLE,
+    SWPAH_Rs_Rt_ADDR_SIMPLE,
+    SWPAL_Rs_Rt_ADDR_SIMPLE,
+    SWPALB_Rs_Rt_ADDR_SIMPLE,
+    SWPALH_Rs_Rt_ADDR_SIMPLE,
+    SWPB_Rs_Rt_ADDR_SIMPLE,
+    SWPH_Rs_Rt_ADDR_SIMPLE,
+    SWPL_Rs_Rt_ADDR_SIMPLE,
+    SWPLB_Rs_Rt_ADDR_SIMPLE,
+    SWPLH_Rs_Rt_ADDR_SIMPLE,
+    SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+}
+#[doc = r" The identity of each instruction, parallel to INSNS."]
+static INSN_IDS: [InsnId; 286] = [
+    InsnId::AND_Rd_SP_Rn_LIMM,
+    InsnId::AND_Rd_Rn_Rm_SFT,
+    InsnId::ANDS_Rd_Rn_LIMM,
+    InsnId::ANDS_Rd_Rn_Rm_SFT,
+    InsnId::BIC_Rd_Rn_Rm_SFT,
+    InsnId::BICS_Rd_Rn_Rm_SFT,
+    InsnId::CAS_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASAB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASAH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASALB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASALH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASLB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASP_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    InsnId::CASPA_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    InsnId::CASPAL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    InsnId::CASPL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    InsnId::EON_Rd_Rn_Rm_SFT,
+    InsnId::EOR_Rd_SP_Rn_LIMM,
+    InsnId::EOR_Rd_Rn_Rm_SFT,
+    InsnId::LD64B_Rt_LS64_ADDR_SIMPLE,
+    InsnId::LDADD_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDADDA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDADDAB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDADDAH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDADDAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDADDALB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDADDALH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDADDB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDADDH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDADDL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDADDLB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDADDLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDAPR_Rt_ADDR_SIMPLE,
+    InsnId::LDAPRB_Rt_ADDR_SIMPLE,
+    InsnId::LDAPRH_Rt_ADDR_SIMPLE,
+    InsnId::LDAPUR_Rt_ADDR_OFFSET,
+    InsnId::LDAPUR_Rt_X_ADDR_OFFSET,
+    InsnId::LDAPURB_Rt_ADDR_OFFSET,
+    InsnId::LDAPURH_Rt_ADDR_OFFSET,
+    InsnId::LDAPURSB_Rt_ADDR_OFFSET,
+    InsnId::LDAPURSB_Rt_W_ADDR_OFFSET,
+    InsnId::LDAPURSH_Rt_ADDR_OFFSET,
+    InsnId::LDAPURSH_Rt_W_ADDR_OFFSET,
+    InsnId::LDAPURSW_Rt_ADDR_OFFSET,
+    InsnId::LDAR_Rt_ADDR_SIMPLE,
+    InsnId::LDARB_Rt_ADDR_SIMPLE,
+    InsnId::LDARH_Rt_ADDR_SIMPLE,
+    InsnId::LDAXP_Rt_Rt2_ADDR_SIMPLE,
+    InsnId::LDAXR_Rt_ADDR_SIMPLE,
+    InsnId::LDAXRB_Rt_ADDR_SIMPLE,
+    InsnId::LDAXRH_Rt_ADDR_SIMPLE,
+    InsnId::LDCLR_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDCLRA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDCLRAB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDCLRAH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDCLRAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDCLRALB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDCLRALH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDCLRB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDCLRH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDCLRL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDCLRLB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDCLRLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    InsnId::LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    InsnId::LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    InsnId::LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    InsnId::LDEOR_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDEORA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDEORAB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDEORAH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDEORAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDEORALB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDEORALH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDEORB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDEORH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDEORL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDEORLB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDEORLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDG_Rt_ADDR_SIMM13,
+    InsnId::LDGM_Rt_ADDR_SIMPLE,
+    InsnId::LDLAR_Rt_ADDR_SIMPLE,
+    InsnId::LDLARB_Rt_ADDR_SIMPLE,
+    InsnId::LDLARH_Rt_ADDR_SIMPLE,
+    InsnId::LDNP_Rt_Rt2_ADDR_SIMM7,
+    InsnId::LDNP_Ft_Ft2_ADDR_SIMM7,
+    InsnId::LDP_Rt_Rt2_ADDR_SIMM7,
+    InsnId::LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S,
+    InsnId::LDP_Ft_Ft2_ADDR_SIMM7,
+    InsnId::LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S,
+    InsnId::LDPSW_Rt_Rt2_ADDR_SIMM7,
+    InsnId::LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S,
+    InsnId::LDR_Rt_ADDR_PCREL19,
+    InsnId::LDR_Rt_ADDR_REGOFF,
+    InsnId::LDR_Rt_ADDR_SIMM9,
+    InsnId::LDR_Rt_ADDR_UIMM12,
+    InsnId::LDR_Ft_ADDR_PCREL19,
+    InsnId::LDR_Ft_ADDR_REGOFF,
+    InsnId::LDR_Ft_ADDR_SIMM9,
+    InsnId::LDR_Ft_ADDR_UIMM12,
+    InsnId::LDRAA_Rt_ADDR_SIMM10,
+    InsnId::LDRAB_Rt_ADDR_SIMM10,
+    InsnId::LDRB_Rt_ADDR_REGOFF,
+    InsnId::LDRB_Rt_ADDR_SIMM9,
+    InsnId::LDRB_Rt_ADDR_UIMM12,
+    InsnId::LDRH_Rt_ADDR_REGOFF,
+    InsnId::LDRH_Rt_ADDR_SIMM9,
+    InsnId::LDRH_Rt_ADDR_UIMM12,
+    InsnId::LDRSB_Rt_ADDR_REGOFF,
+    InsnId::LDRSB_Rt_ADDR_SIMM9,
+    InsnId::LDRSB_Rt_ADDR_UIMM12,
+    InsnId::LDRSH_Rt_ADDR_REGOFF,
+    InsnId::LDRSH_Rt_ADDR_SIMM9,
+    InsnId::LDRSH_Rt_ADDR_UIMM12,
+    InsnId::LDRSW_Rt_ADDR_PCREL19,
+    InsnId::LDRSW_Rt_ADDR_REGOFF,
+    InsnId::LDRSW_Rt_ADDR_SIMM9,
+    InsnId::LDRSW_Rt_ADDR_UIMM12,
+    InsnId::LDSET_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSETA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSETAB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSETAH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSETAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSETALB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSETALH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSETB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSETH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSETL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSETLB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSETLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    InsnId::LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    InsnId::LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    InsnId::LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    InsnId::LDSMAX_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMAXA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMAXAB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMAXAH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMAXAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMAXALB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMAXALH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMAXB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMAXH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMAXL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMAXLB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMAXLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMIN_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMINA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMINAB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMINAH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMINAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMINALB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMINALH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMINB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMINH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMINL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMINLB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDSMINLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTR_Rt_ADDR_SIMM9,
+    InsnId::LDTRB_Rt_ADDR_SIMM9,
+    InsnId::LDTRH_Rt_ADDR_SIMM9,
+    InsnId::LDTRSB_Rt_ADDR_SIMM9,
+    InsnId::LDTRSH_Rt_ADDR_SIMM9,
+    InsnId::LDTRSW_Rt_ADDR_SIMM9,
+    InsnId::LDUMAX_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMAXA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMAXAB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMAXAH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMAXAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMAXALB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMAXALH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMAXB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMAXH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMAXL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMAXLB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMAXLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMIN_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMINA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMINAB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMINAH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMINAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMINALB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMINALH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMINB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMINH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMINL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMINLB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUMINLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDUR_Rt_ADDR_SIMM9,
+    InsnId::LDUR_Ft_ADDR_SIMM9,
+    InsnId::LDURB_Rt_ADDR_SIMM9,
+    InsnId::LDURH_Rt_ADDR_SIMM9,
+    InsnId::LDURSB_Rt_ADDR_SIMM9,
+    InsnId::LDURSH_Rt_ADDR_SIMM9,
+    InsnId::LDURSW_Rt_ADDR_SIMM9,
+    InsnId::LDXP_Rt_Rt2_ADDR_SIMPLE,
+    InsnId::LDXR_Rt_ADDR_SIMPLE,
+    InsnId::LDXRB_Rt_ADDR_SIMPLE,
+    InsnId::LDXRH_Rt_ADDR_SIMPLE,
+    InsnId::ORN_Rd_Rn_Rm_SFT,
+    InsnId::ORR_Rd_SP_Rn_LIMM,
+    InsnId::ORR_Rd_Rn_Rm_SFT,
+    InsnId::PRFM_PRFOP_ADDR_PCREL19,
+    InsnId::PRFM_PRFOP_ADDR_REGOFF,
+    InsnId::PRFM_PRFOP_ADDR_UIMM12,
+    InsnId::PRFUM_PRFOP_ADDR_SIMM9,
+    InsnId::ST2G_Rt_SP_ADDR_SIMM13,
+    InsnId::ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag,
+    InsnId::ST64B_Rt_LS64_ADDR_SIMPLE,
+    InsnId::ST64BV_Rs_Rt_LS64_ADDR_SIMPLE,
+    InsnId::ST64BV0_Rs_Rt_LS64_ADDR_SIMPLE,
+    InsnId::STG_Rt_SP_ADDR_SIMM13,
+    InsnId::STG_Rt_SP_X_ADDR_SIMM13_imm_tag,
+    InsnId::STGM_Rt_ADDR_SIMPLE,
+    InsnId::STGP_Rt_Rt2_ADDR_SIMM11,
+    InsnId::STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag,
+    InsnId::STLLR_Rt_ADDR_SIMPLE,
+    InsnId::STLLRB_Rt_ADDR_SIMPLE,
+    InsnId::STLLRH_Rt_ADDR_SIMPLE,
+    InsnId::STLR_Rt_ADDR_SIMPLE,
+    InsnId::STLRB_Rt_ADDR_SIMPLE,
+    InsnId::STLRH_Rt_ADDR_SIMPLE,
+    InsnId::STLUR_Rt_ADDR_OFFSET,
+    InsnId::STLUR_Rt_X_ADDR_OFFSET,
+    InsnId::STLURB_Rt_ADDR_OFFSET,
+    InsnId::STLURH_Rt_ADDR_OFFSET,
+    InsnId::STLXP_Rs_Rt_Rt2_ADDR_SIMPLE,
+    InsnId::STLXR_Rs_Rt_ADDR_SIMPLE,
+    InsnId::STLXRB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::STLXRH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::STNP_Rt_Rt2_ADDR_SIMM7,
+    InsnId::STNP_Ft_Ft2_ADDR_SIMM7,
+    InsnId::STP_Rt_Rt2_ADDR_SIMM7,
+    InsnId::STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S,
+    InsnId::STP_Ft_Ft2_ADDR_SIMM7,
+    InsnId::STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S,
+    InsnId::STR_Rt_ADDR_REGOFF,
+    InsnId::STR_Rt_ADDR_SIMM9,
+    InsnId::STR_Rt_ADDR_UIMM12,
+    InsnId::STR_Ft_ADDR_REGOFF,
+    InsnId::STR_Ft_ADDR_SIMM9,
+    InsnId::STR_Ft_ADDR_UIMM12,
+    InsnId::STRB_Rt_ADDR_REGOFF,
+    InsnId::STRB_Rt_ADDR_SIMM9,
+    InsnId::STRB_Rt_ADDR_UIMM12,
+    InsnId::STRH_Rt_ADDR_REGOFF,
+    InsnId::STRH_Rt_ADDR_SIMM9,
+    InsnId::STRH_Rt_ADDR_UIMM12,
+    InsnId::STTR_Rt_ADDR_SIMM9,
+    InsnId::STTRB_Rt_ADDR_SIMM9,
+    InsnId::STTRH_Rt_ADDR_SIMM9,
+    InsnId::STUR_Rt_ADDR_SIMM9,
+    InsnId::STUR_Ft_ADDR_SIMM9,
+    InsnId::STURB_Rt_ADDR_SIMM9,
+    InsnId::STURH_Rt_ADDR_SIMM9,
+    InsnId::STXP_Rs_Rt_Rt2_ADDR_SIMPLE,
+    InsnId::STXR_Rs_Rt_ADDR_SIMPLE,
+    InsnId::STXRB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::STXRH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::STZ2G_Rt_SP_ADDR_SIMM13,
+    InsnId::STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag,
+    InsnId::STZG_Rt_SP_ADDR_SIMM13,
+    InsnId::STZG_Rt_SP_X_ADDR_SIMM13_imm_tag,
+    InsnId::STZGM_Rt_ADDR_SIMPLE,
+    InsnId::SWP_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPAB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPAH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPALB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPALH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPLB_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    InsnId::SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    InsnId::SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    InsnId::SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+];
+#[doc = r" The decoded instruction definitions, indexed by InsnId."]
 static INSNS: [Insn; 286] = [
     Insn {
         mnemonic: "and",
@@ -3920,7 +4509,8 @@ static INSNS: [Insn; 286] = [
         flags: InsnFlags::empty(),
     },
 ];
-pub fn decode(insn: u32) -> Option<Opcode> {
+#[doc = r" Return the index of the matching instruction in INSNS, or -1."]
+fn decode_index(insn: u32) -> i32 {
     if insn & 0x2000000 == 0 {
         if insn & 0x4000000 == 0 {
             if insn & 0x10000000 == 0 {
@@ -3933,41 +4523,26 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xffe0fc00 == 0x8007c00 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[263],
-                                                    });
+                                                    return 263;
                                                 }
                                             } else {
                                                 if insn & 0xffe0fc00 == 0x48007c00 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[264],
-                                                    });
+                                                    return 264;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xbfe0fc00 == 0x88007c00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[262],
-                                                });
+                                                return 262;
                                             }
                                         }
                                     } else {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0xbfe0fc00 == 0x8207c00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[18],
-                                                });
+                                                return 18;
                                             }
                                         } else {
                                             if insn & 0xbfe08000 == 0x88200000 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[261],
-                                                });
+                                                return 261;
                                             }
                                         }
                                     }
@@ -3976,67 +4551,43 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xffe0fc00 == 0x800fc00 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[234],
-                                                    });
+                                                    return 234;
                                                 }
                                             } else {
                                                 if insn & 0xffe0fc00 == 0x4800fc00 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[235],
-                                                    });
+                                                    return 235;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xbfe0fc00 == 0x8800fc00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[233],
-                                                });
+                                                return 233;
                                             }
                                         }
                                     } else {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0xbfe0fc00 == 0x820fc00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[21],
-                                                });
+                                                return 21;
                                             }
                                         } else {
                                             if insn & 0xbfe08000 == 0x88208000 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[232],
-                                                });
+                                                return 232;
                                             }
                                         }
                                     }
                                 }
                             } else {
                                 if insn & 0x7fc00000 == 0x28000000 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[236],
-                                    });
+                                    return 236;
                                 }
                             }
                         } else {
                             if insn & 0x40000000 == 0 {
                                 if insn & 0x7fc00000 == 0x29000000 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[238],
-                                    });
+                                    return 238;
                                 }
                             } else {
                                 if insn & 0xffc00000 == 0x69000000 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[220],
-                                    });
+                                    return 220;
                                 }
                             }
                         }
@@ -4047,50 +4598,32 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                     if insn & 0x80000000 == 0 {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0xfffffc00 == 0x89f7c00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[223],
-                                                });
+                                                return 223;
                                             }
                                         } else {
                                             if insn & 0xfffffc00 == 0x489f7c00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[224],
-                                                });
+                                                return 224;
                                             }
                                         }
                                     } else {
                                         if insn & 0xbffffc00 == 0x889f7c00 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[222],
-                                            });
+                                            return 222;
                                         }
                                     }
                                 } else {
                                     if insn & 0x80000000 == 0 {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0xffe0fc00 == 0x8a07c00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[13],
-                                                });
+                                                return 13;
                                             }
                                         } else {
                                             if insn & 0xffe0fc00 == 0x48a07c00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[14],
-                                                });
+                                                return 14;
                                             }
                                         }
                                     } else {
                                         if insn & 0xbfe0fc00 == 0x88a07c00 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[6],
-                                            });
+                                            return 6;
                                         }
                                     }
                                 }
@@ -4099,50 +4632,32 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                     if insn & 0x80000000 == 0 {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0xfffffc00 == 0x89ffc00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[226],
-                                                });
+                                                return 226;
                                             }
                                         } else {
                                             if insn & 0xfffffc00 == 0x489ffc00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[227],
-                                                });
+                                                return 227;
                                             }
                                         }
                                     } else {
                                         if insn & 0xbffffc00 == 0x889ffc00 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[225],
-                                            });
+                                            return 225;
                                         }
                                     }
                                 } else {
                                     if insn & 0x80000000 == 0 {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0xffe0fc00 == 0x8a0fc00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[16],
-                                                });
+                                                return 16;
                                             }
                                         } else {
                                             if insn & 0xffe0fc00 == 0x48a0fc00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[17],
-                                                });
+                                                return 17;
                                             }
                                         }
                                     } else {
                                         if insn & 0xbfe0fc00 == 0x88a0fc00 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[15],
-                                            });
+                                            return 15;
                                         }
                                     }
                                 }
@@ -4150,17 +4665,11 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                         } else {
                             if insn & 0x40000000 == 0 {
                                 if insn & 0x7ec00000 == 0x28800000 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[239],
-                                    });
+                                    return 239;
                                 }
                             } else {
                                 if insn & 0xfec00000 == 0x68800000 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[221],
-                                    });
+                                    return 221;
                                 }
                             }
                         }
@@ -4174,41 +4683,26 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xfffffc00 == 0x85f7c00 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[203],
-                                                    });
+                                                    return 203;
                                                 }
                                             } else {
                                                 if insn & 0xfffffc00 == 0x485f7c00 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[204],
-                                                    });
+                                                    return 204;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xbffffc00 == 0x885f7c00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[202],
-                                                });
+                                                return 202;
                                             }
                                         }
                                     } else {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0xbfe0fc00 == 0x8607c00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[19],
-                                                });
+                                                return 19;
                                             }
                                         } else {
                                             if insn & 0xbfff8000 == 0x887f0000 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[201],
-                                                });
+                                                return 201;
                                             }
                                         }
                                     }
@@ -4217,67 +4711,43 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xfffffc00 == 0x85ffc00 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[55],
-                                                    });
+                                                    return 55;
                                                 }
                                             } else {
                                                 if insn & 0xfffffc00 == 0x485ffc00 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[56],
-                                                    });
+                                                    return 56;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xbffffc00 == 0x885ffc00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[54],
-                                                });
+                                                return 54;
                                             }
                                         }
                                     } else {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0xbfe0fc00 == 0x860fc00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[20],
-                                                });
+                                                return 20;
                                             }
                                         } else {
                                             if insn & 0xbfff8000 == 0x887f8000 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[53],
-                                                });
+                                                return 53;
                                             }
                                         }
                                     }
                                 }
                             } else {
                                 if insn & 0x7fc00000 == 0x28400000 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[90],
-                                    });
+                                    return 90;
                                 }
                             }
                         } else {
                             if insn & 0x40000000 == 0 {
                                 if insn & 0x7fc00000 == 0x29400000 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[92],
-                                    });
+                                    return 92;
                                 }
                             } else {
                                 if insn & 0xffc00000 == 0x69400000 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[96],
-                                    });
+                                    return 96;
                                 }
                             }
                         }
@@ -4288,50 +4758,32 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                     if insn & 0x80000000 == 0 {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0xfffffc00 == 0x8df7c00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[88],
-                                                });
+                                                return 88;
                                             }
                                         } else {
                                             if insn & 0xfffffc00 == 0x48df7c00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[89],
-                                                });
+                                                return 89;
                                             }
                                         }
                                     } else {
                                         if insn & 0xbffffc00 == 0x88df7c00 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[87],
-                                            });
+                                            return 87;
                                         }
                                     }
                                 } else {
                                     if insn & 0x80000000 == 0 {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0xffe0fc00 == 0x8e07c00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[8],
-                                                });
+                                                return 8;
                                             }
                                         } else {
                                             if insn & 0xffe0fc00 == 0x48e07c00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[9],
-                                                });
+                                                return 9;
                                             }
                                         }
                                     } else {
                                         if insn & 0xbfe0fc00 == 0x88e07c00 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[7],
-                                            });
+                                            return 7;
                                         }
                                     }
                                 }
@@ -4340,50 +4792,32 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                     if insn & 0x80000000 == 0 {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0xfffffc00 == 0x8dffc00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[51],
-                                                });
+                                                return 51;
                                             }
                                         } else {
                                             if insn & 0xfffffc00 == 0x48dffc00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[52],
-                                                });
+                                                return 52;
                                             }
                                         }
                                     } else {
                                         if insn & 0xbffffc00 == 0x88dffc00 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[50],
-                                            });
+                                            return 50;
                                         }
                                     }
                                 } else {
                                     if insn & 0x80000000 == 0 {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0xffe0fc00 == 0x8e0fc00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[11],
-                                                });
+                                                return 11;
                                             }
                                         } else {
                                             if insn & 0xffe0fc00 == 0x48e0fc00 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[12],
-                                                });
+                                                return 12;
                                             }
                                         }
                                     } else {
                                         if insn & 0xbfe0fc00 == 0x88e0fc00 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[10],
-                                            });
+                                            return 10;
                                         }
                                     }
                                 }
@@ -4391,17 +4825,11 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                         } else {
                             if insn & 0x40000000 == 0 {
                                 if insn & 0x7ec00000 == 0x28c00000 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[93],
-                                    });
+                                    return 93;
                                 }
                             } else {
                                 if insn & 0xfec00000 == 0x68c00000 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[97],
-                                    });
+                                    return 97;
                                 }
                             }
                         }
@@ -4412,25 +4840,16 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                     if insn & 0x20000000 == 0 {
                         if insn & 0x80000000 == 0 {
                             if insn & 0xbf000000 == 0x18000000 {
-                                return Some(Opcode {
-                                    bits: insn,
-                                    def: &INSNS[98],
-                                });
+                                return 98;
                             }
                         } else {
                             if insn & 0x40000000 == 0 {
                                 if insn & 0xff000000 == 0x98000000 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[120],
-                                    });
+                                    return 120;
                                 }
                             } else {
                                 if insn & 0xff000000 == 0xd8000000 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[208],
-                                    });
+                                    return 208;
                                 }
                             }
                         }
@@ -4443,50 +4862,32 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0x40000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x38000000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[259],
-                                                        });
+                                                        return 259;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x78000000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[260],
-                                                        });
+                                                        return 260;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xbfe00c00 == 0xb8000000 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[257],
-                                                    });
+                                                    return 257;
                                                 }
                                             }
                                         } else {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0x40000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x38400000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[196],
-                                                        });
+                                                        return 196;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x78400000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[197],
-                                                        });
+                                                        return 197;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xbfe00c00 == 0xb8400000 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[194],
-                                                    });
+                                                    return 194;
                                                 }
                                             }
                                         }
@@ -4494,33 +4895,21 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0xffa00c00 == 0x38800000 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[198],
-                                                    });
+                                                    return 198;
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0xb8800000 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[200],
-                                                    });
+                                                    return 200;
                                                 }
                                             }
                                         } else {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0xffa00c00 == 0x78800000 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[199],
-                                                    });
+                                                    return 199;
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0xf8800000 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[211],
-                                                    });
+                                                    return 211;
                                                 }
                                             }
                                         }
@@ -4537,27 +4926,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38200000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[33],
-                                                                        });
+                                                                        return 33;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78200000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[34],
-                                                                        });
+                                                                        return 34;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8200000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[26],
-                                                                    });
+                                                                    return 26;
                                                                 }
                                                             }
                                                         } else {
@@ -4566,27 +4946,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a00000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[28],
-                                                                        });
+                                                                        return 28;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a00000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[29],
-                                                                        });
+                                                                        return 29;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a00000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[27],
-                                                                    });
+                                                                    return 27;
                                                                 }
                                                             }
                                                         }
@@ -4597,27 +4968,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38600000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[36],
-                                                                        });
+                                                                        return 36;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78600000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[37],
-                                                                        });
+                                                                        return 37;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8600000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[35],
-                                                                    });
+                                                                    return 35;
                                                                 }
                                                             }
                                                         } else {
@@ -4626,27 +4988,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e00000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[31],
-                                                                        });
+                                                                        return 31;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e00000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[32],
-                                                                        });
+                                                                        return 32;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e00000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[30],
-                                                                    });
+                                                                    return 30;
                                                                 }
                                                             }
                                                         }
@@ -4659,27 +5012,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38208000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[277],
-                                                                        });
+                                                                        return 277;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78208000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[278],
-                                                                        });
+                                                                        return 278;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8208000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[270],
-                                                                    });
+                                                                    return 270;
                                                                 }
                                                             }
                                                         } else {
@@ -4688,27 +5032,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a08000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[272],
-                                                                        });
+                                                                        return 272;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a08000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[273],
-                                                                        });
+                                                                        return 273;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a08000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[271],
-                                                                    });
+                                                                    return 271;
                                                                 }
                                                             }
                                                         }
@@ -4719,27 +5054,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38608000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[280],
-                                                                        });
+                                                                        return 280;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78608000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[281],
-                                                                        });
+                                                                        return 281;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8608000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[279],
-                                                                    });
+                                                                    return 279;
                                                                 }
                                                             }
                                                         } else {
@@ -4748,27 +5074,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e08000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[275],
-                                                                        });
+                                                                        return 275;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e08000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[276],
-                                                                        });
+                                                                        return 276;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e08000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[274],
-                                                                    });
+                                                                    return 274;
                                                                 }
                                                             }
                                                         }
@@ -4783,27 +5100,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38204000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[147],
-                                                                        });
+                                                                        return 147;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78204000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[148],
-                                                                        });
+                                                                        return 148;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8204000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[140],
-                                                                    });
+                                                                    return 140;
                                                                 }
                                                             }
                                                         } else {
@@ -4812,27 +5120,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a04000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[142],
-                                                                        });
+                                                                        return 142;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a04000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[143],
-                                                                        });
+                                                                        return 143;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a04000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[141],
-                                                                    });
+                                                                    return 141;
                                                                 }
                                                             }
                                                         }
@@ -4843,27 +5142,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38604000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[150],
-                                                                        });
+                                                                        return 150;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78604000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[151],
-                                                                        });
+                                                                        return 151;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8604000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[149],
-                                                                    });
+                                                                    return 149;
                                                                 }
                                                             }
                                                         } else {
@@ -4872,27 +5162,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e04000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[145],
-                                                                        });
+                                                                        return 145;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e04000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[146],
-                                                                        });
+                                                                        return 146;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e04000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[144],
-                                                                    });
+                                                                    return 144;
                                                                 }
                                                             }
                                                         }
@@ -4901,25 +5182,16 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                     if insn & 0x80000000 == 0 {
                                                         if insn & 0x40000000 == 0 {
                                                             if insn & 0xfffffc00 == 0x38bfc000 {
-                                                                return Some(Opcode {
-                                                                    bits: insn,
-                                                                    def: &INSNS[39],
-                                                                });
+                                                                return 39;
                                                             }
                                                         } else {
                                                             if insn & 0xfffffc00 == 0x78bfc000 {
-                                                                return Some(Opcode {
-                                                                    bits: insn,
-                                                                    def: &INSNS[40],
-                                                                });
+                                                                return 40;
                                                             }
                                                         }
                                                     } else {
                                                         if insn & 0xbffffc00 == 0xb8bfc000 {
-                                                            return Some(Opcode {
-                                                                bits: insn,
-                                                                def: &INSNS[38],
-                                                            });
+                                                            return 38;
                                                         }
                                                     }
                                                 }
@@ -4934,27 +5206,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38202000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[80],
-                                                                        });
+                                                                        return 80;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78202000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[81],
-                                                                        });
+                                                                        return 81;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8202000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[73],
-                                                                    });
+                                                                    return 73;
                                                                 }
                                                             }
                                                         } else {
@@ -4963,27 +5226,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a02000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[75],
-                                                                        });
+                                                                        return 75;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a02000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[76],
-                                                                        });
+                                                                        return 76;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a02000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[74],
-                                                                    });
+                                                                    return 74;
                                                                 }
                                                             }
                                                         }
@@ -4994,27 +5248,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38602000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[83],
-                                                                        });
+                                                                        return 83;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78602000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[84],
-                                                                        });
+                                                                        return 84;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8602000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[82],
-                                                                    });
+                                                                    return 82;
                                                                 }
                                                             }
                                                         } else {
@@ -5023,37 +5268,25 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e02000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[78],
-                                                                        });
+                                                                        return 78;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e02000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[79],
-                                                                        });
+                                                                        return 79;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e02000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[77],
-                                                                    });
+                                                                    return 77;
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0xf820a000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[216],
-                                                        });
+                                                        return 216;
                                                     }
                                                 }
                                             } else {
@@ -5062,50 +5295,32 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38206000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[177],
-                                                                    });
+                                                                    return 177;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78206000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[178],
-                                                                    });
+                                                                    return 178;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8206000 {
-                                                                return Some(Opcode {
-                                                                    bits: insn,
-                                                                    def: &INSNS[170],
-                                                                });
+                                                                return 170;
                                                             }
                                                         }
                                                     } else {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38a06000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[172],
-                                                                    });
+                                                                    return 172;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78a06000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[173],
-                                                                    });
+                                                                    return 173;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8a06000 {
-                                                                return Some(Opcode {
-                                                                    bits: insn,
-                                                                    def: &INSNS[171],
-                                                                });
+                                                                return 171;
                                                             }
                                                         }
                                                     }
@@ -5114,50 +5329,32 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38606000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[180],
-                                                                    });
+                                                                    return 180;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78606000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[181],
-                                                                    });
+                                                                    return 181;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8606000 {
-                                                                return Some(Opcode {
-                                                                    bits: insn,
-                                                                    def: &INSNS[179],
-                                                                });
+                                                                return 179;
                                                             }
                                                         }
                                                     } else {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38e06000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[175],
-                                                                    });
+                                                                    return 175;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78e06000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[176],
-                                                                    });
+                                                                    return 176;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8e06000 {
-                                                                return Some(Opcode {
-                                                                    bits: insn,
-                                                                    def: &INSNS[174],
-                                                                });
+                                                                return 174;
                                                             }
                                                         }
                                                     }
@@ -5175,27 +5372,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38201000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[64],
-                                                                        });
+                                                                        return 64;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78201000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[65],
-                                                                        });
+                                                                        return 65;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8201000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[57],
-                                                                    });
+                                                                    return 57;
                                                                 }
                                                             }
                                                         } else {
@@ -5204,27 +5392,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a01000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[59],
-                                                                        });
+                                                                        return 59;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a01000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[60],
-                                                                        });
+                                                                        return 60;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a01000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[58],
-                                                                    });
+                                                                    return 58;
                                                                 }
                                                             }
                                                         }
@@ -5235,27 +5414,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38601000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[67],
-                                                                        });
+                                                                        return 67;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78601000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[68],
-                                                                        });
+                                                                        return 68;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8601000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[66],
-                                                                    });
+                                                                    return 66;
                                                                 }
                                                             }
                                                         } else {
@@ -5264,37 +5434,25 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e01000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[62],
-                                                                        });
+                                                                        return 62;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e01000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[63],
-                                                                        });
+                                                                        return 63;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e01000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[61],
-                                                                    });
+                                                                    return 61;
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 } else {
                                                     if insn & 0xfffffc00 == 0xf83f9000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[214],
-                                                        });
+                                                        return 214;
                                                     }
                                                 }
                                             } else {
@@ -5306,27 +5464,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38205000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[159],
-                                                                        });
+                                                                        return 159;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78205000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[160],
-                                                                        });
+                                                                        return 160;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8205000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[152],
-                                                                    });
+                                                                    return 152;
                                                                 }
                                                             }
                                                         } else {
@@ -5335,27 +5484,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a05000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[154],
-                                                                        });
+                                                                        return 154;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a05000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[155],
-                                                                        });
+                                                                        return 155;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a05000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[153],
-                                                                    });
+                                                                    return 153;
                                                                 }
                                                             }
                                                         }
@@ -5366,27 +5506,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38605000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[162],
-                                                                        });
+                                                                        return 162;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78605000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[163],
-                                                                        });
+                                                                        return 163;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8605000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[161],
-                                                                    });
+                                                                    return 161;
                                                                 }
                                                             }
                                                         } else {
@@ -5395,37 +5526,25 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e05000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[157],
-                                                                        });
+                                                                        return 157;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e05000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[158],
-                                                                        });
+                                                                        return 158;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e05000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[156],
-                                                                    });
+                                                                    return 156;
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 } else {
                                                     if insn & 0xfffffc00 == 0xf83fd000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[25],
-                                                        });
+                                                        return 25;
                                                     }
                                                 }
                                             }
@@ -5439,27 +5558,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38203000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[131],
-                                                                        });
+                                                                        return 131;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78203000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[132],
-                                                                        });
+                                                                        return 132;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8203000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[124],
-                                                                    });
+                                                                    return 124;
                                                                 }
                                                             }
                                                         } else {
@@ -5468,27 +5578,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a03000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[126],
-                                                                        });
+                                                                        return 126;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a03000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[127],
-                                                                        });
+                                                                        return 127;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a03000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[125],
-                                                                    });
+                                                                    return 125;
                                                                 }
                                                             }
                                                         }
@@ -5499,27 +5600,18 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38603000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[134],
-                                                                        });
+                                                                        return 134;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78603000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[135],
-                                                                        });
+                                                                        return 135;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8603000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[133],
-                                                                    });
+                                                                    return 133;
                                                                 }
                                                             }
                                                         } else {
@@ -5528,37 +5620,25 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e03000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[129],
-                                                                        });
+                                                                        return 129;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e03000
                                                                     {
-                                                                        return Some(Opcode {
-                                                                            bits: insn,
-                                                                            def: &INSNS[130],
-                                                                        });
+                                                                        return 130;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e03000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[128],
-                                                                    });
+                                                                    return 128;
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0xf820b000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[215],
-                                                        });
+                                                        return 215;
                                                     }
                                                 }
                                             } else {
@@ -5567,50 +5647,32 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38207000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[189],
-                                                                    });
+                                                                    return 189;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78207000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[190],
-                                                                    });
+                                                                    return 190;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8207000 {
-                                                                return Some(Opcode {
-                                                                    bits: insn,
-                                                                    def: &INSNS[182],
-                                                                });
+                                                                return 182;
                                                             }
                                                         }
                                                     } else {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38a07000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[184],
-                                                                    });
+                                                                    return 184;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78a07000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[185],
-                                                                    });
+                                                                    return 185;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8a07000 {
-                                                                return Some(Opcode {
-                                                                    bits: insn,
-                                                                    def: &INSNS[183],
-                                                                });
+                                                                return 183;
                                                             }
                                                         }
                                                     }
@@ -5619,50 +5681,32 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38607000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[192],
-                                                                    });
+                                                                    return 192;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78607000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[193],
-                                                                    });
+                                                                    return 193;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8607000 {
-                                                                return Some(Opcode {
-                                                                    bits: insn,
-                                                                    def: &INSNS[191],
-                                                                });
+                                                                return 191;
                                                             }
                                                         }
                                                     } else {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38e07000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[187],
-                                                                    });
+                                                                    return 187;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78e07000 {
-                                                                    return Some(Opcode {
-                                                                        bits: insn,
-                                                                        def: &INSNS[188],
-                                                                    });
+                                                                    return 188;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8e07000 {
-                                                                return Some(Opcode {
-                                                                    bits: insn,
-                                                                    def: &INSNS[186],
-                                                                });
+                                                                return 186;
                                                             }
                                                         }
                                                     }
@@ -5678,50 +5722,32 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0x40000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x38000800 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[255],
-                                                        });
+                                                        return 255;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x78000800 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[256],
-                                                        });
+                                                        return 256;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xbfe00c00 == 0xb8000800 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[254],
-                                                    });
+                                                    return 254;
                                                 }
                                             }
                                         } else {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0x40000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x38400800 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[165],
-                                                        });
+                                                        return 165;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x78400800 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[166],
-                                                        });
+                                                        return 166;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xbfe00c00 == 0xb8400800 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[164],
-                                                    });
+                                                    return 164;
                                                 }
                                             }
                                         }
@@ -5729,25 +5755,16 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0xffa00c00 == 0x38800800 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[167],
-                                                    });
+                                                    return 167;
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0xb8800800 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[169],
-                                                    });
+                                                    return 169;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xffa00c00 == 0x78800800 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[168],
-                                                });
+                                                return 168;
                                             }
                                         }
                                     }
@@ -5757,50 +5774,32 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0x40000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x38200800 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[248],
-                                                        });
+                                                        return 248;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x78200800 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[251],
-                                                        });
+                                                        return 251;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xbfe00c00 == 0xb8200800 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[242],
-                                                    });
+                                                    return 242;
                                                 }
                                             }
                                         } else {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0x40000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x38600800 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[108],
-                                                        });
+                                                        return 108;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x78600800 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[111],
-                                                        });
+                                                        return 111;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xbfe00c00 == 0xb8600800 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[99],
-                                                    });
+                                                    return 99;
                                                 }
                                             }
                                         }
@@ -5808,33 +5807,21 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0xffa00c00 == 0x38a00800 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[114],
-                                                    });
+                                                    return 114;
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0xb8a00800 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[121],
-                                                    });
+                                                    return 121;
                                                 }
                                             }
                                         } else {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0xffa00c00 == 0x78a00800 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[117],
-                                                    });
+                                                    return 117;
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0xf8a00800 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[209],
-                                                    });
+                                                    return 209;
                                                 }
                                             }
                                         }
@@ -5848,50 +5835,32 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xffe00400 == 0x38000400 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[249],
-                                                    });
+                                                    return 249;
                                                 }
                                             } else {
                                                 if insn & 0xffe00400 == 0x78000400 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[252],
-                                                    });
+                                                    return 252;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xbfe00400 == 0xb8000400 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[243],
-                                                });
+                                                return 243;
                                             }
                                         }
                                     } else {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xffe00400 == 0x38400400 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[109],
-                                                    });
+                                                    return 109;
                                                 }
                                             } else {
                                                 if insn & 0xffe00400 == 0x78400400 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[112],
-                                                    });
+                                                    return 112;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xbfe00400 == 0xb8400400 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[100],
-                                                });
+                                                return 100;
                                             }
                                         }
                                     }
@@ -5899,42 +5868,27 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                     if insn & 0x40000000 == 0 {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0xffa00400 == 0x38800400 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[115],
-                                                });
+                                                return 115;
                                             }
                                         } else {
                                             if insn & 0xffe00400 == 0xb8800400 {
-                                                return Some(Opcode {
-                                                    bits: insn,
-                                                    def: &INSNS[122],
-                                                });
+                                                return 122;
                                             }
                                         }
                                     } else {
                                         if insn & 0xffa00400 == 0x78800400 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[118],
-                                            });
+                                            return 118;
                                         }
                                     }
                                 }
                             } else {
                                 if insn & 0x800000 == 0 {
                                     if insn & 0xffa00400 == 0xf8200400 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[106],
-                                        });
+                                        return 106;
                                     }
                                 } else {
                                     if insn & 0xffa00400 == 0xf8a00400 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[107],
-                                        });
+                                        return 107;
                                     }
                                 }
                             }
@@ -5950,33 +5904,21 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0x80000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x19000000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[230],
-                                                        });
+                                                        return 230;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x99000000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[228],
-                                                        });
+                                                        return 228;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0x80000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x59000000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[231],
-                                                        });
+                                                        return 231;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0xd9000000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[229],
-                                                        });
+                                                        return 229;
                                                     }
                                                 }
                                             }
@@ -5984,76 +5926,49 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                             if insn & 0x001000 == 0 {
                                                 if insn & 0x008000 == 0 {
                                                     if insn & 0xfffffc00 == 0xd9200000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[269],
-                                                        });
+                                                        return 269;
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0x19208000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[282],
-                                                        });
+                                                        return 282;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0x002000 == 0 {
                                                     if insn & 0xffe0fc00 == 0x19201000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[69],
-                                                        });
+                                                        return 69;
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0x19203000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[136],
-                                                        });
+                                                        return 136;
                                                     }
                                                 }
                                             }
                                         }
                                     } else {
                                         if insn & 0xffe00c00 == 0xd9200800 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[217],
-                                            });
+                                            return 217;
                                         }
                                     }
                                 } else {
                                     if insn & 0xffe00400 == 0xd9200400 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[218],
-                                        });
+                                        return 218;
                                     }
                                 }
                             } else {
                                 if insn & 0x80000000 == 0 {
                                     if insn & 0x40000000 == 0 {
                                         if insn & 0xffc00000 == 0x39000000 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[250],
-                                            });
+                                            return 250;
                                         }
                                     } else {
                                         if insn & 0xffc00000 == 0x79000000 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[253],
-                                            });
+                                            return 253;
                                         }
                                     }
                                 } else {
                                     if insn & 0xbfc00000 == 0xb9000000 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[244],
-                                        });
+                                        return 244;
                                     }
                                 }
                             }
@@ -6065,33 +5980,21 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0x80000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x19400000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[43],
-                                                        });
+                                                        return 43;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x99400000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[41],
-                                                        });
+                                                        return 41;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0x80000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x59400000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[44],
-                                                        });
+                                                        return 44;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0xd9400000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[42],
-                                                        });
+                                                        return 42;
                                                     }
                                                 }
                                             }
@@ -6099,76 +6002,49 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0x001000 == 0 {
                                                     if insn & 0xffe0fc00 == 0x19608000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[285],
-                                                        });
+                                                        return 285;
                                                     }
                                                 } else {
                                                     if insn & 0x002000 == 0 {
                                                         if insn & 0xffe0fc00 == 0x19601000 {
-                                                            return Some(Opcode {
-                                                                bits: insn,
-                                                                def: &INSNS[72],
-                                                            });
+                                                            return 72;
                                                         }
                                                     } else {
                                                         if insn & 0xffe0fc00 == 0x19603000 {
-                                                            return Some(Opcode {
-                                                                bits: insn,
-                                                                def: &INSNS[139],
-                                                            });
+                                                            return 139;
                                                         }
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0xd9600000 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[85],
-                                                    });
+                                                    return 85;
                                                 }
                                             }
                                         }
                                     } else {
                                         if insn & 0xffe00c00 == 0xd9600800 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[267],
-                                            });
+                                            return 267;
                                         }
                                     }
                                 } else {
                                     if insn & 0xffe00400 == 0xd9600400 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[268],
-                                        });
+                                        return 268;
                                     }
                                 }
                             } else {
                                 if insn & 0x80000000 == 0 {
                                     if insn & 0x40000000 == 0 {
                                         if insn & 0xffc00000 == 0x39400000 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[110],
-                                            });
+                                            return 110;
                                         }
                                     } else {
                                         if insn & 0xffc00000 == 0x79400000 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[113],
-                                            });
+                                            return 113;
                                         }
                                     }
                                 } else {
                                     if insn & 0xbfc00000 == 0xb9400000 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[101],
-                                        });
+                                        return 101;
                                     }
                                 }
                             }
@@ -6182,41 +6058,26 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0x80000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x19800000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[45],
-                                                        });
+                                                        return 45;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x99800000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[49],
-                                                        });
+                                                        return 49;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0x59800000 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[47],
-                                                    });
+                                                    return 47;
                                                 }
                                             }
                                         } else {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xffe00c00 == 0x19c00000 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[46],
-                                                    });
+                                                    return 46;
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0x59c00000 {
-                                                    return Some(Opcode {
-                                                        bits: insn,
-                                                        def: &INSNS[48],
-                                                    });
+                                                    return 48;
                                                 }
                                             }
                                         }
@@ -6225,33 +6086,21 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                             if insn & 0x008000 == 0 {
                                                 if insn & 0x400000 == 0 {
                                                     if insn & 0xfffffc00 == 0xd9a00000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[219],
-                                                        });
+                                                        return 219;
                                                     }
                                                 } else {
                                                     if insn & 0xfffffc00 == 0xd9e00000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[86],
-                                                        });
+                                                        return 86;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0x400000 == 0 {
                                                     if insn & 0xffe0fc00 == 0x19a08000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[283],
-                                                        });
+                                                        return 283;
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0x19e08000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[284],
-                                                        });
+                                                        return 284;
                                                     }
                                                 }
                                             }
@@ -6259,33 +6108,21 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                             if insn & 0x002000 == 0 {
                                                 if insn & 0x400000 == 0 {
                                                     if insn & 0xffe0fc00 == 0x19a01000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[70],
-                                                        });
+                                                        return 70;
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0x19e01000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[71],
-                                                        });
+                                                        return 71;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0x400000 == 0 {
                                                     if insn & 0xffe0fc00 == 0x19a03000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[137],
-                                                        });
+                                                        return 137;
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0x19e03000 {
-                                                        return Some(Opcode {
-                                                            bits: insn,
-                                                            def: &INSNS[138],
-                                                        });
+                                                        return 138;
                                                     }
                                                 }
                                             }
@@ -6294,34 +6131,22 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                                 } else {
                                     if insn & 0x400000 == 0 {
                                         if insn & 0xffe00c00 == 0xd9a00800 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[212],
-                                            });
+                                            return 212;
                                         }
                                     } else {
                                         if insn & 0xffe00c00 == 0xd9e00800 {
-                                            return Some(Opcode {
-                                                bits: insn,
-                                                def: &INSNS[265],
-                                            });
+                                            return 265;
                                         }
                                     }
                                 }
                             } else {
                                 if insn & 0x400000 == 0 {
                                     if insn & 0xffe00400 == 0xd9a00400 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[213],
-                                        });
+                                        return 213;
                                     }
                                 } else {
                                     if insn & 0xffe00400 == 0xd9e00400 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[266],
-                                        });
+                                        return 266;
                                     }
                                 }
                             }
@@ -6329,33 +6154,21 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                             if insn & 0x40000000 == 0 {
                                 if insn & 0x80000000 == 0 {
                                     if insn & 0xff800000 == 0x39800000 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[116],
-                                        });
+                                        return 116;
                                     }
                                 } else {
                                     if insn & 0xffc00000 == 0xb9800000 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[123],
-                                        });
+                                        return 123;
                                     }
                                 }
                             } else {
                                 if insn & 0x80000000 == 0 {
                                     if insn & 0xff800000 == 0x79800000 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[119],
-                                        });
+                                        return 119;
                                     }
                                 } else {
                                     if insn & 0xffc00000 == 0xf9800000 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[210],
-                                        });
+                                        return 210;
                                     }
                                 }
                             }
@@ -6369,50 +6182,32 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                     if insn & 0x800000 == 0 {
                         if insn & 0x1000000 == 0 {
                             if insn & 0x3fc00000 == 0x2c000000 {
-                                return Some(Opcode {
-                                    bits: insn,
-                                    def: &INSNS[237],
-                                });
+                                return 237;
                             }
                         } else {
                             if insn & 0x3fc00000 == 0x2d000000 {
-                                return Some(Opcode {
-                                    bits: insn,
-                                    def: &INSNS[240],
-                                });
+                                return 240;
                             }
                         }
                     } else {
                         if insn & 0x3ec00000 == 0x2c800000 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[241],
-                            });
+                            return 241;
                         }
                     }
                 } else {
                     if insn & 0x800000 == 0 {
                         if insn & 0x1000000 == 0 {
                             if insn & 0x3fc00000 == 0x2c400000 {
-                                return Some(Opcode {
-                                    bits: insn,
-                                    def: &INSNS[91],
-                                });
+                                return 91;
                             }
                         } else {
                             if insn & 0x3fc00000 == 0x2d400000 {
-                                return Some(Opcode {
-                                    bits: insn,
-                                    def: &INSNS[94],
-                                });
+                                return 94;
                             }
                         }
                     } else {
                         if insn & 0x3ec00000 == 0x2cc00000 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[95],
-                            });
+                            return 95;
                         }
                     }
                 }
@@ -6420,60 +6215,39 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                 if insn & 0x1000000 == 0 {
                     if insn & 0x20000000 == 0 {
                         if insn & 0x3f000000 == 0x1c000000 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[102],
-                            });
+                            return 102;
                         }
                     } else {
                         if insn & 0x000400 == 0 {
                             if insn & 0x000800 == 0 {
                                 if insn & 0x400000 == 0 {
                                     if insn & 0x3f600c00 == 0x3c000000 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[258],
-                                        });
+                                        return 258;
                                     }
                                 } else {
                                     if insn & 0x3f600c00 == 0x3c400000 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[195],
-                                        });
+                                        return 195;
                                     }
                                 }
                             } else {
                                 if insn & 0x400000 == 0 {
                                     if insn & 0x3f600c00 == 0x3c200800 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[245],
-                                        });
+                                        return 245;
                                     }
                                 } else {
                                     if insn & 0x3f600c00 == 0x3c600800 {
-                                        return Some(Opcode {
-                                            bits: insn,
-                                            def: &INSNS[103],
-                                        });
+                                        return 103;
                                     }
                                 }
                             }
                         } else {
                             if insn & 0x400000 == 0 {
                                 if insn & 0x3f600400 == 0x3c000400 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[246],
-                                    });
+                                    return 246;
                                 }
                             } else {
                                 if insn & 0x3f600400 == 0x3c400400 {
-                                    return Some(Opcode {
-                                        bits: insn,
-                                        def: &INSNS[104],
-                                    });
+                                    return 104;
                                 }
                             }
                         }
@@ -6481,17 +6255,11 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                 } else {
                     if insn & 0x400000 == 0 {
                         if insn & 0x3f400000 == 0x3d000000 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[247],
-                            });
+                            return 247;
                         }
                     } else {
                         if insn & 0x3f400000 == 0x3d400000 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[105],
-                            });
+                            return 105;
                         }
                     }
                 }
@@ -6502,33 +6270,21 @@ pub fn decode(insn: u32) -> Option<Opcode> {
             if insn & 0x20000000 == 0 {
                 if insn & 0x40000000 == 0 {
                     if insn & 0x7f800000 == 0x12000000 {
-                        return Some(Opcode {
-                            bits: insn,
-                            def: &INSNS[0],
-                        });
+                        return 0;
                     }
                 } else {
                     if insn & 0x7f800000 == 0x52000000 {
-                        return Some(Opcode {
-                            bits: insn,
-                            def: &INSNS[23],
-                        });
+                        return 23;
                     }
                 }
             } else {
                 if insn & 0x40000000 == 0 {
                     if insn & 0x7f800000 == 0x32000000 {
-                        return Some(Opcode {
-                            bits: insn,
-                            def: &INSNS[206],
-                        });
+                        return 206;
                     }
                 } else {
                     if insn & 0x7f800000 == 0x72000000 {
-                        return Some(Opcode {
-                            bits: insn,
-                            def: &INSNS[2],
-                        });
+                        return 2;
                     }
                 }
             }
@@ -6537,33 +6293,21 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                 if insn & 0x20000000 == 0 {
                     if insn & 0x40000000 == 0 {
                         if insn & 0x7f200000 == 0xa000000 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[1],
-                            });
+                            return 1;
                         }
                     } else {
                         if insn & 0x7f200000 == 0x4a000000 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[24],
-                            });
+                            return 24;
                         }
                     }
                 } else {
                     if insn & 0x40000000 == 0 {
                         if insn & 0x7f200000 == 0x2a000000 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[207],
-                            });
+                            return 207;
                         }
                     } else {
                         if insn & 0x7f200000 == 0x6a000000 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[3],
-                            });
+                            return 3;
                         }
                     }
                 }
@@ -6571,38 +6315,38 @@ pub fn decode(insn: u32) -> Option<Opcode> {
                 if insn & 0x20000000 == 0 {
                     if insn & 0x40000000 == 0 {
                         if insn & 0x7f200000 == 0xa200000 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[4],
-                            });
+                            return 4;
                         }
                     } else {
                         if insn & 0x7f200000 == 0x4a200000 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[22],
-                            });
+                            return 22;
                         }
                     }
                 } else {
                     if insn & 0x40000000 == 0 {
                         if insn & 0x7f200000 == 0x2a200000 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[205],
-                            });
+                            return 205;
                         }
                     } else {
                         if insn & 0x7f200000 == 0x6a200000 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[5],
-                            });
+                            return 5;
                         }
                     }
                 }
             }
         }
     }
-    None
+    -1
+}
+#[doc = r" Decode a 32-bit instruction word."]
+pub fn decode(insn: u32) -> Option<Opcode> {
+    let index = decode_index(insn);
+    if index < 0 {
+        return None;
+    }
+    Some(Opcode {
+        bits: insn,
+        def: &INSNS[index as usize],
+        id: INSN_IDS[index as usize],
+    })
 }

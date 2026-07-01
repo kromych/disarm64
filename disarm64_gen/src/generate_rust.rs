@@ -8,6 +8,7 @@ use proc_macro2::TokenStream;
 use quote::format_ident;
 use quote::quote;
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::io::Write;
 use std::rc::Rc;
 
@@ -49,6 +50,35 @@ fn intern(
     quote! { #ident }
 }
 
+/// A unique uppercase identifier for an instruction, disambiguating a shared
+/// mnemonic first by operand kinds, then by qualifiers, then by opcode.
+fn unique_insn_name(insn: &Insn, used: &mut HashSet<String>) -> String {
+    let base = insn.mnemonic.to_ascii_uppercase().replace('.', "_");
+
+    let mut name = base.clone();
+    for operand in insn.operands.iter() {
+        name.push_str(&format!("_{:?}", operand.kind));
+    }
+    if used.insert(name.clone()) {
+        return name;
+    }
+
+    let mut name = base;
+    for operand in insn.operands.iter() {
+        name.push_str(&format!("_{:?}", operand.kind));
+        if let Some(qualifier) = operand.qualifiers.first() {
+            name.push_str(&format!("_{qualifier:?}"));
+        }
+    }
+    if used.insert(name.clone()) {
+        return name;
+    }
+
+    name.push_str(&format!("_{:08x}", insn.opcode));
+    used.insert(name.clone());
+    name
+}
+
 fn write_prelude(
     indexing: decision_tree::DecisionTreeIndexing,
     f: &mut impl Write,
@@ -61,6 +91,7 @@ fn write_prelude(
                 /// Leaf nodes in the decision tree
                 struct Leaf {
                     insn: &'static Insn,
+                    index: u16,
                 }
 
                 /// The decision tree node
@@ -100,11 +131,20 @@ fn write_prelude(
         use disarm64_defn::defn::Insn;
         use disarm64_defn::defn::InsnOpcode;
 
-        /// A decoded instruction: its raw bits and a reference to its definition.
+        /// A decoded instruction: its raw bits, its definition, and its matchable
+        /// identity.
         #[derive(Copy, Clone, PartialEq, Eq)]
         pub struct Opcode {
             bits: u32,
             def: &'static Insn,
+            id: InsnId,
+        }
+
+        impl Opcode {
+            /// The instruction's identity, for matching against `InsnId`.
+            pub fn id(&self) -> InsnId {
+                self.id
+            }
         }
 
         impl core::fmt::Debug for Opcode {
@@ -176,12 +216,15 @@ fn write_insn_structs(
     let mut operands_pool: HashMap<String, usize> = HashMap::new();
     let mut operands_defs: Vec<TokenStream> = Vec::new();
 
+    let mut used_names = HashSet::new();
+    let mut insn_ids: Vec<Ident> = Vec::new();
     let mut opcode_to_index = HashMap::new();
     let mut insn_entries: Vec<TokenStream> = Vec::new();
 
     for insn in &insns {
         let index = insn_entries.len();
         opcode_to_index.insert((Opcode(insn.opcode), Mask(insn.mask)), index);
+        insn_ids.push(format_ident!("{}", unique_insn_name(insn, &mut used_names)));
 
         let opcode_hex = hex_lit(insn.opcode);
         let mask_hex = hex_lit(insn.mask);
@@ -270,7 +313,18 @@ fn write_insn_structs(
             #(#bitfields_defs)*
             #(#operands_defs)*
 
-            /// The decoded instruction definitions referenced by the decoder.
+            /// A matchable identity for each instruction. The discriminant is the
+            /// index into INSNS and INSN_IDS.
+            #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+            #[repr(u16)]
+            pub enum InsnId {
+                #(#insn_ids,)*
+            }
+
+            /// The identity of each instruction, parallel to INSNS.
+            static INSN_IDS: [InsnId; #insn_count] = [#(InsnId::#insn_ids,)*];
+
+            /// The decoded instruction definitions, indexed by InsnId.
             static INSNS: [Insn; #insn_count] = [
                 #(#insn_entries),*
             ];
@@ -301,13 +355,13 @@ fn decision_tree_to_rust_recursive_conditionals(
                 if insn.insn.mask == !0 {
                     tokens.extend(quote! {
                         if insn == #opcode_hex {
-                            return Some(Opcode { bits: insn, def: &INSNS[#index] });
+                            return #index;
                         }
                     });
                 } else {
                     tokens.extend(quote! {
                         if insn & #mask_hex == #opcode_hex {
-                            return Some(Opcode { bits: insn, def: &INSNS[#index] });
+                            return #index;
                         }
                     });
                 }
@@ -357,7 +411,7 @@ fn decision_tree_to_rust_indexed(
                             opcode_to_index[&(Opcode(insn.insn.opcode), Mask(insn.insn.mask))],
                         );
                         leafs.push(quote! {
-                            Leaf { insn: &INSNS[#index] }
+                            Leaf { insn: &INSNS[#index], index: #index }
                         });
                     }
                     let tokens = quote! {
@@ -408,25 +462,25 @@ fn decision_tree_to_rust_indexed(
         ];
 
         if DECODE_TABLE.is_empty() {
-            return None;
+            return -1;
         }
 
-        let mut index = 0;
+        let mut node = 0;
         loop {
-            let entry = &DECODE_TABLE[index];
+            let entry = &DECODE_TABLE[node];
             match entry {
                 Decode::Branch { mask, next } => {
                     let bit = (insn & mask != 0) as usize;
                     if let Some(i) = next[bit] {
-                        index = i as usize;
+                        node = i as usize;
                     } else {
-                        return None;
+                        return -1;
                     }
                 }
                 Decode::Leaf(leafs) => {
                     for leaf in leafs.iter() {
                         if insn & leaf.insn.mask == leaf.insn.opcode {
-                            return Some(Opcode { bits: insn, def: leaf.insn });
+                            return leaf.index as i32;
                         }
                     }
                     break;
@@ -459,9 +513,23 @@ pub fn decision_tree_to_rust(
         f,
         "{}",
         quote! {
-            pub fn decode(insn: u32) -> Option<Opcode> {
+            /// Return the index of the matching instruction in INSNS, or -1.
+            fn decode_index(insn: u32) -> i32 {
                 #decoder
-                None
+                -1
+            }
+
+            /// Decode a 32-bit instruction word.
+            pub fn decode(insn: u32) -> Option<Opcode> {
+                let index = decode_index(insn);
+                if index < 0 {
+                    return None;
+                }
+                Some(Opcode {
+                    bits: insn,
+                    def: &INSNS[index as usize],
+                    id: INSN_IDS[index as usize],
+                })
             }
         }
     )

@@ -18,11 +18,19 @@ use disarm64_defn::InsnFlags;
 use disarm64_defn::InsnOperandClass;
 use disarm64_defn::InsnOperandKind;
 use disarm64_defn::InsnOperandQualifier;
-#[doc = r" A decoded instruction: its raw bits and a reference to its definition."]
+#[doc = r" A decoded instruction: its raw bits, its definition, and its matchable"]
+#[doc = r" identity."]
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub struct Opcode {
     bits: u32,
     def: &'static Insn,
+    id: InsnId,
+}
+impl Opcode {
+    #[doc = r" The instruction's identity, for matching against `InsnId`."]
+    pub fn id(&self) -> InsnId {
+        self.id
+    }
 }
 impl core::fmt::Debug for Opcode {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -59,7 +67,34 @@ const OPERANDS_1: &[InsnOperand] = &[InsnOperand {
     qualifiers: &[],
     bit_fields: BITFIELDS_1,
 }];
-#[doc = r" The decoded instruction definitions referenced by the decoder."]
+#[doc = r" A matchable identity for each instruction. The discriminant is the"]
+#[doc = r" index into INSNS and INSN_IDS."]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[repr(u16)]
+pub enum InsnId {
+    BRK_EXCEPTION,
+    DCPS1_EXCEPTION,
+    DCPS2_EXCEPTION,
+    DCPS3_EXCEPTION,
+    HLT_EXCEPTION,
+    HVC_EXCEPTION,
+    SMC_EXCEPTION,
+    SVC_EXCEPTION,
+    UDF_UNDEFINED,
+}
+#[doc = r" The identity of each instruction, parallel to INSNS."]
+static INSN_IDS: [InsnId; 9] = [
+    InsnId::BRK_EXCEPTION,
+    InsnId::DCPS1_EXCEPTION,
+    InsnId::DCPS2_EXCEPTION,
+    InsnId::DCPS3_EXCEPTION,
+    InsnId::HLT_EXCEPTION,
+    InsnId::HVC_EXCEPTION,
+    InsnId::SMC_EXCEPTION,
+    InsnId::SVC_EXCEPTION,
+    InsnId::UDF_UNDEFINED,
+];
+#[doc = r" The decoded instruction definitions, indexed by InsnId."]
 static INSNS: [Insn; 9] = [
     Insn {
         mnemonic: "brk",
@@ -152,84 +187,70 @@ static INSNS: [Insn; 9] = [
         flags: InsnFlags::empty(),
     },
 ];
-pub fn decode(insn: u32) -> Option<Opcode> {
+#[doc = r" Return the index of the matching instruction in INSNS, or -1."]
+fn decode_index(insn: u32) -> i32 {
     if insn & 0x200000 == 0 {
         if insn & 0x400000 == 0 {
             if insn & 0x4000000 == 0 {
                 if insn & 0xffff0000 == 0x000000 {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[8],
-                    });
+                    return 8;
                 }
             } else {
                 if insn & 0x000001 == 0 {
                     if insn & 0xffe0001f == 0xd4000002 {
-                        return Some(Opcode {
-                            bits: insn,
-                            def: &INSNS[5],
-                        });
+                        return 5;
                     }
                 } else {
                     if insn & 0x000002 == 0 {
                         if insn & 0xffe0001f == 0xd4000001 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[7],
-                            });
+                            return 7;
                         }
                     } else {
                         if insn & 0xffe0001f == 0xd4000003 {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[6],
-                            });
+                            return 6;
                         }
                     }
                 }
             }
         } else {
             if insn & 0xffe0001f == 0xd4400000 {
-                return Some(Opcode {
-                    bits: insn,
-                    def: &INSNS[4],
-                });
+                return 4;
             }
         }
     } else {
         if insn & 0x000001 == 0 {
             if insn & 0x000002 == 0 {
                 if insn & 0xffe0001f == 0xd4200000 {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[0],
-                    });
+                    return 0;
                 }
             } else {
                 if insn & 0xffe0001f == 0xd4a00002 {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[2],
-                    });
+                    return 2;
                 }
             }
         } else {
             if insn & 0x000002 == 0 {
                 if insn & 0xffe0001f == 0xd4a00001 {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[1],
-                    });
+                    return 1;
                 }
             } else {
                 if insn & 0xffe0001f == 0xd4a00003 {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[3],
-                    });
+                    return 3;
                 }
             }
         }
     }
-    None
+    -1
+}
+#[doc = r" Decode a 32-bit instruction word."]
+pub fn decode(insn: u32) -> Option<Opcode> {
+    let index = decode_index(insn);
+    if index < 0 {
+        return None;
+    }
+    Some(Opcode {
+        bits: insn,
+        def: &INSNS[index as usize],
+        id: INSN_IDS[index as usize],
+    })
 }

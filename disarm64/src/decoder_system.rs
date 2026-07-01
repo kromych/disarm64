@@ -18,11 +18,19 @@ use disarm64_defn::InsnFlags;
 use disarm64_defn::InsnOperandClass;
 use disarm64_defn::InsnOperandKind;
 use disarm64_defn::InsnOperandQualifier;
-#[doc = r" A decoded instruction: its raw bits and a reference to its definition."]
+#[doc = r" A decoded instruction: its raw bits, its definition, and its matchable"]
+#[doc = r" identity."]
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub struct Opcode {
     bits: u32,
     def: &'static Insn,
+    id: InsnId,
+}
+impl Opcode {
+    #[doc = r" The instruction's identity, for matching against `InsnId`."]
+    pub fn id(&self) -> InsnId {
+        self.id
+    }
 }
 impl core::fmt::Debug for Opcode {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -346,7 +354,62 @@ const OPERANDS_16: &[InsnOperand] = &[InsnOperand {
     qualifiers: &[InsnOperandQualifier::X],
     bit_fields: BITFIELDS_9,
 }];
-#[doc = r" The decoded instruction definitions referenced by the decoder."]
+#[doc = r" A matchable identity for each instruction. The discriminant is the"]
+#[doc = r" index into INSNS and INSN_IDS."]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[repr(u16)]
+pub enum InsnId {
+    CFINV,
+    CHKFEAT_X16,
+    CLREX_UIMM4,
+    DGH,
+    DMB_BARRIER,
+    DSB_BARRIER_DSB_NXS,
+    DSB_BARRIER,
+    HINT_UIMM7,
+    ISB_BARRIER_ISB,
+    MRRS_Rt_PAIRREG_SYSREG128,
+    MRS_Rt_SYSREG,
+    MSR_PSTATEFIELD_UIMM4,
+    MSR_SYSREG_Rt,
+    MSRR_SYSREG128_Rt_PAIRREG,
+    RMIF_Rn_IMM_2_MASK,
+    SB,
+    SETF16_Rn,
+    SETF8_Rn,
+    SYS_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt,
+    SYSL_Rt_UIMM3_OP1_CRn_CRm_UIMM3_OP2,
+    SYSP_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt_PAIRREG_OR_XZR,
+    WFET_Rd,
+    WFIT_Rd,
+}
+#[doc = r" The identity of each instruction, parallel to INSNS."]
+static INSN_IDS: [InsnId; 23] = [
+    InsnId::CFINV,
+    InsnId::CHKFEAT_X16,
+    InsnId::CLREX_UIMM4,
+    InsnId::DGH,
+    InsnId::DMB_BARRIER,
+    InsnId::DSB_BARRIER_DSB_NXS,
+    InsnId::DSB_BARRIER,
+    InsnId::HINT_UIMM7,
+    InsnId::ISB_BARRIER_ISB,
+    InsnId::MRRS_Rt_PAIRREG_SYSREG128,
+    InsnId::MRS_Rt_SYSREG,
+    InsnId::MSR_PSTATEFIELD_UIMM4,
+    InsnId::MSR_SYSREG_Rt,
+    InsnId::MSRR_SYSREG128_Rt_PAIRREG,
+    InsnId::RMIF_Rn_IMM_2_MASK,
+    InsnId::SB,
+    InsnId::SETF16_Rn,
+    InsnId::SETF8_Rn,
+    InsnId::SYS_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt,
+    InsnId::SYSL_Rt_UIMM3_OP1_CRn_CRm_UIMM3_OP2,
+    InsnId::SYSP_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt_PAIRREG_OR_XZR,
+    InsnId::WFET_Rd,
+    InsnId::WFIT_Rd,
+];
+#[doc = r" The decoded instruction definitions, indexed by InsnId."]
 static INSNS: [Insn; 23] = [
     Insn {
         mnemonic: "cfinv",
@@ -579,165 +642,109 @@ static INSNS: [Insn; 23] = [
         flags: InsnFlags::const_from_bits(8u64),
     },
 ];
-pub fn decode(insn: u32) -> Option<Opcode> {
+#[doc = r" Return the index of the matching instruction in INSNS, or -1."]
+fn decode_index(insn: u32) -> i32 {
     if insn & 0x200000 == 0 {
         if insn & 0x400000 == 0 {
             if insn & 0x1000000 == 0 {
                 if insn & 0x000400 == 0 {
                     if insn & 0x004000 == 0 {
                         if insn & 0xfffffc1f == 0x3a00080d {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[17],
-                            });
+                            return 17;
                         }
                     } else {
                         if insn & 0xfffffc1f == 0x3a00480d {
-                            return Some(Opcode {
-                                bits: insn,
-                                def: &INSNS[16],
-                            });
+                            return 16;
                         }
                     }
                 } else {
                     if insn & 0xffe07c10 == 0xba000400 {
-                        return Some(Opcode {
-                            bits: insn,
-                            def: &INSNS[14],
-                        });
+                        return 14;
                     }
                 }
             } else {
                 if insn == 0xd503251f {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[1],
-                    });
+                    return 1;
                 }
                 if insn == 0xd50320df {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[3],
-                    });
+                    return 3;
                 }
                 if insn == 0xd50330ff {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[15],
-                    });
+                    return 15;
                 }
                 if insn == 0xd500401f {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[0],
-                    });
+                    return 0;
                 }
                 if insn & 0xfffff3ff == 0xd503323f {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[5],
-                    });
+                    return 5;
                 }
                 if insn & 0xfffff0ff == 0xd503305f {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[2],
-                    });
+                    return 2;
                 }
                 if insn & 0xfffff0ff == 0xd503309f {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[6],
-                    });
+                    return 6;
                 }
                 if insn & 0xfffff0ff == 0xd50330bf {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[4],
-                    });
+                    return 4;
                 }
                 if insn & 0xfffff0ff == 0xd50330df {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[8],
-                    });
+                    return 8;
                 }
                 if insn & 0xffffffe0 == 0xd5031000 {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[21],
-                    });
+                    return 21;
                 }
                 if insn & 0xffffffe0 == 0xd5031020 {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[22],
-                    });
+                    return 22;
                 }
                 if insn & 0xfffff01f == 0xd503201f {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[7],
-                    });
+                    return 7;
                 }
                 if insn & 0xfff8f01f == 0xd500401f {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[11],
-                    });
+                    return 11;
                 }
                 if insn & 0xfff80000 == 0xd5080000 {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[18],
-                    });
+                    return 18;
                 }
                 if insn & 0xffe00000 == 0xd5000000 {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[12],
-                    });
+                    return 12;
                 }
             }
         } else {
             if insn & 0x100000 == 0 {
                 if insn & 0xfff80000 == 0xd5480000 {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[20],
-                    });
+                    return 20;
                 }
             } else {
                 if insn & 0xfff00000 == 0xd5500000 {
-                    return Some(Opcode {
-                        bits: insn,
-                        def: &INSNS[13],
-                    });
+                    return 13;
                 }
             }
         }
     } else {
         if insn & 0x400000 == 0 {
             if insn & 0xfff80000 == 0xd5280000 {
-                return Some(Opcode {
-                    bits: insn,
-                    def: &INSNS[19],
-                });
+                return 19;
             }
             if insn & 0xffe00000 == 0xd5200000 {
-                return Some(Opcode {
-                    bits: insn,
-                    def: &INSNS[10],
-                });
+                return 10;
             }
         } else {
             if insn & 0xfff00000 == 0xd5700000 {
-                return Some(Opcode {
-                    bits: insn,
-                    def: &INSNS[9],
-                });
+                return 9;
             }
         }
     }
-    None
+    -1
+}
+#[doc = r" Decode a 32-bit instruction word."]
+pub fn decode(insn: u32) -> Option<Opcode> {
+    let index = decode_index(insn);
+    if index < 0 {
+        return None;
+    }
+    Some(Opcode {
+        bits: insn,
+        def: &INSNS[index as usize],
+        id: INSN_IDS[index as usize],
+    })
 }
