@@ -2,6 +2,7 @@ use crate::decision_tree;
 use crate::decision_tree::DecisionTree;
 use crate::decision_tree::DecisionTreeNode;
 use disarm64_defn::deser::Insn;
+use proc_macro2::Ident;
 use proc_macro2::Literal;
 use proc_macro2::TokenStream;
 use quote::format_ident;
@@ -10,6 +11,16 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::io::Write;
 use std::rc::Rc;
+
+/// A hex literal token formatted with the `{:#08x}` width used for opcodes and masks.
+fn hex_lit(value: u32) -> TokenStream {
+    format!("{value:#08x}").parse().unwrap()
+}
+
+/// An identifier built from a value's Debug representation, i.e. the enum variant name.
+fn dbg_ident(value: impl std::fmt::Debug) -> Ident {
+    format_ident!("{}", format!("{value:?}"))
+}
 
 fn write_prelude(_decision_tree: &DecisionTree, f: &mut impl Write) -> std::io::Result<()> {
     let prelude = quote! {
@@ -229,22 +240,19 @@ fn write_insn_structs(
         }
 
         let opcode_struct_name_ident = format_ident!("{}", opcode_struct_name);
-        let opcode_hex: TokenStream = format!("{:#08x}", insn.opcode).parse().unwrap();
-        let mask_hex: TokenStream = format!("{:#08x}", insn.mask).parse().unwrap();
+        let opcode_hex = hex_lit(insn.opcode);
+        let mask_hex = hex_lit(insn.mask);
         let mnemonic = insn.mnemonic.as_str();
-        let feature_set = format_ident!("{}", insn.feature_set.to_string());
-        let class = format_ident!("{}", insn.class.to_string());
+        let feature_set = dbg_ident(insn.feature_set);
+        let class = dbg_ident(insn.class);
 
         let mut insn_operands = Vec::new();
         for operand in insn.operands.iter() {
-            let kind = format_ident!("{}", format!("{:?}", operand.kind));
-            let class = format_ident!("{}", format!("{:?}", operand.class));
-            let qualifiers = operand
-                .qualifiers
-                .iter()
-                .map(|q| format_ident!("{}", format!("{q:?}")));
+            let kind = dbg_ident(operand.kind);
+            let class = dbg_ident(operand.class);
+            let qualifiers = operand.qualifiers.iter().map(dbg_ident);
             let bit_fields = operand.bit_fields.iter().map(|bf| {
-                let bf_name = format_ident!("{}", format!("{:?}", bf.bitfield));
+                let bf_name = dbg_ident(bf.bitfield);
                 let lsb = Literal::u8_unsuffixed(bf.lsb);
                 let width = Literal::u8_unsuffixed(bf.width);
                 quote! {
@@ -305,7 +313,7 @@ fn write_insn_structs(
     let mut sorted_classes = classes.keys().collect::<Vec<_>>();
     sorted_classes.sort_by_key(|x| x.to_string());
     for class in &sorted_classes {
-        let class_name = format_ident!("{}", format!("{:?}", class));
+        let class_name = dbg_ident(class);
         let mut class_opcode_idents = classes.get(class).unwrap().to_vec();
         class_opcode_idents.sort();
         let class_opcode_idents = class_opcode_idents
@@ -342,10 +350,7 @@ fn write_insn_structs(
         });
     }
 
-    let classes_idents = sorted_classes
-        .iter()
-        .map(|class| format_ident!("{}", format!("{:?}", class)))
-        .collect::<Vec<_>>();
+    let classes_idents = sorted_classes.iter().map(dbg_ident).collect::<Vec<_>>();
 
     writeln!(
         f,
@@ -412,8 +417,8 @@ fn decision_tree_to_rust_recursive_conditionals(
         DecisionTreeNode::Leaf { insns, .. } => {
             let mut tokens = quote! {};
             for insn in insns {
-                let opcode_hex: TokenStream = format!("{:#08x}", insn.insn.opcode).parse().unwrap();
-                let mask_hex: TokenStream = format!("{:#08x}", insn.insn.mask).parse().unwrap();
+                let opcode_hex = hex_lit(insn.insn.opcode);
+                let mask_hex = hex_lit(insn.insn.mask);
                 let opcode_type = format_ident!(
                     "{}",
                     opcode_to_used_name[&(Opcode(insn.insn.opcode), Mask(insn.insn.mask))]
@@ -445,8 +450,7 @@ fn decision_tree_to_rust_recursive_conditionals(
             let zero_branch =
                 decision_tree_to_rust_recursive_conditionals(zero, opcode_to_used_name);
             let one_branch = decision_tree_to_rust_recursive_conditionals(one, opcode_to_used_name);
-            let decision_mask_lit: TokenStream =
-                format!("{:#08x}", 1 << *decision_bit).parse().unwrap();
+            let decision_mask_lit = hex_lit(1u32 << *decision_bit);
 
             quote! {
                 if insn & #decision_mask_lit == 0 {
