@@ -22,7 +22,7 @@ use disarm64_defn::InsnOperandQualifier;
 #[doc = r" Define instruction newtype structs with Debug impl."]
 macro_rules ! define_insn_types { ($ ($ name : ident) , * $ (,) ?) => { $ (# [derive (Copy , Clone , PartialEq , Eq)] pub struct $ name (pub u32) ; impl core :: fmt :: Debug for $ name { fn fmt (& self , f : & mut core :: fmt :: Formatter < '_ >) -> core :: fmt :: Result { write ! (f , "{}({:#010x})" , stringify ! ($ name) , self . 0) } }) * } ; }
 #[doc = r" Define DEFINITION, make_opcode, and InsnOpcode for each instruction struct."]
-macro_rules ! define_insn_impls { ($ ($ name : ident ($ mnemonic_str : expr , $ mnemonic_ident : ident , $ opcode : expr , $ mask : expr , $ class : ident , $ feature_set : ident , $ flags : expr , [$ ($ operand : expr) , * $ (,) ?])) , * $ (,) ?) => { $ (impl $ name { pub const DEFINITION : Insn = Insn { mnemonic : $ mnemonic_str , aliases : & [] , opcode : $ opcode , mask : $ mask , class : InsnClass :: $ class , feature_set : InsnFeatureSet :: $ feature_set , operands : & [$ ($ operand) , *] , flags : $ flags , } ; fn make_opcode (bits : u32) -> Opcode { Opcode { mnemonic : Mnemonic :: $ mnemonic_ident , operation : Operation :: $ class ($ class :: $ name ($ name (bits))) } } } impl InsnOpcode for $ name { fn definition (& self) -> & 'static Insn { & Self :: DEFINITION } fn bits (& self) -> u32 { self . 0 } }) * } ; }
+macro_rules ! define_insn_impls { ($ ($ name : ident ($ mnemonic_str : expr , $ mnemonic_ident : ident , $ opcode : expr , $ mask : expr , $ class : ident , $ feature_set : ident , $ flags : expr , $ operands : expr)) , * $ (,) ?) => { $ (impl $ name { pub const DEFINITION : Insn = Insn { mnemonic : $ mnemonic_str , aliases : & [] , opcode : $ opcode , mask : $ mask , class : InsnClass :: $ class , feature_set : InsnFeatureSet :: $ feature_set , operands : $ operands , flags : $ flags , } ; fn make_opcode (bits : u32) -> Opcode { Opcode { mnemonic : Mnemonic :: $ mnemonic_ident , operation : Operation :: $ class ($ class :: $ name ($ name (bits))) } } } impl InsnOpcode for $ name { fn definition (& self) -> & 'static Insn { & Self :: DEFINITION } fn bits (& self) -> u32 { self . 0 } }) * } ; }
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Mnemonic {
     r#cfinv,
@@ -72,6 +72,315 @@ define_insn_types!(
     WFET_Rd,
     WFIT_Rd
 );
+const BITFIELDS_0: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::CRm,
+    lsb: 8,
+    width: 4,
+}];
+const BITFIELDS_1: &[BitfieldSpec] = &[
+    BitfieldSpec {
+        bitfield: InsnBitField::CRm,
+        lsb: 8,
+        width: 4,
+    },
+    BitfieldSpec {
+        bitfield: InsnBitField::op2,
+        lsb: 5,
+        width: 3,
+    },
+];
+const BITFIELDS_2: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::Rt,
+    lsb: 0,
+    width: 5,
+}];
+const BITFIELDS_3: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::Rn,
+    lsb: 5,
+    width: 5,
+}];
+const BITFIELDS_4: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::imm6_15,
+    lsb: 15,
+    width: 6,
+}];
+const BITFIELDS_5: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::imm4_0,
+    lsb: 0,
+    width: 4,
+}];
+const BITFIELDS_6: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::op1,
+    lsb: 16,
+    width: 3,
+}];
+const BITFIELDS_7: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::CRn,
+    lsb: 12,
+    width: 4,
+}];
+const BITFIELDS_8: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::op2,
+    lsb: 5,
+    width: 3,
+}];
+const BITFIELDS_9: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::Rd,
+    lsb: 0,
+    width: 5,
+}];
+const OPERANDS_0: &[InsnOperand] = &[InsnOperand {
+    kind: InsnOperandKind::X16,
+    class: InsnOperandClass::INT_REG,
+    qualifiers: &[InsnOperandQualifier::X],
+    bit_fields: &[],
+}];
+const OPERANDS_1: &[InsnOperand] = &[InsnOperand {
+    kind: InsnOperandKind::UIMM4,
+    class: InsnOperandClass::IMMEDIATE,
+    qualifiers: &[],
+    bit_fields: BITFIELDS_0,
+}];
+const OPERANDS_2: &[InsnOperand] = &[InsnOperand {
+    kind: InsnOperandKind::BARRIER,
+    class: InsnOperandClass::SYSTEM,
+    qualifiers: &[],
+    bit_fields: &[],
+}];
+const OPERANDS_3: &[InsnOperand] = &[InsnOperand {
+    kind: InsnOperandKind::BARRIER_DSB_NXS,
+    class: InsnOperandClass::SYSTEM,
+    qualifiers: &[],
+    bit_fields: &[],
+}];
+const OPERANDS_4: &[InsnOperand] = &[InsnOperand {
+    kind: InsnOperandKind::UIMM7,
+    class: InsnOperandClass::IMMEDIATE,
+    qualifiers: &[],
+    bit_fields: BITFIELDS_1,
+}];
+const OPERANDS_5: &[InsnOperand] = &[InsnOperand {
+    kind: InsnOperandKind::BARRIER_ISB,
+    class: InsnOperandClass::SYSTEM,
+    qualifiers: &[],
+    bit_fields: &[],
+}];
+const OPERANDS_6: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_2,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::PAIRREG,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: &[],
+    },
+    InsnOperand {
+        kind: InsnOperandKind::SYSREG128,
+        class: InsnOperandClass::SYSTEM,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_7: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_2,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::SYSREG,
+        class: InsnOperandClass::SYSTEM,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_8: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::PSTATEFIELD,
+        class: InsnOperandClass::SYSTEM,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+    InsnOperand {
+        kind: InsnOperandKind::UIMM4,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_0,
+    },
+];
+const OPERANDS_9: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::SYSREG,
+        class: InsnOperandClass::SYSTEM,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_2,
+    },
+];
+const OPERANDS_10: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::SYSREG128,
+        class: InsnOperandClass::SYSTEM,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_2,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::PAIRREG,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_11: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rn,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_3,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::IMM_2,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[InsnOperandQualifier::imm_0_63],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::MASK,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[InsnOperandQualifier::imm_0_15],
+        bit_fields: BITFIELDS_5,
+    },
+];
+const OPERANDS_12: &[InsnOperand] = &[InsnOperand {
+    kind: InsnOperandKind::Rn,
+    class: InsnOperandClass::INT_REG,
+    qualifiers: &[InsnOperandQualifier::W],
+    bit_fields: BITFIELDS_3,
+}];
+const OPERANDS_13: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::UIMM3_OP1,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_6,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::CRn,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_7,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::CRm,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_0,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::UIMM3_OP2,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_8,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_2,
+    },
+];
+const OPERANDS_14: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_2,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::UIMM3_OP1,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_6,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::CRn,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_7,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::CRm,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_0,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::UIMM3_OP2,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_8,
+    },
+];
+const OPERANDS_15: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::UIMM3_OP1,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_6,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::CRn,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_7,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::CRm,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_0,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::UIMM3_OP2,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_8,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_2,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::PAIRREG_OR_XZR,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_16: &[InsnOperand] = &[InsnOperand {
+    kind: InsnOperandKind::Rd,
+    class: InsnOperandClass::INT_REG,
+    qualifiers: &[InsnOperandQualifier::X],
+    bit_fields: BITFIELDS_9,
+}];
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum IC_SYSTEM {
     CFINV(CFINV),
@@ -118,7 +427,7 @@ define_insn_impls!(
         IC_SYSTEM,
         FLAGM,
         InsnFlags::empty(),
-        []
+        &[]
     ),
     CHKFEAT_X16(
         "chkfeat",
@@ -128,12 +437,7 @@ define_insn_impls!(
         IC_SYSTEM,
         CHK,
         InsnFlags::empty(),
-        [InsnOperand {
-            kind: InsnOperandKind::X16,
-            class: InsnOperandClass::INT_REG,
-            qualifiers: &[InsnOperandQualifier::X,],
-            bit_fields: &[],
-        }]
+        OPERANDS_0
     ),
     CLREX_UIMM4(
         "clrex",
@@ -143,16 +447,7 @@ define_insn_impls!(
         IC_SYSTEM,
         V8,
         InsnFlags::empty(),
-        [InsnOperand {
-            kind: InsnOperandKind::UIMM4,
-            class: InsnOperandClass::IMMEDIATE,
-            qualifiers: &[],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::CRm,
-                lsb: 8,
-                width: 4,
-            }],
-        }]
+        OPERANDS_1
     ),
     DGH(
         "dgh",
@@ -162,7 +457,7 @@ define_insn_impls!(
         IC_SYSTEM,
         V8,
         InsnFlags::empty(),
-        []
+        &[]
     ),
     DMB_BARRIER(
         "dmb",
@@ -172,12 +467,7 @@ define_insn_impls!(
         IC_SYSTEM,
         V8,
         InsnFlags::empty(),
-        [InsnOperand {
-            kind: InsnOperandKind::BARRIER,
-            class: InsnOperandClass::SYSTEM,
-            qualifiers: &[],
-            bit_fields: &[],
-        }]
+        OPERANDS_2
     ),
     DSB_BARRIER_DSB_NXS(
         "dsb",
@@ -187,12 +477,7 @@ define_insn_impls!(
         IC_SYSTEM,
         XS,
         InsnFlags::const_from_bits(8u64),
-        [InsnOperand {
-            kind: InsnOperandKind::BARRIER_DSB_NXS,
-            class: InsnOperandClass::SYSTEM,
-            qualifiers: &[],
-            bit_fields: &[],
-        }]
+        OPERANDS_3
     ),
     DSB_BARRIER(
         "dsb",
@@ -202,12 +487,7 @@ define_insn_impls!(
         IC_SYSTEM,
         V8,
         InsnFlags::const_from_bits(8u64),
-        [InsnOperand {
-            kind: InsnOperandKind::BARRIER,
-            class: InsnOperandClass::SYSTEM,
-            qualifiers: &[],
-            bit_fields: &[],
-        }]
+        OPERANDS_2
     ),
     HINT_UIMM7(
         "hint",
@@ -217,23 +497,7 @@ define_insn_impls!(
         IC_SYSTEM,
         V8,
         InsnFlags::const_from_bits(8u64),
-        [InsnOperand {
-            kind: InsnOperandKind::UIMM7,
-            class: InsnOperandClass::IMMEDIATE,
-            qualifiers: &[],
-            bit_fields: &[
-                BitfieldSpec {
-                    bitfield: InsnBitField::CRm,
-                    lsb: 8,
-                    width: 4,
-                },
-                BitfieldSpec {
-                    bitfield: InsnBitField::op2,
-                    lsb: 5,
-                    width: 3,
-                }
-            ],
-        }]
+        OPERANDS_4
     ),
     ISB_BARRIER_ISB(
         "isb",
@@ -243,12 +507,7 @@ define_insn_impls!(
         IC_SYSTEM,
         V8,
         InsnFlags::empty(),
-        [InsnOperand {
-            kind: InsnOperandKind::BARRIER_ISB,
-            class: InsnOperandClass::SYSTEM,
-            qualifiers: &[],
-            bit_fields: &[],
-        }]
+        OPERANDS_5
     ),
     MRRS_Rt_PAIRREG_SYSREG128(
         "mrrs",
@@ -258,30 +517,7 @@ define_insn_impls!(
         IC_SYSTEM,
         D128,
         InsnFlags::const_from_bits(8388608u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::PAIRREG,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::SYSREG128,
-                class: InsnOperandClass::SYSTEM,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_6
     ),
     MRS_Rt_SYSREG(
         "mrs",
@@ -291,24 +527,7 @@ define_insn_impls!(
         IC_SYSTEM,
         V8,
         InsnFlags::const_from_bits(8388608u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::SYSREG,
-                class: InsnOperandClass::SYSTEM,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_7
     ),
     MSR_PSTATEFIELD_UIMM4(
         "msr",
@@ -318,24 +537,7 @@ define_insn_impls!(
         IC_SYSTEM,
         V8,
         InsnFlags::const_from_bits(16777216u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::PSTATEFIELD,
-                class: InsnOperandClass::SYSTEM,
-                qualifiers: &[],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::UIMM4,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::CRm,
-                    lsb: 8,
-                    width: 4,
-                }],
-            }
-        ]
+        OPERANDS_8
     ),
     MSR_SYSREG_Rt(
         "msr",
@@ -345,24 +547,7 @@ define_insn_impls!(
         IC_SYSTEM,
         V8,
         InsnFlags::const_from_bits(16777216u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::SYSREG,
-                class: InsnOperandClass::SYSTEM,
-                qualifiers: &[],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            }
-        ]
+        OPERANDS_9
     ),
     MSRR_SYSREG128_Rt_PAIRREG(
         "msrr",
@@ -372,30 +557,7 @@ define_insn_impls!(
         IC_SYSTEM,
         D128,
         InsnFlags::const_from_bits(16777216u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::SYSREG128,
-                class: InsnOperandClass::SYSTEM,
-                qualifiers: &[],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::PAIRREG,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_10
     ),
     RMIF_Rn_IMM_2_MASK(
         "rmif",
@@ -405,38 +567,7 @@ define_insn_impls!(
         IC_SYSTEM,
         FLAGM,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rn,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rn,
-                    lsb: 5,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::IMM_2,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[InsnOperandQualifier::imm_0_63,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::imm6_15,
-                    lsb: 15,
-                    width: 6,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::MASK,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[InsnOperandQualifier::imm_0_15,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::imm4_0,
-                    lsb: 0,
-                    width: 4,
-                }],
-            }
-        ]
+        OPERANDS_11
     ),
     SB(
         "sb",
@@ -446,7 +577,7 @@ define_insn_impls!(
         IC_SYSTEM,
         SB,
         InsnFlags::empty(),
-        []
+        &[]
     ),
     SETF16_Rn(
         "setf16",
@@ -456,16 +587,7 @@ define_insn_impls!(
         IC_SYSTEM,
         FLAGM,
         InsnFlags::const_from_bits(131072u64),
-        [InsnOperand {
-            kind: InsnOperandKind::Rn,
-            class: InsnOperandClass::INT_REG,
-            qualifiers: &[InsnOperandQualifier::W,],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::Rn,
-                lsb: 5,
-                width: 5,
-            }],
-        }]
+        OPERANDS_12
     ),
     SETF8_Rn(
         "setf8",
@@ -475,16 +597,7 @@ define_insn_impls!(
         IC_SYSTEM,
         FLAGM,
         InsnFlags::const_from_bits(131072u64),
-        [InsnOperand {
-            kind: InsnOperandKind::Rn,
-            class: InsnOperandClass::INT_REG,
-            qualifiers: &[InsnOperandQualifier::W,],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::Rn,
-                lsb: 5,
-                width: 5,
-            }],
-        }]
+        OPERANDS_12
     ),
     SYS_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt(
         "sys",
@@ -494,58 +607,7 @@ define_insn_impls!(
         IC_SYSTEM,
         V8,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::UIMM3_OP1,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::op1,
-                    lsb: 16,
-                    width: 3,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::CRn,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::CRn,
-                    lsb: 12,
-                    width: 4,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::CRm,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::CRm,
-                    lsb: 8,
-                    width: 4,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::UIMM3_OP2,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::op2,
-                    lsb: 5,
-                    width: 3,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            }
-        ]
+        OPERANDS_13
     ),
     SYSL_Rt_UIMM3_OP1_CRn_CRm_UIMM3_OP2(
         "sysl",
@@ -555,58 +617,7 @@ define_insn_impls!(
         IC_SYSTEM,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::UIMM3_OP1,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::op1,
-                    lsb: 16,
-                    width: 3,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::CRn,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::CRn,
-                    lsb: 12,
-                    width: 4,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::CRm,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::CRm,
-                    lsb: 8,
-                    width: 4,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::UIMM3_OP2,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::op2,
-                    lsb: 5,
-                    width: 3,
-                }],
-            }
-        ]
+        OPERANDS_14
     ),
     SYSP_UIMM3_OP1_CRn_CRm_UIMM3_OP2_Rt_PAIRREG_OR_XZR(
         "sysp",
@@ -616,64 +627,7 @@ define_insn_impls!(
         IC_SYSTEM,
         D128,
         InsnFlags::const_from_bits(136u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::UIMM3_OP1,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::op1,
-                    lsb: 16,
-                    width: 3,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::CRn,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::CRn,
-                    lsb: 12,
-                    width: 4,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::CRm,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::CRm,
-                    lsb: 8,
-                    width: 4,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::UIMM3_OP2,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::op2,
-                    lsb: 5,
-                    width: 3,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::PAIRREG_OR_XZR,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_15
     ),
     WFET_Rd(
         "wfet",
@@ -683,16 +637,7 @@ define_insn_impls!(
         IC_SYSTEM,
         WFXT,
         InsnFlags::const_from_bits(8u64),
-        [InsnOperand {
-            kind: InsnOperandKind::Rd,
-            class: InsnOperandClass::INT_REG,
-            qualifiers: &[InsnOperandQualifier::X,],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::Rd,
-                lsb: 0,
-                width: 5,
-            }],
-        }]
+        OPERANDS_16
     ),
     WFIT_Rd(
         "wfit",
@@ -702,16 +647,7 @@ define_insn_impls!(
         IC_SYSTEM,
         WFXT,
         InsnFlags::const_from_bits(8u64),
-        [InsnOperand {
-            kind: InsnOperandKind::Rd,
-            class: InsnOperandClass::INT_REG,
-            qualifiers: &[InsnOperandQualifier::X,],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::Rd,
-                lsb: 0,
-                width: 5,
-            }],
-        }]
+        OPERANDS_16
     )
 );
 impl InsnOpcode for IC_SYSTEM {

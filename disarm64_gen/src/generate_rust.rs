@@ -22,6 +22,34 @@ fn dbg_ident(value: impl std::fmt::Debug) -> Ident {
     format_ident!("{}", format!("{value:?}"))
 }
 
+/// Intern a list of token items into a pool of `const NAME_i: &[TYPE] = &[..];`
+/// declarations and return a reference to the matching const, deduplicating
+/// identical lists. An empty list is emitted inline as `&[]`.
+fn intern(
+    pool: &mut HashMap<String, usize>,
+    defs: &mut Vec<TokenStream>,
+    name: &str,
+    ty: &str,
+    items: &[TokenStream],
+) -> TokenStream {
+    if items.is_empty() {
+        return quote! { &[] };
+    }
+    let body = quote! { &[#(#items),*] };
+    let idx = if let Some(&idx) = pool.get(&body.to_string()) {
+        idx
+    } else {
+        let idx = defs.len();
+        let ident = format_ident!("{name}_{idx}");
+        let ty_ident = format_ident!("{ty}");
+        defs.push(quote! { const #ident: &[#ty_ident] = #body; });
+        pool.insert(body.to_string(), idx);
+        idx
+    };
+    let ident = format_ident!("{name}_{idx}");
+    quote! { #ident }
+}
+
 fn write_prelude(
     indexing: decision_tree::DecisionTreeIndexing,
     f: &mut impl Write,
@@ -99,7 +127,7 @@ fn write_prelude(
                     $mnemonic_str:expr, $mnemonic_ident:ident,
                     $opcode:expr, $mask:expr,
                     $class:ident, $feature_set:ident,
-                    $flags:expr, [$($operand:expr),* $(,)?]
+                    $flags:expr, $operands:expr
                 )
             ),* $(,)?) => {
                 $(
@@ -111,7 +139,7 @@ fn write_prelude(
                             mask: $mask,
                             class: InsnClass::$class,
                             feature_set: InsnFeatureSet::$feature_set,
-                            operands: &[$($operand),*],
+                            operands: $operands,
                             flags: $flags,
                         };
 
@@ -210,6 +238,13 @@ fn write_insn_structs(
     let mut all_struct_names: Vec<proc_macro2::Ident> = Vec::new();
     let mut all_impl_entries: Vec<TokenStream> = Vec::new();
 
+    // Operand and bitfield lists are heavily duplicated across instructions, so
+    // intern them into shared const pools referenced by each definition.
+    let mut bitfields_pool: HashMap<String, usize> = HashMap::new();
+    let mut bitfields_defs: Vec<TokenStream> = Vec::new();
+    let mut operands_pool: HashMap<String, usize> = HashMap::new();
+    let mut operands_defs: Vec<TokenStream> = Vec::new();
+
     for insn in insns {
         let mut opcode_struct_name = insn.mnemonic.to_string();
         opcode_struct_name.make_ascii_uppercase();
@@ -265,28 +300,46 @@ fn write_insn_structs(
             let kind = dbg_ident(operand.kind);
             let class = dbg_ident(operand.class);
             let qualifiers = operand.qualifiers.iter().map(dbg_ident);
-            let bit_fields = operand.bit_fields.iter().map(|bf| {
-                let bf_name = dbg_ident(bf.bitfield);
-                let lsb = Literal::u8_unsuffixed(bf.lsb);
-                let width = Literal::u8_unsuffixed(bf.width);
-                quote! {
-                    BitfieldSpec {
-                        bitfield: InsnBitField::#bf_name,
-                        lsb: #lsb,
-                        width: #width,
+            let bit_fields = operand
+                .bit_fields
+                .iter()
+                .map(|bf| {
+                    let bf_name = dbg_ident(bf.bitfield);
+                    let lsb = Literal::u8_unsuffixed(bf.lsb);
+                    let width = Literal::u8_unsuffixed(bf.width);
+                    quote! {
+                        BitfieldSpec {
+                            bitfield: InsnBitField::#bf_name,
+                            lsb: #lsb,
+                            width: #width,
+                        }
                     }
-                }
-            });
+                })
+                .collect::<Vec<_>>();
+            let bit_fields = intern(
+                &mut bitfields_pool,
+                &mut bitfields_defs,
+                "BITFIELDS",
+                "BitfieldSpec",
+                &bit_fields,
+            );
 
             insn_operands.push(quote! {
                 InsnOperand {
                     kind: InsnOperandKind::#kind,
                     class: InsnOperandClass::#class,
                     qualifiers: &[#(InsnOperandQualifier::#qualifiers,)*],
-                    bit_fields: &[#(#bit_fields),*],
+                    bit_fields: #bit_fields,
                 }
             });
         }
+        let operands = intern(
+            &mut operands_pool,
+            &mut operands_defs,
+            "OPERANDS",
+            "InsnOperand",
+            &insn_operands,
+        );
 
         // Emit the flags as their raw bit pattern rather than reconstructing an
         // expression from bitflags' Debug output.
@@ -309,7 +362,7 @@ fn write_insn_structs(
                 #mnemonic, #mnemonic_ident,
                 #opcode_hex, #mask_hex,
                 #class, #feature_set,
-                #flags, [#(#insn_operands),*]
+                #flags, #operands
             )
         });
     }
@@ -317,6 +370,13 @@ fn write_insn_structs(
     // Emit batched struct type definitions via macro
     struct_definitions.extend(quote! {
         define_insn_types!(#(#all_struct_names),*);
+    });
+
+    // Emit the interned operand and bitfield pools (bitfields first, since the
+    // operand pool references them).
+    struct_definitions.extend(quote! {
+        #(#bitfields_defs)*
+        #(#operands_defs)*
     });
 
     // Emit batched impl blocks via macro (after enums are defined)

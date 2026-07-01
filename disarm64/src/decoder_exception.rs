@@ -22,7 +22,7 @@ use disarm64_defn::InsnOperandQualifier;
 #[doc = r" Define instruction newtype structs with Debug impl."]
 macro_rules ! define_insn_types { ($ ($ name : ident) , * $ (,) ?) => { $ (# [derive (Copy , Clone , PartialEq , Eq)] pub struct $ name (pub u32) ; impl core :: fmt :: Debug for $ name { fn fmt (& self , f : & mut core :: fmt :: Formatter < '_ >) -> core :: fmt :: Result { write ! (f , "{}({:#010x})" , stringify ! ($ name) , self . 0) } }) * } ; }
 #[doc = r" Define DEFINITION, make_opcode, and InsnOpcode for each instruction struct."]
-macro_rules ! define_insn_impls { ($ ($ name : ident ($ mnemonic_str : expr , $ mnemonic_ident : ident , $ opcode : expr , $ mask : expr , $ class : ident , $ feature_set : ident , $ flags : expr , [$ ($ operand : expr) , * $ (,) ?])) , * $ (,) ?) => { $ (impl $ name { pub const DEFINITION : Insn = Insn { mnemonic : $ mnemonic_str , aliases : & [] , opcode : $ opcode , mask : $ mask , class : InsnClass :: $ class , feature_set : InsnFeatureSet :: $ feature_set , operands : & [$ ($ operand) , *] , flags : $ flags , } ; fn make_opcode (bits : u32) -> Opcode { Opcode { mnemonic : Mnemonic :: $ mnemonic_ident , operation : Operation :: $ class ($ class :: $ name ($ name (bits))) } } } impl InsnOpcode for $ name { fn definition (& self) -> & 'static Insn { & Self :: DEFINITION } fn bits (& self) -> u32 { self . 0 } }) * } ; }
+macro_rules ! define_insn_impls { ($ ($ name : ident ($ mnemonic_str : expr , $ mnemonic_ident : ident , $ opcode : expr , $ mask : expr , $ class : ident , $ feature_set : ident , $ flags : expr , $ operands : expr)) , * $ (,) ?) => { $ (impl $ name { pub const DEFINITION : Insn = Insn { mnemonic : $ mnemonic_str , aliases : & [] , opcode : $ opcode , mask : $ mask , class : InsnClass :: $ class , feature_set : InsnFeatureSet :: $ feature_set , operands : $ operands , flags : $ flags , } ; fn make_opcode (bits : u32) -> Opcode { Opcode { mnemonic : Mnemonic :: $ mnemonic_ident , operation : Operation :: $ class ($ class :: $ name ($ name (bits))) } } } impl InsnOpcode for $ name { fn definition (& self) -> & 'static Insn { & Self :: DEFINITION } fn bits (& self) -> u32 { self . 0 } }) * } ; }
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Mnemonic {
     r#brk,
@@ -46,6 +46,28 @@ define_insn_types!(
     SVC_EXCEPTION,
     UDF_UNDEFINED
 );
+const BITFIELDS_0: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::imm16_5,
+    lsb: 5,
+    width: 16,
+}];
+const BITFIELDS_1: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::imm16_0,
+    lsb: 0,
+    width: 16,
+}];
+const OPERANDS_0: &[InsnOperand] = &[InsnOperand {
+    kind: InsnOperandKind::EXCEPTION,
+    class: InsnOperandClass::IMMEDIATE,
+    qualifiers: &[],
+    bit_fields: BITFIELDS_0,
+}];
+const OPERANDS_1: &[InsnOperand] = &[InsnOperand {
+    kind: InsnOperandKind::UNDEFINED,
+    class: InsnOperandClass::IMMEDIATE,
+    qualifiers: &[],
+    bit_fields: BITFIELDS_1,
+}];
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum EXCEPTION {
     BRK_EXCEPTION(BRK_EXCEPTION),
@@ -76,16 +98,7 @@ define_insn_impls!(
         EXCEPTION,
         V8,
         InsnFlags::empty(),
-        [InsnOperand {
-            kind: InsnOperandKind::EXCEPTION,
-            class: InsnOperandClass::IMMEDIATE,
-            qualifiers: &[],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::imm16_5,
-                lsb: 5,
-                width: 16,
-            }],
-        }]
+        OPERANDS_0
     ),
     DCPS1_EXCEPTION(
         "dcps1",
@@ -95,16 +108,7 @@ define_insn_impls!(
         EXCEPTION,
         V8,
         InsnFlags::empty(),
-        [InsnOperand {
-            kind: InsnOperandKind::EXCEPTION,
-            class: InsnOperandClass::IMMEDIATE,
-            qualifiers: &[],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::imm16_5,
-                lsb: 5,
-                width: 16,
-            }],
-        }]
+        OPERANDS_0
     ),
     DCPS2_EXCEPTION(
         "dcps2",
@@ -114,16 +118,7 @@ define_insn_impls!(
         EXCEPTION,
         V8,
         InsnFlags::empty(),
-        [InsnOperand {
-            kind: InsnOperandKind::EXCEPTION,
-            class: InsnOperandClass::IMMEDIATE,
-            qualifiers: &[],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::imm16_5,
-                lsb: 5,
-                width: 16,
-            }],
-        }]
+        OPERANDS_0
     ),
     DCPS3_EXCEPTION(
         "dcps3",
@@ -133,16 +128,7 @@ define_insn_impls!(
         EXCEPTION,
         V8,
         InsnFlags::empty(),
-        [InsnOperand {
-            kind: InsnOperandKind::EXCEPTION,
-            class: InsnOperandClass::IMMEDIATE,
-            qualifiers: &[],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::imm16_5,
-                lsb: 5,
-                width: 16,
-            }],
-        }]
+        OPERANDS_0
     ),
     HLT_EXCEPTION(
         "hlt",
@@ -152,16 +138,7 @@ define_insn_impls!(
         EXCEPTION,
         V8,
         InsnFlags::empty(),
-        [InsnOperand {
-            kind: InsnOperandKind::EXCEPTION,
-            class: InsnOperandClass::IMMEDIATE,
-            qualifiers: &[],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::imm16_5,
-                lsb: 5,
-                width: 16,
-            }],
-        }]
+        OPERANDS_0
     ),
     HVC_EXCEPTION(
         "hvc",
@@ -171,16 +148,7 @@ define_insn_impls!(
         EXCEPTION,
         V8,
         InsnFlags::empty(),
-        [InsnOperand {
-            kind: InsnOperandKind::EXCEPTION,
-            class: InsnOperandClass::IMMEDIATE,
-            qualifiers: &[],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::imm16_5,
-                lsb: 5,
-                width: 16,
-            }],
-        }]
+        OPERANDS_0
     ),
     SMC_EXCEPTION(
         "smc",
@@ -190,16 +158,7 @@ define_insn_impls!(
         EXCEPTION,
         V8,
         InsnFlags::empty(),
-        [InsnOperand {
-            kind: InsnOperandKind::EXCEPTION,
-            class: InsnOperandClass::IMMEDIATE,
-            qualifiers: &[],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::imm16_5,
-                lsb: 5,
-                width: 16,
-            }],
-        }]
+        OPERANDS_0
     ),
     SVC_EXCEPTION(
         "svc",
@@ -209,16 +168,7 @@ define_insn_impls!(
         EXCEPTION,
         V8,
         InsnFlags::empty(),
-        [InsnOperand {
-            kind: InsnOperandKind::EXCEPTION,
-            class: InsnOperandClass::IMMEDIATE,
-            qualifiers: &[],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::imm16_5,
-                lsb: 5,
-                width: 16,
-            }],
-        }]
+        OPERANDS_0
     ),
     UDF_UNDEFINED(
         "udf",
@@ -228,16 +178,7 @@ define_insn_impls!(
         EXCEPTION,
         V8,
         InsnFlags::empty(),
-        [InsnOperand {
-            kind: InsnOperandKind::UNDEFINED,
-            class: InsnOperandClass::IMMEDIATE,
-            qualifiers: &[],
-            bit_fields: &[BitfieldSpec {
-                bitfield: InsnBitField::imm16_0,
-                lsb: 0,
-                width: 16,
-            }],
-        }]
+        OPERANDS_1
     )
 );
 impl InsnOpcode for EXCEPTION {

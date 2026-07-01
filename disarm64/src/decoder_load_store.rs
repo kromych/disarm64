@@ -22,7 +22,7 @@ use disarm64_defn::InsnOperandQualifier;
 #[doc = r" Define instruction newtype structs with Debug impl."]
 macro_rules ! define_insn_types { ($ ($ name : ident) , * $ (,) ?) => { $ (# [derive (Copy , Clone , PartialEq , Eq)] pub struct $ name (pub u32) ; impl core :: fmt :: Debug for $ name { fn fmt (& self , f : & mut core :: fmt :: Formatter < '_ >) -> core :: fmt :: Result { write ! (f , "{}({:#010x})" , stringify ! ($ name) , self . 0) } }) * } ; }
 #[doc = r" Define DEFINITION, make_opcode, and InsnOpcode for each instruction struct."]
-macro_rules ! define_insn_impls { ($ ($ name : ident ($ mnemonic_str : expr , $ mnemonic_ident : ident , $ opcode : expr , $ mask : expr , $ class : ident , $ feature_set : ident , $ flags : expr , [$ ($ operand : expr) , * $ (,) ?])) , * $ (,) ?) => { $ (impl $ name { pub const DEFINITION : Insn = Insn { mnemonic : $ mnemonic_str , aliases : & [] , opcode : $ opcode , mask : $ mask , class : InsnClass :: $ class , feature_set : InsnFeatureSet :: $ feature_set , operands : & [$ ($ operand) , *] , flags : $ flags , } ; fn make_opcode (bits : u32) -> Opcode { Opcode { mnemonic : Mnemonic :: $ mnemonic_ident , operation : Operation :: $ class ($ class :: $ name ($ name (bits))) } } } impl InsnOpcode for $ name { fn definition (& self) -> & 'static Insn { & Self :: DEFINITION } fn bits (& self) -> u32 { self . 0 } }) * } ; }
+macro_rules ! define_insn_impls { ($ ($ name : ident ($ mnemonic_str : expr , $ mnemonic_ident : ident , $ opcode : expr , $ mask : expr , $ class : ident , $ feature_set : ident , $ flags : expr , $ operands : expr)) , * $ (,) ?) => { $ (impl $ name { pub const DEFINITION : Insn = Insn { mnemonic : $ mnemonic_str , aliases : & [] , opcode : $ opcode , mask : $ mask , class : InsnClass :: $ class , feature_set : InsnFeatureSet :: $ feature_set , operands : $ operands , flags : $ flags , } ; fn make_opcode (bits : u32) -> Opcode { Opcode { mnemonic : Mnemonic :: $ mnemonic_ident , operation : Operation :: $ class ($ class :: $ name ($ name (bits))) } } } impl InsnOpcode for $ name { fn definition (& self) -> & 'static Insn { & Self :: DEFINITION } fn bits (& self) -> u32 { self . 0 } }) * } ; }
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Mnemonic {
     r#and,
@@ -547,6 +547,1026 @@ define_insn_types!(
     SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
     SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE
 );
+const BITFIELDS_0: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::Rd,
+    lsb: 0,
+    width: 5,
+}];
+const BITFIELDS_1: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::Rn,
+    lsb: 5,
+    width: 5,
+}];
+const BITFIELDS_2: &[BitfieldSpec] = &[
+    BitfieldSpec {
+        bitfield: InsnBitField::N,
+        lsb: 22,
+        width: 1,
+    },
+    BitfieldSpec {
+        bitfield: InsnBitField::immr,
+        lsb: 16,
+        width: 6,
+    },
+    BitfieldSpec {
+        bitfield: InsnBitField::imms,
+        lsb: 10,
+        width: 6,
+    },
+];
+const BITFIELDS_3: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::Rs,
+    lsb: 16,
+    width: 5,
+}];
+const BITFIELDS_4: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::Rt,
+    lsb: 0,
+    width: 5,
+}];
+const BITFIELDS_5: &[BitfieldSpec] = &[
+    BitfieldSpec {
+        bitfield: InsnBitField::Rn,
+        lsb: 5,
+        width: 5,
+    },
+    BitfieldSpec {
+        bitfield: InsnBitField::imm9,
+        lsb: 12,
+        width: 9,
+    },
+    BitfieldSpec {
+        bitfield: InsnBitField::index,
+        lsb: 11,
+        width: 1,
+    },
+];
+const BITFIELDS_6: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::Rt2,
+    lsb: 10,
+    width: 5,
+}];
+const BITFIELDS_7: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::LSE128_Rt,
+    lsb: 0,
+    width: 5,
+}];
+const BITFIELDS_8: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::LSE128_Rt2,
+    lsb: 16,
+    width: 5,
+}];
+const BITFIELDS_9: &[BitfieldSpec] = &[
+    BitfieldSpec {
+        bitfield: InsnBitField::imm9,
+        lsb: 12,
+        width: 9,
+    },
+    BitfieldSpec {
+        bitfield: InsnBitField::index,
+        lsb: 11,
+        width: 1,
+    },
+];
+const BITFIELDS_10: &[BitfieldSpec] = &[
+    BitfieldSpec {
+        bitfield: InsnBitField::imm7,
+        lsb: 15,
+        width: 7,
+    },
+    BitfieldSpec {
+        bitfield: InsnBitField::index2,
+        lsb: 24,
+        width: 1,
+    },
+];
+const BITFIELDS_11: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::imm19,
+    lsb: 5,
+    width: 19,
+}];
+const BITFIELDS_12: &[BitfieldSpec] = &[
+    BitfieldSpec {
+        bitfield: InsnBitField::Rn,
+        lsb: 5,
+        width: 5,
+    },
+    BitfieldSpec {
+        bitfield: InsnBitField::imm12,
+        lsb: 10,
+        width: 12,
+    },
+];
+const BITFIELDS_13: &[BitfieldSpec] = &[
+    BitfieldSpec {
+        bitfield: InsnBitField::Rn,
+        lsb: 5,
+        width: 5,
+    },
+    BitfieldSpec {
+        bitfield: InsnBitField::S_imm10,
+        lsb: 22,
+        width: 1,
+    },
+    BitfieldSpec {
+        bitfield: InsnBitField::imm9,
+        lsb: 12,
+        width: 9,
+    },
+    BitfieldSpec {
+        bitfield: InsnBitField::index,
+        lsb: 11,
+        width: 1,
+    },
+];
+const OPERANDS_0: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rd_SP,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_0,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rn,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_1,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::LIMM,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_2,
+    },
+];
+const OPERANDS_1: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rd,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_0,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rn,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_1,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rm_SFT,
+        class: InsnOperandClass::MODIFIED_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_2: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rd,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_0,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rn,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_1,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::LIMM,
+        class: InsnOperandClass::IMMEDIATE,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_2,
+    },
+];
+const OPERANDS_3: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rs,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_3,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_4: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rs,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W],
+        bit_fields: BITFIELDS_3,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_5: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rs,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_3,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::PAIRREG,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: &[],
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::PAIRREG,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: &[],
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_6: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt_LS64,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_7: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_8: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_9: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_OFFSET,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_5,
+    },
+];
+const OPERANDS_10: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_OFFSET,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_5,
+    },
+];
+const OPERANDS_11: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt2,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_6,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_12: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::LSE128_Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_7,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::LSE128_Rt2,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_8,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_13: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM13,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::imm_tag],
+        bit_fields: BITFIELDS_9,
+    },
+];
+const OPERANDS_14: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_15: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt2,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_6,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM7,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+        bit_fields: BITFIELDS_10,
+    },
+];
+const OPERANDS_16: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Ft,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+            InsnOperandQualifier::S_Q,
+        ],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Ft2,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+            InsnOperandQualifier::S_Q,
+        ],
+        bit_fields: BITFIELDS_6,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM7,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+            InsnOperandQualifier::S_Q,
+        ],
+        bit_fields: BITFIELDS_10,
+    },
+];
+const OPERANDS_17: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt2,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_6,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM7,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_S],
+        bit_fields: BITFIELDS_10,
+    },
+];
+const OPERANDS_18: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_PCREL19,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_11,
+    },
+];
+const OPERANDS_19: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_REGOFF,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_20: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM9,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+        bit_fields: BITFIELDS_9,
+    },
+];
+const OPERANDS_21: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_UIMM12,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+        bit_fields: BITFIELDS_12,
+    },
+];
+const OPERANDS_22: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Ft,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+            InsnOperandQualifier::S_Q,
+        ],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_PCREL19,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_11,
+    },
+];
+const OPERANDS_23: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Ft,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[
+            InsnOperandQualifier::S_B,
+            InsnOperandQualifier::S_H,
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+            InsnOperandQualifier::S_Q,
+        ],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_REGOFF,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[
+            InsnOperandQualifier::S_B,
+            InsnOperandQualifier::S_H,
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+            InsnOperandQualifier::S_Q,
+        ],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_24: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Ft,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[
+            InsnOperandQualifier::S_B,
+            InsnOperandQualifier::S_H,
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+            InsnOperandQualifier::S_Q,
+        ],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM9,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[
+            InsnOperandQualifier::S_B,
+            InsnOperandQualifier::S_H,
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+            InsnOperandQualifier::S_Q,
+        ],
+        bit_fields: BITFIELDS_9,
+    },
+];
+const OPERANDS_25: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Ft,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[
+            InsnOperandQualifier::S_B,
+            InsnOperandQualifier::S_H,
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+            InsnOperandQualifier::S_Q,
+        ],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_UIMM12,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[
+            InsnOperandQualifier::S_B,
+            InsnOperandQualifier::S_H,
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+            InsnOperandQualifier::S_Q,
+        ],
+        bit_fields: BITFIELDS_12,
+    },
+];
+const OPERANDS_26: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM10,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_13,
+    },
+];
+const OPERANDS_27: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_REGOFF,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_B],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_28: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM9,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_B],
+        bit_fields: BITFIELDS_9,
+    },
+];
+const OPERANDS_29: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_UIMM12,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_B],
+        bit_fields: BITFIELDS_12,
+    },
+];
+const OPERANDS_30: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_REGOFF,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_H],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_31: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM9,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_H],
+        bit_fields: BITFIELDS_9,
+    },
+];
+const OPERANDS_32: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_UIMM12,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_H],
+        bit_fields: BITFIELDS_12,
+    },
+];
+const OPERANDS_33: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_REGOFF,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_34: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM9,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
+        bit_fields: BITFIELDS_9,
+    },
+];
+const OPERANDS_35: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_UIMM12,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
+        bit_fields: BITFIELDS_12,
+    },
+];
+const OPERANDS_36: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_REGOFF,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_37: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM9,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
+        bit_fields: BITFIELDS_9,
+    },
+];
+const OPERANDS_38: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_UIMM12,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
+        bit_fields: BITFIELDS_12,
+    },
+];
+const OPERANDS_39: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_PCREL19,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_11,
+    },
+];
+const OPERANDS_40: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_REGOFF,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_S],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_41: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM9,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_S],
+        bit_fields: BITFIELDS_9,
+    },
+];
+const OPERANDS_42: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_UIMM12,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_S],
+        bit_fields: BITFIELDS_12,
+    },
+];
+const OPERANDS_43: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::PRFOP,
+        class: InsnOperandClass::SYSTEM,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_PCREL19,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_11,
+    },
+];
+const OPERANDS_44: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::PRFOP,
+        class: InsnOperandClass::SYSTEM,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_REGOFF,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_45: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::PRFOP,
+        class: InsnOperandClass::SYSTEM,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_UIMM12,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_12,
+    },
+];
+const OPERANDS_46: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::PRFOP,
+        class: InsnOperandClass::SYSTEM,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM9,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_9,
+    },
+];
+const OPERANDS_47: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt_SP,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM13,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag],
+        bit_fields: BITFIELDS_9,
+    },
+];
+const OPERANDS_48: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rs,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_3,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt_LS64,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_49: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt2,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_6,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM11,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::imm_tag],
+        bit_fields: BITFIELDS_10,
+    },
+];
+const OPERANDS_50: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rs,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::W],
+        bit_fields: BITFIELDS_3,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt2,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_6,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_51: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rs,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::W],
+        bit_fields: BITFIELDS_3,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum LDSTEXCL {
     LDAPRB_Rt_ADDR_SIMPLE(LDAPRB_Rt_ADDR_SIMPLE),
@@ -910,50 +1930,7 @@ define_insn_impls!(
         LOG_IMM,
         V8,
         InsnFlags::const_from_bits(131080u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rd_SP,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rd,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rn,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rn,
-                    lsb: 5,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LIMM,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::N,
-                        lsb: 22,
-                        width: 1,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::immr,
-                        lsb: 16,
-                        width: 6,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imms,
-                        lsb: 10,
-                        width: 6,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_0
     ),
     AND_Rd_Rn_Rm_SFT(
         "and",
@@ -963,34 +1940,7 @@ define_insn_impls!(
         LOG_SHIFT,
         V8,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rd,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rd,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rn,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rn,
-                    lsb: 5,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rm_SFT,
-                class: InsnOperandClass::MODIFIED_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_1
     ),
     ANDS_Rd_Rn_LIMM(
         "ands",
@@ -1000,50 +1950,7 @@ define_insn_impls!(
         LOG_IMM,
         V8,
         InsnFlags::const_from_bits(131080u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rd,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rd,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rn,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rn,
-                    lsb: 5,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LIMM,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::N,
-                        lsb: 22,
-                        width: 1,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::immr,
-                        lsb: 16,
-                        width: 6,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imms,
-                        lsb: 10,
-                        width: 6,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_2
     ),
     ANDS_Rd_Rn_Rm_SFT(
         "ands",
@@ -1053,34 +1960,7 @@ define_insn_impls!(
         LOG_SHIFT,
         V8,
         InsnFlags::const_from_bits(131080u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rd,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rd,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rn,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rn,
-                    lsb: 5,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rm_SFT,
-                class: InsnOperandClass::MODIFIED_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_1
     ),
     BIC_Rd_Rn_Rm_SFT(
         "bic",
@@ -1090,34 +1970,7 @@ define_insn_impls!(
         LOG_SHIFT,
         V8,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rd,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rd,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rn,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rn,
-                    lsb: 5,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rm_SFT,
-                class: InsnOperandClass::MODIFIED_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_1
     ),
     BICS_Rd_Rn_Rm_SFT(
         "bics",
@@ -1127,34 +1980,7 @@ define_insn_impls!(
         LOG_SHIFT,
         V8,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rd,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rd,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rn,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rn,
-                    lsb: 5,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rm_SFT,
-                class: InsnOperandClass::MODIFIED_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_1
     ),
     CAS_Rs_Rt_ADDR_SIMPLE(
         "cas",
@@ -1164,34 +1990,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     CASA_Rs_Rt_ADDR_SIMPLE(
         "casa",
@@ -1201,34 +2000,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     CASAB_Rs_Rt_ADDR_SIMPLE(
         "casab",
@@ -1238,34 +2010,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     CASAH_Rs_Rt_ADDR_SIMPLE(
         "casah",
@@ -1275,34 +2020,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     CASAL_Rs_Rt_ADDR_SIMPLE(
         "casal",
@@ -1312,34 +2030,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     CASALB_Rs_Rt_ADDR_SIMPLE(
         "casalb",
@@ -1349,34 +2040,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     CASALH_Rs_Rt_ADDR_SIMPLE(
         "casalh",
@@ -1386,34 +2050,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     CASB_Rs_Rt_ADDR_SIMPLE(
         "casb",
@@ -1423,34 +2060,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     CASH_Rs_Rt_ADDR_SIMPLE(
         "cash",
@@ -1460,34 +2070,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     CASL_Rs_Rt_ADDR_SIMPLE(
         "casl",
@@ -1497,34 +2080,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     CASLB_Rs_Rt_ADDR_SIMPLE(
         "caslb",
@@ -1534,34 +2090,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     CASLH_Rs_Rt_ADDR_SIMPLE(
         "caslh",
@@ -1571,34 +2100,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     CASP_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE(
         "casp",
@@ -1608,46 +2110,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::PAIRREG,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::PAIRREG,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_5
     ),
     CASPA_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE(
         "caspa",
@@ -1657,46 +2120,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::PAIRREG,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::PAIRREG,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_5
     ),
     CASPAL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE(
         "caspal",
@@ -1706,46 +2130,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::PAIRREG,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::PAIRREG,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_5
     ),
     CASPL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE(
         "caspl",
@@ -1755,46 +2140,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::PAIRREG,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::PAIRREG,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_5
     ),
     EON_Rd_Rn_Rm_SFT(
         "eon",
@@ -1804,34 +2150,7 @@ define_insn_impls!(
         LOG_SHIFT,
         V8,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rd,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rd,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rn,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rn,
-                    lsb: 5,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rm_SFT,
-                class: InsnOperandClass::MODIFIED_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_1
     ),
     EOR_Rd_SP_Rn_LIMM(
         "eor",
@@ -1841,50 +2160,7 @@ define_insn_impls!(
         LOG_IMM,
         V8,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rd_SP,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rd,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rn,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rn,
-                    lsb: 5,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LIMM,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::N,
-                        lsb: 22,
-                        width: 1,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::immr,
-                        lsb: 16,
-                        width: 6,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imms,
-                        lsb: 10,
-                        width: 6,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_0
     ),
     EOR_Rd_Rn_Rm_SFT(
         "eor",
@@ -1894,34 +2170,7 @@ define_insn_impls!(
         LOG_SHIFT,
         V8,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rd,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rd,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rn,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rn,
-                    lsb: 5,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rm_SFT,
-                class: InsnOperandClass::MODIFIED_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_1
     ),
     LD64B_Rt_LS64_ADDR_SIMPLE(
         "ld64b",
@@ -1931,24 +2180,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LS64,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt_LS64,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_6
     ),
     LDADD_Rs_Rt_ADDR_SIMPLE(
         "ldadd",
@@ -1958,34 +2190,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDADDA_Rs_Rt_ADDR_SIMPLE(
         "ldadda",
@@ -1995,34 +2200,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDADDAB_Rs_Rt_ADDR_SIMPLE(
         "ldaddab",
@@ -2032,34 +2210,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDADDAH_Rs_Rt_ADDR_SIMPLE(
         "ldaddah",
@@ -2069,34 +2220,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDADDAL_Rs_Rt_ADDR_SIMPLE(
         "ldaddal",
@@ -2106,34 +2230,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDADDALB_Rs_Rt_ADDR_SIMPLE(
         "ldaddalb",
@@ -2143,34 +2240,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDADDALH_Rs_Rt_ADDR_SIMPLE(
         "ldaddalh",
@@ -2180,34 +2250,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDADDB_Rs_Rt_ADDR_SIMPLE(
         "ldaddb",
@@ -2217,34 +2260,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDADDH_Rs_Rt_ADDR_SIMPLE(
         "ldaddh",
@@ -2254,34 +2270,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDADDL_Rs_Rt_ADDR_SIMPLE(
         "ldaddl",
@@ -2291,34 +2280,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDADDLB_Rs_Rt_ADDR_SIMPLE(
         "ldaddlb",
@@ -2328,34 +2290,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDADDLH_Rs_Rt_ADDR_SIMPLE(
         "ldaddlh",
@@ -2365,34 +2300,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDAPR_Rt_ADDR_SIMPLE(
         "ldapr",
@@ -2402,24 +2310,7 @@ define_insn_impls!(
         LDSTEXCL,
         RCPC,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_7
     ),
     LDAPRB_Rt_ADDR_SIMPLE(
         "ldaprb",
@@ -2429,24 +2320,7 @@ define_insn_impls!(
         LDSTEXCL,
         RCPC,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     LDAPRH_Rt_ADDR_SIMPLE(
         "ldaprh",
@@ -2456,24 +2330,7 @@ define_insn_impls!(
         LDSTEXCL,
         RCPC,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     LDAPUR_Rt_ADDR_OFFSET(
         "ldapur",
@@ -2483,40 +2340,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         RCPC2,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_OFFSET,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_9
     ),
     LDAPUR_Rt_X_ADDR_OFFSET(
         "ldapur",
@@ -2526,40 +2350,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         RCPC2,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_OFFSET,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_10
     ),
     LDAPURB_Rt_ADDR_OFFSET(
         "ldapurb",
@@ -2569,40 +2360,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         RCPC2,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_OFFSET,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_9
     ),
     LDAPURH_Rt_ADDR_OFFSET(
         "ldapurh",
@@ -2612,40 +2370,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         RCPC2,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_OFFSET,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_9
     ),
     LDAPURSB_Rt_ADDR_OFFSET(
         "ldapursb",
@@ -2655,40 +2380,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         RCPC2,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_OFFSET,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_10
     ),
     LDAPURSB_Rt_W_ADDR_OFFSET(
         "ldapursb",
@@ -2698,40 +2390,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         RCPC2,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_OFFSET,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_9
     ),
     LDAPURSH_Rt_ADDR_OFFSET(
         "ldapursh",
@@ -2741,40 +2400,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         RCPC2,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_OFFSET,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_10
     ),
     LDAPURSH_Rt_W_ADDR_OFFSET(
         "ldapursh",
@@ -2784,40 +2410,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         RCPC2,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_OFFSET,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_9
     ),
     LDAPURSW_Rt_ADDR_OFFSET(
         "ldapursw",
@@ -2827,40 +2420,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         RCPC2,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_OFFSET,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_10
     ),
     LDAR_Rt_ADDR_SIMPLE(
         "ldar",
@@ -2870,24 +2430,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_7
     ),
     LDARB_Rt_ADDR_SIMPLE(
         "ldarb",
@@ -2897,24 +2440,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     LDARH_Rt_ADDR_SIMPLE(
         "ldarh",
@@ -2924,24 +2450,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     LDAXP_Rt_Rt2_ADDR_SIMPLE(
         "ldaxp",
@@ -2951,34 +2460,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_11
     ),
     LDAXR_Rt_ADDR_SIMPLE(
         "ldaxr",
@@ -2988,24 +2470,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_7
     ),
     LDAXRB_Rt_ADDR_SIMPLE(
         "ldaxrb",
@@ -3015,24 +2480,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     LDAXRH_Rt_ADDR_SIMPLE(
         "ldaxrh",
@@ -3042,24 +2490,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     LDCLR_Rs_Rt_ADDR_SIMPLE(
         "ldclr",
@@ -3069,34 +2500,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDCLRA_Rs_Rt_ADDR_SIMPLE(
         "ldclra",
@@ -3106,34 +2510,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDCLRAB_Rs_Rt_ADDR_SIMPLE(
         "ldclrab",
@@ -3143,34 +2520,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDCLRAH_Rs_Rt_ADDR_SIMPLE(
         "ldclrah",
@@ -3180,34 +2530,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDCLRAL_Rs_Rt_ADDR_SIMPLE(
         "ldclral",
@@ -3217,34 +2540,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDCLRALB_Rs_Rt_ADDR_SIMPLE(
         "ldclralb",
@@ -3254,34 +2550,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDCLRALH_Rs_Rt_ADDR_SIMPLE(
         "ldclralh",
@@ -3291,34 +2560,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDCLRB_Rs_Rt_ADDR_SIMPLE(
         "ldclrb",
@@ -3328,34 +2570,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDCLRH_Rs_Rt_ADDR_SIMPLE(
         "ldclrh",
@@ -3365,34 +2580,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDCLRL_Rs_Rt_ADDR_SIMPLE(
         "ldclrl",
@@ -3402,34 +2590,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDCLRLB_Rs_Rt_ADDR_SIMPLE(
         "ldclrlb",
@@ -3439,34 +2600,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDCLRLH_Rs_Rt_ADDR_SIMPLE(
         "ldclrlh",
@@ -3476,34 +2610,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDCLRP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
         "ldclrp",
@@ -3513,34 +2620,7 @@ define_insn_impls!(
         LSE128_ATOMIC,
         LSE128,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt2,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_12
     ),
     LDCLRPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
         "ldclrpa",
@@ -3550,34 +2630,7 @@ define_insn_impls!(
         LSE128_ATOMIC,
         LSE128,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt2,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_12
     ),
     LDCLRPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
         "ldclrpal",
@@ -3587,34 +2640,7 @@ define_insn_impls!(
         LSE128_ATOMIC,
         LSE128,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt2,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_12
     ),
     LDCLRPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
         "ldclrpl",
@@ -3624,34 +2650,7 @@ define_insn_impls!(
         LSE128_ATOMIC,
         LSE128,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt2,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_12
     ),
     LDEOR_Rs_Rt_ADDR_SIMPLE(
         "ldeor",
@@ -3661,34 +2660,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDEORA_Rs_Rt_ADDR_SIMPLE(
         "ldeora",
@@ -3698,34 +2670,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDEORAB_Rs_Rt_ADDR_SIMPLE(
         "ldeorab",
@@ -3735,34 +2680,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDEORAH_Rs_Rt_ADDR_SIMPLE(
         "ldeorah",
@@ -3772,34 +2690,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDEORAL_Rs_Rt_ADDR_SIMPLE(
         "ldeoral",
@@ -3809,34 +2700,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDEORALB_Rs_Rt_ADDR_SIMPLE(
         "ldeoralb",
@@ -3846,34 +2710,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDEORALH_Rs_Rt_ADDR_SIMPLE(
         "ldeoralh",
@@ -3883,34 +2720,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDEORB_Rs_Rt_ADDR_SIMPLE(
         "ldeorb",
@@ -3920,34 +2730,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDEORH_Rs_Rt_ADDR_SIMPLE(
         "ldeorh",
@@ -3957,34 +2740,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDEORL_Rs_Rt_ADDR_SIMPLE(
         "ldeorl",
@@ -3994,34 +2750,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDEORLB_Rs_Rt_ADDR_SIMPLE(
         "ldeorlb",
@@ -4031,34 +2760,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDEORLH_Rs_Rt_ADDR_SIMPLE(
         "ldeorlh",
@@ -4068,34 +2770,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDG_Rt_ADDR_SIMM13(
         "ldg",
@@ -4105,35 +2780,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         MEMTAG,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM13,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_13
     ),
     LDGM_Rt_ADDR_SIMPLE(
         "ldgm",
@@ -4143,24 +2790,7 @@ define_insn_impls!(
         LDSTEXCL,
         MEMTAG,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_14
     ),
     LDLAR_Rt_ADDR_SIMPLE(
         "ldlar",
@@ -4170,24 +2800,7 @@ define_insn_impls!(
         LDSTEXCL,
         LOR,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_7
     ),
     LDLARB_Rt_ADDR_SIMPLE(
         "ldlarb",
@@ -4197,24 +2810,7 @@ define_insn_impls!(
         LDSTEXCL,
         LOR,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     LDLARH_Rt_ADDR_SIMPLE(
         "ldlarh",
@@ -4224,24 +2820,7 @@ define_insn_impls!(
         LDSTEXCL,
         LOR,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     LDNP_Rt_Rt2_ADDR_SIMM7(
         "ldnp",
@@ -4251,45 +2830,7 @@ define_insn_impls!(
         LDSTNAPAIR_OFFS,
         V8,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_15
     ),
     LDNP_Ft_Ft2_ADDR_SIMM7(
         "ldnp",
@@ -4299,57 +2840,7 @@ define_insn_impls!(
         LDSTNAPAIR_OFFS,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Ft2,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_16
     ),
     LDP_Rt_Rt2_ADDR_SIMM7(
         "ldp",
@@ -4359,45 +2850,7 @@ define_insn_impls!(
         LDSTPAIR_OFF,
         V8,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_15
     ),
     LDP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(
         "ldp",
@@ -4407,45 +2860,7 @@ define_insn_impls!(
         LDSTPAIR_INDEXED,
         V8,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_15
     ),
     LDP_Ft_Ft2_ADDR_SIMM7(
         "ldp",
@@ -4455,57 +2870,7 @@ define_insn_impls!(
         LDSTPAIR_OFF,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Ft2,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_16
     ),
     LDP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(
         "ldp",
@@ -4515,57 +2880,7 @@ define_insn_impls!(
         LDSTPAIR_INDEXED,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Ft2,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_16
     ),
     LDPSW_Rt_Rt2_ADDR_SIMM7(
         "ldpsw",
@@ -4575,45 +2890,7 @@ define_insn_impls!(
         LDSTPAIR_OFF,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_17
     ),
     LDPSW_Rt_X_Rt2_X_ADDR_SIMM7_S_S(
         "ldpsw",
@@ -4623,45 +2900,7 @@ define_insn_impls!(
         LDSTPAIR_INDEXED,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_17
     ),
     LDR_Rt_ADDR_PCREL19(
         "ldr",
@@ -4671,28 +2910,7 @@ define_insn_impls!(
         LOADLIT,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_PCREL19,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::imm19,
-                    lsb: 5,
-                    width: 19,
-                }],
-            }
-        ]
+        OPERANDS_18
     ),
     LDR_Rt_ADDR_REGOFF(
         "ldr",
@@ -4702,24 +2920,7 @@ define_insn_impls!(
         LDST_REGOFF,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_REGOFF,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_19
     ),
     LDR_Rt_ADDR_SIMM9(
         "ldr",
@@ -4729,35 +2930,7 @@ define_insn_impls!(
         LDST_IMM9,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_20
     ),
     LDR_Rt_ADDR_UIMM12(
         "ldr",
@@ -4767,35 +2940,7 @@ define_insn_impls!(
         LDST_POS,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_UIMM12,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm12,
-                        lsb: 10,
-                        width: 12,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_21
     ),
     LDR_Ft_ADDR_PCREL19(
         "ldr",
@@ -4805,32 +2950,7 @@ define_insn_impls!(
         LOADLIT,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_PCREL19,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::imm19,
-                    lsb: 5,
-                    width: 19,
-                }],
-            }
-        ]
+        OPERANDS_22
     ),
     LDR_Ft_ADDR_REGOFF(
         "ldr",
@@ -4840,36 +2960,7 @@ define_insn_impls!(
         LDST_REGOFF,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_REGOFF,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_23
     ),
     LDR_Ft_ADDR_SIMM9(
         "ldr",
@@ -4879,47 +2970,7 @@ define_insn_impls!(
         LDST_IMM9,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_24
     ),
     LDR_Ft_ADDR_UIMM12(
         "ldr",
@@ -4929,47 +2980,7 @@ define_insn_impls!(
         LDST_POS,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_UIMM12,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm12,
-                        lsb: 10,
-                        width: 12,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_25
     ),
     LDRAA_Rt_ADDR_SIMM10(
         "ldraa",
@@ -4979,45 +2990,7 @@ define_insn_impls!(
         LDST_IMM10,
         PAC,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM10,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::S_imm10,
-                        lsb: 22,
-                        width: 1,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_26
     ),
     LDRAB_Rt_ADDR_SIMM10(
         "ldrab",
@@ -5027,45 +3000,7 @@ define_insn_impls!(
         LDST_IMM10,
         PAC,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM10,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::S_imm10,
-                        lsb: 22,
-                        width: 1,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_26
     ),
     LDRB_Rt_ADDR_REGOFF(
         "ldrb",
@@ -5075,24 +3010,7 @@ define_insn_impls!(
         LDST_REGOFF,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_REGOFF,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_27
     ),
     LDRB_Rt_ADDR_SIMM9(
         "ldrb",
@@ -5102,35 +3020,7 @@ define_insn_impls!(
         LDST_IMM9,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_28
     ),
     LDRB_Rt_ADDR_UIMM12(
         "ldrb",
@@ -5140,35 +3030,7 @@ define_insn_impls!(
         LDST_POS,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_UIMM12,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm12,
-                        lsb: 10,
-                        width: 12,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_29
     ),
     LDRH_Rt_ADDR_REGOFF(
         "ldrh",
@@ -5178,24 +3040,7 @@ define_insn_impls!(
         LDST_REGOFF,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_REGOFF,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_30
     ),
     LDRH_Rt_ADDR_SIMM9(
         "ldrh",
@@ -5205,35 +3050,7 @@ define_insn_impls!(
         LDST_IMM9,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_31
     ),
     LDRH_Rt_ADDR_UIMM12(
         "ldrh",
@@ -5243,35 +3060,7 @@ define_insn_impls!(
         LDST_POS,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_UIMM12,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm12,
-                        lsb: 10,
-                        width: 12,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_32
     ),
     LDRSB_Rt_ADDR_REGOFF(
         "ldrsb",
@@ -5281,24 +3070,7 @@ define_insn_impls!(
         LDST_REGOFF,
         V8,
         InsnFlags::const_from_bits(32u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_REGOFF,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_33
     ),
     LDRSB_Rt_ADDR_SIMM9(
         "ldrsb",
@@ -5308,35 +3080,7 @@ define_insn_impls!(
         LDST_IMM9,
         V8,
         InsnFlags::const_from_bits(32u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_34
     ),
     LDRSB_Rt_ADDR_UIMM12(
         "ldrsb",
@@ -5346,35 +3090,7 @@ define_insn_impls!(
         LDST_POS,
         V8,
         InsnFlags::const_from_bits(32u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_UIMM12,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm12,
-                        lsb: 10,
-                        width: 12,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_35
     ),
     LDRSH_Rt_ADDR_REGOFF(
         "ldrsh",
@@ -5384,24 +3100,7 @@ define_insn_impls!(
         LDST_REGOFF,
         V8,
         InsnFlags::const_from_bits(32u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_REGOFF,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_36
     ),
     LDRSH_Rt_ADDR_SIMM9(
         "ldrsh",
@@ -5411,35 +3110,7 @@ define_insn_impls!(
         LDST_IMM9,
         V8,
         InsnFlags::const_from_bits(32u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_37
     ),
     LDRSH_Rt_ADDR_UIMM12(
         "ldrsh",
@@ -5449,35 +3120,7 @@ define_insn_impls!(
         LDST_POS,
         V8,
         InsnFlags::const_from_bits(32u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_UIMM12,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm12,
-                        lsb: 10,
-                        width: 12,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_38
     ),
     LDRSW_Rt_ADDR_PCREL19(
         "ldrsw",
@@ -5487,28 +3130,7 @@ define_insn_impls!(
         LOADLIT,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_PCREL19,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::imm19,
-                    lsb: 5,
-                    width: 19,
-                }],
-            }
-        ]
+        OPERANDS_39
     ),
     LDRSW_Rt_ADDR_REGOFF(
         "ldrsw",
@@ -5518,24 +3140,7 @@ define_insn_impls!(
         LDST_REGOFF,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_REGOFF,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_40
     ),
     LDRSW_Rt_ADDR_SIMM9(
         "ldrsw",
@@ -5545,35 +3150,7 @@ define_insn_impls!(
         LDST_IMM9,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_41
     ),
     LDRSW_Rt_ADDR_UIMM12(
         "ldrsw",
@@ -5583,35 +3160,7 @@ define_insn_impls!(
         LDST_POS,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_UIMM12,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm12,
-                        lsb: 10,
-                        width: 12,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_42
     ),
     LDSET_Rs_Rt_ADDR_SIMPLE(
         "ldset",
@@ -5621,34 +3170,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDSETA_Rs_Rt_ADDR_SIMPLE(
         "ldseta",
@@ -5658,34 +3180,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDSETAB_Rs_Rt_ADDR_SIMPLE(
         "ldsetab",
@@ -5695,34 +3190,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSETAH_Rs_Rt_ADDR_SIMPLE(
         "ldsetah",
@@ -5732,34 +3200,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSETAL_Rs_Rt_ADDR_SIMPLE(
         "ldsetal",
@@ -5769,34 +3210,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDSETALB_Rs_Rt_ADDR_SIMPLE(
         "ldsetalb",
@@ -5806,34 +3220,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSETALH_Rs_Rt_ADDR_SIMPLE(
         "ldsetalh",
@@ -5843,34 +3230,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSETB_Rs_Rt_ADDR_SIMPLE(
         "ldsetb",
@@ -5880,34 +3240,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSETH_Rs_Rt_ADDR_SIMPLE(
         "ldseth",
@@ -5917,34 +3250,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSETL_Rs_Rt_ADDR_SIMPLE(
         "ldsetl",
@@ -5954,34 +3260,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDSETLB_Rs_Rt_ADDR_SIMPLE(
         "ldsetlb",
@@ -5991,34 +3270,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSETLH_Rs_Rt_ADDR_SIMPLE(
         "ldsetlh",
@@ -6028,34 +3280,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSETP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
         "ldsetp",
@@ -6065,34 +3290,7 @@ define_insn_impls!(
         LSE128_ATOMIC,
         LSE128,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt2,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_12
     ),
     LDSETPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
         "ldsetpa",
@@ -6102,34 +3300,7 @@ define_insn_impls!(
         LSE128_ATOMIC,
         LSE128,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt2,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_12
     ),
     LDSETPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
         "ldsetpal",
@@ -6139,34 +3310,7 @@ define_insn_impls!(
         LSE128_ATOMIC,
         LSE128,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt2,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_12
     ),
     LDSETPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
         "ldsetpl",
@@ -6176,34 +3320,7 @@ define_insn_impls!(
         LSE128_ATOMIC,
         LSE128,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt2,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_12
     ),
     LDSMAX_Rs_Rt_ADDR_SIMPLE(
         "ldsmax",
@@ -6213,34 +3330,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDSMAXA_Rs_Rt_ADDR_SIMPLE(
         "ldsmaxa",
@@ -6250,34 +3340,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDSMAXAB_Rs_Rt_ADDR_SIMPLE(
         "ldsmaxab",
@@ -6287,34 +3350,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMAXAH_Rs_Rt_ADDR_SIMPLE(
         "ldsmaxah",
@@ -6324,34 +3360,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMAXAL_Rs_Rt_ADDR_SIMPLE(
         "ldsmaxal",
@@ -6361,34 +3370,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDSMAXALB_Rs_Rt_ADDR_SIMPLE(
         "ldsmaxalb",
@@ -6398,34 +3380,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMAXALH_Rs_Rt_ADDR_SIMPLE(
         "ldsmaxalh",
@@ -6435,34 +3390,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMAXB_Rs_Rt_ADDR_SIMPLE(
         "ldsmaxb",
@@ -6472,34 +3400,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMAXH_Rs_Rt_ADDR_SIMPLE(
         "ldsmaxh",
@@ -6509,34 +3410,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMAXL_Rs_Rt_ADDR_SIMPLE(
         "ldsmaxl",
@@ -6546,34 +3420,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDSMAXLB_Rs_Rt_ADDR_SIMPLE(
         "ldsmaxlb",
@@ -6583,34 +3430,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMAXLH_Rs_Rt_ADDR_SIMPLE(
         "ldsmaxlh",
@@ -6620,34 +3440,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMIN_Rs_Rt_ADDR_SIMPLE(
         "ldsmin",
@@ -6657,34 +3450,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDSMINA_Rs_Rt_ADDR_SIMPLE(
         "ldsmina",
@@ -6694,34 +3460,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDSMINAB_Rs_Rt_ADDR_SIMPLE(
         "ldsminab",
@@ -6731,34 +3470,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMINAH_Rs_Rt_ADDR_SIMPLE(
         "ldsminah",
@@ -6768,34 +3480,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMINAL_Rs_Rt_ADDR_SIMPLE(
         "ldsminal",
@@ -6805,34 +3490,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDSMINALB_Rs_Rt_ADDR_SIMPLE(
         "ldsminalb",
@@ -6842,34 +3500,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMINALH_Rs_Rt_ADDR_SIMPLE(
         "ldsminalh",
@@ -6879,34 +3510,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMINB_Rs_Rt_ADDR_SIMPLE(
         "ldsminb",
@@ -6916,34 +3520,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMINH_Rs_Rt_ADDR_SIMPLE(
         "ldsminh",
@@ -6953,34 +3530,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMINL_Rs_Rt_ADDR_SIMPLE(
         "ldsminl",
@@ -6990,34 +3540,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDSMINLB_Rs_Rt_ADDR_SIMPLE(
         "ldsminlb",
@@ -7027,34 +3550,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDSMINLH_Rs_Rt_ADDR_SIMPLE(
         "ldsminlh",
@@ -7064,34 +3560,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDTR_Rt_ADDR_SIMM9(
         "ldtr",
@@ -7101,35 +3570,7 @@ define_insn_impls!(
         LDST_UNPRIV,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_20
     ),
     LDTRB_Rt_ADDR_SIMM9(
         "ldtrb",
@@ -7139,35 +3580,7 @@ define_insn_impls!(
         LDST_UNPRIV,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_28
     ),
     LDTRH_Rt_ADDR_SIMM9(
         "ldtrh",
@@ -7177,35 +3590,7 @@ define_insn_impls!(
         LDST_UNPRIV,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_31
     ),
     LDTRSB_Rt_ADDR_SIMM9(
         "ldtrsb",
@@ -7215,35 +3600,7 @@ define_insn_impls!(
         LDST_UNPRIV,
         V8,
         InsnFlags::const_from_bits(32u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_34
     ),
     LDTRSH_Rt_ADDR_SIMM9(
         "ldtrsh",
@@ -7253,35 +3610,7 @@ define_insn_impls!(
         LDST_UNPRIV,
         V8,
         InsnFlags::const_from_bits(32u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_37
     ),
     LDTRSW_Rt_ADDR_SIMM9(
         "ldtrsw",
@@ -7291,35 +3620,7 @@ define_insn_impls!(
         LDST_UNPRIV,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_41
     ),
     LDUMAX_Rs_Rt_ADDR_SIMPLE(
         "ldumax",
@@ -7329,34 +3630,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDUMAXA_Rs_Rt_ADDR_SIMPLE(
         "ldumaxa",
@@ -7366,34 +3640,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDUMAXAB_Rs_Rt_ADDR_SIMPLE(
         "ldumaxab",
@@ -7403,34 +3650,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMAXAH_Rs_Rt_ADDR_SIMPLE(
         "ldumaxah",
@@ -7440,34 +3660,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMAXAL_Rs_Rt_ADDR_SIMPLE(
         "ldumaxal",
@@ -7477,34 +3670,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDUMAXALB_Rs_Rt_ADDR_SIMPLE(
         "ldumaxalb",
@@ -7514,34 +3680,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMAXALH_Rs_Rt_ADDR_SIMPLE(
         "ldumaxalh",
@@ -7551,34 +3690,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMAXB_Rs_Rt_ADDR_SIMPLE(
         "ldumaxb",
@@ -7588,34 +3700,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMAXH_Rs_Rt_ADDR_SIMPLE(
         "ldumaxh",
@@ -7625,34 +3710,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMAXL_Rs_Rt_ADDR_SIMPLE(
         "ldumaxl",
@@ -7662,34 +3720,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDUMAXLB_Rs_Rt_ADDR_SIMPLE(
         "ldumaxlb",
@@ -7699,34 +3730,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMAXLH_Rs_Rt_ADDR_SIMPLE(
         "ldumaxlh",
@@ -7736,34 +3740,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMIN_Rs_Rt_ADDR_SIMPLE(
         "ldumin",
@@ -7773,34 +3750,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDUMINA_Rs_Rt_ADDR_SIMPLE(
         "ldumina",
@@ -7810,34 +3760,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDUMINAB_Rs_Rt_ADDR_SIMPLE(
         "lduminab",
@@ -7847,34 +3770,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMINAH_Rs_Rt_ADDR_SIMPLE(
         "lduminah",
@@ -7884,34 +3780,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMINAL_Rs_Rt_ADDR_SIMPLE(
         "lduminal",
@@ -7921,34 +3790,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDUMINALB_Rs_Rt_ADDR_SIMPLE(
         "lduminalb",
@@ -7958,34 +3800,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMINALH_Rs_Rt_ADDR_SIMPLE(
         "lduminalh",
@@ -7995,34 +3810,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMINB_Rs_Rt_ADDR_SIMPLE(
         "lduminb",
@@ -8032,34 +3820,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMINH_Rs_Rt_ADDR_SIMPLE(
         "lduminh",
@@ -8069,34 +3830,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMINL_Rs_Rt_ADDR_SIMPLE(
         "lduminl",
@@ -8106,34 +3840,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(72u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     LDUMINLB_Rs_Rt_ADDR_SIMPLE(
         "lduminlb",
@@ -8143,34 +3850,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUMINLH_Rs_Rt_ADDR_SIMPLE(
         "lduminlh",
@@ -8180,34 +3860,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(8u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     LDUR_Rt_ADDR_SIMM9(
         "ldur",
@@ -8217,35 +3870,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_20
     ),
     LDUR_Ft_ADDR_SIMM9(
         "ldur",
@@ -8255,47 +3880,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_24
     ),
     LDURB_Rt_ADDR_SIMM9(
         "ldurb",
@@ -8305,35 +3890,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_28
     ),
     LDURH_Rt_ADDR_SIMM9(
         "ldurh",
@@ -8343,35 +3900,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_31
     ),
     LDURSB_Rt_ADDR_SIMM9(
         "ldursb",
@@ -8381,35 +3910,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         V8,
         InsnFlags::const_from_bits(32u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_34
     ),
     LDURSH_Rt_ADDR_SIMM9(
         "ldursh",
@@ -8419,35 +3920,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         V8,
         InsnFlags::const_from_bits(32u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_37
     ),
     LDURSW_Rt_ADDR_SIMM9(
         "ldursw",
@@ -8457,35 +3930,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_41
     ),
     LDXP_Rt_Rt2_ADDR_SIMPLE(
         "ldxp",
@@ -8495,34 +3940,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_11
     ),
     LDXR_Rt_ADDR_SIMPLE(
         "ldxr",
@@ -8532,24 +3950,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_7
     ),
     LDXRB_Rt_ADDR_SIMPLE(
         "ldxrb",
@@ -8559,24 +3960,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     LDXRH_Rt_ADDR_SIMPLE(
         "ldxrh",
@@ -8586,24 +3970,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     ORN_Rd_Rn_Rm_SFT(
         "orn",
@@ -8613,34 +3980,7 @@ define_insn_impls!(
         LOG_SHIFT,
         V8,
         InsnFlags::const_from_bits(131080u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rd,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rd,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rn,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rn,
-                    lsb: 5,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rm_SFT,
-                class: InsnOperandClass::MODIFIED_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_1
     ),
     ORR_Rd_SP_Rn_LIMM(
         "orr",
@@ -8650,50 +3990,7 @@ define_insn_impls!(
         LOG_IMM,
         V8,
         InsnFlags::const_from_bits(131080u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rd_SP,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rd,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rn,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rn,
-                    lsb: 5,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LIMM,
-                class: InsnOperandClass::IMMEDIATE,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::N,
-                        lsb: 22,
-                        width: 1,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::immr,
-                        lsb: 16,
-                        width: 6,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imms,
-                        lsb: 10,
-                        width: 6,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_0
     ),
     ORR_Rd_Rn_Rm_SFT(
         "orr",
@@ -8703,34 +4000,7 @@ define_insn_impls!(
         LOG_SHIFT,
         V8,
         InsnFlags::const_from_bits(131080u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rd,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rd,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rn,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rn,
-                    lsb: 5,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rm_SFT,
-                class: InsnOperandClass::MODIFIED_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_1
     ),
     PRFM_PRFOP_ADDR_PCREL19(
         "prfm",
@@ -8740,24 +4010,7 @@ define_insn_impls!(
         LOADLIT,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::PRFOP,
-                class: InsnOperandClass::SYSTEM,
-                qualifiers: &[],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_PCREL19,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::imm19,
-                    lsb: 5,
-                    width: 19,
-                }],
-            }
-        ]
+        OPERANDS_43
     ),
     PRFM_PRFOP_ADDR_REGOFF(
         "prfm",
@@ -8767,20 +4020,7 @@ define_insn_impls!(
         LDST_REGOFF,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::PRFOP,
-                class: InsnOperandClass::SYSTEM,
-                qualifiers: &[],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_REGOFF,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_44
     ),
     PRFM_PRFOP_ADDR_UIMM12(
         "prfm",
@@ -8790,31 +4030,7 @@ define_insn_impls!(
         LDST_POS,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::PRFOP,
-                class: InsnOperandClass::SYSTEM,
-                qualifiers: &[],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_UIMM12,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm12,
-                        lsb: 10,
-                        width: 12,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_45
     ),
     PRFUM_PRFOP_ADDR_SIMM9(
         "prfum",
@@ -8824,31 +4040,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::PRFOP,
-                class: InsnOperandClass::SYSTEM,
-                qualifiers: &[],
-                bit_fields: &[],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_46
     ),
     ST2G_Rt_SP_ADDR_SIMM13(
         "st2g",
@@ -8858,35 +4050,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         MEMTAG,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt_SP,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM13,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_47
     ),
     ST2G_Rt_SP_X_ADDR_SIMM13_imm_tag(
         "st2g",
@@ -8896,35 +4060,7 @@ define_insn_impls!(
         LDST_IMM9,
         MEMTAG,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt_SP,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM13,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_47
     ),
     ST64B_Rt_LS64_ADDR_SIMPLE(
         "st64b",
@@ -8934,24 +4070,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LS64,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt_LS64,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_6
     ),
     ST64BV_Rs_Rt_LS64_ADDR_SIMPLE(
         "st64bv",
@@ -8961,34 +4080,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LS64,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt_LS64,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_48
     ),
     ST64BV0_Rs_Rt_LS64_ADDR_SIMPLE(
         "st64bv0",
@@ -8998,34 +4090,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LS64,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt_LS64,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_48
     ),
     STG_Rt_SP_ADDR_SIMM13(
         "stg",
@@ -9035,35 +4100,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         MEMTAG,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt_SP,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM13,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_47
     ),
     STG_Rt_SP_X_ADDR_SIMM13_imm_tag(
         "stg",
@@ -9073,35 +4110,7 @@ define_insn_impls!(
         LDST_IMM9,
         MEMTAG,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt_SP,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM13,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_47
     ),
     STGM_Rt_ADDR_SIMPLE(
         "stgm",
@@ -9111,24 +4120,7 @@ define_insn_impls!(
         LDSTEXCL,
         MEMTAG,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_14
     ),
     STGP_Rt_Rt2_ADDR_SIMM11(
         "stgp",
@@ -9138,45 +4130,7 @@ define_insn_impls!(
         LDSTPAIR_OFF,
         MEMTAG,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM11,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_49
     ),
     STGP_Rt_X_Rt2_X_ADDR_SIMM11_imm_tag(
         "stgp",
@@ -9186,45 +4140,7 @@ define_insn_impls!(
         LDSTPAIR_INDEXED,
         MEMTAG,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM11,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_49
     ),
     STLLR_Rt_ADDR_SIMPLE(
         "stllr",
@@ -9234,24 +4150,7 @@ define_insn_impls!(
         LDSTEXCL,
         LOR,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_7
     ),
     STLLRB_Rt_ADDR_SIMPLE(
         "stllrb",
@@ -9261,24 +4160,7 @@ define_insn_impls!(
         LDSTEXCL,
         LOR,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     STLLRH_Rt_ADDR_SIMPLE(
         "stllrh",
@@ -9288,24 +4170,7 @@ define_insn_impls!(
         LDSTEXCL,
         LOR,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     STLR_Rt_ADDR_SIMPLE(
         "stlr",
@@ -9315,24 +4180,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_7
     ),
     STLRB_Rt_ADDR_SIMPLE(
         "stlrb",
@@ -9342,24 +4190,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     STLRH_Rt_ADDR_SIMPLE(
         "stlrh",
@@ -9369,24 +4200,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_8
     ),
     STLUR_Rt_ADDR_OFFSET(
         "stlur",
@@ -9396,40 +4210,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         RCPC2,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_OFFSET,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_9
     ),
     STLUR_Rt_X_ADDR_OFFSET(
         "stlur",
@@ -9439,40 +4220,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         RCPC2,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_OFFSET,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_10
     ),
     STLURB_Rt_ADDR_OFFSET(
         "stlurb",
@@ -9482,40 +4230,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         RCPC2,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_OFFSET,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_9
     ),
     STLURH_Rt_ADDR_OFFSET(
         "stlurh",
@@ -9525,40 +4240,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         RCPC2,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_OFFSET,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_9
     ),
     STLXP_Rs_Rt_Rt2_ADDR_SIMPLE(
         "stlxp",
@@ -9568,44 +4250,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_50
     ),
     STLXR_Rs_Rt_ADDR_SIMPLE(
         "stlxr",
@@ -9615,34 +4260,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_51
     ),
     STLXRB_Rs_Rt_ADDR_SIMPLE(
         "stlxrb",
@@ -9652,34 +4270,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     STLXRH_Rs_Rt_ADDR_SIMPLE(
         "stlxrh",
@@ -9689,34 +4280,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     STNP_Rt_Rt2_ADDR_SIMM7(
         "stnp",
@@ -9726,45 +4290,7 @@ define_insn_impls!(
         LDSTNAPAIR_OFFS,
         V8,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_15
     ),
     STNP_Ft_Ft2_ADDR_SIMM7(
         "stnp",
@@ -9774,57 +4300,7 @@ define_insn_impls!(
         LDSTNAPAIR_OFFS,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Ft2,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_16
     ),
     STP_Rt_Rt2_ADDR_SIMM7(
         "stp",
@@ -9834,45 +4310,7 @@ define_insn_impls!(
         LDSTPAIR_OFF,
         V8,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_15
     ),
     STP_Rt_W_Rt2_W_ADDR_SIMM7_S_S(
         "stp",
@@ -9882,45 +4320,7 @@ define_insn_impls!(
         LDSTPAIR_INDEXED,
         V8,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_15
     ),
     STP_Ft_Ft2_ADDR_SIMM7(
         "stp",
@@ -9930,57 +4330,7 @@ define_insn_impls!(
         LDSTPAIR_OFF,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Ft2,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_16
     ),
     STP_Ft_S_S_Ft2_S_S_ADDR_SIMM7_S_S(
         "stp",
@@ -9990,57 +4340,7 @@ define_insn_impls!(
         LDSTPAIR_INDEXED,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Ft2,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM7,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm7,
-                        lsb: 15,
-                        width: 7,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index2,
-                        lsb: 24,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_16
     ),
     STR_Rt_ADDR_REGOFF(
         "str",
@@ -10050,24 +4350,7 @@ define_insn_impls!(
         LDST_REGOFF,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_REGOFF,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_19
     ),
     STR_Rt_ADDR_SIMM9(
         "str",
@@ -10077,35 +4360,7 @@ define_insn_impls!(
         LDST_IMM9,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_20
     ),
     STR_Rt_ADDR_UIMM12(
         "str",
@@ -10115,35 +4370,7 @@ define_insn_impls!(
         LDST_POS,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_UIMM12,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm12,
-                        lsb: 10,
-                        width: 12,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_21
     ),
     STR_Ft_ADDR_REGOFF(
         "str",
@@ -10153,36 +4380,7 @@ define_insn_impls!(
         LDST_REGOFF,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_REGOFF,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_23
     ),
     STR_Ft_ADDR_SIMM9(
         "str",
@@ -10192,47 +4390,7 @@ define_insn_impls!(
         LDST_IMM9,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_24
     ),
     STR_Ft_ADDR_UIMM12(
         "str",
@@ -10242,47 +4400,7 @@ define_insn_impls!(
         LDST_POS,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_UIMM12,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm12,
-                        lsb: 10,
-                        width: 12,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_25
     ),
     STRB_Rt_ADDR_REGOFF(
         "strb",
@@ -10292,24 +4410,7 @@ define_insn_impls!(
         LDST_REGOFF,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_REGOFF,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_27
     ),
     STRB_Rt_ADDR_SIMM9(
         "strb",
@@ -10319,35 +4420,7 @@ define_insn_impls!(
         LDST_IMM9,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_28
     ),
     STRB_Rt_ADDR_UIMM12(
         "strb",
@@ -10357,35 +4430,7 @@ define_insn_impls!(
         LDST_POS,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_UIMM12,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm12,
-                        lsb: 10,
-                        width: 12,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_29
     ),
     STRH_Rt_ADDR_REGOFF(
         "strh",
@@ -10395,24 +4440,7 @@ define_insn_impls!(
         LDST_REGOFF,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_REGOFF,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H,],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_30
     ),
     STRH_Rt_ADDR_SIMM9(
         "strh",
@@ -10422,35 +4450,7 @@ define_insn_impls!(
         LDST_IMM9,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_31
     ),
     STRH_Rt_ADDR_UIMM12(
         "strh",
@@ -10460,35 +4460,7 @@ define_insn_impls!(
         LDST_POS,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_UIMM12,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::Rn,
-                        lsb: 5,
-                        width: 5,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm12,
-                        lsb: 10,
-                        width: 12,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_32
     ),
     STTR_Rt_ADDR_SIMM9(
         "sttr",
@@ -10498,35 +4470,7 @@ define_insn_impls!(
         LDST_UNPRIV,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_20
     ),
     STTRB_Rt_ADDR_SIMM9(
         "sttrb",
@@ -10536,35 +4480,7 @@ define_insn_impls!(
         LDST_UNPRIV,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_28
     ),
     STTRH_Rt_ADDR_SIMM9(
         "sttrh",
@@ -10574,35 +4490,7 @@ define_insn_impls!(
         LDST_UNPRIV,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_31
     ),
     STUR_Rt_ADDR_SIMM9(
         "stur",
@@ -10612,35 +4500,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_20
     ),
     STUR_Ft_ADDR_SIMM9(
         "stur",
@@ -10650,47 +4510,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Ft,
-                class: InsnOperandClass::FP_REG,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[
-                    InsnOperandQualifier::S_B,
-                    InsnOperandQualifier::S_H,
-                    InsnOperandQualifier::S_S,
-                    InsnOperandQualifier::S_D,
-                    InsnOperandQualifier::S_Q,
-                ],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_24
     ),
     STURB_Rt_ADDR_SIMM9(
         "sturb",
@@ -10700,35 +4520,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_B,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_28
     ),
     STURH_Rt_ADDR_SIMM9(
         "sturh",
@@ -10738,35 +4530,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM9,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::S_H,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_31
     ),
     STXP_Rs_Rt_Rt2_ADDR_SIMPLE(
         "stxp",
@@ -10776,44 +4540,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt2,
-                    lsb: 10,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_50
     ),
     STXR_Rs_Rt_ADDR_SIMPLE(
         "stxr",
@@ -10823,34 +4550,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::const_from_bits(2u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_51
     ),
     STXRB_Rs_Rt_ADDR_SIMPLE(
         "stxrb",
@@ -10860,34 +4560,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     STXRH_Rs_Rt_ADDR_SIMPLE(
         "stxrh",
@@ -10897,34 +4570,7 @@ define_insn_impls!(
         LDSTEXCL,
         V8,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     STZ2G_Rt_SP_ADDR_SIMM13(
         "stz2g",
@@ -10934,35 +4580,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         MEMTAG,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt_SP,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM13,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_47
     ),
     STZ2G_Rt_SP_X_ADDR_SIMM13_imm_tag(
         "stz2g",
@@ -10972,35 +4590,7 @@ define_insn_impls!(
         LDST_IMM9,
         MEMTAG,
         InsnFlags::const_from_bits(131072u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt_SP,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM13,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_47
     ),
     STZG_Rt_SP_ADDR_SIMM13(
         "stzg",
@@ -11010,35 +4600,7 @@ define_insn_impls!(
         LDST_UNSCALED,
         MEMTAG,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt_SP,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM13,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_47
     ),
     STZG_Rt_SP_X_ADDR_SIMM13_imm_tag(
         "stzg",
@@ -11048,35 +4610,7 @@ define_insn_impls!(
         LDST_IMM9,
         MEMTAG,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt_SP,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X, InsnOperandQualifier::SP,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMM13,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag,],
-                bit_fields: &[
-                    BitfieldSpec {
-                        bitfield: InsnBitField::imm9,
-                        lsb: 12,
-                        width: 9,
-                    },
-                    BitfieldSpec {
-                        bitfield: InsnBitField::index,
-                        lsb: 11,
-                        width: 1,
-                    }
-                ],
-            }
-        ]
+        OPERANDS_47
     ),
     STZGM_Rt_ADDR_SIMPLE(
         "stzgm",
@@ -11086,24 +4620,7 @@ define_insn_impls!(
         LDSTEXCL,
         MEMTAG,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_14
     ),
     SWP_Rs_Rt_ADDR_SIMPLE(
         "swp",
@@ -11113,34 +4630,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     SWPA_Rs_Rt_ADDR_SIMPLE(
         "swpa",
@@ -11150,34 +4640,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     SWPAB_Rs_Rt_ADDR_SIMPLE(
         "swpab",
@@ -11187,34 +4650,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     SWPAH_Rs_Rt_ADDR_SIMPLE(
         "swpah",
@@ -11224,34 +4660,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     SWPAL_Rs_Rt_ADDR_SIMPLE(
         "swpal",
@@ -11261,34 +4670,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     SWPALB_Rs_Rt_ADDR_SIMPLE(
         "swpalb",
@@ -11298,34 +4680,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     SWPALH_Rs_Rt_ADDR_SIMPLE(
         "swpalh",
@@ -11335,34 +4690,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     SWPB_Rs_Rt_ADDR_SIMPLE(
         "swpb",
@@ -11372,34 +4700,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     SWPH_Rs_Rt_ADDR_SIMPLE(
         "swph",
@@ -11409,34 +4710,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     SWPL_Rs_Rt_ADDR_SIMPLE(
         "swpl",
@@ -11446,34 +4720,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::const_from_bits(64u64),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_3
     ),
     SWPLB_Rs_Rt_ADDR_SIMPLE(
         "swplb",
@@ -11483,34 +4730,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     SWPLH_Rs_Rt_ADDR_SIMPLE(
         "swplh",
@@ -11520,34 +4740,7 @@ define_insn_impls!(
         LSE_ATOMIC,
         LSE,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::Rs,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rs,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::W,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_4
     ),
     SWPP_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
         "swpp",
@@ -11557,34 +4750,7 @@ define_insn_impls!(
         LSE128_ATOMIC,
         LSE128,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt2,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_12
     ),
     SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
         "swppa",
@@ -11594,34 +4760,7 @@ define_insn_impls!(
         LSE128_ATOMIC,
         LSE128,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt2,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_12
     ),
     SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
         "swppal",
@@ -11631,34 +4770,7 @@ define_insn_impls!(
         LSE128_ATOMIC,
         LSE128,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt2,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_12
     ),
     SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE(
         "swppl",
@@ -11668,34 +4780,7 @@ define_insn_impls!(
         LSE128_ATOMIC,
         LSE128,
         InsnFlags::empty(),
-        [
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt,
-                    lsb: 0,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::LSE128_Rt2,
-                class: InsnOperandClass::INT_REG,
-                qualifiers: &[InsnOperandQualifier::X,],
-                bit_fields: &[BitfieldSpec {
-                    bitfield: InsnBitField::LSE128_Rt2,
-                    lsb: 16,
-                    width: 5,
-                }],
-            },
-            InsnOperand {
-                kind: InsnOperandKind::ADDR_SIMPLE,
-                class: InsnOperandClass::ADDRESS,
-                qualifiers: &[],
-                bit_fields: &[],
-            }
-        ]
+        OPERANDS_12
     )
 );
 impl InsnOpcode for LDSTEXCL {
