@@ -925,7 +925,7 @@ define_insn_impls!(
         0x7f800000,
         LOG_IMM,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131080u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rd_SP,
@@ -978,7 +978,7 @@ define_insn_impls!(
         0x7f200000,
         LOG_SHIFT,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rd,
@@ -1015,7 +1015,7 @@ define_insn_impls!(
         0x7f800000,
         LOG_IMM,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131080u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rd,
@@ -1068,7 +1068,7 @@ define_insn_impls!(
         0x7f200000,
         LOG_SHIFT,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131080u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rd,
@@ -1105,7 +1105,7 @@ define_insn_impls!(
         0x7f200000,
         LOG_SHIFT,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rd,
@@ -1142,7 +1142,7 @@ define_insn_impls!(
         0x7f200000,
         LOG_SHIFT,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rd,
@@ -1179,7 +1179,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -1216,7 +1216,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -1327,7 +1327,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -1512,7 +1512,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -1623,7 +1623,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -1672,7 +1672,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -1721,7 +1721,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -1770,7 +1770,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -1819,7 +1819,7 @@ define_insn_impls!(
         0x7f200000,
         LOG_SHIFT,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rd,
@@ -1856,7 +1856,7 @@ define_insn_impls!(
         0x7f800000,
         LOG_IMM,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rd_SP,
@@ -1909,7 +1909,7 @@ define_insn_impls!(
         0x7f200000,
         LOG_SHIFT,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rd,
@@ -1973,9 +1973,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -2012,7 +2010,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -2123,7 +2121,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -2234,7 +2232,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -2271,7 +2269,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -2308,9 +2306,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -2347,7 +2343,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -2384,7 +2380,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -2421,7 +2417,7 @@ define_insn_impls!(
         0xbffffc00,
         LDSTEXCL,
         RCPC,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -2889,7 +2885,7 @@ define_insn_impls!(
         0xbffffc00,
         LDSTEXCL,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -2970,7 +2966,7 @@ define_insn_impls!(
         0xbfff8000,
         LDSTEXCL,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -3007,7 +3003,7 @@ define_insn_impls!(
         0xbffffc00,
         LDSTEXCL,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -3088,9 +3084,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -3127,7 +3121,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -3238,7 +3232,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -3349,7 +3343,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -3386,7 +3380,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -3423,9 +3417,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -3462,7 +3454,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -3499,7 +3491,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -3684,9 +3676,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -3723,7 +3713,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -3834,7 +3824,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -3945,7 +3935,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -3982,7 +3972,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -4019,9 +4009,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -4058,7 +4046,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -4095,7 +4083,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -4197,7 +4185,7 @@ define_insn_impls!(
         0xbffffc00,
         LDSTEXCL,
         LOR,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -4278,7 +4266,7 @@ define_insn_impls!(
         0x7fc00000,
         LDSTNAPAIR_OFFS,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -4386,7 +4374,7 @@ define_insn_impls!(
         0x7fc00000,
         LDSTPAIR_OFF,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -4434,7 +4422,7 @@ define_insn_impls!(
         0x7ec00000,
         LDSTPAIR_INDEXED,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -4698,7 +4686,7 @@ define_insn_impls!(
         0xbf000000,
         LOADLIT,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -4729,7 +4717,7 @@ define_insn_impls!(
         0xbfe00c00,
         LDST_REGOFF,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -4756,7 +4744,7 @@ define_insn_impls!(
         0xbfe00400,
         LDST_IMM9,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -4794,7 +4782,7 @@ define_insn_impls!(
         0xbfc00000,
         LDST_POS,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -5308,7 +5296,7 @@ define_insn_impls!(
         0xffa00c00,
         LDST_REGOFF,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LDS_SIZE_IN_BIT_22.bits()),
+        InsnFlags::const_from_bits(32u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -5335,7 +5323,7 @@ define_insn_impls!(
         0xffa00400,
         LDST_IMM9,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LDS_SIZE_IN_BIT_22.bits()),
+        InsnFlags::const_from_bits(32u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -5373,7 +5361,7 @@ define_insn_impls!(
         0xff800000,
         LDST_POS,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LDS_SIZE_IN_BIT_22.bits()),
+        InsnFlags::const_from_bits(32u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -5411,7 +5399,7 @@ define_insn_impls!(
         0xffa00c00,
         LDST_REGOFF,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LDS_SIZE_IN_BIT_22.bits()),
+        InsnFlags::const_from_bits(32u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -5438,7 +5426,7 @@ define_insn_impls!(
         0xffa00400,
         LDST_IMM9,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LDS_SIZE_IN_BIT_22.bits()),
+        InsnFlags::const_from_bits(32u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -5476,7 +5464,7 @@ define_insn_impls!(
         0xff800000,
         LDST_POS,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LDS_SIZE_IN_BIT_22.bits()),
+        InsnFlags::const_from_bits(32u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -5648,9 +5636,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -5687,7 +5673,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -5798,7 +5784,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -5909,7 +5895,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -5946,7 +5932,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -5983,9 +5969,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6022,7 +6006,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6059,7 +6043,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6244,9 +6228,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6283,7 +6265,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6394,7 +6376,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6505,7 +6487,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6542,7 +6524,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6579,9 +6561,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6618,7 +6598,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6655,7 +6635,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6692,9 +6672,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6731,7 +6709,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6842,7 +6820,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6953,7 +6931,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -6990,7 +6968,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7027,9 +7005,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7066,7 +7042,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7103,7 +7079,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7140,7 +7116,7 @@ define_insn_impls!(
         0xbfe00c00,
         LDST_UNPRIV,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -7254,7 +7230,7 @@ define_insn_impls!(
         0xffa00c00,
         LDST_UNPRIV,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LDS_SIZE_IN_BIT_22.bits()),
+        InsnFlags::const_from_bits(32u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -7292,7 +7268,7 @@ define_insn_impls!(
         0xffa00c00,
         LDST_UNPRIV,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LDS_SIZE_IN_BIT_22.bits()),
+        InsnFlags::const_from_bits(32u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -7368,9 +7344,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7407,7 +7381,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7518,7 +7492,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7629,7 +7603,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7666,7 +7640,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7703,9 +7677,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7742,7 +7714,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7779,7 +7751,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7816,9 +7788,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7855,7 +7825,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -7966,7 +7936,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -8077,7 +8047,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -8114,7 +8084,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -8151,9 +8121,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(
-            InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_LSE_SZ_FIELD.bits()
-        ),
+        InsnFlags::const_from_bits(72u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -8190,7 +8158,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -8227,7 +8195,7 @@ define_insn_impls!(
         0xffe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -8264,7 +8232,7 @@ define_insn_impls!(
         0xbfe00c00,
         LDST_UNSCALED,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -8428,7 +8396,7 @@ define_insn_impls!(
         0xffa00c00,
         LDST_UNSCALED,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LDS_SIZE_IN_BIT_22.bits()),
+        InsnFlags::const_from_bits(32u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -8466,7 +8434,7 @@ define_insn_impls!(
         0xffa00c00,
         LDST_UNSCALED,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LDS_SIZE_IN_BIT_22.bits()),
+        InsnFlags::const_from_bits(32u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -8542,7 +8510,7 @@ define_insn_impls!(
         0xbfff8000,
         LDSTEXCL,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -8579,7 +8547,7 @@ define_insn_impls!(
         0xbffffc00,
         LDSTEXCL,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -8660,7 +8628,7 @@ define_insn_impls!(
         0x7f200000,
         LOG_SHIFT,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131080u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rd,
@@ -8697,7 +8665,7 @@ define_insn_impls!(
         0x7f800000,
         LOG_IMM,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131080u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rd_SP,
@@ -8750,7 +8718,7 @@ define_insn_impls!(
         0x7f200000,
         LOG_SHIFT,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131080u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rd,
@@ -9281,7 +9249,7 @@ define_insn_impls!(
         0xbffffc00,
         LDSTEXCL,
         LOR,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -9362,7 +9330,7 @@ define_insn_impls!(
         0xbffffc00,
         LDSTEXCL,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -9615,7 +9583,7 @@ define_insn_impls!(
         0xbfe08000,
         LDSTEXCL,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -9662,7 +9630,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LDSTEXCL,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -9773,7 +9741,7 @@ define_insn_impls!(
         0x7fc00000,
         LDSTNAPAIR_OFFS,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -9881,7 +9849,7 @@ define_insn_impls!(
         0x7fc00000,
         LDSTPAIR_OFF,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -9929,7 +9897,7 @@ define_insn_impls!(
         0x7ec00000,
         LDSTPAIR_INDEXED,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -10097,7 +10065,7 @@ define_insn_impls!(
         0xbfe00c00,
         LDST_REGOFF,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -10124,7 +10092,7 @@ define_insn_impls!(
         0xbfe00400,
         LDST_IMM9,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -10162,7 +10130,7 @@ define_insn_impls!(
         0xbfc00000,
         LDST_POS,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -10545,7 +10513,7 @@ define_insn_impls!(
         0xbfe00c00,
         LDST_UNPRIV,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -10659,7 +10627,7 @@ define_insn_impls!(
         0xbfe00c00,
         LDST_UNSCALED,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -10823,7 +10791,7 @@ define_insn_impls!(
         0xbfe08000,
         LDSTEXCL,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -10870,7 +10838,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LDSTEXCL,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ADVSIMV_GPRSIZE_IN_Q.bits()),
+        InsnFlags::const_from_bits(2u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -10981,7 +10949,7 @@ define_insn_impls!(
         0xffe00c00,
         LDST_UNSCALED,
         MEMTAG,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt_SP,
@@ -11019,7 +10987,7 @@ define_insn_impls!(
         0xffe00400,
         LDST_IMM9,
         MEMTAG,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt_SP,
@@ -11160,7 +11128,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -11197,7 +11165,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -11308,7 +11276,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,
@@ -11493,7 +11461,7 @@ define_insn_impls!(
         0xbfe0fc00,
         LSE_ATOMIC,
         LSE,
-        InsnFlags::const_from_bits(InsnFlags::HAS_LSE_SZ_FIELD.bits()),
+        InsnFlags::const_from_bits(64u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rs,

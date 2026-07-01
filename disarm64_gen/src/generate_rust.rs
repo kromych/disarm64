@@ -266,22 +266,16 @@ fn write_insn_structs(
             });
         }
 
-        // Serialize flags to STRING
-        let mut flags = Vec::new();
-        for flag in insn.flags.iter() {
-            let str_flag = format!("{flag:?}")
-                .replace('(', "::")
-                .replace(')', ".bits()");
-            flags.push(str_flag);
-        }
-        let flags: TokenStream = if flags.is_empty() {
+        // Emit the flags as their raw bit pattern rather than reconstructing an
+        // expression from bitflags' Debug output.
+        let flags: TokenStream = if insn.flags.is_empty() {
             quote! {
                 InsnFlags::empty()
             }
         } else {
-            let flags: TokenStream = flags.join("|").parse().unwrap();
+            let bits = insn.flags.bits();
             quote! {
-                InsnFlags::const_from_bits(#flags)
+                InsnFlags::const_from_bits(#bits)
             }
         };
 

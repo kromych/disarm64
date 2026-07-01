@@ -202,7 +202,7 @@ define_insn_impls!(
         0xfffff3ff,
         IC_SYSTEM,
         XS,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [InsnOperand {
             kind: InsnOperandKind::BARRIER_DSB_NXS,
             class: InsnOperandClass::SYSTEM,
@@ -217,7 +217,7 @@ define_insn_impls!(
         0xfffff0ff,
         IC_SYSTEM,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [InsnOperand {
             kind: InsnOperandKind::BARRIER,
             class: InsnOperandClass::SYSTEM,
@@ -232,7 +232,7 @@ define_insn_impls!(
         0xfffff01f,
         IC_SYSTEM,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [InsnOperand {
             kind: InsnOperandKind::UIMM7,
             class: InsnOperandClass::IMMEDIATE,
@@ -273,7 +273,7 @@ define_insn_impls!(
         0xfff00000,
         IC_SYSTEM,
         D128,
-        InsnFlags::const_from_bits(InsnFlags::IS_SYS_READ.bits()),
+        InsnFlags::const_from_bits(8388608u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -306,7 +306,7 @@ define_insn_impls!(
         0xffe00000,
         IC_SYSTEM,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::IS_SYS_READ.bits()),
+        InsnFlags::const_from_bits(8388608u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::Rt,
@@ -333,7 +333,7 @@ define_insn_impls!(
         0xfff8f01f,
         IC_SYSTEM,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::IS_SYS_WRITE.bits()),
+        InsnFlags::const_from_bits(16777216u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::PSTATEFIELD,
@@ -360,7 +360,7 @@ define_insn_impls!(
         0xffe00000,
         IC_SYSTEM,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::IS_SYS_WRITE.bits()),
+        InsnFlags::const_from_bits(16777216u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::SYSREG,
@@ -387,7 +387,7 @@ define_insn_impls!(
         0xfff00000,
         IC_SYSTEM,
         D128,
-        InsnFlags::const_from_bits(InsnFlags::IS_SYS_WRITE.bits()),
+        InsnFlags::const_from_bits(16777216u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::SYSREG128,
@@ -471,7 +471,7 @@ define_insn_impls!(
         0xfffffc1f,
         IC_SYSTEM,
         FLAGM,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [InsnOperand {
             kind: InsnOperandKind::Rn,
             class: InsnOperandClass::INT_REG,
@@ -490,7 +490,7 @@ define_insn_impls!(
         0xfffffc1f,
         IC_SYSTEM,
         FLAGM,
-        InsnFlags::const_from_bits(InsnFlags::HAS_SF_FIELD.bits()),
+        InsnFlags::const_from_bits(131072u64),
         [InsnOperand {
             kind: InsnOperandKind::Rn,
             class: InsnOperandClass::INT_REG,
@@ -509,7 +509,7 @@ define_insn_impls!(
         0xfff80000,
         IC_SYSTEM,
         V8,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::UIMM3_OP1,
@@ -631,7 +631,7 @@ define_insn_impls!(
         0xfff80000,
         IC_SYSTEM,
         D128,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits() | InsnFlags::HAS_NARROW.bits()),
+        InsnFlags::const_from_bits(136u64),
         [
             InsnOperand {
                 kind: InsnOperandKind::UIMM3_OP1,
@@ -698,7 +698,7 @@ define_insn_impls!(
         0xffffffe0,
         IC_SYSTEM,
         WFXT,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [InsnOperand {
             kind: InsnOperandKind::Rd,
             class: InsnOperandClass::INT_REG,
@@ -717,7 +717,7 @@ define_insn_impls!(
         0xffffffe0,
         IC_SYSTEM,
         WFXT,
-        InsnFlags::const_from_bits(InsnFlags::HAS_ALIAS.bits()),
+        InsnFlags::const_from_bits(8u64),
         [InsnOperand {
             kind: InsnOperandKind::Rd,
             class: InsnOperandClass::INT_REG,
