@@ -302,11 +302,16 @@ fn format_operand(
 
         #[cfg(feature = "full")]
         InsnOperandKind::AIMM => {
-            let shift = bit_set(bits, 22);
+            // The shift field holds two bits of which only LSL #0 and
+            // LSL #12 are defined.
+            let shift = bit_range(bits, 22, 2);
+            if shift >= 2 {
+                return write!(f, "<undefined>").map(|()| flow);
+            }
             let imm12 = bit_range(bits, 10, 12);
             write!(f, "#{imm12:#x}")?;
 
-            if shift {
+            if shift == 1 {
                 return write!(f, ", lsl #12").map(|()| flow);
             }
         }
@@ -474,6 +479,12 @@ fn format_operand(
             write!(f, "{}", cond_name(cond))?
         }
 
+        #[cfg(feature = "full")]
+        InsnOperandKind::ADDR_PCREL9 => {
+            let offset = bit_range(bits, 5, 9);
+            let offset = sign_extend(offset, 8) << 2;
+            write!(f, "{:#x}", pc.wrapping_add(offset))?
+        }
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL14 => {
             let offset = bit_range(bits, 5, 14);
@@ -888,9 +899,16 @@ fn format_operand(
         | InsnOperandKind::SME_Znx4
         | InsnOperandKind::SME_Ztx2_STRIDED
         | InsnOperandKind::SME_Ztx4_STRIDED
-        | InsnOperandKind::SME_Zt2
-        | InsnOperandKind::SME_Zt3
-        | InsnOperandKind::SME_Zt4
+        | InsnOperandKind::SME_Zm_17
+        | InsnOperandKind::SME_Zm_17_3
+        | InsnOperandKind::SME_Zmx2_17_3
+        | InsnOperandKind::SME_Zmx2_INDEX_22
+        | InsnOperandKind::SME_Zn_6_3
+        | InsnOperandKind::SME_Zn7xN_UNTYPED
+        | InsnOperandKind::SME_Znx2_6_3
+        | InsnOperandKind::SME_Znx2_BIT_INDEX
+        | InsnOperandKind::SME_Zk_INDEX
+        | InsnOperandKind::SME_ZA_ARRAY4
         | InsnOperandKind::SVE_Zm3_INDEX
         | InsnOperandKind::SVE_Zm3_22_INDEX
         | InsnOperandKind::SVE_Zm3_19_INDEX
@@ -912,7 +930,24 @@ fn format_operand(
         | InsnOperandKind::SME_Zn_INDEX3_14
         | InsnOperandKind::SME_Zn_INDEX3_15
         | InsnOperandKind::SME_Zn_INDEX4_14
-        | InsnOperandKind::SVE_Zm_imm4
+        | InsnOperandKind::SME_Zn_INDEX2_19
+        | InsnOperandKind::SME_Zm_INDEX2_3
+        | InsnOperandKind::SME_Zm_INDEX3_3
+        | InsnOperandKind::SME_Zm_INDEX4_2
+        | InsnOperandKind::SME_Zm_INDEX4_3
+        | InsnOperandKind::SVE_Zm1_23_INDEX
+        | InsnOperandKind::SVE_Zm2_22_INDEX
+        | InsnOperandKind::SVE_Zm3_10_INDEX
+        | InsnOperandKind::SVE_Zm3_12_INDEX
+        | InsnOperandKind::SVE_Zn0_INDEX
+        | InsnOperandKind::SVE_Zn1_17_INDEX
+        | InsnOperandKind::SVE_Zn2_18_INDEX
+        | InsnOperandKind::SVE_Zn3_22_INDEX
+        | InsnOperandKind::SVE_Zd0_INDEX
+        | InsnOperandKind::SVE_Zd1_17_INDEX
+        | InsnOperandKind::SVE_Zd2_18_INDEX
+        | InsnOperandKind::SVE_Zd3_22_INDEX
+        | InsnOperandKind::SME_ZAda_1b
         | InsnOperandKind::SME_ZAda_2b
         | InsnOperandKind::SME_ZAda_3b
         | InsnOperandKind::SME_ZA_HV_idx_src
@@ -942,6 +977,7 @@ fn format_operand(
         | InsnOperandKind::SME_VLxN_13
         | InsnOperandKind::WIDTH
         | InsnOperandKind::SIMM5
+        | InsnOperandKind::SME_SHRIMM3
         | InsnOperandKind::SME_SHRIMM4
         | InsnOperandKind::SME_SHRIMM5
         | InsnOperandKind::SVE_SHLIMM_PRED
@@ -955,6 +991,7 @@ fn format_operand(
         | InsnOperandKind::SVE_SIMM6
         | InsnOperandKind::SVE_SIMM8
         | InsnOperandKind::SVE_UIMM3
+        | InsnOperandKind::SVE_UIMM4
         | InsnOperandKind::SVE_UIMM7
         | InsnOperandKind::SVE_UIMM8
         | InsnOperandKind::SVE_UIMM8_53
@@ -971,7 +1008,6 @@ fn format_operand(
         | InsnOperandKind::SVE_INV_LIMM
         | InsnOperandKind::SVE_LIMM
         | InsnOperandKind::SVE_LIMM_MOV
-        | InsnOperandKind::SVE_ADDR_R
         | InsnOperandKind::SVE_ADDR_RR
         | InsnOperandKind::SVE_ADDR_RR_LSL1
         | InsnOperandKind::SVE_ADDR_RR_LSL2
@@ -981,6 +1017,11 @@ fn format_operand(
         | InsnOperandKind::SVE_ADDR_RX_LSL1
         | InsnOperandKind::SVE_ADDR_RX_LSL2
         | InsnOperandKind::SVE_ADDR_RX_LSL3
+        | InsnOperandKind::SVE_ADDR_RX_LSL4
+        | InsnOperandKind::SVE_ADDR_RM
+        | InsnOperandKind::SVE_ADDR_RM_LSL1
+        | InsnOperandKind::SVE_ADDR_RM_LSL2
+        | InsnOperandKind::SVE_ADDR_RM_LSL3
         | InsnOperandKind::SVE_ADDR_ZX
         | InsnOperandKind::SVE_ADDR_RZ
         | InsnOperandKind::SVE_ADDR_RZ_LSL1
@@ -1022,6 +1063,17 @@ fn format_operand(
         | InsnOperandKind::SME_ZT0
         | InsnOperandKind::SME_ZT0_INDEX
         | InsnOperandKind::SME_ZT0_LIST
+        | InsnOperandKind::SME_ZT0_INDEX_MUL_VL
+        | InsnOperandKind::Em8
+        | InsnOperandKind::Em_INDEX1_14
+        | InsnOperandKind::Em_INDEX2_13
+        | InsnOperandKind::Em_INDEX3_12
+        | InsnOperandKind::LVn_LUT
+        | InsnOperandKind::IMMP1_2
+        | InsnOperandKind::IMMS1_2
+        | InsnOperandKind::NOT_BALANCED_10
+        | InsnOperandKind::NOT_BALANCED_17
+        | InsnOperandKind::Rm_LSL
         | InsnOperandKind::BTI_TARGET => write!(f, ":{kind:?}:")?,
 
         #[cfg(any(feature = "full", feature = "system"))]
@@ -1031,6 +1083,15 @@ fn format_operand(
         | InsnOperandKind::SYSREG_IC
         | InsnOperandKind::SYSREG_TLBI
         | InsnOperandKind::SYSREG_TLBIP
+        | InsnOperandKind::SYSREG_PLBI
+        | InsnOperandKind::SYSREG_MLBI
+        | InsnOperandKind::GIC
+        | InsnOperandKind::GICR
+        | InsnOperandKind::GSB
+        | InsnOperandKind::BRBOP
+        | InsnOperandKind::Rt_IN_SYS_ALIASES
+        | InsnOperandKind::SHUH_PHINT
+        | InsnOperandKind::STSHH_POLICY
         | InsnOperandKind::SYSREG_SR
         | InsnOperandKind::BARRIER_PSB
         | InsnOperandKind::BARRIER_GCSB => write!(f, ":{kind:?}:")?,
@@ -1101,14 +1162,23 @@ pub fn format_insn_pc<O: InsnOpcode>(pc: u64, f: &mut impl Write, opcode: &O) ->
         }
     }
 
-    write!(f, "{}", definition.mnemonic)?;
-
     #[cfg(feature = "full")]
     if definition.flags.contains(InsnFlags::IS_COND) {
+        // The table mnemonic carries a condition placeholder after the final
+        // dot, e.g. "b.c"; replace it with the decoded condition.
+        let stem = definition
+            .mnemonic
+            .rsplit_once('.')
+            .map_or(definition.mnemonic, |(stem, _)| stem);
         let cond = bit_range(bits, 0, 4);
         let cond = cond_name(cond);
-        write!(f, "{} ", cond)?;
+        write!(f, "{stem}.{cond} ")?;
+    } else {
+        write!(f, "{}", definition.mnemonic)?;
     }
+    #[cfg(not(feature = "full"))]
+    write!(f, "{}", definition.mnemonic)?;
+
     write!(f, "\t\t")?;
 
     let op_count = definition.operands.len();

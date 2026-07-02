@@ -362,7 +362,6 @@ pub enum InsnId {
     CFINV,
     CHKFEAT_X16,
     CLREX_UIMM4,
-    DGH,
     DMB_BARRIER,
     DSB_BARRIER_DSB_NXS,
     DSB_BARRIER,
@@ -384,11 +383,10 @@ pub enum InsnId {
     WFIT_Rd,
 }
 #[doc = r" The identity of each instruction, parallel to INSNS."]
-static INSN_IDS: [InsnId; 23] = [
+static INSN_IDS: [InsnId; 22] = [
     InsnId::CFINV,
     InsnId::CHKFEAT_X16,
     InsnId::CLREX_UIMM4,
-    InsnId::DGH,
     InsnId::DMB_BARRIER,
     InsnId::DSB_BARRIER_DSB_NXS,
     InsnId::DSB_BARRIER,
@@ -410,7 +408,7 @@ static INSN_IDS: [InsnId; 23] = [
     InsnId::WFIT_Rd,
 ];
 #[doc = r" The decoded instruction definitions, indexed by InsnId."]
-static INSNS: [Insn; 23] = [
+static INSNS: [Insn; 22] = [
     Insn {
         mnemonic: "cfinv",
         aliases: &[],
@@ -439,16 +437,6 @@ static INSNS: [Insn; 23] = [
         class: InsnClass::IC_SYSTEM,
         feature_set: InsnFeatureSet::V8,
         operands: OPERANDS_1,
-        flags: InsnFlags::empty(),
-    },
-    Insn {
-        mnemonic: "dgh",
-        aliases: &[],
-        opcode: 0xd50320df,
-        mask: 0xffffffff,
-        class: InsnClass::IC_SYSTEM,
-        feature_set: InsnFeatureSet::V8,
-        operands: &[],
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -579,7 +567,7 @@ static INSNS: [Insn; 23] = [
         class: InsnClass::IC_SYSTEM,
         feature_set: InsnFeatureSet::FLAGM,
         operands: OPERANDS_12,
-        flags: InsnFlags::const_from_bits(131072u64),
+        flags: InsnFlags::empty(),
     },
     Insn {
         mnemonic: "setf8",
@@ -589,7 +577,7 @@ static INSNS: [Insn; 23] = [
         class: InsnClass::IC_SYSTEM,
         feature_set: InsnFeatureSet::FLAGM,
         operands: OPERANDS_12,
-        flags: InsnFlags::const_from_bits(131072u64),
+        flags: InsnFlags::empty(),
     },
     Insn {
         mnemonic: "sys",
@@ -650,87 +638,84 @@ fn decode_index(insn: u32) -> i32 {
                 if insn & 0x000400 == 0 {
                     if insn & 0x004000 == 0 {
                         if insn & 0xfffffc1f == 0x3a00080d {
-                            return 17;
+                            return 16;
                         }
                     } else {
                         if insn & 0xfffffc1f == 0x3a00480d {
-                            return 16;
+                            return 15;
                         }
                     }
                 } else {
                     if insn & 0xffe07c10 == 0xba000400 {
-                        return 14;
+                        return 13;
                     }
                 }
             } else {
                 if insn == 0xd503251f {
                     return 1;
                 }
-                if insn == 0xd50320df {
-                    return 3;
-                }
                 if insn == 0xd50330ff {
-                    return 15;
+                    return 14;
                 }
                 if insn == 0xd500401f {
                     return 0;
                 }
                 if insn & 0xfffff3ff == 0xd503323f {
-                    return 5;
+                    return 4;
                 }
                 if insn & 0xfffff0ff == 0xd503305f {
                     return 2;
                 }
                 if insn & 0xfffff0ff == 0xd503309f {
-                    return 6;
+                    return 5;
                 }
                 if insn & 0xfffff0ff == 0xd50330bf {
-                    return 4;
+                    return 3;
                 }
                 if insn & 0xfffff0ff == 0xd50330df {
-                    return 8;
-                }
-                if insn & 0xffffffe0 == 0xd5031000 {
-                    return 21;
-                }
-                if insn & 0xffffffe0 == 0xd5031020 {
-                    return 22;
-                }
-                if insn & 0xfffff01f == 0xd503201f {
                     return 7;
                 }
+                if insn & 0xffffffe0 == 0xd5031000 {
+                    return 20;
+                }
+                if insn & 0xffffffe0 == 0xd5031020 {
+                    return 21;
+                }
+                if insn & 0xfffff01f == 0xd503201f {
+                    return 6;
+                }
                 if insn & 0xfff8f01f == 0xd500401f {
-                    return 11;
+                    return 10;
                 }
                 if insn & 0xfff80000 == 0xd5080000 {
-                    return 18;
+                    return 17;
                 }
                 if insn & 0xffe00000 == 0xd5000000 {
-                    return 12;
+                    return 11;
                 }
             }
         } else {
             if insn & 0x100000 == 0 {
                 if insn & 0xfff80000 == 0xd5480000 {
-                    return 20;
+                    return 19;
                 }
             } else {
                 if insn & 0xfff00000 == 0xd5500000 {
-                    return 13;
+                    return 12;
                 }
             }
         }
     } else {
         if insn & 0x400000 == 0 {
             if insn & 0xfff80000 == 0xd5280000 {
-                return 19;
+                return 18;
             }
             if insn & 0xffe00000 == 0xd5200000 {
-                return 10;
+                return 9;
             }
         } else {
             if insn & 0xfff00000 == 0xd5700000 {
-                return 9;
+                return 8;
             }
         }
     }

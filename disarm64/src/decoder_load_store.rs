@@ -105,16 +105,21 @@ const BITFIELDS_6: &[BitfieldSpec] = &[BitfieldSpec {
     width: 5,
 }];
 const BITFIELDS_7: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::Rm,
+    lsb: 16,
+    width: 5,
+}];
+const BITFIELDS_8: &[BitfieldSpec] = &[BitfieldSpec {
     bitfield: InsnBitField::LSE128_Rt,
     lsb: 0,
     width: 5,
 }];
-const BITFIELDS_8: &[BitfieldSpec] = &[BitfieldSpec {
+const BITFIELDS_9: &[BitfieldSpec] = &[BitfieldSpec {
     bitfield: InsnBitField::LSE128_Rt2,
     lsb: 16,
     width: 5,
 }];
-const BITFIELDS_9: &[BitfieldSpec] = &[
+const BITFIELDS_10: &[BitfieldSpec] = &[
     BitfieldSpec {
         bitfield: InsnBitField::imm9,
         lsb: 12,
@@ -126,7 +131,7 @@ const BITFIELDS_9: &[BitfieldSpec] = &[
         width: 1,
     },
 ];
-const BITFIELDS_10: &[BitfieldSpec] = &[
+const BITFIELDS_11: &[BitfieldSpec] = &[
     BitfieldSpec {
         bitfield: InsnBitField::imm7,
         lsb: 15,
@@ -138,12 +143,12 @@ const BITFIELDS_10: &[BitfieldSpec] = &[
         width: 1,
     },
 ];
-const BITFIELDS_11: &[BitfieldSpec] = &[BitfieldSpec {
+const BITFIELDS_12: &[BitfieldSpec] = &[BitfieldSpec {
     bitfield: InsnBitField::imm19,
     lsb: 5,
     width: 19,
 }];
-const BITFIELDS_12: &[BitfieldSpec] = &[
+const BITFIELDS_13: &[BitfieldSpec] = &[
     BitfieldSpec {
         bitfield: InsnBitField::Rn,
         lsb: 5,
@@ -155,7 +160,7 @@ const BITFIELDS_12: &[BitfieldSpec] = &[
         width: 12,
     },
 ];
-const BITFIELDS_13: &[BitfieldSpec] = &[
+const BITFIELDS_14: &[BitfieldSpec] = &[
     BitfieldSpec {
         bitfield: InsnBitField::Rn,
         lsb: 5,
@@ -177,6 +182,11 @@ const BITFIELDS_13: &[BitfieldSpec] = &[
         width: 1,
     },
 ];
+const BITFIELDS_15: &[BitfieldSpec] = &[BitfieldSpec {
+    bitfield: InsnBitField::Ra,
+    lsb: 10,
+    width: 5,
+}];
 const OPERANDS_0: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rd_SP,
@@ -281,6 +291,26 @@ const OPERANDS_5: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rs,
         class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_3,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_6: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rs,
+        class: InsnOperandClass::INT_REG,
         qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
         bit_fields: BITFIELDS_3,
     },
@@ -309,7 +339,39 @@ const OPERANDS_5: &[InsnOperand] = &[
         bit_fields: &[],
     },
 ];
-const OPERANDS_6: &[InsnOperand] = &[
+const OPERANDS_7: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rs,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_3,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::PAIRREG,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: &[],
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::PAIRREG,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: &[],
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_8: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt_LS64,
         class: InsnOperandClass::INT_REG,
@@ -323,7 +385,27 @@ const OPERANDS_6: &[InsnOperand] = &[
         bit_fields: &[],
     },
 ];
-const OPERANDS_7: &[InsnOperand] = &[
+const OPERANDS_9: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rs,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_3,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_10: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
@@ -337,7 +419,7 @@ const OPERANDS_7: &[InsnOperand] = &[
         bit_fields: &[],
     },
 ];
-const OPERANDS_8: &[InsnOperand] = &[
+const OPERANDS_11: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
@@ -351,7 +433,7 @@ const OPERANDS_8: &[InsnOperand] = &[
         bit_fields: &[],
     },
 ];
-const OPERANDS_9: &[InsnOperand] = &[
+const OPERANDS_12: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
@@ -365,7 +447,7 @@ const OPERANDS_9: &[InsnOperand] = &[
         bit_fields: BITFIELDS_5,
     },
 ];
-const OPERANDS_10: &[InsnOperand] = &[
+const OPERANDS_13: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
@@ -379,7 +461,7 @@ const OPERANDS_10: &[InsnOperand] = &[
         bit_fields: BITFIELDS_5,
     },
 ];
-const OPERANDS_11: &[InsnOperand] = &[
+const OPERANDS_14: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
@@ -399,18 +481,18 @@ const OPERANDS_11: &[InsnOperand] = &[
         bit_fields: &[],
     },
 ];
-const OPERANDS_12: &[InsnOperand] = &[
+const OPERANDS_15: &[InsnOperand] = &[
     InsnOperand {
-        kind: InsnOperandKind::LSE128_Rt,
-        class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::X],
+        kind: InsnOperandKind::Fm,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[InsnOperandQualifier::S_H],
         bit_fields: BITFIELDS_7,
     },
     InsnOperand {
-        kind: InsnOperandKind::LSE128_Rt2,
-        class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::X],
-        bit_fields: BITFIELDS_8,
+        kind: InsnOperandKind::Fd,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[InsnOperandQualifier::S_H],
+        bit_fields: BITFIELDS_0,
     },
     InsnOperand {
         kind: InsnOperandKind::ADDR_SIMPLE,
@@ -419,7 +501,55 @@ const OPERANDS_12: &[InsnOperand] = &[
         bit_fields: &[],
     },
 ];
-const OPERANDS_13: &[InsnOperand] = &[
+const OPERANDS_16: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::LSE128_Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_8,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::LSE128_Rt2,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_9,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_17: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Fm,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[
+            InsnOperandQualifier::S_H,
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+        ],
+        bit_fields: BITFIELDS_7,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Fd,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[
+            InsnOperandQualifier::S_H,
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+        ],
+        bit_fields: BITFIELDS_0,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_18: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
@@ -430,10 +560,10 @@ const OPERANDS_13: &[InsnOperand] = &[
         kind: InsnOperandKind::ADDR_SIMM13,
         class: InsnOperandClass::ADDRESS,
         qualifiers: &[InsnOperandQualifier::imm_tag],
-        bit_fields: BITFIELDS_9,
+        bit_fields: BITFIELDS_10,
     },
 ];
-const OPERANDS_14: &[InsnOperand] = &[
+const OPERANDS_19: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
@@ -447,7 +577,7 @@ const OPERANDS_14: &[InsnOperand] = &[
         bit_fields: &[],
     },
 ];
-const OPERANDS_15: &[InsnOperand] = &[
+const OPERANDS_20: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
@@ -464,10 +594,10 @@ const OPERANDS_15: &[InsnOperand] = &[
         kind: InsnOperandKind::ADDR_SIMM7,
         class: InsnOperandClass::ADDRESS,
         qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
-        bit_fields: BITFIELDS_10,
+        bit_fields: BITFIELDS_11,
     },
 ];
-const OPERANDS_16: &[InsnOperand] = &[
+const OPERANDS_21: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Ft,
         class: InsnOperandClass::FP_REG,
@@ -496,10 +626,10 @@ const OPERANDS_16: &[InsnOperand] = &[
             InsnOperandQualifier::S_D,
             InsnOperandQualifier::S_Q,
         ],
-        bit_fields: BITFIELDS_10,
+        bit_fields: BITFIELDS_11,
     },
 ];
-const OPERANDS_17: &[InsnOperand] = &[
+const OPERANDS_22: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
@@ -516,85 +646,85 @@ const OPERANDS_17: &[InsnOperand] = &[
         kind: InsnOperandKind::ADDR_SIMM7,
         class: InsnOperandClass::ADDRESS,
         qualifiers: &[InsnOperandQualifier::S_S],
-        bit_fields: BITFIELDS_10,
-    },
-];
-const OPERANDS_18: &[InsnOperand] = &[
-    InsnOperand {
-        kind: InsnOperandKind::Rt,
-        class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
-        bit_fields: BITFIELDS_4,
-    },
-    InsnOperand {
-        kind: InsnOperandKind::ADDR_PCREL19,
-        class: InsnOperandClass::ADDRESS,
-        qualifiers: &[],
-        bit_fields: BITFIELDS_11,
-    },
-];
-const OPERANDS_19: &[InsnOperand] = &[
-    InsnOperand {
-        kind: InsnOperandKind::Rt,
-        class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
-        bit_fields: BITFIELDS_4,
-    },
-    InsnOperand {
-        kind: InsnOperandKind::ADDR_REGOFF,
-        class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
-        bit_fields: &[],
-    },
-];
-const OPERANDS_20: &[InsnOperand] = &[
-    InsnOperand {
-        kind: InsnOperandKind::Rt,
-        class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
-        bit_fields: BITFIELDS_4,
-    },
-    InsnOperand {
-        kind: InsnOperandKind::ADDR_SIMM9,
-        class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
-        bit_fields: BITFIELDS_9,
-    },
-];
-const OPERANDS_21: &[InsnOperand] = &[
-    InsnOperand {
-        kind: InsnOperandKind::Rt,
-        class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
-        bit_fields: BITFIELDS_4,
-    },
-    InsnOperand {
-        kind: InsnOperandKind::ADDR_UIMM12,
-        class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
-        bit_fields: BITFIELDS_12,
-    },
-];
-const OPERANDS_22: &[InsnOperand] = &[
-    InsnOperand {
-        kind: InsnOperandKind::Ft,
-        class: InsnOperandClass::FP_REG,
-        qualifiers: &[
-            InsnOperandQualifier::S_S,
-            InsnOperandQualifier::S_D,
-            InsnOperandQualifier::S_Q,
-        ],
-        bit_fields: BITFIELDS_4,
-    },
-    InsnOperand {
-        kind: InsnOperandKind::ADDR_PCREL19,
-        class: InsnOperandClass::ADDRESS,
-        qualifiers: &[],
         bit_fields: BITFIELDS_11,
     },
 ];
 const OPERANDS_23: &[InsnOperand] = &[
     InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_PCREL19,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_12,
+    },
+];
+const OPERANDS_24: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_REGOFF,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_25: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM9,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+        bit_fields: BITFIELDS_10,
+    },
+];
+const OPERANDS_26: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_UIMM12,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_S, InsnOperandQualifier::S_D],
+        bit_fields: BITFIELDS_13,
+    },
+];
+const OPERANDS_27: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Ft,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+            InsnOperandQualifier::S_Q,
+        ],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_PCREL19,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_12,
+    },
+];
+const OPERANDS_28: &[InsnOperand] = &[
+    InsnOperand {
         kind: InsnOperandKind::Ft,
         class: InsnOperandClass::FP_REG,
         qualifiers: &[
@@ -619,7 +749,7 @@ const OPERANDS_23: &[InsnOperand] = &[
         bit_fields: &[],
     },
 ];
-const OPERANDS_24: &[InsnOperand] = &[
+const OPERANDS_29: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Ft,
         class: InsnOperandClass::FP_REG,
@@ -642,10 +772,10 @@ const OPERANDS_24: &[InsnOperand] = &[
             InsnOperandQualifier::S_D,
             InsnOperandQualifier::S_Q,
         ],
-        bit_fields: BITFIELDS_9,
+        bit_fields: BITFIELDS_10,
     },
 ];
-const OPERANDS_25: &[InsnOperand] = &[
+const OPERANDS_30: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Ft,
         class: InsnOperandClass::FP_REG,
@@ -668,10 +798,10 @@ const OPERANDS_25: &[InsnOperand] = &[
             InsnOperandQualifier::S_D,
             InsnOperandQualifier::S_Q,
         ],
-        bit_fields: BITFIELDS_12,
+        bit_fields: BITFIELDS_13,
     },
 ];
-const OPERANDS_26: &[InsnOperand] = &[
+const OPERANDS_31: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
@@ -682,77 +812,7 @@ const OPERANDS_26: &[InsnOperand] = &[
         kind: InsnOperandKind::ADDR_SIMM10,
         class: InsnOperandClass::ADDRESS,
         qualifiers: &[],
-        bit_fields: BITFIELDS_13,
-    },
-];
-const OPERANDS_27: &[InsnOperand] = &[
-    InsnOperand {
-        kind: InsnOperandKind::Rt,
-        class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W],
-        bit_fields: BITFIELDS_4,
-    },
-    InsnOperand {
-        kind: InsnOperandKind::ADDR_REGOFF,
-        class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_B],
-        bit_fields: &[],
-    },
-];
-const OPERANDS_28: &[InsnOperand] = &[
-    InsnOperand {
-        kind: InsnOperandKind::Rt,
-        class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W],
-        bit_fields: BITFIELDS_4,
-    },
-    InsnOperand {
-        kind: InsnOperandKind::ADDR_SIMM9,
-        class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_B],
-        bit_fields: BITFIELDS_9,
-    },
-];
-const OPERANDS_29: &[InsnOperand] = &[
-    InsnOperand {
-        kind: InsnOperandKind::Rt,
-        class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W],
-        bit_fields: BITFIELDS_4,
-    },
-    InsnOperand {
-        kind: InsnOperandKind::ADDR_UIMM12,
-        class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_B],
-        bit_fields: BITFIELDS_12,
-    },
-];
-const OPERANDS_30: &[InsnOperand] = &[
-    InsnOperand {
-        kind: InsnOperandKind::Rt,
-        class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W],
-        bit_fields: BITFIELDS_4,
-    },
-    InsnOperand {
-        kind: InsnOperandKind::ADDR_REGOFF,
-        class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_H],
-        bit_fields: &[],
-    },
-];
-const OPERANDS_31: &[InsnOperand] = &[
-    InsnOperand {
-        kind: InsnOperandKind::Rt,
-        class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W],
-        bit_fields: BITFIELDS_4,
-    },
-    InsnOperand {
-        kind: InsnOperandKind::ADDR_SIMM9,
-        class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_H],
-        bit_fields: BITFIELDS_9,
+        bit_fields: BITFIELDS_14,
     },
 ];
 const OPERANDS_32: &[InsnOperand] = &[
@@ -763,80 +823,80 @@ const OPERANDS_32: &[InsnOperand] = &[
         bit_fields: BITFIELDS_4,
     },
     InsnOperand {
-        kind: InsnOperandKind::ADDR_UIMM12,
+        kind: InsnOperandKind::ADDR_REGOFF,
         class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_H],
-        bit_fields: BITFIELDS_12,
+        qualifiers: &[InsnOperandQualifier::S_B],
+        bit_fields: &[],
     },
 ];
 const OPERANDS_33: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        qualifiers: &[InsnOperandQualifier::W],
         bit_fields: BITFIELDS_4,
     },
     InsnOperand {
-        kind: InsnOperandKind::ADDR_REGOFF,
+        kind: InsnOperandKind::ADDR_SIMM9,
         class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
-        bit_fields: &[],
+        qualifiers: &[InsnOperandQualifier::S_B],
+        bit_fields: BITFIELDS_10,
     },
 ];
 const OPERANDS_34: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        qualifiers: &[InsnOperandQualifier::W],
         bit_fields: BITFIELDS_4,
     },
     InsnOperand {
-        kind: InsnOperandKind::ADDR_SIMM9,
+        kind: InsnOperandKind::ADDR_UIMM12,
         class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
-        bit_fields: BITFIELDS_9,
+        qualifiers: &[InsnOperandQualifier::S_B],
+        bit_fields: BITFIELDS_13,
     },
 ];
 const OPERANDS_35: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        qualifiers: &[InsnOperandQualifier::W],
         bit_fields: BITFIELDS_4,
     },
     InsnOperand {
-        kind: InsnOperandKind::ADDR_UIMM12,
+        kind: InsnOperandKind::ADDR_REGOFF,
         class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
-        bit_fields: BITFIELDS_12,
+        qualifiers: &[InsnOperandQualifier::S_H],
+        bit_fields: &[],
     },
 ];
 const OPERANDS_36: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        qualifiers: &[InsnOperandQualifier::W],
         bit_fields: BITFIELDS_4,
     },
     InsnOperand {
-        kind: InsnOperandKind::ADDR_REGOFF,
+        kind: InsnOperandKind::ADDR_SIMM9,
         class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
-        bit_fields: &[],
+        qualifiers: &[InsnOperandQualifier::S_H],
+        bit_fields: BITFIELDS_10,
     },
 ];
 const OPERANDS_37: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        qualifiers: &[InsnOperandQualifier::W],
         bit_fields: BITFIELDS_4,
     },
     InsnOperand {
-        kind: InsnOperandKind::ADDR_SIMM9,
+        kind: InsnOperandKind::ADDR_UIMM12,
         class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
-        bit_fields: BITFIELDS_9,
+        qualifiers: &[InsnOperandQualifier::S_H],
+        bit_fields: BITFIELDS_13,
     },
 ];
 const OPERANDS_38: &[InsnOperand] = &[
@@ -847,30 +907,100 @@ const OPERANDS_38: &[InsnOperand] = &[
         bit_fields: BITFIELDS_4,
     },
     InsnOperand {
-        kind: InsnOperandKind::ADDR_UIMM12,
+        kind: InsnOperandKind::ADDR_REGOFF,
         class: InsnOperandClass::ADDRESS,
-        qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
-        bit_fields: BITFIELDS_12,
+        qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
+        bit_fields: &[],
     },
 ];
 const OPERANDS_39: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::X],
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
         bit_fields: BITFIELDS_4,
     },
     InsnOperand {
-        kind: InsnOperandKind::ADDR_PCREL19,
+        kind: InsnOperandKind::ADDR_SIMM9,
         class: InsnOperandClass::ADDRESS,
-        qualifiers: &[],
-        bit_fields: BITFIELDS_11,
+        qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
+        bit_fields: BITFIELDS_10,
     },
 ];
 const OPERANDS_40: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_UIMM12,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_B, InsnOperandQualifier::S_B],
+        bit_fields: BITFIELDS_13,
+    },
+];
+const OPERANDS_41: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_REGOFF,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_42: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM9,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
+        bit_fields: BITFIELDS_10,
+    },
+];
+const OPERANDS_43: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_UIMM12,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_H, InsnOperandQualifier::S_H],
+        bit_fields: BITFIELDS_13,
+    },
+];
+const OPERANDS_44: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_PCREL19,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: BITFIELDS_12,
+    },
+];
+const OPERANDS_45: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
         qualifiers: &[InsnOperandQualifier::X],
         bit_fields: BITFIELDS_4,
     },
@@ -881,7 +1011,7 @@ const OPERANDS_40: &[InsnOperand] = &[
         bit_fields: &[],
     },
 ];
-const OPERANDS_41: &[InsnOperand] = &[
+const OPERANDS_46: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
@@ -892,10 +1022,10 @@ const OPERANDS_41: &[InsnOperand] = &[
         kind: InsnOperandKind::ADDR_SIMM9,
         class: InsnOperandClass::ADDRESS,
         qualifiers: &[InsnOperandQualifier::S_S],
-        bit_fields: BITFIELDS_9,
+        bit_fields: BITFIELDS_10,
     },
 ];
-const OPERANDS_42: &[InsnOperand] = &[
+const OPERANDS_47: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
@@ -906,10 +1036,50 @@ const OPERANDS_42: &[InsnOperand] = &[
         kind: InsnOperandKind::ADDR_UIMM12,
         class: InsnOperandClass::ADDRESS,
         qualifiers: &[InsnOperandQualifier::S_S],
-        bit_fields: BITFIELDS_12,
+        bit_fields: BITFIELDS_13,
     },
 ];
-const OPERANDS_43: &[InsnOperand] = &[
+const OPERANDS_48: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt2,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_6,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM7,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_D],
+        bit_fields: BITFIELDS_11,
+    },
+];
+const OPERANDS_49: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Fd,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[InsnOperandQualifier::S_Q],
+        bit_fields: BITFIELDS_0,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Fa,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[InsnOperandQualifier::S_Q],
+        bit_fields: BITFIELDS_15,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMM7,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[InsnOperandQualifier::S_Q],
+        bit_fields: BITFIELDS_11,
+    },
+];
+const OPERANDS_50: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::PRFOP,
         class: InsnOperandClass::SYSTEM,
@@ -920,10 +1090,10 @@ const OPERANDS_43: &[InsnOperand] = &[
         kind: InsnOperandKind::ADDR_PCREL19,
         class: InsnOperandClass::ADDRESS,
         qualifiers: &[],
-        bit_fields: BITFIELDS_11,
+        bit_fields: BITFIELDS_12,
     },
 ];
-const OPERANDS_44: &[InsnOperand] = &[
+const OPERANDS_51: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::PRFOP,
         class: InsnOperandClass::SYSTEM,
@@ -937,7 +1107,7 @@ const OPERANDS_44: &[InsnOperand] = &[
         bit_fields: &[],
     },
 ];
-const OPERANDS_45: &[InsnOperand] = &[
+const OPERANDS_52: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::PRFOP,
         class: InsnOperandClass::SYSTEM,
@@ -948,10 +1118,10 @@ const OPERANDS_45: &[InsnOperand] = &[
         kind: InsnOperandKind::ADDR_UIMM12,
         class: InsnOperandClass::ADDRESS,
         qualifiers: &[],
-        bit_fields: BITFIELDS_12,
+        bit_fields: BITFIELDS_13,
     },
 ];
-const OPERANDS_46: &[InsnOperand] = &[
+const OPERANDS_53: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::PRFOP,
         class: InsnOperandClass::SYSTEM,
@@ -962,10 +1132,10 @@ const OPERANDS_46: &[InsnOperand] = &[
         kind: InsnOperandKind::ADDR_SIMM9,
         class: InsnOperandClass::ADDRESS,
         qualifiers: &[],
-        bit_fields: BITFIELDS_9,
+        bit_fields: BITFIELDS_10,
     },
 ];
-const OPERANDS_47: &[InsnOperand] = &[
+const OPERANDS_54: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt_SP,
         class: InsnOperandClass::INT_REG,
@@ -976,10 +1146,10 @@ const OPERANDS_47: &[InsnOperand] = &[
         kind: InsnOperandKind::ADDR_SIMM13,
         class: InsnOperandClass::ADDRESS,
         qualifiers: &[InsnOperandQualifier::imm_tag, InsnOperandQualifier::imm_tag],
-        bit_fields: BITFIELDS_9,
+        bit_fields: BITFIELDS_10,
     },
 ];
-const OPERANDS_48: &[InsnOperand] = &[
+const OPERANDS_55: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rs,
         class: InsnOperandClass::INT_REG,
@@ -999,7 +1169,39 @@ const OPERANDS_48: &[InsnOperand] = &[
         bit_fields: &[],
     },
 ];
-const OPERANDS_49: &[InsnOperand] = &[
+const OPERANDS_56: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Fm,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[InsnOperandQualifier::S_H],
+        bit_fields: BITFIELDS_7,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_57: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Fm,
+        class: InsnOperandClass::FP_REG,
+        qualifiers: &[
+            InsnOperandQualifier::S_H,
+            InsnOperandQualifier::S_S,
+            InsnOperandQualifier::S_D,
+        ],
+        bit_fields: BITFIELDS_7,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_58: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rt,
         class: InsnOperandClass::INT_REG,
@@ -1016,10 +1218,30 @@ const OPERANDS_49: &[InsnOperand] = &[
         kind: InsnOperandKind::ADDR_SIMM11,
         class: InsnOperandClass::ADDRESS,
         qualifiers: &[InsnOperandQualifier::imm_tag],
-        bit_fields: BITFIELDS_10,
+        bit_fields: BITFIELDS_11,
     },
 ];
-const OPERANDS_50: &[InsnOperand] = &[
+const OPERANDS_59: &[InsnOperand] = &[
+    InsnOperand {
+        kind: InsnOperandKind::Rs,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::W],
+        bit_fields: BITFIELDS_3,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::Rt,
+        class: InsnOperandClass::INT_REG,
+        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
+        bit_fields: BITFIELDS_4,
+    },
+    InsnOperand {
+        kind: InsnOperandKind::ADDR_SIMPLE,
+        class: InsnOperandClass::ADDRESS,
+        qualifiers: &[],
+        bit_fields: &[],
+    },
+];
+const OPERANDS_60: &[InsnOperand] = &[
     InsnOperand {
         kind: InsnOperandKind::Rs,
         class: InsnOperandClass::INT_REG,
@@ -1037,26 +1259,6 @@ const OPERANDS_50: &[InsnOperand] = &[
         class: InsnOperandClass::INT_REG,
         qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
         bit_fields: BITFIELDS_6,
-    },
-    InsnOperand {
-        kind: InsnOperandKind::ADDR_SIMPLE,
-        class: InsnOperandClass::ADDRESS,
-        qualifiers: &[],
-        bit_fields: &[],
-    },
-];
-const OPERANDS_51: &[InsnOperand] = &[
-    InsnOperand {
-        kind: InsnOperandKind::Rs,
-        class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::W],
-        bit_fields: BITFIELDS_3,
-    },
-    InsnOperand {
-        kind: InsnOperandKind::Rt,
-        class: InsnOperandClass::INT_REG,
-        qualifiers: &[InsnOperandQualifier::W, InsnOperandQualifier::X],
-        bit_fields: BITFIELDS_4,
     },
     InsnOperand {
         kind: InsnOperandKind::ADDR_SIMPLE,
@@ -1083,15 +1285,23 @@ pub enum InsnId {
     CASAL_Rs_Rt_ADDR_SIMPLE,
     CASALB_Rs_Rt_ADDR_SIMPLE,
     CASALH_Rs_Rt_ADDR_SIMPLE,
+    CASALT_Rs_Rt_ADDR_SIMPLE,
+    CASAT_Rs_Rt_ADDR_SIMPLE,
     CASB_Rs_Rt_ADDR_SIMPLE,
     CASH_Rs_Rt_ADDR_SIMPLE,
     CASL_Rs_Rt_ADDR_SIMPLE,
     CASLB_Rs_Rt_ADDR_SIMPLE,
     CASLH_Rs_Rt_ADDR_SIMPLE,
+    CASLT_Rs_Rt_ADDR_SIMPLE,
     CASP_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
     CASPA_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
     CASPAL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    CASPALT_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    CASPAT_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
     CASPL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    CASPLT_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    CASPT_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    CAST_Rs_Rt_ADDR_SIMPLE,
     EON_Rd_Rn_Rm_SFT,
     EOR_Rd_SP_Rn_LIMM,
     EOR_Rd_Rn_Rm_SFT,
@@ -1108,6 +1318,8 @@ pub enum InsnId {
     LDADDL_Rs_Rt_ADDR_SIMPLE,
     LDADDLB_Rs_Rt_ADDR_SIMPLE,
     LDADDLH_Rs_Rt_ADDR_SIMPLE,
+    LDAP_Rt_Rs_ADDR_SIMPLE,
+    LDAPP_Rt_Rs_ADDR_SIMPLE,
     LDAPR_Rt_ADDR_SIMPLE,
     LDAPRB_Rt_ADDR_SIMPLE,
     LDAPRH_Rt_ADDR_SIMPLE,
@@ -1123,10 +1335,31 @@ pub enum InsnId {
     LDAR_Rt_ADDR_SIMPLE,
     LDARB_Rt_ADDR_SIMPLE,
     LDARH_Rt_ADDR_SIMPLE,
+    LDATXR_Rt_ADDR_SIMPLE,
     LDAXP_Rt_Rt2_ADDR_SIMPLE,
     LDAXR_Rt_ADDR_SIMPLE,
     LDAXRB_Rt_ADDR_SIMPLE,
     LDAXRH_Rt_ADDR_SIMPLE,
+    LDBFADD_Fm_Fd_ADDR_SIMPLE,
+    LDBFADDA_Fm_Fd_ADDR_SIMPLE,
+    LDBFADDAL_Fm_Fd_ADDR_SIMPLE,
+    LDBFADDL_Fm_Fd_ADDR_SIMPLE,
+    LDBFMAX_Fm_Fd_ADDR_SIMPLE,
+    LDBFMAXA_Fm_Fd_ADDR_SIMPLE,
+    LDBFMAXAL_Fm_Fd_ADDR_SIMPLE,
+    LDBFMAXL_Fm_Fd_ADDR_SIMPLE,
+    LDBFMAXNM_Fm_Fd_ADDR_SIMPLE,
+    LDBFMAXNMA_Fm_Fd_ADDR_SIMPLE,
+    LDBFMAXNMAL_Fm_Fd_ADDR_SIMPLE,
+    LDBFMAXNML_Fm_Fd_ADDR_SIMPLE,
+    LDBFMIN_Fm_Fd_ADDR_SIMPLE,
+    LDBFMINA_Fm_Fd_ADDR_SIMPLE,
+    LDBFMINAL_Fm_Fd_ADDR_SIMPLE,
+    LDBFMINL_Fm_Fd_ADDR_SIMPLE,
+    LDBFMINNM_Fm_Fd_ADDR_SIMPLE,
+    LDBFMINNMA_Fm_Fd_ADDR_SIMPLE,
+    LDBFMINNMAL_Fm_Fd_ADDR_SIMPLE,
+    LDBFMINNML_Fm_Fd_ADDR_SIMPLE,
     LDCLR_Rs_Rt_ADDR_SIMPLE,
     LDCLRA_Rs_Rt_ADDR_SIMPLE,
     LDCLRAB_Rs_Rt_ADDR_SIMPLE,
@@ -1155,6 +1388,26 @@ pub enum InsnId {
     LDEORL_Rs_Rt_ADDR_SIMPLE,
     LDEORLB_Rs_Rt_ADDR_SIMPLE,
     LDEORLH_Rs_Rt_ADDR_SIMPLE,
+    LDFADD_Fm_Fd_ADDR_SIMPLE,
+    LDFADDA_Fm_Fd_ADDR_SIMPLE,
+    LDFADDAL_Fm_Fd_ADDR_SIMPLE,
+    LDFADDL_Fm_Fd_ADDR_SIMPLE,
+    LDFMAX_Fm_Fd_ADDR_SIMPLE,
+    LDFMAXA_Fm_Fd_ADDR_SIMPLE,
+    LDFMAXAL_Fm_Fd_ADDR_SIMPLE,
+    LDFMAXL_Fm_Fd_ADDR_SIMPLE,
+    LDFMAXNM_Fm_Fd_ADDR_SIMPLE,
+    LDFMAXNMA_Fm_Fd_ADDR_SIMPLE,
+    LDFMAXNMAL_Fm_Fd_ADDR_SIMPLE,
+    LDFMAXNML_Fm_Fd_ADDR_SIMPLE,
+    LDFMIN_Fm_Fd_ADDR_SIMPLE,
+    LDFMINA_Fm_Fd_ADDR_SIMPLE,
+    LDFMINAL_Fm_Fd_ADDR_SIMPLE,
+    LDFMINL_Fm_Fd_ADDR_SIMPLE,
+    LDFMINNM_Fm_Fd_ADDR_SIMPLE,
+    LDFMINNMA_Fm_Fd_ADDR_SIMPLE,
+    LDFMINNMAL_Fm_Fd_ADDR_SIMPLE,
+    LDFMINNML_Fm_Fd_ADDR_SIMPLE,
     LDG_Rt_ADDR_SIMM13,
     LDGM_Rt_ADDR_SIMPLE,
     LDLAR_Rt_ADDR_SIMPLE,
@@ -1234,12 +1487,31 @@ pub enum InsnId {
     LDSMINL_Rs_Rt_ADDR_SIMPLE,
     LDSMINLB_Rs_Rt_ADDR_SIMPLE,
     LDSMINLH_Rs_Rt_ADDR_SIMPLE,
+    LDTADD_Rs_Rt_ADDR_SIMPLE,
+    LDTADDA_Rs_Rt_ADDR_SIMPLE,
+    LDTADDAL_Rs_Rt_ADDR_SIMPLE,
+    LDTADDL_Rs_Rt_ADDR_SIMPLE,
+    LDTCLR_Rs_Rt_ADDR_SIMPLE,
+    LDTCLRA_Rs_Rt_ADDR_SIMPLE,
+    LDTCLRAL_Rs_Rt_ADDR_SIMPLE,
+    LDTCLRL_Rs_Rt_ADDR_SIMPLE,
+    LDTNP_Rt_Rt2_ADDR_SIMM7,
+    LDTNP_Fd_Fa_ADDR_SIMM7,
+    LDTP_Rt_Rt2_ADDR_SIMM7,
+    LDTP_Rt_X_Rt2_X_ADDR_SIMM7_S_D,
+    LDTP_Fd_Fa_ADDR_SIMM7,
+    LDTP_Fd_S_Q_Fa_S_Q_ADDR_SIMM7_S_Q,
     LDTR_Rt_ADDR_SIMM9,
     LDTRB_Rt_ADDR_SIMM9,
     LDTRH_Rt_ADDR_SIMM9,
     LDTRSB_Rt_ADDR_SIMM9,
     LDTRSH_Rt_ADDR_SIMM9,
     LDTRSW_Rt_ADDR_SIMM9,
+    LDTSET_Rs_Rt_ADDR_SIMPLE,
+    LDTSETA_Rs_Rt_ADDR_SIMPLE,
+    LDTSETAL_Rs_Rt_ADDR_SIMPLE,
+    LDTSETL_Rs_Rt_ADDR_SIMPLE,
+    LDTXR_Rt_ADDR_SIMPLE,
     LDUMAX_Rs_Rt_ADDR_SIMPLE,
     LDUMAXA_Rs_Rt_ADDR_SIMPLE,
     LDUMAXAB_Rs_Rt_ADDR_SIMPLE,
@@ -1287,6 +1559,26 @@ pub enum InsnId {
     ST64B_Rt_LS64_ADDR_SIMPLE,
     ST64BV_Rs_Rt_LS64_ADDR_SIMPLE,
     ST64BV0_Rs_Rt_LS64_ADDR_SIMPLE,
+    STBFADD_Fm_ADDR_SIMPLE,
+    STBFADDL_Fm_ADDR_SIMPLE,
+    STBFMAX_Fm_ADDR_SIMPLE,
+    STBFMAXL_Fm_ADDR_SIMPLE,
+    STBFMAXNM_Fm_ADDR_SIMPLE,
+    STBFMAXNML_Fm_ADDR_SIMPLE,
+    STBFMIN_Fm_ADDR_SIMPLE,
+    STBFMINL_Fm_ADDR_SIMPLE,
+    STBFMINNM_Fm_ADDR_SIMPLE,
+    STBFMINNML_Fm_ADDR_SIMPLE,
+    STFADD_Fm_ADDR_SIMPLE,
+    STFADDL_Fm_ADDR_SIMPLE,
+    STFMAX_Fm_ADDR_SIMPLE,
+    STFMAXL_Fm_ADDR_SIMPLE,
+    STFMAXNM_Fm_ADDR_SIMPLE,
+    STFMAXNML_Fm_ADDR_SIMPLE,
+    STFMIN_Fm_ADDR_SIMPLE,
+    STFMINL_Fm_ADDR_SIMPLE,
+    STFMINNM_Fm_ADDR_SIMPLE,
+    STFMINNML_Fm_ADDR_SIMPLE,
     STG_Rt_SP_ADDR_SIMM13,
     STG_Rt_SP_X_ADDR_SIMM13_imm_tag,
     STGM_Rt_ADDR_SIMPLE,
@@ -1295,9 +1587,11 @@ pub enum InsnId {
     STLLR_Rt_ADDR_SIMPLE,
     STLLRB_Rt_ADDR_SIMPLE,
     STLLRH_Rt_ADDR_SIMPLE,
+    STLP_Rt_Rs_ADDR_SIMPLE,
     STLR_Rt_ADDR_SIMPLE,
     STLRB_Rt_ADDR_SIMPLE,
     STLRH_Rt_ADDR_SIMPLE,
+    STLTXR_Rs_Rt_ADDR_SIMPLE,
     STLUR_Rt_ADDR_OFFSET,
     STLUR_Rt_X_ADDR_OFFSET,
     STLURB_Rt_ADDR_OFFSET,
@@ -1324,9 +1618,16 @@ pub enum InsnId {
     STRH_Rt_ADDR_REGOFF,
     STRH_Rt_ADDR_SIMM9,
     STRH_Rt_ADDR_UIMM12,
+    STTNP_Rt_Rt2_ADDR_SIMM7,
+    STTNP_Fd_Fa_ADDR_SIMM7,
+    STTP_Rt_Rt2_ADDR_SIMM7,
+    STTP_Rt_X_Rt2_X_ADDR_SIMM7_S_D,
+    STTP_Fd_Fa_ADDR_SIMM7,
+    STTP_Fd_S_Q_Fa_S_Q_ADDR_SIMM7_S_Q,
     STTR_Rt_ADDR_SIMM9,
     STTRB_Rt_ADDR_SIMM9,
     STTRH_Rt_ADDR_SIMM9,
+    STTXR_Rs_Rt_ADDR_SIMPLE,
     STUR_Rt_ADDR_SIMM9,
     STUR_Ft_ADDR_SIMM9,
     STURB_Rt_ADDR_SIMM9,
@@ -1356,9 +1657,13 @@ pub enum InsnId {
     SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
     SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
     SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    SWPT_Rs_Rt_ADDR_SIMPLE,
+    SWPTA_Rs_Rt_ADDR_SIMPLE,
+    SWPTAL_Rs_Rt_ADDR_SIMPLE,
+    SWPTL_Rs_Rt_ADDR_SIMPLE,
 }
 #[doc = r" The identity of each instruction, parallel to INSNS."]
-static INSN_IDS: [InsnId; 286] = [
+static INSN_IDS: [InsnId; 389] = [
     InsnId::AND_Rd_SP_Rn_LIMM,
     InsnId::AND_Rd_Rn_Rm_SFT,
     InsnId::ANDS_Rd_Rn_LIMM,
@@ -1372,15 +1677,23 @@ static INSN_IDS: [InsnId; 286] = [
     InsnId::CASAL_Rs_Rt_ADDR_SIMPLE,
     InsnId::CASALB_Rs_Rt_ADDR_SIMPLE,
     InsnId::CASALH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASALT_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASAT_Rs_Rt_ADDR_SIMPLE,
     InsnId::CASB_Rs_Rt_ADDR_SIMPLE,
     InsnId::CASH_Rs_Rt_ADDR_SIMPLE,
     InsnId::CASL_Rs_Rt_ADDR_SIMPLE,
     InsnId::CASLB_Rs_Rt_ADDR_SIMPLE,
     InsnId::CASLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::CASLT_Rs_Rt_ADDR_SIMPLE,
     InsnId::CASP_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
     InsnId::CASPA_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
     InsnId::CASPAL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    InsnId::CASPALT_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    InsnId::CASPAT_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
     InsnId::CASPL_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    InsnId::CASPLT_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    InsnId::CASPT_Rs_PAIRREG_Rt_PAIRREG_ADDR_SIMPLE,
+    InsnId::CAST_Rs_Rt_ADDR_SIMPLE,
     InsnId::EON_Rd_Rn_Rm_SFT,
     InsnId::EOR_Rd_SP_Rn_LIMM,
     InsnId::EOR_Rd_Rn_Rm_SFT,
@@ -1397,6 +1710,8 @@ static INSN_IDS: [InsnId; 286] = [
     InsnId::LDADDL_Rs_Rt_ADDR_SIMPLE,
     InsnId::LDADDLB_Rs_Rt_ADDR_SIMPLE,
     InsnId::LDADDLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDAP_Rt_Rs_ADDR_SIMPLE,
+    InsnId::LDAPP_Rt_Rs_ADDR_SIMPLE,
     InsnId::LDAPR_Rt_ADDR_SIMPLE,
     InsnId::LDAPRB_Rt_ADDR_SIMPLE,
     InsnId::LDAPRH_Rt_ADDR_SIMPLE,
@@ -1412,10 +1727,31 @@ static INSN_IDS: [InsnId; 286] = [
     InsnId::LDAR_Rt_ADDR_SIMPLE,
     InsnId::LDARB_Rt_ADDR_SIMPLE,
     InsnId::LDARH_Rt_ADDR_SIMPLE,
+    InsnId::LDATXR_Rt_ADDR_SIMPLE,
     InsnId::LDAXP_Rt_Rt2_ADDR_SIMPLE,
     InsnId::LDAXR_Rt_ADDR_SIMPLE,
     InsnId::LDAXRB_Rt_ADDR_SIMPLE,
     InsnId::LDAXRH_Rt_ADDR_SIMPLE,
+    InsnId::LDBFADD_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFADDA_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFADDAL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFADDL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMAX_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMAXA_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMAXAL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMAXL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMAXNM_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMAXNMA_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMAXNMAL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMAXNML_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMIN_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMINA_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMINAL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMINL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMINNM_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMINNMA_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMINNMAL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDBFMINNML_Fm_Fd_ADDR_SIMPLE,
     InsnId::LDCLR_Rs_Rt_ADDR_SIMPLE,
     InsnId::LDCLRA_Rs_Rt_ADDR_SIMPLE,
     InsnId::LDCLRAB_Rs_Rt_ADDR_SIMPLE,
@@ -1444,6 +1780,26 @@ static INSN_IDS: [InsnId; 286] = [
     InsnId::LDEORL_Rs_Rt_ADDR_SIMPLE,
     InsnId::LDEORLB_Rs_Rt_ADDR_SIMPLE,
     InsnId::LDEORLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDFADD_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFADDA_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFADDAL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFADDL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMAX_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMAXA_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMAXAL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMAXL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMAXNM_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMAXNMA_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMAXNMAL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMAXNML_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMIN_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMINA_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMINAL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMINL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMINNM_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMINNMA_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMINNMAL_Fm_Fd_ADDR_SIMPLE,
+    InsnId::LDFMINNML_Fm_Fd_ADDR_SIMPLE,
     InsnId::LDG_Rt_ADDR_SIMM13,
     InsnId::LDGM_Rt_ADDR_SIMPLE,
     InsnId::LDLAR_Rt_ADDR_SIMPLE,
@@ -1523,12 +1879,31 @@ static INSN_IDS: [InsnId; 286] = [
     InsnId::LDSMINL_Rs_Rt_ADDR_SIMPLE,
     InsnId::LDSMINLB_Rs_Rt_ADDR_SIMPLE,
     InsnId::LDSMINLH_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTADD_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTADDA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTADDAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTADDL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTCLR_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTCLRA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTCLRAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTCLRL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTNP_Rt_Rt2_ADDR_SIMM7,
+    InsnId::LDTNP_Fd_Fa_ADDR_SIMM7,
+    InsnId::LDTP_Rt_Rt2_ADDR_SIMM7,
+    InsnId::LDTP_Rt_X_Rt2_X_ADDR_SIMM7_S_D,
+    InsnId::LDTP_Fd_Fa_ADDR_SIMM7,
+    InsnId::LDTP_Fd_S_Q_Fa_S_Q_ADDR_SIMM7_S_Q,
     InsnId::LDTR_Rt_ADDR_SIMM9,
     InsnId::LDTRB_Rt_ADDR_SIMM9,
     InsnId::LDTRH_Rt_ADDR_SIMM9,
     InsnId::LDTRSB_Rt_ADDR_SIMM9,
     InsnId::LDTRSH_Rt_ADDR_SIMM9,
     InsnId::LDTRSW_Rt_ADDR_SIMM9,
+    InsnId::LDTSET_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTSETA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTSETAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTSETL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::LDTXR_Rt_ADDR_SIMPLE,
     InsnId::LDUMAX_Rs_Rt_ADDR_SIMPLE,
     InsnId::LDUMAXA_Rs_Rt_ADDR_SIMPLE,
     InsnId::LDUMAXAB_Rs_Rt_ADDR_SIMPLE,
@@ -1576,6 +1951,26 @@ static INSN_IDS: [InsnId; 286] = [
     InsnId::ST64B_Rt_LS64_ADDR_SIMPLE,
     InsnId::ST64BV_Rs_Rt_LS64_ADDR_SIMPLE,
     InsnId::ST64BV0_Rs_Rt_LS64_ADDR_SIMPLE,
+    InsnId::STBFADD_Fm_ADDR_SIMPLE,
+    InsnId::STBFADDL_Fm_ADDR_SIMPLE,
+    InsnId::STBFMAX_Fm_ADDR_SIMPLE,
+    InsnId::STBFMAXL_Fm_ADDR_SIMPLE,
+    InsnId::STBFMAXNM_Fm_ADDR_SIMPLE,
+    InsnId::STBFMAXNML_Fm_ADDR_SIMPLE,
+    InsnId::STBFMIN_Fm_ADDR_SIMPLE,
+    InsnId::STBFMINL_Fm_ADDR_SIMPLE,
+    InsnId::STBFMINNM_Fm_ADDR_SIMPLE,
+    InsnId::STBFMINNML_Fm_ADDR_SIMPLE,
+    InsnId::STFADD_Fm_ADDR_SIMPLE,
+    InsnId::STFADDL_Fm_ADDR_SIMPLE,
+    InsnId::STFMAX_Fm_ADDR_SIMPLE,
+    InsnId::STFMAXL_Fm_ADDR_SIMPLE,
+    InsnId::STFMAXNM_Fm_ADDR_SIMPLE,
+    InsnId::STFMAXNML_Fm_ADDR_SIMPLE,
+    InsnId::STFMIN_Fm_ADDR_SIMPLE,
+    InsnId::STFMINL_Fm_ADDR_SIMPLE,
+    InsnId::STFMINNM_Fm_ADDR_SIMPLE,
+    InsnId::STFMINNML_Fm_ADDR_SIMPLE,
     InsnId::STG_Rt_SP_ADDR_SIMM13,
     InsnId::STG_Rt_SP_X_ADDR_SIMM13_imm_tag,
     InsnId::STGM_Rt_ADDR_SIMPLE,
@@ -1584,9 +1979,11 @@ static INSN_IDS: [InsnId; 286] = [
     InsnId::STLLR_Rt_ADDR_SIMPLE,
     InsnId::STLLRB_Rt_ADDR_SIMPLE,
     InsnId::STLLRH_Rt_ADDR_SIMPLE,
+    InsnId::STLP_Rt_Rs_ADDR_SIMPLE,
     InsnId::STLR_Rt_ADDR_SIMPLE,
     InsnId::STLRB_Rt_ADDR_SIMPLE,
     InsnId::STLRH_Rt_ADDR_SIMPLE,
+    InsnId::STLTXR_Rs_Rt_ADDR_SIMPLE,
     InsnId::STLUR_Rt_ADDR_OFFSET,
     InsnId::STLUR_Rt_X_ADDR_OFFSET,
     InsnId::STLURB_Rt_ADDR_OFFSET,
@@ -1613,9 +2010,16 @@ static INSN_IDS: [InsnId; 286] = [
     InsnId::STRH_Rt_ADDR_REGOFF,
     InsnId::STRH_Rt_ADDR_SIMM9,
     InsnId::STRH_Rt_ADDR_UIMM12,
+    InsnId::STTNP_Rt_Rt2_ADDR_SIMM7,
+    InsnId::STTNP_Fd_Fa_ADDR_SIMM7,
+    InsnId::STTP_Rt_Rt2_ADDR_SIMM7,
+    InsnId::STTP_Rt_X_Rt2_X_ADDR_SIMM7_S_D,
+    InsnId::STTP_Fd_Fa_ADDR_SIMM7,
+    InsnId::STTP_Fd_S_Q_Fa_S_Q_ADDR_SIMM7_S_Q,
     InsnId::STTR_Rt_ADDR_SIMM9,
     InsnId::STTRB_Rt_ADDR_SIMM9,
     InsnId::STTRH_Rt_ADDR_SIMM9,
+    InsnId::STTXR_Rs_Rt_ADDR_SIMPLE,
     InsnId::STUR_Rt_ADDR_SIMM9,
     InsnId::STUR_Ft_ADDR_SIMM9,
     InsnId::STURB_Rt_ADDR_SIMM9,
@@ -1645,9 +2049,13 @@ static INSN_IDS: [InsnId; 286] = [
     InsnId::SWPPA_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
     InsnId::SWPPAL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
     InsnId::SWPPL_LSE128_Rt_LSE128_Rt2_ADDR_SIMPLE,
+    InsnId::SWPT_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPTA_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPTAL_Rs_Rt_ADDR_SIMPLE,
+    InsnId::SWPTL_Rs_Rt_ADDR_SIMPLE,
 ];
 #[doc = r" The decoded instruction definitions, indexed by InsnId."]
-static INSNS: [Insn; 286] = [
+static INSNS: [Insn; 389] = [
     Insn {
         mnemonic: "and",
         aliases: &[],
@@ -1779,6 +2187,26 @@ static INSNS: [Insn; 286] = [
         flags: InsnFlags::empty(),
     },
     Insn {
+        mnemonic: "casalt",
+        aliases: &[],
+        opcode: 0xc9c0fc00,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_5,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "casat",
+        aliases: &[],
+        opcode: 0xc9c07c00,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_5,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
         mnemonic: "casb",
         aliases: &[],
         opcode: 0x8a07c00,
@@ -1829,13 +2257,23 @@ static INSNS: [Insn; 286] = [
         flags: InsnFlags::empty(),
     },
     Insn {
+        mnemonic: "caslt",
+        aliases: &[],
+        opcode: 0xc980fc00,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_5,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
         mnemonic: "casp",
         aliases: &[],
         opcode: 0x8207c00,
         mask: 0xbfe0fc00,
         class: InsnClass::LSE_ATOMIC,
         feature_set: InsnFeatureSet::LSE,
-        operands: OPERANDS_5,
+        operands: OPERANDS_6,
         flags: InsnFlags::const_from_bits(64u64),
     },
     Insn {
@@ -1845,7 +2283,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe0fc00,
         class: InsnClass::LSE_ATOMIC,
         feature_set: InsnFeatureSet::LSE,
-        operands: OPERANDS_5,
+        operands: OPERANDS_6,
         flags: InsnFlags::const_from_bits(64u64),
     },
     Insn {
@@ -1855,8 +2293,28 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe0fc00,
         class: InsnClass::LSE_ATOMIC,
         feature_set: InsnFeatureSet::LSE,
-        operands: OPERANDS_5,
+        operands: OPERANDS_6,
         flags: InsnFlags::const_from_bits(64u64),
+    },
+    Insn {
+        mnemonic: "caspalt",
+        aliases: &[],
+        opcode: 0x49c0fc00,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_7,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "caspat",
+        aliases: &[],
+        opcode: 0x49c07c00,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_7,
+        flags: InsnFlags::empty(),
     },
     Insn {
         mnemonic: "caspl",
@@ -1865,8 +2323,38 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe0fc00,
         class: InsnClass::LSE_ATOMIC,
         feature_set: InsnFeatureSet::LSE,
-        operands: OPERANDS_5,
+        operands: OPERANDS_6,
         flags: InsnFlags::const_from_bits(64u64),
+    },
+    Insn {
+        mnemonic: "casplt",
+        aliases: &[],
+        opcode: 0x4980fc00,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_7,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "caspt",
+        aliases: &[],
+        opcode: 0x49807c00,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_7,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "cast",
+        aliases: &[],
+        opcode: 0xc9807c00,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_5,
+        flags: InsnFlags::empty(),
     },
     Insn {
         mnemonic: "eon",
@@ -1905,7 +2393,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LSE_ATOMIC,
         feature_set: InsnFeatureSet::LS64,
-        operands: OPERANDS_6,
+        operands: OPERANDS_8,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2029,13 +2517,33 @@ static INSNS: [Insn; 286] = [
         flags: InsnFlags::const_from_bits(8u64),
     },
     Insn {
+        mnemonic: "ldap",
+        aliases: &[],
+        opcode: 0xd9405800,
+        mask: 0xffe0fc00,
+        class: InsnClass::LDSTPAIR_OFF,
+        feature_set: InsnFeatureSet::LSCP,
+        operands: OPERANDS_9,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldapp",
+        aliases: &[],
+        opcode: 0xd9407800,
+        mask: 0xffe0fc00,
+        class: InsnClass::LDSTPAIR_OFF,
+        feature_set: InsnFeatureSet::LSCP,
+        operands: OPERANDS_9,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
         mnemonic: "ldapr",
         aliases: &[],
         opcode: 0xb8bfc000,
         mask: 0xbffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::RCPC,
-        operands: OPERANDS_7,
+        operands: OPERANDS_10,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -2045,7 +2553,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::RCPC,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2055,7 +2563,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::RCPC,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2065,7 +2573,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::RCPC2,
-        operands: OPERANDS_9,
+        operands: OPERANDS_12,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2075,7 +2583,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::RCPC2,
-        operands: OPERANDS_10,
+        operands: OPERANDS_13,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2085,7 +2593,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::RCPC2,
-        operands: OPERANDS_9,
+        operands: OPERANDS_12,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2095,7 +2603,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::RCPC2,
-        operands: OPERANDS_9,
+        operands: OPERANDS_12,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2105,7 +2613,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::RCPC2,
-        operands: OPERANDS_10,
+        operands: OPERANDS_13,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2115,7 +2623,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::RCPC2,
-        operands: OPERANDS_9,
+        operands: OPERANDS_12,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2125,7 +2633,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::RCPC2,
-        operands: OPERANDS_10,
+        operands: OPERANDS_13,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2135,7 +2643,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::RCPC2,
-        operands: OPERANDS_9,
+        operands: OPERANDS_12,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2145,7 +2653,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::RCPC2,
-        operands: OPERANDS_10,
+        operands: OPERANDS_13,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2155,7 +2663,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_7,
+        operands: OPERANDS_10,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -2165,7 +2673,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2175,8 +2683,18 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
         flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldatxr",
+        aliases: &[],
+        opcode: 0x895ffc00,
+        mask: 0xbffffc00,
+        class: InsnClass::LDSTEXCL,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_10,
+        flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
         mnemonic: "ldaxp",
@@ -2185,7 +2703,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfff8000,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_11,
+        operands: OPERANDS_14,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -2195,7 +2713,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_7,
+        operands: OPERANDS_10,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -2205,7 +2723,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2215,7 +2733,207 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfadd",
+        aliases: &[],
+        opcode: 0x3c200000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfadda",
+        aliases: &[],
+        opcode: 0x3ca00000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfaddal",
+        aliases: &[],
+        opcode: 0x3ce00000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfaddl",
+        aliases: &[],
+        opcode: 0x3c600000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfmax",
+        aliases: &[],
+        opcode: 0x3c204000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfmaxa",
+        aliases: &[],
+        opcode: 0x3ca04000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfmaxal",
+        aliases: &[],
+        opcode: 0x3ce04000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfmaxl",
+        aliases: &[],
+        opcode: 0x3c604000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfmaxnm",
+        aliases: &[],
+        opcode: 0x3c206000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfmaxnma",
+        aliases: &[],
+        opcode: 0x3ca06000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfmaxnmal",
+        aliases: &[],
+        opcode: 0x3ce06000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfmaxnml",
+        aliases: &[],
+        opcode: 0x3c606000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfmin",
+        aliases: &[],
+        opcode: 0x3c205000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfmina",
+        aliases: &[],
+        opcode: 0x3ca05000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfminal",
+        aliases: &[],
+        opcode: 0x3ce05000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfminl",
+        aliases: &[],
+        opcode: 0x3c605000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfminnm",
+        aliases: &[],
+        opcode: 0x3c207000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfminnma",
+        aliases: &[],
+        opcode: 0x3ca07000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfminnmal",
+        aliases: &[],
+        opcode: 0x3ce07000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldbfminnml",
+        aliases: &[],
+        opcode: 0x3c607000,
+        mask: 0xffe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_15,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2345,7 +3063,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE128_ATOMIC,
         feature_set: InsnFeatureSet::LSE128,
-        operands: OPERANDS_12,
+        operands: OPERANDS_16,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2355,7 +3073,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE128_ATOMIC,
         feature_set: InsnFeatureSet::LSE128,
-        operands: OPERANDS_12,
+        operands: OPERANDS_16,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2365,7 +3083,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE128_ATOMIC,
         feature_set: InsnFeatureSet::LSE128,
-        operands: OPERANDS_12,
+        operands: OPERANDS_16,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2375,7 +3093,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE128_ATOMIC,
         feature_set: InsnFeatureSet::LSE128,
-        operands: OPERANDS_12,
+        operands: OPERANDS_16,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2499,13 +3217,213 @@ static INSNS: [Insn; 286] = [
         flags: InsnFlags::const_from_bits(8u64),
     },
     Insn {
+        mnemonic: "ldfadd",
+        aliases: &[],
+        opcode: 0x3c200000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfadda",
+        aliases: &[],
+        opcode: 0x3ca00000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfaddal",
+        aliases: &[],
+        opcode: 0x3ce00000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfaddl",
+        aliases: &[],
+        opcode: 0x3c600000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfmax",
+        aliases: &[],
+        opcode: 0x3c204000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfmaxa",
+        aliases: &[],
+        opcode: 0x3ca04000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfmaxal",
+        aliases: &[],
+        opcode: 0x3ce04000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfmaxl",
+        aliases: &[],
+        opcode: 0x3c604000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfmaxnm",
+        aliases: &[],
+        opcode: 0x3c206000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfmaxnma",
+        aliases: &[],
+        opcode: 0x3ca06000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfmaxnmal",
+        aliases: &[],
+        opcode: 0x3ce06000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfmaxnml",
+        aliases: &[],
+        opcode: 0x3c606000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfmin",
+        aliases: &[],
+        opcode: 0x3c205000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfmina",
+        aliases: &[],
+        opcode: 0x3ca05000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfminal",
+        aliases: &[],
+        opcode: 0x3ce05000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfminl",
+        aliases: &[],
+        opcode: 0x3c605000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfminnm",
+        aliases: &[],
+        opcode: 0x3c207000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfminnma",
+        aliases: &[],
+        opcode: 0x3ca07000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfminnmal",
+        aliases: &[],
+        opcode: 0x3ce07000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "ldfminnml",
+        aliases: &[],
+        opcode: 0x3c607000,
+        mask: 0x3fe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_17,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
         mnemonic: "ldg",
         aliases: &[],
         opcode: 0xd9600000,
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_13,
+        operands: OPERANDS_18,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2515,7 +3433,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_14,
+        operands: OPERANDS_19,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2525,7 +3443,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::LOR,
-        operands: OPERANDS_7,
+        operands: OPERANDS_10,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -2535,7 +3453,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::LOR,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2545,7 +3463,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::LOR,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2555,7 +3473,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x7fc00000,
         class: InsnClass::LDSTNAPAIR_OFFS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_15,
+        operands: OPERANDS_20,
         flags: InsnFlags::const_from_bits(131072u64),
     },
     Insn {
@@ -2565,7 +3483,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3fc00000,
         class: InsnClass::LDSTNAPAIR_OFFS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_16,
+        operands: OPERANDS_21,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2575,7 +3493,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x7fc00000,
         class: InsnClass::LDSTPAIR_OFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_15,
+        operands: OPERANDS_20,
         flags: InsnFlags::const_from_bits(131072u64),
     },
     Insn {
@@ -2585,7 +3503,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x7ec00000,
         class: InsnClass::LDSTPAIR_INDEXED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_15,
+        operands: OPERANDS_20,
         flags: InsnFlags::const_from_bits(131072u64),
     },
     Insn {
@@ -2595,7 +3513,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3fc00000,
         class: InsnClass::LDSTPAIR_OFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_16,
+        operands: OPERANDS_21,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2605,7 +3523,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3ec00000,
         class: InsnClass::LDSTPAIR_INDEXED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_16,
+        operands: OPERANDS_21,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2615,7 +3533,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffc00000,
         class: InsnClass::LDSTPAIR_OFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_17,
+        operands: OPERANDS_22,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2625,7 +3543,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfec00000,
         class: InsnClass::LDSTPAIR_INDEXED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_17,
+        operands: OPERANDS_22,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2635,7 +3553,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbf000000,
         class: InsnClass::LOADLIT,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_18,
+        operands: OPERANDS_23,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -2645,7 +3563,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe00c00,
         class: InsnClass::LDST_REGOFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_19,
+        operands: OPERANDS_24,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -2655,7 +3573,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe00400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_20,
+        operands: OPERANDS_25,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -2665,7 +3583,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfc00000,
         class: InsnClass::LDST_POS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_21,
+        operands: OPERANDS_26,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -2675,7 +3593,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3f000000,
         class: InsnClass::LOADLIT,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_22,
+        operands: OPERANDS_27,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2685,7 +3603,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3f600c00,
         class: InsnClass::LDST_REGOFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_23,
+        operands: OPERANDS_28,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2695,7 +3613,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3f600400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_24,
+        operands: OPERANDS_29,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2705,7 +3623,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3f400000,
         class: InsnClass::LDST_POS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_25,
+        operands: OPERANDS_30,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2714,8 +3632,8 @@ static INSNS: [Insn; 286] = [
         opcode: 0xf8200400,
         mask: 0xffa00400,
         class: InsnClass::LDST_IMM10,
-        feature_set: InsnFeatureSet::PAC,
-        operands: OPERANDS_26,
+        feature_set: InsnFeatureSet::PAUTH,
+        operands: OPERANDS_31,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2724,8 +3642,8 @@ static INSNS: [Insn; 286] = [
         opcode: 0xf8a00400,
         mask: 0xffa00400,
         class: InsnClass::LDST_IMM10,
-        feature_set: InsnFeatureSet::PAC,
-        operands: OPERANDS_26,
+        feature_set: InsnFeatureSet::PAUTH,
+        operands: OPERANDS_31,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2735,7 +3653,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_REGOFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_27,
+        operands: OPERANDS_32,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2745,7 +3663,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_28,
+        operands: OPERANDS_33,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2755,7 +3673,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffc00000,
         class: InsnClass::LDST_POS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_29,
+        operands: OPERANDS_34,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2765,7 +3683,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_REGOFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_30,
+        operands: OPERANDS_35,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2775,7 +3693,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_31,
+        operands: OPERANDS_36,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2785,7 +3703,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffc00000,
         class: InsnClass::LDST_POS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_32,
+        operands: OPERANDS_37,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2795,7 +3713,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffa00c00,
         class: InsnClass::LDST_REGOFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_33,
+        operands: OPERANDS_38,
         flags: InsnFlags::const_from_bits(32u64),
     },
     Insn {
@@ -2805,7 +3723,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffa00400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_34,
+        operands: OPERANDS_39,
         flags: InsnFlags::const_from_bits(32u64),
     },
     Insn {
@@ -2815,7 +3733,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xff800000,
         class: InsnClass::LDST_POS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_35,
+        operands: OPERANDS_40,
         flags: InsnFlags::const_from_bits(32u64),
     },
     Insn {
@@ -2825,7 +3743,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffa00c00,
         class: InsnClass::LDST_REGOFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_36,
+        operands: OPERANDS_41,
         flags: InsnFlags::const_from_bits(32u64),
     },
     Insn {
@@ -2835,7 +3753,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffa00400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_37,
+        operands: OPERANDS_42,
         flags: InsnFlags::const_from_bits(32u64),
     },
     Insn {
@@ -2845,7 +3763,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xff800000,
         class: InsnClass::LDST_POS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_38,
+        operands: OPERANDS_43,
         flags: InsnFlags::const_from_bits(32u64),
     },
     Insn {
@@ -2855,7 +3773,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xff000000,
         class: InsnClass::LOADLIT,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_39,
+        operands: OPERANDS_44,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2865,7 +3783,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_REGOFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_40,
+        operands: OPERANDS_45,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2875,7 +3793,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_41,
+        operands: OPERANDS_46,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -2885,7 +3803,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffc00000,
         class: InsnClass::LDST_POS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_42,
+        operands: OPERANDS_47,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3015,7 +3933,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE128_ATOMIC,
         feature_set: InsnFeatureSet::LSE128,
-        operands: OPERANDS_12,
+        operands: OPERANDS_16,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3025,7 +3943,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE128_ATOMIC,
         feature_set: InsnFeatureSet::LSE128,
-        operands: OPERANDS_12,
+        operands: OPERANDS_16,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3035,7 +3953,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE128_ATOMIC,
         feature_set: InsnFeatureSet::LSE128,
-        operands: OPERANDS_12,
+        operands: OPERANDS_16,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3045,7 +3963,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE128_ATOMIC,
         feature_set: InsnFeatureSet::LSE128,
-        operands: OPERANDS_12,
+        operands: OPERANDS_16,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3289,13 +4207,153 @@ static INSNS: [Insn; 286] = [
         flags: InsnFlags::const_from_bits(8u64),
     },
     Insn {
+        mnemonic: "ldtadd",
+        aliases: &[],
+        opcode: 0x19200400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(72u64),
+    },
+    Insn {
+        mnemonic: "ldtadda",
+        aliases: &[],
+        opcode: 0x19a00400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(64u64),
+    },
+    Insn {
+        mnemonic: "ldtaddal",
+        aliases: &[],
+        opcode: 0x19e00400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(64u64),
+    },
+    Insn {
+        mnemonic: "ldtaddl",
+        aliases: &[],
+        opcode: 0x19600400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(72u64),
+    },
+    Insn {
+        mnemonic: "ldtclr",
+        aliases: &[],
+        opcode: 0x19201400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(72u64),
+    },
+    Insn {
+        mnemonic: "ldtclra",
+        aliases: &[],
+        opcode: 0x19a01400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(64u64),
+    },
+    Insn {
+        mnemonic: "ldtclral",
+        aliases: &[],
+        opcode: 0x19e01400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(64u64),
+    },
+    Insn {
+        mnemonic: "ldtclrl",
+        aliases: &[],
+        opcode: 0x19601400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(72u64),
+    },
+    Insn {
+        mnemonic: "ldtnp",
+        aliases: &[],
+        opcode: 0xe8400000,
+        mask: 0xffc00000,
+        class: InsnClass::LDSTNAPAIR_OFFS,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_48,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldtnp",
+        aliases: &[],
+        opcode: 0xec400000,
+        mask: 0xffc00000,
+        class: InsnClass::LDSTNAPAIR_OFFS,
+        feature_set: InsnFeatureSet::LSUI_FP,
+        operands: OPERANDS_49,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldtp",
+        aliases: &[],
+        opcode: 0xe9400000,
+        mask: 0xffc00000,
+        class: InsnClass::LDSTPAIR_OFF,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_48,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldtp",
+        aliases: &[],
+        opcode: 0xe8c00000,
+        mask: 0xfec00000,
+        class: InsnClass::LDSTPAIR_INDEXED,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_48,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldtp",
+        aliases: &[],
+        opcode: 0xed400000,
+        mask: 0xffc00000,
+        class: InsnClass::LDSTPAIR_OFF,
+        feature_set: InsnFeatureSet::LSUI_FP,
+        operands: OPERANDS_49,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldtp",
+        aliases: &[],
+        opcode: 0xecc00000,
+        mask: 0xfec00000,
+        class: InsnClass::LDSTPAIR_INDEXED,
+        feature_set: InsnFeatureSet::LSUI_FP,
+        operands: OPERANDS_49,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
         mnemonic: "ldtr",
         aliases: &[],
         opcode: 0xb8400800,
         mask: 0xbfe00c00,
         class: InsnClass::LDST_UNPRIV,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_20,
+        operands: OPERANDS_25,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -3305,7 +4363,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNPRIV,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_28,
+        operands: OPERANDS_33,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3315,7 +4373,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNPRIV,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_31,
+        operands: OPERANDS_36,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3325,7 +4383,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffa00c00,
         class: InsnClass::LDST_UNPRIV,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_34,
+        operands: OPERANDS_39,
         flags: InsnFlags::const_from_bits(32u64),
     },
     Insn {
@@ -3335,7 +4393,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffa00c00,
         class: InsnClass::LDST_UNPRIV,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_37,
+        operands: OPERANDS_42,
         flags: InsnFlags::const_from_bits(32u64),
     },
     Insn {
@@ -3345,8 +4403,58 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNPRIV,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_41,
+        operands: OPERANDS_46,
         flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "ldtset",
+        aliases: &[],
+        opcode: 0x19203400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(72u64),
+    },
+    Insn {
+        mnemonic: "ldtseta",
+        aliases: &[],
+        opcode: 0x19a03400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(64u64),
+    },
+    Insn {
+        mnemonic: "ldtsetal",
+        aliases: &[],
+        opcode: 0x19e03400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(64u64),
+    },
+    Insn {
+        mnemonic: "ldtsetl",
+        aliases: &[],
+        opcode: 0x19603400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(72u64),
+    },
+    Insn {
+        mnemonic: "ldtxr",
+        aliases: &[],
+        opcode: 0x895f7c00,
+        mask: 0xbffffc00,
+        class: InsnClass::LDSTEXCL,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_10,
+        flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
         mnemonic: "ldumax",
@@ -3595,7 +4703,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_20,
+        operands: OPERANDS_25,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -3605,7 +4713,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3f600c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_24,
+        operands: OPERANDS_29,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3615,7 +4723,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_28,
+        operands: OPERANDS_33,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3625,7 +4733,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_31,
+        operands: OPERANDS_36,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3635,7 +4743,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffa00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_34,
+        operands: OPERANDS_39,
         flags: InsnFlags::const_from_bits(32u64),
     },
     Insn {
@@ -3645,7 +4753,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffa00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_37,
+        operands: OPERANDS_42,
         flags: InsnFlags::const_from_bits(32u64),
     },
     Insn {
@@ -3655,7 +4763,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_41,
+        operands: OPERANDS_46,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3665,7 +4773,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfff8000,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_11,
+        operands: OPERANDS_14,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -3675,7 +4783,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_7,
+        operands: OPERANDS_10,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -3685,7 +4793,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3695,7 +4803,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3735,7 +4843,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xff000000,
         class: InsnClass::LOADLIT,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_43,
+        operands: OPERANDS_50,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3745,7 +4853,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_REGOFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_44,
+        operands: OPERANDS_51,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3755,7 +4863,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffc00000,
         class: InsnClass::LDST_POS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_45,
+        operands: OPERANDS_52,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3765,7 +4873,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_46,
+        operands: OPERANDS_53,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3775,7 +4883,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_47,
+        operands: OPERANDS_54,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3785,7 +4893,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_47,
+        operands: OPERANDS_54,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3795,7 +4903,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LSE_ATOMIC,
         feature_set: InsnFeatureSet::LS64,
-        operands: OPERANDS_6,
+        operands: OPERANDS_8,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3805,7 +4913,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE_ATOMIC,
         feature_set: InsnFeatureSet::LS64,
-        operands: OPERANDS_48,
+        operands: OPERANDS_55,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3815,8 +4923,208 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE_ATOMIC,
         feature_set: InsnFeatureSet::LS64,
-        operands: OPERANDS_48,
+        operands: OPERANDS_55,
         flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "stbfadd",
+        aliases: &[],
+        opcode: 0x3c20801f,
+        mask: 0xffe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_56,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "stbfaddl",
+        aliases: &[],
+        opcode: 0x3c60801f,
+        mask: 0xffe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_56,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "stbfmax",
+        aliases: &[],
+        opcode: 0x3c20c01f,
+        mask: 0xffe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_56,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "stbfmaxl",
+        aliases: &[],
+        opcode: 0x3c60c01f,
+        mask: 0xffe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_56,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "stbfmaxnm",
+        aliases: &[],
+        opcode: 0x3c20e01f,
+        mask: 0xffe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_56,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "stbfmaxnml",
+        aliases: &[],
+        opcode: 0x3c60e01f,
+        mask: 0xffe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_56,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "stbfmin",
+        aliases: &[],
+        opcode: 0x3c20d01f,
+        mask: 0xffe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_56,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "stbfminl",
+        aliases: &[],
+        opcode: 0x3c60d01f,
+        mask: 0xffe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_56,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "stbfminnm",
+        aliases: &[],
+        opcode: 0x3c20f01f,
+        mask: 0xffe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_56,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "stbfminnml",
+        aliases: &[],
+        opcode: 0x3c60f01f,
+        mask: 0xffe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_56,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "stfadd",
+        aliases: &[],
+        opcode: 0x3c20801f,
+        mask: 0x3fe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_57,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "stfaddl",
+        aliases: &[],
+        opcode: 0x3c60801f,
+        mask: 0x3fe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_57,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "stfmax",
+        aliases: &[],
+        opcode: 0x3c20c01f,
+        mask: 0x3fe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_57,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "stfmaxl",
+        aliases: &[],
+        opcode: 0x3c60c01f,
+        mask: 0x3fe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_57,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "stfmaxnm",
+        aliases: &[],
+        opcode: 0x3c20e01f,
+        mask: 0x3fe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_57,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "stfmaxnml",
+        aliases: &[],
+        opcode: 0x3c60e01f,
+        mask: 0x3fe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_57,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "stfmin",
+        aliases: &[],
+        opcode: 0x3c20d01f,
+        mask: 0x3fe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_57,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "stfminl",
+        aliases: &[],
+        opcode: 0x3c60d01f,
+        mask: 0x3fe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_57,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "stfminnm",
+        aliases: &[],
+        opcode: 0x3c20f01f,
+        mask: 0x3fe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_57,
+        flags: InsnFlags::const_from_bits(67108864u64),
+    },
+    Insn {
+        mnemonic: "stfminnml",
+        aliases: &[],
+        opcode: 0x3c60f01f,
+        mask: 0x3fe0fc1f,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSFE,
+        operands: OPERANDS_57,
+        flags: InsnFlags::const_from_bits(67108864u64),
     },
     Insn {
         mnemonic: "stg",
@@ -3825,7 +5133,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_47,
+        operands: OPERANDS_54,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3835,7 +5143,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_47,
+        operands: OPERANDS_54,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3845,7 +5153,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_14,
+        operands: OPERANDS_19,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3855,7 +5163,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffc00000,
         class: InsnClass::LDSTPAIR_OFF,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_49,
+        operands: OPERANDS_58,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3865,7 +5173,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfec00000,
         class: InsnClass::LDSTPAIR_INDEXED,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_49,
+        operands: OPERANDS_58,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3875,7 +5183,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::LOR,
-        operands: OPERANDS_7,
+        operands: OPERANDS_10,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -3885,7 +5193,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::LOR,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3895,7 +5203,17 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::LOR,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "stlp",
+        aliases: &[],
+        opcode: 0xd9005800,
+        mask: 0xffe0fc00,
+        class: InsnClass::LDSTPAIR_OFF,
+        feature_set: InsnFeatureSet::LSCP,
+        operands: OPERANDS_9,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3905,7 +5223,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_7,
+        operands: OPERANDS_10,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -3915,7 +5233,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3925,8 +5243,18 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_8,
+        operands: OPERANDS_11,
         flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "stltxr",
+        aliases: &[],
+        opcode: 0x8900fc00,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LDSTEXCL,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_59,
+        flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
         mnemonic: "stlur",
@@ -3935,7 +5263,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::RCPC2,
-        operands: OPERANDS_9,
+        operands: OPERANDS_12,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3945,7 +5273,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::RCPC2,
-        operands: OPERANDS_10,
+        operands: OPERANDS_13,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3955,7 +5283,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::RCPC2,
-        operands: OPERANDS_9,
+        operands: OPERANDS_12,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3965,7 +5293,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::RCPC2,
-        operands: OPERANDS_9,
+        operands: OPERANDS_12,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -3975,7 +5303,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe08000,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_50,
+        operands: OPERANDS_60,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -3985,7 +5313,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe0fc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_51,
+        operands: OPERANDS_59,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -4015,7 +5343,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x7fc00000,
         class: InsnClass::LDSTNAPAIR_OFFS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_15,
+        operands: OPERANDS_20,
         flags: InsnFlags::const_from_bits(131072u64),
     },
     Insn {
@@ -4025,7 +5353,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3fc00000,
         class: InsnClass::LDSTNAPAIR_OFFS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_16,
+        operands: OPERANDS_21,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4035,7 +5363,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x7fc00000,
         class: InsnClass::LDSTPAIR_OFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_15,
+        operands: OPERANDS_20,
         flags: InsnFlags::const_from_bits(131072u64),
     },
     Insn {
@@ -4045,7 +5373,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x7ec00000,
         class: InsnClass::LDSTPAIR_INDEXED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_15,
+        operands: OPERANDS_20,
         flags: InsnFlags::const_from_bits(131072u64),
     },
     Insn {
@@ -4055,7 +5383,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3fc00000,
         class: InsnClass::LDSTPAIR_OFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_16,
+        operands: OPERANDS_21,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4065,7 +5393,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3ec00000,
         class: InsnClass::LDSTPAIR_INDEXED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_16,
+        operands: OPERANDS_21,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4075,7 +5403,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe00c00,
         class: InsnClass::LDST_REGOFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_19,
+        operands: OPERANDS_24,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -4085,7 +5413,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe00400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_20,
+        operands: OPERANDS_25,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -4095,7 +5423,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfc00000,
         class: InsnClass::LDST_POS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_21,
+        operands: OPERANDS_26,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -4105,7 +5433,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3f600c00,
         class: InsnClass::LDST_REGOFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_23,
+        operands: OPERANDS_28,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4115,7 +5443,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3f600400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_24,
+        operands: OPERANDS_29,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4125,7 +5453,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3f400000,
         class: InsnClass::LDST_POS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_25,
+        operands: OPERANDS_30,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4135,7 +5463,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_REGOFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_27,
+        operands: OPERANDS_32,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4145,7 +5473,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_28,
+        operands: OPERANDS_33,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4155,7 +5483,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffc00000,
         class: InsnClass::LDST_POS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_29,
+        operands: OPERANDS_34,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4165,7 +5493,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_REGOFF,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_30,
+        operands: OPERANDS_35,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4175,7 +5503,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_31,
+        operands: OPERANDS_36,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4185,7 +5513,67 @@ static INSNS: [Insn; 286] = [
         mask: 0xffc00000,
         class: InsnClass::LDST_POS,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_32,
+        operands: OPERANDS_37,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "sttnp",
+        aliases: &[],
+        opcode: 0xe8000000,
+        mask: 0xffc00000,
+        class: InsnClass::LDSTNAPAIR_OFFS,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_48,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "sttnp",
+        aliases: &[],
+        opcode: 0xec000000,
+        mask: 0xffc00000,
+        class: InsnClass::LDSTNAPAIR_OFFS,
+        feature_set: InsnFeatureSet::LSUI_FP,
+        operands: OPERANDS_49,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "sttp",
+        aliases: &[],
+        opcode: 0xe9000000,
+        mask: 0xffc00000,
+        class: InsnClass::LDSTPAIR_OFF,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_48,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "sttp",
+        aliases: &[],
+        opcode: 0xe8800000,
+        mask: 0xfec00000,
+        class: InsnClass::LDSTPAIR_INDEXED,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_48,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "sttp",
+        aliases: &[],
+        opcode: 0xed000000,
+        mask: 0xffc00000,
+        class: InsnClass::LDSTPAIR_OFF,
+        feature_set: InsnFeatureSet::LSUI_FP,
+        operands: OPERANDS_49,
+        flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "sttp",
+        aliases: &[],
+        opcode: 0xec800000,
+        mask: 0xfec00000,
+        class: InsnClass::LDSTPAIR_INDEXED,
+        feature_set: InsnFeatureSet::LSUI_FP,
+        operands: OPERANDS_49,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4195,7 +5583,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe00c00,
         class: InsnClass::LDST_UNPRIV,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_20,
+        operands: OPERANDS_25,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -4205,7 +5593,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNPRIV,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_28,
+        operands: OPERANDS_33,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4215,8 +5603,18 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNPRIV,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_31,
+        operands: OPERANDS_36,
         flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "sttxr",
+        aliases: &[],
+        opcode: 0x89007c00,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LDSTEXCL,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_59,
+        flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
         mnemonic: "stur",
@@ -4225,7 +5623,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_20,
+        operands: OPERANDS_25,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -4235,7 +5633,7 @@ static INSNS: [Insn; 286] = [
         mask: 0x3f600c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_24,
+        operands: OPERANDS_29,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4245,7 +5643,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_28,
+        operands: OPERANDS_33,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4255,7 +5653,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_31,
+        operands: OPERANDS_36,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4265,7 +5663,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe08000,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_50,
+        operands: OPERANDS_60,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -4275,7 +5673,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xbfe0fc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::V8,
-        operands: OPERANDS_51,
+        operands: OPERANDS_59,
         flags: InsnFlags::const_from_bits(2u64),
     },
     Insn {
@@ -4305,8 +5703,8 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_47,
-        flags: InsnFlags::const_from_bits(131072u64),
+        operands: OPERANDS_54,
+        flags: InsnFlags::empty(),
     },
     Insn {
         mnemonic: "stz2g",
@@ -4315,8 +5713,8 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_47,
-        flags: InsnFlags::const_from_bits(131072u64),
+        operands: OPERANDS_54,
+        flags: InsnFlags::empty(),
     },
     Insn {
         mnemonic: "stzg",
@@ -4325,7 +5723,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00c00,
         class: InsnClass::LDST_UNSCALED,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_47,
+        operands: OPERANDS_54,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4335,7 +5733,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe00400,
         class: InsnClass::LDST_IMM9,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_47,
+        operands: OPERANDS_54,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4345,7 +5743,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xfffffc00,
         class: InsnClass::LDSTEXCL,
         feature_set: InsnFeatureSet::MEMTAG,
-        operands: OPERANDS_14,
+        operands: OPERANDS_19,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4475,7 +5873,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE128_ATOMIC,
         feature_set: InsnFeatureSet::LSE128,
-        operands: OPERANDS_12,
+        operands: OPERANDS_16,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4485,7 +5883,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE128_ATOMIC,
         feature_set: InsnFeatureSet::LSE128,
-        operands: OPERANDS_12,
+        operands: OPERANDS_16,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4495,7 +5893,7 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE128_ATOMIC,
         feature_set: InsnFeatureSet::LSE128,
-        operands: OPERANDS_12,
+        operands: OPERANDS_16,
         flags: InsnFlags::empty(),
     },
     Insn {
@@ -4505,8 +5903,48 @@ static INSNS: [Insn; 286] = [
         mask: 0xffe0fc00,
         class: InsnClass::LSE128_ATOMIC,
         feature_set: InsnFeatureSet::LSE128,
-        operands: OPERANDS_12,
+        operands: OPERANDS_16,
         flags: InsnFlags::empty(),
+    },
+    Insn {
+        mnemonic: "swpt",
+        aliases: &[],
+        opcode: 0x19208400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(64u64),
+    },
+    Insn {
+        mnemonic: "swpta",
+        aliases: &[],
+        opcode: 0x19a08400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(64u64),
+    },
+    Insn {
+        mnemonic: "swptal",
+        aliases: &[],
+        opcode: 0x19e08400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(64u64),
+    },
+    Insn {
+        mnemonic: "swptl",
+        aliases: &[],
+        opcode: 0x19608400,
+        mask: 0xbfe0fc00,
+        class: InsnClass::LSE_ATOMIC,
+        feature_set: InsnFeatureSet::LSUI,
+        operands: OPERANDS_3,
+        flags: InsnFlags::const_from_bits(64u64),
     },
 ];
 #[doc = r" Return the index of the matching instruction in INSNS, or -1."]
@@ -4523,26 +5961,26 @@ fn decode_index(insn: u32) -> i32 {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xffe0fc00 == 0x8007c00 {
-                                                    return 263;
+                                                    return 362;
                                                 }
                                             } else {
                                                 if insn & 0xffe0fc00 == 0x48007c00 {
-                                                    return 264;
+                                                    return 363;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xbfe0fc00 == 0x88007c00 {
-                                                return 262;
+                                                return 361;
                                             }
                                         }
                                     } else {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0xbfe0fc00 == 0x8207c00 {
-                                                return 18;
+                                                return 21;
                                             }
                                         } else {
                                             if insn & 0xbfe08000 == 0x88200000 {
-                                                return 261;
+                                                return 360;
                                             }
                                         }
                                     }
@@ -4551,43 +5989,67 @@ fn decode_index(insn: u32) -> i32 {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xffe0fc00 == 0x800fc00 {
-                                                    return 234;
+                                                    return 326;
                                                 }
                                             } else {
                                                 if insn & 0xffe0fc00 == 0x4800fc00 {
-                                                    return 235;
+                                                    return 327;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xbfe0fc00 == 0x8800fc00 {
-                                                return 233;
+                                                return 325;
                                             }
                                         }
                                     } else {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0xbfe0fc00 == 0x820fc00 {
-                                                return 21;
+                                                return 26;
                                             }
                                         } else {
                                             if insn & 0xbfe08000 == 0x88208000 {
-                                                return 232;
+                                                return 324;
                                             }
                                         }
                                     }
                                 }
                             } else {
-                                if insn & 0x7fc00000 == 0x28000000 {
-                                    return 236;
+                                if insn & 0x40000000 == 0 {
+                                    if insn & 0x7fc00000 == 0x28000000 {
+                                        return 328;
+                                    }
+                                } else {
+                                    if insn & 0xffc00000 == 0xe8000000 {
+                                        return 346;
+                                    }
                                 }
                             }
                         } else {
-                            if insn & 0x40000000 == 0 {
-                                if insn & 0x7fc00000 == 0x29000000 {
-                                    return 238;
+                            if insn & 0x20000000 == 0 {
+                                if insn & 0x008000 == 0 {
+                                    if insn & 0xbfe0fc00 == 0x89007c00 {
+                                        return 355;
+                                    }
+                                } else {
+                                    if insn & 0xbfe0fc00 == 0x8900fc00 {
+                                        return 319;
+                                    }
                                 }
                             } else {
-                                if insn & 0xffc00000 == 0x69000000 {
-                                    return 220;
+                                if insn & 0x40000000 == 0 {
+                                    if insn & 0x7fc00000 == 0x29000000 {
+                                        return 330;
+                                    }
+                                } else {
+                                    if insn & 0x80000000 == 0 {
+                                        if insn & 0xffc00000 == 0x69000000 {
+                                            return 310;
+                                        }
+                                    } else {
+                                        if insn & 0xffc00000 == 0xe9000000 {
+                                            return 348;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -4595,30 +6057,42 @@ fn decode_index(insn: u32) -> i32 {
                         if insn & 0x20000000 == 0 {
                             if insn & 0x008000 == 0 {
                                 if insn & 0x200000 == 0 {
-                                    if insn & 0x80000000 == 0 {
-                                        if insn & 0x40000000 == 0 {
-                                            if insn & 0xfffffc00 == 0x89f7c00 {
-                                                return 223;
+                                    if insn & 0x1000000 == 0 {
+                                        if insn & 0x80000000 == 0 {
+                                            if insn & 0x40000000 == 0 {
+                                                if insn & 0xfffffc00 == 0x89f7c00 {
+                                                    return 313;
+                                                }
+                                            } else {
+                                                if insn & 0xfffffc00 == 0x489f7c00 {
+                                                    return 314;
+                                                }
                                             }
                                         } else {
-                                            if insn & 0xfffffc00 == 0x489f7c00 {
-                                                return 224;
+                                            if insn & 0xbffffc00 == 0x889f7c00 {
+                                                return 312;
                                             }
                                         }
                                     } else {
-                                        if insn & 0xbffffc00 == 0x889f7c00 {
-                                            return 222;
+                                        if insn & 0x80000000 == 0 {
+                                            if insn & 0xffe0fc00 == 0x49807c00 {
+                                                return 28;
+                                            }
+                                        } else {
+                                            if insn & 0xffe0fc00 == 0xc9807c00 {
+                                                return 29;
+                                            }
                                         }
                                     }
                                 } else {
                                     if insn & 0x80000000 == 0 {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0xffe0fc00 == 0x8a07c00 {
-                                                return 13;
+                                                return 15;
                                             }
                                         } else {
                                             if insn & 0xffe0fc00 == 0x48a07c00 {
-                                                return 14;
+                                                return 16;
                                             }
                                         }
                                     } else {
@@ -4629,35 +6103,47 @@ fn decode_index(insn: u32) -> i32 {
                                 }
                             } else {
                                 if insn & 0x200000 == 0 {
-                                    if insn & 0x80000000 == 0 {
-                                        if insn & 0x40000000 == 0 {
-                                            if insn & 0xfffffc00 == 0x89ffc00 {
-                                                return 226;
+                                    if insn & 0x1000000 == 0 {
+                                        if insn & 0x80000000 == 0 {
+                                            if insn & 0x40000000 == 0 {
+                                                if insn & 0xfffffc00 == 0x89ffc00 {
+                                                    return 317;
+                                                }
+                                            } else {
+                                                if insn & 0xfffffc00 == 0x489ffc00 {
+                                                    return 318;
+                                                }
                                             }
                                         } else {
-                                            if insn & 0xfffffc00 == 0x489ffc00 {
-                                                return 227;
+                                            if insn & 0xbffffc00 == 0x889ffc00 {
+                                                return 316;
                                             }
                                         }
                                     } else {
-                                        if insn & 0xbffffc00 == 0x889ffc00 {
-                                            return 225;
+                                        if insn & 0x80000000 == 0 {
+                                            if insn & 0xffe0fc00 == 0x4980fc00 {
+                                                return 27;
+                                            }
+                                        } else {
+                                            if insn & 0xffe0fc00 == 0xc980fc00 {
+                                                return 20;
+                                            }
                                         }
                                     }
                                 } else {
                                     if insn & 0x80000000 == 0 {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0xffe0fc00 == 0x8a0fc00 {
-                                                return 16;
+                                                return 18;
                                             }
                                         } else {
                                             if insn & 0xffe0fc00 == 0x48a0fc00 {
-                                                return 17;
+                                                return 19;
                                             }
                                         }
                                     } else {
                                         if insn & 0xbfe0fc00 == 0x88a0fc00 {
-                                            return 15;
+                                            return 17;
                                         }
                                     }
                                 }
@@ -4665,11 +6151,17 @@ fn decode_index(insn: u32) -> i32 {
                         } else {
                             if insn & 0x40000000 == 0 {
                                 if insn & 0x7ec00000 == 0x28800000 {
-                                    return 239;
+                                    return 331;
                                 }
                             } else {
-                                if insn & 0xfec00000 == 0x68800000 {
-                                    return 221;
+                                if insn & 0x80000000 == 0 {
+                                    if insn & 0xfec00000 == 0x68800000 {
+                                        return 311;
+                                    }
+                                } else {
+                                    if insn & 0xfec00000 == 0xe8800000 {
+                                        return 349;
+                                    }
                                 }
                             }
                         }
@@ -4683,26 +6175,26 @@ fn decode_index(insn: u32) -> i32 {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xfffffc00 == 0x85f7c00 {
-                                                    return 203;
+                                                    return 273;
                                                 }
                                             } else {
                                                 if insn & 0xfffffc00 == 0x485f7c00 {
-                                                    return 204;
+                                                    return 274;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xbffffc00 == 0x885f7c00 {
-                                                return 202;
+                                                return 272;
                                             }
                                         }
                                     } else {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0xbfe0fc00 == 0x8607c00 {
-                                                return 19;
+                                                return 22;
                                             }
                                         } else {
                                             if insn & 0xbfff8000 == 0x887f0000 {
-                                                return 201;
+                                                return 271;
                                             }
                                         }
                                     }
@@ -4711,43 +6203,67 @@ fn decode_index(insn: u32) -> i32 {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xfffffc00 == 0x85ffc00 {
-                                                    return 55;
+                                                    return 66;
                                                 }
                                             } else {
                                                 if insn & 0xfffffc00 == 0x485ffc00 {
-                                                    return 56;
+                                                    return 67;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xbffffc00 == 0x885ffc00 {
-                                                return 54;
+                                                return 65;
                                             }
                                         }
                                     } else {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0xbfe0fc00 == 0x860fc00 {
-                                                return 20;
+                                                return 23;
                                             }
                                         } else {
                                             if insn & 0xbfff8000 == 0x887f8000 {
-                                                return 53;
+                                                return 64;
                                             }
                                         }
                                     }
                                 }
                             } else {
-                                if insn & 0x7fc00000 == 0x28400000 {
-                                    return 90;
+                                if insn & 0x40000000 == 0 {
+                                    if insn & 0x7fc00000 == 0x28400000 {
+                                        return 141;
+                                    }
+                                } else {
+                                    if insn & 0xffc00000 == 0xe8400000 {
+                                        return 223;
+                                    }
                                 }
                             }
                         } else {
-                            if insn & 0x40000000 == 0 {
-                                if insn & 0x7fc00000 == 0x29400000 {
-                                    return 92;
+                            if insn & 0x20000000 == 0 {
+                                if insn & 0x008000 == 0 {
+                                    if insn & 0xbffffc00 == 0x895f7c00 {
+                                        return 239;
+                                    }
+                                } else {
+                                    if insn & 0xbffffc00 == 0x895ffc00 {
+                                        return 63;
+                                    }
                                 }
                             } else {
-                                if insn & 0xffc00000 == 0x69400000 {
-                                    return 96;
+                                if insn & 0x40000000 == 0 {
+                                    if insn & 0x7fc00000 == 0x29400000 {
+                                        return 143;
+                                    }
+                                } else {
+                                    if insn & 0x80000000 == 0 {
+                                        if insn & 0xffc00000 == 0x69400000 {
+                                            return 147;
+                                        }
+                                    } else {
+                                        if insn & 0xffc00000 == 0xe9400000 {
+                                            return 225;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -4755,19 +6271,31 @@ fn decode_index(insn: u32) -> i32 {
                         if insn & 0x20000000 == 0 {
                             if insn & 0x008000 == 0 {
                                 if insn & 0x200000 == 0 {
-                                    if insn & 0x80000000 == 0 {
-                                        if insn & 0x40000000 == 0 {
-                                            if insn & 0xfffffc00 == 0x8df7c00 {
-                                                return 88;
+                                    if insn & 0x1000000 == 0 {
+                                        if insn & 0x80000000 == 0 {
+                                            if insn & 0x40000000 == 0 {
+                                                if insn & 0xfffffc00 == 0x8df7c00 {
+                                                    return 139;
+                                                }
+                                            } else {
+                                                if insn & 0xfffffc00 == 0x48df7c00 {
+                                                    return 140;
+                                                }
                                             }
                                         } else {
-                                            if insn & 0xfffffc00 == 0x48df7c00 {
-                                                return 89;
+                                            if insn & 0xbffffc00 == 0x88df7c00 {
+                                                return 138;
                                             }
                                         }
                                     } else {
-                                        if insn & 0xbffffc00 == 0x88df7c00 {
-                                            return 87;
+                                        if insn & 0x80000000 == 0 {
+                                            if insn & 0xffe0fc00 == 0x49c07c00 {
+                                                return 25;
+                                            }
+                                        } else {
+                                            if insn & 0xffe0fc00 == 0xc9c07c00 {
+                                                return 14;
+                                            }
                                         }
                                     }
                                 } else {
@@ -4789,19 +6317,31 @@ fn decode_index(insn: u32) -> i32 {
                                 }
                             } else {
                                 if insn & 0x200000 == 0 {
-                                    if insn & 0x80000000 == 0 {
-                                        if insn & 0x40000000 == 0 {
-                                            if insn & 0xfffffc00 == 0x8dffc00 {
-                                                return 51;
+                                    if insn & 0x1000000 == 0 {
+                                        if insn & 0x80000000 == 0 {
+                                            if insn & 0x40000000 == 0 {
+                                                if insn & 0xfffffc00 == 0x8dffc00 {
+                                                    return 61;
+                                                }
+                                            } else {
+                                                if insn & 0xfffffc00 == 0x48dffc00 {
+                                                    return 62;
+                                                }
                                             }
                                         } else {
-                                            if insn & 0xfffffc00 == 0x48dffc00 {
-                                                return 52;
+                                            if insn & 0xbffffc00 == 0x88dffc00 {
+                                                return 60;
                                             }
                                         }
                                     } else {
-                                        if insn & 0xbffffc00 == 0x88dffc00 {
-                                            return 50;
+                                        if insn & 0x80000000 == 0 {
+                                            if insn & 0xffe0fc00 == 0x49c0fc00 {
+                                                return 24;
+                                            }
+                                        } else {
+                                            if insn & 0xffe0fc00 == 0xc9c0fc00 {
+                                                return 13;
+                                            }
                                         }
                                     }
                                 } else {
@@ -4825,11 +6365,17 @@ fn decode_index(insn: u32) -> i32 {
                         } else {
                             if insn & 0x40000000 == 0 {
                                 if insn & 0x7ec00000 == 0x28c00000 {
-                                    return 93;
+                                    return 144;
                                 }
                             } else {
-                                if insn & 0xfec00000 == 0x68c00000 {
-                                    return 97;
+                                if insn & 0x80000000 == 0 {
+                                    if insn & 0xfec00000 == 0x68c00000 {
+                                        return 148;
+                                    }
+                                } else {
+                                    if insn & 0xfec00000 == 0xe8c00000 {
+                                        return 226;
+                                    }
                                 }
                             }
                         }
@@ -4840,16 +6386,16 @@ fn decode_index(insn: u32) -> i32 {
                     if insn & 0x20000000 == 0 {
                         if insn & 0x80000000 == 0 {
                             if insn & 0xbf000000 == 0x18000000 {
-                                return 98;
+                                return 149;
                             }
                         } else {
                             if insn & 0x40000000 == 0 {
                                 if insn & 0xff000000 == 0x98000000 {
-                                    return 120;
+                                    return 171;
                                 }
                             } else {
                                 if insn & 0xff000000 == 0xd8000000 {
-                                    return 208;
+                                    return 278;
                                 }
                             }
                         }
@@ -4862,32 +6408,32 @@ fn decode_index(insn: u32) -> i32 {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0x40000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x38000000 {
-                                                        return 259;
+                                                        return 358;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x78000000 {
-                                                        return 260;
+                                                        return 359;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xbfe00c00 == 0xb8000000 {
-                                                    return 257;
+                                                    return 356;
                                                 }
                                             }
                                         } else {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0x40000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x38400000 {
-                                                        return 196;
+                                                        return 266;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x78400000 {
-                                                        return 197;
+                                                        return 267;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xbfe00c00 == 0xb8400000 {
-                                                    return 194;
+                                                    return 264;
                                                 }
                                             }
                                         }
@@ -4895,21 +6441,21 @@ fn decode_index(insn: u32) -> i32 {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0xffa00c00 == 0x38800000 {
-                                                    return 198;
+                                                    return 268;
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0xb8800000 {
-                                                    return 200;
+                                                    return 270;
                                                 }
                                             }
                                         } else {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0xffa00c00 == 0x78800000 {
-                                                    return 199;
+                                                    return 269;
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0xf8800000 {
-                                                    return 211;
+                                                    return 281;
                                                 }
                                             }
                                         }
@@ -4926,18 +6472,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38200000
                                                                     {
-                                                                        return 33;
+                                                                        return 41;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78200000
                                                                     {
-                                                                        return 34;
+                                                                        return 42;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8200000 {
-                                                                    return 26;
+                                                                    return 34;
                                                                 }
                                                             }
                                                         } else {
@@ -4946,18 +6492,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a00000
                                                                     {
-                                                                        return 28;
+                                                                        return 36;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a00000
                                                                     {
-                                                                        return 29;
+                                                                        return 37;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a00000 {
-                                                                    return 27;
+                                                                    return 35;
                                                                 }
                                                             }
                                                         }
@@ -4968,18 +6514,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38600000
                                                                     {
-                                                                        return 36;
+                                                                        return 44;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78600000
                                                                     {
-                                                                        return 37;
+                                                                        return 45;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8600000 {
-                                                                    return 35;
+                                                                    return 43;
                                                                 }
                                                             }
                                                         } else {
@@ -4988,18 +6534,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e00000
                                                                     {
-                                                                        return 31;
+                                                                        return 39;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e00000
                                                                     {
-                                                                        return 32;
+                                                                        return 40;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e00000 {
-                                                                    return 30;
+                                                                    return 38;
                                                                 }
                                                             }
                                                         }
@@ -5012,18 +6558,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38208000
                                                                     {
-                                                                        return 277;
+                                                                        return 376;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78208000
                                                                     {
-                                                                        return 278;
+                                                                        return 377;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8208000 {
-                                                                    return 270;
+                                                                    return 369;
                                                                 }
                                                             }
                                                         } else {
@@ -5032,18 +6578,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a08000
                                                                     {
-                                                                        return 272;
+                                                                        return 371;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a08000
                                                                     {
-                                                                        return 273;
+                                                                        return 372;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a08000 {
-                                                                    return 271;
+                                                                    return 370;
                                                                 }
                                                             }
                                                         }
@@ -5054,18 +6600,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38608000
                                                                     {
-                                                                        return 280;
+                                                                        return 379;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78608000
                                                                     {
-                                                                        return 281;
+                                                                        return 380;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8608000 {
-                                                                    return 279;
+                                                                    return 378;
                                                                 }
                                                             }
                                                         } else {
@@ -5074,18 +6620,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e08000
                                                                     {
-                                                                        return 275;
+                                                                        return 374;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e08000
                                                                     {
-                                                                        return 276;
+                                                                        return 375;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e08000 {
-                                                                    return 274;
+                                                                    return 373;
                                                                 }
                                                             }
                                                         }
@@ -5100,18 +6646,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38204000
                                                                     {
-                                                                        return 147;
+                                                                        return 198;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78204000
                                                                     {
-                                                                        return 148;
+                                                                        return 199;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8204000 {
-                                                                    return 140;
+                                                                    return 191;
                                                                 }
                                                             }
                                                         } else {
@@ -5120,18 +6666,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a04000
                                                                     {
-                                                                        return 142;
+                                                                        return 193;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a04000
                                                                     {
-                                                                        return 143;
+                                                                        return 194;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a04000 {
-                                                                    return 141;
+                                                                    return 192;
                                                                 }
                                                             }
                                                         }
@@ -5142,18 +6688,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38604000
                                                                     {
-                                                                        return 150;
+                                                                        return 201;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78604000
                                                                     {
-                                                                        return 151;
+                                                                        return 202;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8604000 {
-                                                                    return 149;
+                                                                    return 200;
                                                                 }
                                                             }
                                                         } else {
@@ -5162,18 +6708,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e04000
                                                                     {
-                                                                        return 145;
+                                                                        return 196;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e04000
                                                                     {
-                                                                        return 146;
+                                                                        return 197;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e04000 {
-                                                                    return 144;
+                                                                    return 195;
                                                                 }
                                                             }
                                                         }
@@ -5182,16 +6728,16 @@ fn decode_index(insn: u32) -> i32 {
                                                     if insn & 0x80000000 == 0 {
                                                         if insn & 0x40000000 == 0 {
                                                             if insn & 0xfffffc00 == 0x38bfc000 {
-                                                                return 39;
+                                                                return 49;
                                                             }
                                                         } else {
                                                             if insn & 0xfffffc00 == 0x78bfc000 {
-                                                                return 40;
+                                                                return 50;
                                                             }
                                                         }
                                                     } else {
                                                         if insn & 0xbffffc00 == 0xb8bfc000 {
-                                                            return 38;
+                                                            return 48;
                                                         }
                                                     }
                                                 }
@@ -5206,18 +6752,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38202000
                                                                     {
-                                                                        return 80;
+                                                                        return 111;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78202000
                                                                     {
-                                                                        return 81;
+                                                                        return 112;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8202000 {
-                                                                    return 73;
+                                                                    return 104;
                                                                 }
                                                             }
                                                         } else {
@@ -5226,18 +6772,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a02000
                                                                     {
-                                                                        return 75;
+                                                                        return 106;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a02000
                                                                     {
-                                                                        return 76;
+                                                                        return 107;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a02000 {
-                                                                    return 74;
+                                                                    return 105;
                                                                 }
                                                             }
                                                         }
@@ -5248,18 +6794,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38602000
                                                                     {
-                                                                        return 83;
+                                                                        return 114;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78602000
                                                                     {
-                                                                        return 84;
+                                                                        return 115;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8602000 {
-                                                                    return 82;
+                                                                    return 113;
                                                                 }
                                                             }
                                                         } else {
@@ -5268,25 +6814,25 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e02000
                                                                     {
-                                                                        return 78;
+                                                                        return 109;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e02000
                                                                     {
-                                                                        return 79;
+                                                                        return 110;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e02000 {
-                                                                    return 77;
+                                                                    return 108;
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0xf820a000 {
-                                                        return 216;
+                                                        return 286;
                                                     }
                                                 }
                                             } else {
@@ -5295,32 +6841,32 @@ fn decode_index(insn: u32) -> i32 {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38206000 {
-                                                                    return 177;
+                                                                    return 247;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78206000 {
-                                                                    return 178;
+                                                                    return 248;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8206000 {
-                                                                return 170;
+                                                                return 240;
                                                             }
                                                         }
                                                     } else {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38a06000 {
-                                                                    return 172;
+                                                                    return 242;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78a06000 {
-                                                                    return 173;
+                                                                    return 243;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8a06000 {
-                                                                return 171;
+                                                                return 241;
                                                             }
                                                         }
                                                     }
@@ -5329,32 +6875,32 @@ fn decode_index(insn: u32) -> i32 {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38606000 {
-                                                                    return 180;
+                                                                    return 250;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78606000 {
-                                                                    return 181;
+                                                                    return 251;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8606000 {
-                                                                return 179;
+                                                                return 249;
                                                             }
                                                         }
                                                     } else {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38e06000 {
-                                                                    return 175;
+                                                                    return 245;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78e06000 {
-                                                                    return 176;
+                                                                    return 246;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8e06000 {
-                                                                return 174;
+                                                                return 244;
                                                             }
                                                         }
                                                     }
@@ -5372,18 +6918,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38201000
                                                                     {
-                                                                        return 64;
+                                                                        return 95;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78201000
                                                                     {
-                                                                        return 65;
+                                                                        return 96;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8201000 {
-                                                                    return 57;
+                                                                    return 88;
                                                                 }
                                                             }
                                                         } else {
@@ -5392,18 +6938,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a01000
                                                                     {
-                                                                        return 59;
+                                                                        return 90;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a01000
                                                                     {
-                                                                        return 60;
+                                                                        return 91;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a01000 {
-                                                                    return 58;
+                                                                    return 89;
                                                                 }
                                                             }
                                                         }
@@ -5414,18 +6960,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38601000
                                                                     {
-                                                                        return 67;
+                                                                        return 98;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78601000
                                                                     {
-                                                                        return 68;
+                                                                        return 99;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8601000 {
-                                                                    return 66;
+                                                                    return 97;
                                                                 }
                                                             }
                                                         } else {
@@ -5434,25 +6980,25 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e01000
                                                                     {
-                                                                        return 62;
+                                                                        return 93;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e01000
                                                                     {
-                                                                        return 63;
+                                                                        return 94;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e01000 {
-                                                                    return 61;
+                                                                    return 92;
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 } else {
                                                     if insn & 0xfffffc00 == 0xf83f9000 {
-                                                        return 214;
+                                                        return 284;
                                                     }
                                                 }
                                             } else {
@@ -5464,18 +7010,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38205000
                                                                     {
-                                                                        return 159;
+                                                                        return 210;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78205000
                                                                     {
-                                                                        return 160;
+                                                                        return 211;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8205000 {
-                                                                    return 152;
+                                                                    return 203;
                                                                 }
                                                             }
                                                         } else {
@@ -5484,18 +7030,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a05000
                                                                     {
-                                                                        return 154;
+                                                                        return 205;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a05000
                                                                     {
-                                                                        return 155;
+                                                                        return 206;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a05000 {
-                                                                    return 153;
+                                                                    return 204;
                                                                 }
                                                             }
                                                         }
@@ -5506,18 +7052,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38605000
                                                                     {
-                                                                        return 162;
+                                                                        return 213;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78605000
                                                                     {
-                                                                        return 163;
+                                                                        return 214;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8605000 {
-                                                                    return 161;
+                                                                    return 212;
                                                                 }
                                                             }
                                                         } else {
@@ -5526,25 +7072,25 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e05000
                                                                     {
-                                                                        return 157;
+                                                                        return 208;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e05000
                                                                     {
-                                                                        return 158;
+                                                                        return 209;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e05000 {
-                                                                    return 156;
+                                                                    return 207;
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 } else {
                                                     if insn & 0xfffffc00 == 0xf83fd000 {
-                                                        return 25;
+                                                        return 33;
                                                     }
                                                 }
                                             }
@@ -5558,18 +7104,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38203000
                                                                     {
-                                                                        return 131;
+                                                                        return 182;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78203000
                                                                     {
-                                                                        return 132;
+                                                                        return 183;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8203000 {
-                                                                    return 124;
+                                                                    return 175;
                                                                 }
                                                             }
                                                         } else {
@@ -5578,18 +7124,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38a03000
                                                                     {
-                                                                        return 126;
+                                                                        return 177;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78a03000
                                                                     {
-                                                                        return 127;
+                                                                        return 178;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8a03000 {
-                                                                    return 125;
+                                                                    return 176;
                                                                 }
                                                             }
                                                         }
@@ -5600,18 +7146,18 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38603000
                                                                     {
-                                                                        return 134;
+                                                                        return 185;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78603000
                                                                     {
-                                                                        return 135;
+                                                                        return 186;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8603000 {
-                                                                    return 133;
+                                                                    return 184;
                                                                 }
                                                             }
                                                         } else {
@@ -5620,25 +7166,25 @@ fn decode_index(insn: u32) -> i32 {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x38e03000
                                                                     {
-                                                                        return 129;
+                                                                        return 180;
                                                                     }
                                                                 } else {
                                                                     if insn & 0xffe0fc00
                                                                         == 0x78e03000
                                                                     {
-                                                                        return 130;
+                                                                        return 181;
                                                                     }
                                                                 }
                                                             } else {
                                                                 if insn & 0xbfe0fc00 == 0xb8e03000 {
-                                                                    return 128;
+                                                                    return 179;
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0xf820b000 {
-                                                        return 215;
+                                                        return 285;
                                                     }
                                                 }
                                             } else {
@@ -5647,32 +7193,32 @@ fn decode_index(insn: u32) -> i32 {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38207000 {
-                                                                    return 189;
+                                                                    return 259;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78207000 {
-                                                                    return 190;
+                                                                    return 260;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8207000 {
-                                                                return 182;
+                                                                return 252;
                                                             }
                                                         }
                                                     } else {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38a07000 {
-                                                                    return 184;
+                                                                    return 254;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78a07000 {
-                                                                    return 185;
+                                                                    return 255;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8a07000 {
-                                                                return 183;
+                                                                return 253;
                                                             }
                                                         }
                                                     }
@@ -5681,32 +7227,32 @@ fn decode_index(insn: u32) -> i32 {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38607000 {
-                                                                    return 192;
+                                                                    return 262;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78607000 {
-                                                                    return 193;
+                                                                    return 263;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8607000 {
-                                                                return 191;
+                                                                return 261;
                                                             }
                                                         }
                                                     } else {
                                                         if insn & 0x80000000 == 0 {
                                                             if insn & 0x40000000 == 0 {
                                                                 if insn & 0xffe0fc00 == 0x38e07000 {
-                                                                    return 187;
+                                                                    return 257;
                                                                 }
                                                             } else {
                                                                 if insn & 0xffe0fc00 == 0x78e07000 {
-                                                                    return 188;
+                                                                    return 258;
                                                                 }
                                                             }
                                                         } else {
                                                             if insn & 0xbfe0fc00 == 0xb8e07000 {
-                                                                return 186;
+                                                                return 256;
                                                             }
                                                         }
                                                     }
@@ -5722,32 +7268,32 @@ fn decode_index(insn: u32) -> i32 {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0x40000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x38000800 {
-                                                        return 255;
+                                                        return 353;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x78000800 {
-                                                        return 256;
+                                                        return 354;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xbfe00c00 == 0xb8000800 {
-                                                    return 254;
+                                                    return 352;
                                                 }
                                             }
                                         } else {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0x40000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x38400800 {
-                                                        return 165;
+                                                        return 230;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x78400800 {
-                                                        return 166;
+                                                        return 231;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xbfe00c00 == 0xb8400800 {
-                                                    return 164;
+                                                    return 229;
                                                 }
                                             }
                                         }
@@ -5755,16 +7301,16 @@ fn decode_index(insn: u32) -> i32 {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0xffa00c00 == 0x38800800 {
-                                                    return 167;
+                                                    return 232;
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0xb8800800 {
-                                                    return 169;
+                                                    return 234;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xffa00c00 == 0x78800800 {
-                                                return 168;
+                                                return 233;
                                             }
                                         }
                                     }
@@ -5774,32 +7320,32 @@ fn decode_index(insn: u32) -> i32 {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0x40000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x38200800 {
-                                                        return 248;
+                                                        return 340;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x78200800 {
-                                                        return 251;
+                                                        return 343;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xbfe00c00 == 0xb8200800 {
-                                                    return 242;
+                                                    return 334;
                                                 }
                                             }
                                         } else {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0x40000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x38600800 {
-                                                        return 108;
+                                                        return 159;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x78600800 {
-                                                        return 111;
+                                                        return 162;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xbfe00c00 == 0xb8600800 {
-                                                    return 99;
+                                                    return 150;
                                                 }
                                             }
                                         }
@@ -5807,21 +7353,21 @@ fn decode_index(insn: u32) -> i32 {
                                         if insn & 0x40000000 == 0 {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0xffa00c00 == 0x38a00800 {
-                                                    return 114;
+                                                    return 165;
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0xb8a00800 {
-                                                    return 121;
+                                                    return 172;
                                                 }
                                             }
                                         } else {
                                             if insn & 0x80000000 == 0 {
                                                 if insn & 0xffa00c00 == 0x78a00800 {
-                                                    return 117;
+                                                    return 168;
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0xf8a00800 {
-                                                    return 209;
+                                                    return 279;
                                                 }
                                             }
                                         }
@@ -5835,32 +7381,32 @@ fn decode_index(insn: u32) -> i32 {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xffe00400 == 0x38000400 {
-                                                    return 249;
+                                                    return 341;
                                                 }
                                             } else {
                                                 if insn & 0xffe00400 == 0x78000400 {
-                                                    return 252;
+                                                    return 344;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xbfe00400 == 0xb8000400 {
-                                                return 243;
+                                                return 335;
                                             }
                                         }
                                     } else {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xffe00400 == 0x38400400 {
-                                                    return 109;
+                                                    return 160;
                                                 }
                                             } else {
                                                 if insn & 0xffe00400 == 0x78400400 {
-                                                    return 112;
+                                                    return 163;
                                                 }
                                             }
                                         } else {
                                             if insn & 0xbfe00400 == 0xb8400400 {
-                                                return 100;
+                                                return 151;
                                             }
                                         }
                                     }
@@ -5868,27 +7414,27 @@ fn decode_index(insn: u32) -> i32 {
                                     if insn & 0x40000000 == 0 {
                                         if insn & 0x80000000 == 0 {
                                             if insn & 0xffa00400 == 0x38800400 {
-                                                return 115;
+                                                return 166;
                                             }
                                         } else {
                                             if insn & 0xffe00400 == 0xb8800400 {
-                                                return 122;
+                                                return 173;
                                             }
                                         }
                                     } else {
                                         if insn & 0xffa00400 == 0x78800400 {
-                                            return 118;
+                                            return 169;
                                         }
                                     }
                                 }
                             } else {
                                 if insn & 0x800000 == 0 {
                                     if insn & 0xffa00400 == 0xf8200400 {
-                                        return 106;
+                                        return 157;
                                     }
                                 } else {
                                     if insn & 0xffa00400 == 0xf8a00400 {
-                                        return 107;
+                                        return 158;
                                     }
                                 }
                             }
@@ -5904,21 +7450,21 @@ fn decode_index(insn: u32) -> i32 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0x80000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x19000000 {
-                                                        return 230;
+                                                        return 322;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x99000000 {
-                                                        return 228;
+                                                        return 320;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0x80000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x59000000 {
-                                                        return 231;
+                                                        return 323;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0xd9000000 {
-                                                        return 229;
+                                                        return 321;
                                                     }
                                                 }
                                             }
@@ -5926,49 +7472,79 @@ fn decode_index(insn: u32) -> i32 {
                                             if insn & 0x001000 == 0 {
                                                 if insn & 0x008000 == 0 {
                                                     if insn & 0xfffffc00 == 0xd9200000 {
-                                                        return 269;
+                                                        return 368;
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0x19208000 {
-                                                        return 282;
+                                                        return 381;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0x002000 == 0 {
                                                     if insn & 0xffe0fc00 == 0x19201000 {
-                                                        return 69;
+                                                        return 100;
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0x19203000 {
-                                                        return 136;
+                                                        return 187;
                                                     }
                                                 }
                                             }
                                         }
                                     } else {
-                                        if insn & 0xffe00c00 == 0xd9200800 {
-                                            return 217;
+                                        if insn & 0x200000 == 0 {
+                                            if insn & 0xffe0fc00 == 0xd9005800 {
+                                                return 315;
+                                            }
+                                        } else {
+                                            if insn & 0xffe00c00 == 0xd9200800 {
+                                                return 307;
+                                            }
                                         }
                                     }
                                 } else {
-                                    if insn & 0xffe00400 == 0xd9200400 {
-                                        return 218;
+                                    if insn & 0x80000000 == 0 {
+                                        if insn & 0x001000 == 0 {
+                                            if insn & 0x008000 == 0 {
+                                                if insn & 0xbfe0fc00 == 0x19200400 {
+                                                    return 215;
+                                                }
+                                            } else {
+                                                if insn & 0xbfe0fc00 == 0x19208400 {
+                                                    return 385;
+                                                }
+                                            }
+                                        } else {
+                                            if insn & 0x002000 == 0 {
+                                                if insn & 0xbfe0fc00 == 0x19201400 {
+                                                    return 219;
+                                                }
+                                            } else {
+                                                if insn & 0xbfe0fc00 == 0x19203400 {
+                                                    return 235;
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        if insn & 0xffe00400 == 0xd9200400 {
+                                            return 308;
+                                        }
                                     }
                                 }
                             } else {
                                 if insn & 0x80000000 == 0 {
                                     if insn & 0x40000000 == 0 {
                                         if insn & 0xffc00000 == 0x39000000 {
-                                            return 250;
+                                            return 342;
                                         }
                                     } else {
                                         if insn & 0xffc00000 == 0x79000000 {
-                                            return 253;
+                                            return 345;
                                         }
                                     }
                                 } else {
                                     if insn & 0xbfc00000 == 0xb9000000 {
-                                        return 244;
+                                        return 336;
                                     }
                                 }
                             }
@@ -5980,21 +7556,21 @@ fn decode_index(insn: u32) -> i32 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0x80000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x19400000 {
-                                                        return 43;
+                                                        return 53;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x99400000 {
-                                                        return 41;
+                                                        return 51;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0x80000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x59400000 {
-                                                        return 44;
+                                                        return 54;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0xd9400000 {
-                                                        return 42;
+                                                        return 52;
                                                     }
                                                 }
                                             }
@@ -6002,49 +7578,85 @@ fn decode_index(insn: u32) -> i32 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0x001000 == 0 {
                                                     if insn & 0xffe0fc00 == 0x19608000 {
-                                                        return 285;
+                                                        return 384;
                                                     }
                                                 } else {
                                                     if insn & 0x002000 == 0 {
                                                         if insn & 0xffe0fc00 == 0x19601000 {
-                                                            return 72;
+                                                            return 103;
                                                         }
                                                     } else {
                                                         if insn & 0xffe0fc00 == 0x19603000 {
-                                                            return 139;
+                                                            return 190;
                                                         }
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0xd9600000 {
-                                                    return 85;
+                                                    return 136;
                                                 }
                                             }
                                         }
                                     } else {
-                                        if insn & 0xffe00c00 == 0xd9600800 {
-                                            return 267;
+                                        if insn & 0x200000 == 0 {
+                                            if insn & 0x002000 == 0 {
+                                                if insn & 0xffe0fc00 == 0xd9405800 {
+                                                    return 46;
+                                                }
+                                            } else {
+                                                if insn & 0xffe0fc00 == 0xd9407800 {
+                                                    return 47;
+                                                }
+                                            }
+                                        } else {
+                                            if insn & 0xffe00c00 == 0xd9600800 {
+                                                return 366;
+                                            }
                                         }
                                     }
                                 } else {
-                                    if insn & 0xffe00400 == 0xd9600400 {
-                                        return 268;
+                                    if insn & 0x80000000 == 0 {
+                                        if insn & 0x001000 == 0 {
+                                            if insn & 0x008000 == 0 {
+                                                if insn & 0xbfe0fc00 == 0x19600400 {
+                                                    return 218;
+                                                }
+                                            } else {
+                                                if insn & 0xbfe0fc00 == 0x19608400 {
+                                                    return 388;
+                                                }
+                                            }
+                                        } else {
+                                            if insn & 0x002000 == 0 {
+                                                if insn & 0xbfe0fc00 == 0x19601400 {
+                                                    return 222;
+                                                }
+                                            } else {
+                                                if insn & 0xbfe0fc00 == 0x19603400 {
+                                                    return 238;
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        if insn & 0xffe00400 == 0xd9600400 {
+                                            return 367;
+                                        }
                                     }
                                 }
                             } else {
                                 if insn & 0x80000000 == 0 {
                                     if insn & 0x40000000 == 0 {
                                         if insn & 0xffc00000 == 0x39400000 {
-                                            return 110;
+                                            return 161;
                                         }
                                     } else {
                                         if insn & 0xffc00000 == 0x79400000 {
-                                            return 113;
+                                            return 164;
                                         }
                                     }
                                 } else {
                                     if insn & 0xbfc00000 == 0xb9400000 {
-                                        return 101;
+                                        return 152;
                                     }
                                 }
                             }
@@ -6058,26 +7670,26 @@ fn decode_index(insn: u32) -> i32 {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0x80000000 == 0 {
                                                     if insn & 0xffe00c00 == 0x19800000 {
-                                                        return 45;
+                                                        return 55;
                                                     }
                                                 } else {
                                                     if insn & 0xffe00c00 == 0x99800000 {
-                                                        return 49;
+                                                        return 59;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0x59800000 {
-                                                    return 47;
+                                                    return 57;
                                                 }
                                             }
                                         } else {
                                             if insn & 0x40000000 == 0 {
                                                 if insn & 0xffe00c00 == 0x19c00000 {
-                                                    return 46;
+                                                    return 56;
                                                 }
                                             } else {
                                                 if insn & 0xffe00c00 == 0x59c00000 {
-                                                    return 48;
+                                                    return 58;
                                                 }
                                             }
                                         }
@@ -6086,21 +7698,21 @@ fn decode_index(insn: u32) -> i32 {
                                             if insn & 0x008000 == 0 {
                                                 if insn & 0x400000 == 0 {
                                                     if insn & 0xfffffc00 == 0xd9a00000 {
-                                                        return 219;
+                                                        return 309;
                                                     }
                                                 } else {
                                                     if insn & 0xfffffc00 == 0xd9e00000 {
-                                                        return 86;
+                                                        return 137;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0x400000 == 0 {
                                                     if insn & 0xffe0fc00 == 0x19a08000 {
-                                                        return 283;
+                                                        return 382;
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0x19e08000 {
-                                                        return 284;
+                                                        return 383;
                                                     }
                                                 }
                                             }
@@ -6108,21 +7720,21 @@ fn decode_index(insn: u32) -> i32 {
                                             if insn & 0x002000 == 0 {
                                                 if insn & 0x400000 == 0 {
                                                     if insn & 0xffe0fc00 == 0x19a01000 {
-                                                        return 70;
+                                                        return 101;
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0x19e01000 {
-                                                        return 71;
+                                                        return 102;
                                                     }
                                                 }
                                             } else {
                                                 if insn & 0x400000 == 0 {
                                                     if insn & 0xffe0fc00 == 0x19a03000 {
-                                                        return 137;
+                                                        return 188;
                                                     }
                                                 } else {
                                                     if insn & 0xffe0fc00 == 0x19e03000 {
-                                                        return 138;
+                                                        return 189;
                                                     }
                                                 }
                                             }
@@ -6131,22 +7743,70 @@ fn decode_index(insn: u32) -> i32 {
                                 } else {
                                     if insn & 0x400000 == 0 {
                                         if insn & 0xffe00c00 == 0xd9a00800 {
-                                            return 212;
+                                            return 282;
                                         }
                                     } else {
                                         if insn & 0xffe00c00 == 0xd9e00800 {
-                                            return 265;
+                                            return 364;
                                         }
                                     }
                                 }
                             } else {
                                 if insn & 0x400000 == 0 {
-                                    if insn & 0xffe00400 == 0xd9a00400 {
-                                        return 213;
+                                    if insn & 0x80000000 == 0 {
+                                        if insn & 0x001000 == 0 {
+                                            if insn & 0x008000 == 0 {
+                                                if insn & 0xbfe0fc00 == 0x19a00400 {
+                                                    return 216;
+                                                }
+                                            } else {
+                                                if insn & 0xbfe0fc00 == 0x19a08400 {
+                                                    return 386;
+                                                }
+                                            }
+                                        } else {
+                                            if insn & 0x002000 == 0 {
+                                                if insn & 0xbfe0fc00 == 0x19a01400 {
+                                                    return 220;
+                                                }
+                                            } else {
+                                                if insn & 0xbfe0fc00 == 0x19a03400 {
+                                                    return 236;
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        if insn & 0xffe00400 == 0xd9a00400 {
+                                            return 283;
+                                        }
                                     }
                                 } else {
-                                    if insn & 0xffe00400 == 0xd9e00400 {
-                                        return 266;
+                                    if insn & 0x80000000 == 0 {
+                                        if insn & 0x001000 == 0 {
+                                            if insn & 0x008000 == 0 {
+                                                if insn & 0xbfe0fc00 == 0x19e00400 {
+                                                    return 217;
+                                                }
+                                            } else {
+                                                if insn & 0xbfe0fc00 == 0x19e08400 {
+                                                    return 387;
+                                                }
+                                            }
+                                        } else {
+                                            if insn & 0x002000 == 0 {
+                                                if insn & 0xbfe0fc00 == 0x19e01400 {
+                                                    return 221;
+                                                }
+                                            } else {
+                                                if insn & 0xbfe0fc00 == 0x19e03400 {
+                                                    return 237;
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        if insn & 0xffe00400 == 0xd9e00400 {
+                                            return 365;
+                                        }
                                     }
                                 }
                             }
@@ -6154,21 +7814,21 @@ fn decode_index(insn: u32) -> i32 {
                             if insn & 0x40000000 == 0 {
                                 if insn & 0x80000000 == 0 {
                                     if insn & 0xff800000 == 0x39800000 {
-                                        return 116;
+                                        return 167;
                                     }
                                 } else {
                                     if insn & 0xffc00000 == 0xb9800000 {
-                                        return 123;
+                                        return 174;
                                     }
                                 }
                             } else {
                                 if insn & 0x80000000 == 0 {
                                     if insn & 0xff800000 == 0x79800000 {
-                                        return 119;
+                                        return 170;
                                     }
                                 } else {
                                     if insn & 0xffc00000 == 0xf9800000 {
-                                        return 210;
+                                        return 280;
                                     }
                                 }
                             }
@@ -6181,33 +7841,51 @@ fn decode_index(insn: u32) -> i32 {
                 if insn & 0x400000 == 0 {
                     if insn & 0x800000 == 0 {
                         if insn & 0x1000000 == 0 {
+                            if insn & 0xffc00000 == 0xec000000 {
+                                return 347;
+                            }
                             if insn & 0x3fc00000 == 0x2c000000 {
-                                return 237;
+                                return 329;
                             }
                         } else {
+                            if insn & 0xffc00000 == 0xed000000 {
+                                return 350;
+                            }
                             if insn & 0x3fc00000 == 0x2d000000 {
-                                return 240;
+                                return 332;
                             }
                         }
                     } else {
+                        if insn & 0xfec00000 == 0xec800000 {
+                            return 351;
+                        }
                         if insn & 0x3ec00000 == 0x2c800000 {
-                            return 241;
+                            return 333;
                         }
                     }
                 } else {
                     if insn & 0x800000 == 0 {
                         if insn & 0x1000000 == 0 {
+                            if insn & 0xffc00000 == 0xec400000 {
+                                return 224;
+                            }
                             if insn & 0x3fc00000 == 0x2c400000 {
-                                return 91;
+                                return 142;
                             }
                         } else {
+                            if insn & 0xffc00000 == 0xed400000 {
+                                return 227;
+                            }
                             if insn & 0x3fc00000 == 0x2d400000 {
-                                return 94;
+                                return 145;
                             }
                         }
                     } else {
+                        if insn & 0xfec00000 == 0xecc00000 {
+                            return 228;
+                        }
                         if insn & 0x3ec00000 == 0x2cc00000 {
-                            return 95;
+                            return 146;
                         }
                     }
                 }
@@ -6215,39 +7893,309 @@ fn decode_index(insn: u32) -> i32 {
                 if insn & 0x1000000 == 0 {
                     if insn & 0x20000000 == 0 {
                         if insn & 0x3f000000 == 0x1c000000 {
-                            return 102;
+                            return 153;
                         }
                     } else {
                         if insn & 0x000400 == 0 {
                             if insn & 0x000800 == 0 {
-                                if insn & 0x400000 == 0 {
-                                    if insn & 0x3f600c00 == 0x3c000000 {
-                                        return 258;
+                                if insn & 0x200000 == 0 {
+                                    if insn & 0x400000 == 0 {
+                                        if insn & 0x3f600c00 == 0x3c000000 {
+                                            return 357;
+                                        }
+                                    } else {
+                                        if insn & 0x3f600c00 == 0x3c400000 {
+                                            return 265;
+                                        }
                                     }
                                 } else {
-                                    if insn & 0x3f600c00 == 0x3c400000 {
-                                        return 195;
+                                    if insn & 0x001000 == 0 {
+                                        if insn & 0x002000 == 0 {
+                                            if insn & 0x004000 == 0 {
+                                                if insn & 0x008000 == 0 {
+                                                    if insn & 0x400000 == 0 {
+                                                        if insn & 0x800000 == 0 {
+                                                            if insn & 0xffe0fc00 == 0x3c200000 {
+                                                                return 68;
+                                                            }
+                                                            if insn & 0x3fe0fc00 == 0x3c200000 {
+                                                                return 116;
+                                                            }
+                                                        } else {
+                                                            if insn & 0xffe0fc00 == 0x3ca00000 {
+                                                                return 69;
+                                                            }
+                                                            if insn & 0x3fe0fc00 == 0x3ca00000 {
+                                                                return 117;
+                                                            }
+                                                        }
+                                                    } else {
+                                                        if insn & 0x800000 == 0 {
+                                                            if insn & 0xffe0fc00 == 0x3c600000 {
+                                                                return 71;
+                                                            }
+                                                            if insn & 0x3fe0fc00 == 0x3c600000 {
+                                                                return 119;
+                                                            }
+                                                        } else {
+                                                            if insn & 0xffe0fc00 == 0x3ce00000 {
+                                                                return 70;
+                                                            }
+                                                            if insn & 0x3fe0fc00 == 0x3ce00000 {
+                                                                return 118;
+                                                            }
+                                                        }
+                                                    }
+                                                } else {
+                                                    if insn & 0x400000 == 0 {
+                                                        if insn & 0xffe0fc1f == 0x3c20801f {
+                                                            return 287;
+                                                        }
+                                                        if insn & 0x3fe0fc1f == 0x3c20801f {
+                                                            return 297;
+                                                        }
+                                                    } else {
+                                                        if insn & 0xffe0fc1f == 0x3c60801f {
+                                                            return 288;
+                                                        }
+                                                        if insn & 0x3fe0fc1f == 0x3c60801f {
+                                                            return 298;
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                if insn & 0x008000 == 0 {
+                                                    if insn & 0x400000 == 0 {
+                                                        if insn & 0x800000 == 0 {
+                                                            if insn & 0xffe0fc00 == 0x3c204000 {
+                                                                return 72;
+                                                            }
+                                                            if insn & 0x3fe0fc00 == 0x3c204000 {
+                                                                return 120;
+                                                            }
+                                                        } else {
+                                                            if insn & 0xffe0fc00 == 0x3ca04000 {
+                                                                return 73;
+                                                            }
+                                                            if insn & 0x3fe0fc00 == 0x3ca04000 {
+                                                                return 121;
+                                                            }
+                                                        }
+                                                    } else {
+                                                        if insn & 0x800000 == 0 {
+                                                            if insn & 0xffe0fc00 == 0x3c604000 {
+                                                                return 75;
+                                                            }
+                                                            if insn & 0x3fe0fc00 == 0x3c604000 {
+                                                                return 123;
+                                                            }
+                                                        } else {
+                                                            if insn & 0xffe0fc00 == 0x3ce04000 {
+                                                                return 74;
+                                                            }
+                                                            if insn & 0x3fe0fc00 == 0x3ce04000 {
+                                                                return 122;
+                                                            }
+                                                        }
+                                                    }
+                                                } else {
+                                                    if insn & 0x400000 == 0 {
+                                                        if insn & 0xffe0fc1f == 0x3c20c01f {
+                                                            return 289;
+                                                        }
+                                                        if insn & 0x3fe0fc1f == 0x3c20c01f {
+                                                            return 299;
+                                                        }
+                                                    } else {
+                                                        if insn & 0xffe0fc1f == 0x3c60c01f {
+                                                            return 290;
+                                                        }
+                                                        if insn & 0x3fe0fc1f == 0x3c60c01f {
+                                                            return 300;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            if insn & 0x008000 == 0 {
+                                                if insn & 0x400000 == 0 {
+                                                    if insn & 0x800000 == 0 {
+                                                        if insn & 0xffe0fc00 == 0x3c206000 {
+                                                            return 76;
+                                                        }
+                                                        if insn & 0x3fe0fc00 == 0x3c206000 {
+                                                            return 124;
+                                                        }
+                                                    } else {
+                                                        if insn & 0xffe0fc00 == 0x3ca06000 {
+                                                            return 77;
+                                                        }
+                                                        if insn & 0x3fe0fc00 == 0x3ca06000 {
+                                                            return 125;
+                                                        }
+                                                    }
+                                                } else {
+                                                    if insn & 0x800000 == 0 {
+                                                        if insn & 0xffe0fc00 == 0x3c606000 {
+                                                            return 79;
+                                                        }
+                                                        if insn & 0x3fe0fc00 == 0x3c606000 {
+                                                            return 127;
+                                                        }
+                                                    } else {
+                                                        if insn & 0xffe0fc00 == 0x3ce06000 {
+                                                            return 78;
+                                                        }
+                                                        if insn & 0x3fe0fc00 == 0x3ce06000 {
+                                                            return 126;
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                if insn & 0x400000 == 0 {
+                                                    if insn & 0xffe0fc1f == 0x3c20e01f {
+                                                        return 291;
+                                                    }
+                                                    if insn & 0x3fe0fc1f == 0x3c20e01f {
+                                                        return 301;
+                                                    }
+                                                } else {
+                                                    if insn & 0xffe0fc1f == 0x3c60e01f {
+                                                        return 292;
+                                                    }
+                                                    if insn & 0x3fe0fc1f == 0x3c60e01f {
+                                                        return 302;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        if insn & 0x002000 == 0 {
+                                            if insn & 0x008000 == 0 {
+                                                if insn & 0x400000 == 0 {
+                                                    if insn & 0x800000 == 0 {
+                                                        if insn & 0xffe0fc00 == 0x3c205000 {
+                                                            return 80;
+                                                        }
+                                                        if insn & 0x3fe0fc00 == 0x3c205000 {
+                                                            return 128;
+                                                        }
+                                                    } else {
+                                                        if insn & 0xffe0fc00 == 0x3ca05000 {
+                                                            return 81;
+                                                        }
+                                                        if insn & 0x3fe0fc00 == 0x3ca05000 {
+                                                            return 129;
+                                                        }
+                                                    }
+                                                } else {
+                                                    if insn & 0x800000 == 0 {
+                                                        if insn & 0xffe0fc00 == 0x3c605000 {
+                                                            return 83;
+                                                        }
+                                                        if insn & 0x3fe0fc00 == 0x3c605000 {
+                                                            return 131;
+                                                        }
+                                                    } else {
+                                                        if insn & 0xffe0fc00 == 0x3ce05000 {
+                                                            return 82;
+                                                        }
+                                                        if insn & 0x3fe0fc00 == 0x3ce05000 {
+                                                            return 130;
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                if insn & 0x400000 == 0 {
+                                                    if insn & 0xffe0fc1f == 0x3c20d01f {
+                                                        return 293;
+                                                    }
+                                                    if insn & 0x3fe0fc1f == 0x3c20d01f {
+                                                        return 303;
+                                                    }
+                                                } else {
+                                                    if insn & 0xffe0fc1f == 0x3c60d01f {
+                                                        return 294;
+                                                    }
+                                                    if insn & 0x3fe0fc1f == 0x3c60d01f {
+                                                        return 304;
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            if insn & 0x008000 == 0 {
+                                                if insn & 0x400000 == 0 {
+                                                    if insn & 0x800000 == 0 {
+                                                        if insn & 0xffe0fc00 == 0x3c207000 {
+                                                            return 84;
+                                                        }
+                                                        if insn & 0x3fe0fc00 == 0x3c207000 {
+                                                            return 132;
+                                                        }
+                                                    } else {
+                                                        if insn & 0xffe0fc00 == 0x3ca07000 {
+                                                            return 85;
+                                                        }
+                                                        if insn & 0x3fe0fc00 == 0x3ca07000 {
+                                                            return 133;
+                                                        }
+                                                    }
+                                                } else {
+                                                    if insn & 0x800000 == 0 {
+                                                        if insn & 0xffe0fc00 == 0x3c607000 {
+                                                            return 87;
+                                                        }
+                                                        if insn & 0x3fe0fc00 == 0x3c607000 {
+                                                            return 135;
+                                                        }
+                                                    } else {
+                                                        if insn & 0xffe0fc00 == 0x3ce07000 {
+                                                            return 86;
+                                                        }
+                                                        if insn & 0x3fe0fc00 == 0x3ce07000 {
+                                                            return 134;
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                if insn & 0x400000 == 0 {
+                                                    if insn & 0xffe0fc1f == 0x3c20f01f {
+                                                        return 295;
+                                                    }
+                                                    if insn & 0x3fe0fc1f == 0x3c20f01f {
+                                                        return 305;
+                                                    }
+                                                } else {
+                                                    if insn & 0xffe0fc1f == 0x3c60f01f {
+                                                        return 296;
+                                                    }
+                                                    if insn & 0x3fe0fc1f == 0x3c60f01f {
+                                                        return 306;
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             } else {
                                 if insn & 0x400000 == 0 {
                                     if insn & 0x3f600c00 == 0x3c200800 {
-                                        return 245;
+                                        return 337;
                                     }
                                 } else {
                                     if insn & 0x3f600c00 == 0x3c600800 {
-                                        return 103;
+                                        return 154;
                                     }
                                 }
                             }
                         } else {
                             if insn & 0x400000 == 0 {
                                 if insn & 0x3f600400 == 0x3c000400 {
-                                    return 246;
+                                    return 338;
                                 }
                             } else {
                                 if insn & 0x3f600400 == 0x3c400400 {
-                                    return 104;
+                                    return 155;
                                 }
                             }
                         }
@@ -6255,11 +8203,11 @@ fn decode_index(insn: u32) -> i32 {
                 } else {
                     if insn & 0x400000 == 0 {
                         if insn & 0x3f400000 == 0x3d000000 {
-                            return 247;
+                            return 339;
                         }
                     } else {
                         if insn & 0x3f400000 == 0x3d400000 {
-                            return 105;
+                            return 156;
                         }
                     }
                 }
@@ -6274,13 +8222,13 @@ fn decode_index(insn: u32) -> i32 {
                     }
                 } else {
                     if insn & 0x7f800000 == 0x52000000 {
-                        return 23;
+                        return 31;
                     }
                 }
             } else {
                 if insn & 0x40000000 == 0 {
                     if insn & 0x7f800000 == 0x32000000 {
-                        return 206;
+                        return 276;
                     }
                 } else {
                     if insn & 0x7f800000 == 0x72000000 {
@@ -6297,13 +8245,13 @@ fn decode_index(insn: u32) -> i32 {
                         }
                     } else {
                         if insn & 0x7f200000 == 0x4a000000 {
-                            return 24;
+                            return 32;
                         }
                     }
                 } else {
                     if insn & 0x40000000 == 0 {
                         if insn & 0x7f200000 == 0x2a000000 {
-                            return 207;
+                            return 277;
                         }
                     } else {
                         if insn & 0x7f200000 == 0x6a000000 {
@@ -6319,13 +8267,13 @@ fn decode_index(insn: u32) -> i32 {
                         }
                     } else {
                         if insn & 0x7f200000 == 0x4a200000 {
-                            return 22;
+                            return 30;
                         }
                     }
                 } else {
                     if insn & 0x40000000 == 0 {
                         if insn & 0x7f200000 == 0x2a200000 {
-                            return 205;
+                            return 275;
                         }
                     } else {
                         if insn & 0x7f200000 == 0x6a200000 {

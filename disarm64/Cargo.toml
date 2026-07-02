@@ -1,6 +1,6 @@
 [package]
 name = "disarm64"
-version = "0.1.26"
+version = "0.2.0"
 edition.workspace = true
 authors.workspace = true
 description.workspace = true
@@ -20,6 +20,6 @@ system = []
 default = ["full"]
 
 [dependencies]
-disarm64_defn = { version = "0.1.12", default-features = false }
+disarm64_defn = { version = "0.2.0", default-features = false }
 
 bitfield-struct = "0.13"

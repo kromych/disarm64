@@ -107,12 +107,14 @@ fn smoke() {
         (0x11c00008, "smax\t\tw8, w0, #0"),
         // Decoded mnemonic with an operand kind that resolves to `<undefined>`.
         (0x0b201400, "add\t\tw0, w0, <undefined>"),
+        // Arithmetic immediate with an undefined shift amount.
+        (0x11800000, "add\t\tw0, w0, <undefined>"),
         // Decoded mnemonic with a not-yet-implemented operand kind (stub form).
         (0x19400800, "ldiapp\t\tw0, w0, :RCPC3_ADDR_OPT_POSTIND:"),
     ];
 
     // Encodings that must not decode to any instruction.
-    const UNDEFINED: &[u32] = &[0x11800000, 0xffffffff];
+    const UNDEFINED: &[u32] = &[0xffffffff];
 
     let mut fails = Vec::new();
     for &(insn, want) in CASES {

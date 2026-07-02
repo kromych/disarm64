@@ -188,7 +188,7 @@ dependencies = [
 
 [[package]]
 name = "disarm64"
-version = "0.1.26"
+version = "0.2.0"
 dependencies = [
  "bitfield-struct",
  "disarm64_defn",
@@ -196,7 +196,7 @@ dependencies = [
 
 [[package]]
 name = "disarm64-cli"
-version = "0.1.26"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -211,7 +211,9 @@ dependencies = [
 
 [[package]]
 name = "disarm64_defn"
-version = "0.1.12"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d418097b7a997c487a9934a763bf6b53b19454352ee4fbb927fa730dfb2f039f"
 dependencies = [
  "bitflags 2.13.0",
  "serde",
