@@ -37,7 +37,17 @@ pub(crate) fn format_int_operand_reg_pair(
         // DUP (general): GPR size from imm5 qualifier index
         let idx = asimdins_qualifier_idx(bits).unwrap_or(0);
         matches!(operand.qualifiers.get(idx), Some(InsnOperandQualifier::X))
-    } else if operand.qualifiers.is_empty() || operand.qualifiers == [InsnOperandQualifier::X] {
+    } else if definition.class == InsnClass::TESTBRANCH {
+        // TBZ/TBNZ: the tested bit number implies the register width; bit 31
+        // is the top bit of the bit number, so bits 0-31 are in the W view.
+        bit_set(bits, 31)
+    } else if operand.qualifiers.is_empty()
+        || operand
+            .qualifiers
+            .iter()
+            .all(|q| matches!(q, InsnOperandQualifier::X | InsnOperandQualifier::SP))
+    {
+        // Only 64-bit register views are possible.
         true
     } else if definition.class == InsnClass::LDST_IMM9
         || definition.class == InsnClass::LDST_POS

@@ -6,10 +6,27 @@ use disarm64_defn::defn::InsnOpcode;
 use memmap2::Mmap;
 use std::fs;
 use std::fs::File;
-use std::io::BufReader;
 use std::io::IsTerminal;
-use std::io::Read;
+use std::ops::Deref;
 use std::path::PathBuf;
+
+/// Backing storage for a file's bytes: memory-mapped normally, owned in
+/// benchmark mode so the read is not attributed to the decode time.
+enum Backing {
+    Mmap(Mmap),
+    Owned(Vec<u8>),
+}
+
+impl Deref for Backing {
+    type Target = [u8];
+
+    fn deref(&self) -> &[u8] {
+        match self {
+            Backing::Mmap(mmap) => mmap,
+            Backing::Owned(bytes) => bytes,
+        }
+    }
+}
 
 #[cfg(feature = "full")]
 use disarm64::decoder;
@@ -143,29 +160,21 @@ fn main() -> anyhow::Result<()> {
                        offset: usize,
                        count: Option<usize>|
      -> anyhow::Result<ProcessingStats> {
-        if opt.benchmark.is_none() {
+        let backing = if opt.benchmark.is_none() {
             let file = File::open(file)?;
-            let mmap = unsafe { Mmap::map(&file)? };
-
-            let data = &mmap[offset..];
-            let data = if let Some(count) = count {
-                &data[..count]
-            } else {
-                data
-            };
-
-            reader(data, opt.benchmark)
+            Backing::Mmap(unsafe { Mmap::map(&file)? })
         } else {
-            let data = fs::read(file)?;
-            let data = &data[offset..];
-            let data = if let Some(count) = count {
-                &data[..count]
-            } else {
-                data
-            };
+            Backing::Owned(fs::read(file)?)
+        };
 
-            reader(data, opt.benchmark)
-        }
+        let data = &backing[offset..];
+        let data = if let Some(count) = count {
+            &data[..count]
+        } else {
+            data
+        };
+
+        reader(data, opt.benchmark)
     };
 
     let stats = match &opt.command {
@@ -249,23 +258,16 @@ fn process_bytes(
     buffer: &mut String,
     benchmark: Option<BenchmarkMode>,
 ) -> anyhow::Result<ProcessingStats> {
-    let mut pos = 0;
-    let mut reader = BufReader::new(data);
     let start = std::time::Instant::now();
-    while pos + 4 <= data.len() {
-        let mut insn = [0; 4];
-        reader.read_exact(&mut insn)?;
-        let insn = u32::from_le_bytes(insn);
-        let current_offset = offset + pos as u64;
-
-        print_insn(current_offset, insn, buffer, benchmark)?;
-        pos += 4;
+    for (i, chunk) in data.chunks_exact(4).enumerate() {
+        let insn = u32::from_le_bytes(chunk.try_into().unwrap());
+        print_insn(offset + (i as u64) * 4, insn, buffer, benchmark)?;
     }
     let elapsed = start.elapsed();
 
     Ok(ProcessingStats {
         elapsed,
-        processed_size: pos,
+        processed_size: data.len() / 4 * 4,
     })
 }
 
@@ -354,10 +356,12 @@ fn decode_mach(data: &[u8], benchmark: Option<BenchmarkMode>) -> anyhow::Result<
     for segment in &mach.segments {
         if let Ok(sections) = segment.sections() {
             for (section, data) in sections {
-                if section.flags & 0x80000000 != 0 {
+                // S_ATTR_PURE_INSTRUCTIONS: the section holds only machine code.
+                const MACHO_PURE_INSTRUCTIONS: u32 = 0x8000_0000;
+                if section.flags & MACHO_PURE_INSTRUCTIONS != 0 {
                     log::info!(
                         "// Decoding section {:?} @ {:#x}",
-                        section.name().unwrap_or("<unknwon>"),
+                        section.name().unwrap_or("<unknown>"),
                         section.addr
                     );
 
@@ -383,7 +387,9 @@ fn decode_pe(data: &[u8], benchmark: Option<BenchmarkMode>) -> anyhow::Result<Pr
     let mut proc_stats = ProcessingStats::default();
     let mut buffer = String::new();
     for section in &pe.sections {
-        if section.characteristics & 0x20000000 != 0 {
+        // IMAGE_SCN_MEM_EXECUTE: the section can be executed as code.
+        const PE_MEM_EXECUTE: u32 = 0x2000_0000;
+        if section.characteristics & PE_MEM_EXECUTE != 0 {
             let vbase = pe.image_base + section.virtual_address as u64;
             log::info!(
                 "// Decoding section {:?} @ {vbase:#x}",

@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+# The root manifest patches disarm64_defn to ../disarm64_defn, so every job checks
+# out that sibling repository next to this one and runs cargo from this checkout.
+defaults:
+  run:
+    working-directory: disarm64
+
+jobs:
+  lint:
+    name: Format and clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: disarm64
+      - uses: actions/checkout@v4
+        with:
+          repository: kromych/disarm64_defn
+          path: disarm64_defn
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: cargo fmt --all --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+
+  test:
+    name: Test (smoke)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: disarm64
+      - uses: actions/checkout@v4
+        with:
+          repository: kromych/disarm64_defn
+          path: disarm64_defn
+      - uses: dtolnay/rust-toolchain@stable
+      # The corpus test needs the external disarm64_test_data repo, which is not
+      # present here; it skips with a notice. The smoke suite always runs.
+      - run: cargo test --workspace --locked
+
+  features:
+    name: Feature matrix (${{ matrix.feature }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        feature: [full, load_store, exception, system]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: disarm64
+      - uses: actions/checkout@v4
+        with:
+          repository: kromych/disarm64_defn
+          path: disarm64_defn
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo build -p disarm64 --no-default-features --features ${{ matrix.feature }}
+      # Doctests demonstrate the full-feature API, so build lib and integration
+      # tests here and leave doctests to the default-feature `test` job.
+      - run: cargo test -p disarm64 --no-default-features --features ${{ matrix.feature }} --lib --tests
+
+  no_std:
+    name: no_std build (${{ matrix.feature }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        feature: [full, load_store, exception, system]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: disarm64
+      - uses: actions/checkout@v4
+        with:
+          repository: kromych/disarm64_defn
+          path: disarm64_defn
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-unknown-none
+      - name: Build the library for a bare-metal target
+        run: cargo build -p disarm64 --no-default-features --features ${{ matrix.feature }} --target aarch64-unknown-none
+
+  regen:
+    name: Generated decoders are up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: disarm64
+      - uses: actions/checkout@v4
+        with:
+          repository: kromych/disarm64_defn
+          path: disarm64_defn
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Regenerate the decoder tables
+        run: |
+          gen() { cargo run -p disarm64_gen --release --quiet -- "$@"; }
+          gen ./aarch64.json -r disarm64/src/decoder_full.rs
+          gen ./aarch64.json -c ic_system -r disarm64/src/decoder_system.rs
+          gen ./aarch64.json -c exception -r disarm64/src/decoder_exception.rs
+          gen ./aarch64.json -c ldst_imm10,ldst_imm9,ldst_pos,ldst_regoff,ldst_unpriv,ldst_unscaled,ldstexcl,ldstnapair_offs,ldstpair_indexed,ldstpair_off,loadlit,log_imm,log_shift,lse128_atomic,lse_atomic -r disarm64/src/decoder_load_store.rs
+          gen ./aarch64.json --registers disarm64/src/register_tables.rs
+          cargo fmt
+      - name: Fail if the committed decoders differ from a fresh regeneration
+        run: git diff --exit-code -- disarm64/src/decoder_full.rs disarm64/src/decoder_system.rs disarm64/src/decoder_exception.rs disarm64/src/decoder_load_store.rs disarm64/src/register_tables.rs

@@ -40,6 +40,14 @@ use simd::{
 
 const LOG2_TAG_GRANULE: u32 = 4;
 
+/// Whether formatting an operand also consumed the remaining operand slots;
+/// `Stop` suppresses the separator and ends the operand loop.
+#[derive(Clone, Copy)]
+enum Flow {
+    Continue,
+    Stop,
+}
+
 /// Format an operand to a string.
 fn format_operand(
     pos: usize,
@@ -48,9 +56,9 @@ fn format_operand(
     bits: u32,
     operand: &defn::InsnOperand,
     definition: &defn::Insn,
-    stop: &mut bool,
-) -> core::fmt::Result {
+) -> Result<Flow, core::fmt::Error> {
     let kind = operand.kind;
+    let mut flow = Flow::Continue;
     match kind {
         InsnOperandKind::Rd
         | InsnOperandKind::Rn
@@ -70,7 +78,7 @@ fn format_operand(
 
         InsnOperandKind::PAIRREG | InsnOperandKind::PAIRREG_OR_XZR => {
             if pos == 0 {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
 
             let prev_operand = &definition.operands[pos - 1];
@@ -100,9 +108,6 @@ fn format_operand(
         | InsnOperandKind::Sd
         | InsnOperandKind::Sn
         | InsnOperandKind::Sm => format_fp_reg(f, bits, operand, definition)?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_VZn => write!(f, ":{kind:?}:")?,
 
         #[cfg(feature = "full")]
         InsnOperandKind::SVE_Vd
@@ -149,122 +154,9 @@ fn format_operand(
         }
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_Pd
-        | InsnOperandKind::SVE_Pg3
-        | InsnOperandKind::SVE_Pg4_5
-        | InsnOperandKind::SVE_Pg4_10
-        | InsnOperandKind::SVE_Pg4_16
-        | InsnOperandKind::SVE_Pm
-        | InsnOperandKind::SVE_Pn
-        | InsnOperandKind::SVE_Pt
-        | InsnOperandKind::SME_Pm => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_PNd
-        | InsnOperandKind::SVE_PNg4_10
-        | InsnOperandKind::SVE_PNn
-        | InsnOperandKind::SVE_PNt
-        | InsnOperandKind::SME_PNd3
-        | InsnOperandKind::SME_PNg3
-        | InsnOperandKind::SME_PNn => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SME_Pdx2 | InsnOperandKind::SME_PdxN => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
         InsnOperandKind::SME_PNn3_INDEX1 | InsnOperandKind::SME_PNn3_INDEX2 => {
             write!(f, ":{kind:?}:")?
         }
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_Za_5
-        | InsnOperandKind::SVE_Za_16
-        | InsnOperandKind::SVE_Zd
-        | InsnOperandKind::SVE_Zm_5
-        | InsnOperandKind::SVE_Zm_16
-        | InsnOperandKind::SVE_Zn
-        | InsnOperandKind::SVE_Zt
-        | InsnOperandKind::SME_Zm => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_ZnxN
-        | InsnOperandKind::SVE_ZtxN
-        | InsnOperandKind::SME_Zdnx2
-        | InsnOperandKind::SME_Zdnx4
-        | InsnOperandKind::SME_Zmx2
-        | InsnOperandKind::SME_Zmx4
-        | InsnOperandKind::SME_Znx2
-        | InsnOperandKind::SME_Znx4
-        | InsnOperandKind::SME_Ztx2_STRIDED
-        | InsnOperandKind::SME_Ztx4_STRIDED
-        | InsnOperandKind::SME_Zt2
-        | InsnOperandKind::SME_Zt3
-        | InsnOperandKind::SME_Zt4 => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_Zm3_INDEX
-        | InsnOperandKind::SVE_Zm3_22_INDEX
-        | InsnOperandKind::SVE_Zm3_19_INDEX
-        | InsnOperandKind::SVE_Zm3_11_INDEX
-        | InsnOperandKind::SVE_Zm4_11_INDEX
-        | InsnOperandKind::SVE_Zm4_INDEX
-        | InsnOperandKind::SVE_Zn_INDEX
-        | InsnOperandKind::SME_Zm_INDEX1
-        | InsnOperandKind::SME_Zm_INDEX2
-        | InsnOperandKind::SME_Zm_INDEX3_1
-        | InsnOperandKind::SME_Zm_INDEX3_2
-        | InsnOperandKind::SME_Zm_INDEX3_10
-        | InsnOperandKind::SVE_Zn_5_INDEX
-        | InsnOperandKind::SME_Zm_INDEX4_1
-        | InsnOperandKind::SME_Zm_INDEX4_10
-        | InsnOperandKind::SME_Zn_INDEX1_16
-        | InsnOperandKind::SME_Zn_INDEX2_15
-        | InsnOperandKind::SME_Zn_INDEX2_16
-        | InsnOperandKind::SME_Zn_INDEX3_14
-        | InsnOperandKind::SME_Zn_INDEX3_15
-        | InsnOperandKind::SME_Zn_INDEX4_14
-        | InsnOperandKind::SVE_Zm_imm4 => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZAda_2b | InsnOperandKind::SME_ZAda_3b => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZA_HV_idx_src
-        | InsnOperandKind::SME_ZA_HV_idx_srcxN
-        | InsnOperandKind::SME_ZA_HV_idx_dest
-        | InsnOperandKind::SME_ZA_HV_idx_destxN
-        | InsnOperandKind::SME_ZA_HV_idx_ldstr => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SME_list_of_64bit_tiles => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZA_array_off1x4
-        | InsnOperandKind::SME_ZA_array_off2x2
-        | InsnOperandKind::SME_ZA_array_off2x4
-        | InsnOperandKind::SME_ZA_array_off3_0
-        | InsnOperandKind::SME_ZA_array_off3_5
-        | InsnOperandKind::SME_ZA_array_off3x2
-        | InsnOperandKind::SME_ZA_array_off4 => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZA_array_vrsb_1
-        | InsnOperandKind::SME_ZA_array_vrsh_1
-        | InsnOperandKind::SME_ZA_array_vrss_1
-        | InsnOperandKind::SME_ZA_array_vrsd_1
-        | InsnOperandKind::SME_ZA_array_vrsb_2
-        | InsnOperandKind::SME_ZA_array_vrsh_2
-        | InsnOperandKind::SME_ZA_array_vrss_2
-        | InsnOperandKind::SME_ZA_array_vrsd_2 => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SME_SM_ZA => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SME_PnT_Wm_imm => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SME_VLxN_10 | InsnOperandKind::SME_VLxN_13 => write!(f, ":{kind:?}:")?,
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::CRn => write!(f, "c{}", bit_range(bits, 12, 4))?,
@@ -277,7 +169,7 @@ fn format_operand(
             let sf = bit_set(bits, 31);
 
             if (sf && !n) || (!sf && (n || bit_set(immr, 5))) {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
             write!(f, "#{}", immr)?;
         }
@@ -288,7 +180,7 @@ fn format_operand(
             let sf = bit_set(bits, 31);
 
             if (sf && !n) || (!sf && (n || bit_set(imms, 5))) {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
             write!(f, "#{}", imms)?;
         }
@@ -305,12 +197,12 @@ fn format_operand(
         InsnOperandKind::FBITS => {
             let ftype = bit_range(bits, 22, 2);
             if ftype == 0b10 {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
             let sf = bit_set(bits, 31);
             let scale = 64 - bit_range(bits, 10, 6);
             if !sf && scale > 32 {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
             write!(f, "#{scale}")?;
         }
@@ -397,29 +289,6 @@ fn format_operand(
         }
 
         #[cfg(feature = "full")]
-        InsnOperandKind::WIDTH
-        | InsnOperandKind::SIMM5
-        | InsnOperandKind::SME_SHRIMM4
-        | InsnOperandKind::SME_SHRIMM5
-        | InsnOperandKind::SVE_SHLIMM_PRED
-        | InsnOperandKind::SVE_SHLIMM_UNPRED
-        | InsnOperandKind::SVE_SHLIMM_UNPRED_22
-        | InsnOperandKind::SVE_SHRIMM_PRED
-        | InsnOperandKind::SVE_SHRIMM_UNPRED
-        | InsnOperandKind::SVE_SHRIMM_UNPRED_22
-        | InsnOperandKind::SVE_SIMM5
-        | InsnOperandKind::SVE_SIMM5B
-        | InsnOperandKind::SVE_SIMM6
-        | InsnOperandKind::SVE_SIMM8
-        | InsnOperandKind::SVE_UIMM3
-        | InsnOperandKind::SVE_UIMM7
-        | InsnOperandKind::SVE_UIMM8
-        | InsnOperandKind::SVE_UIMM8_53
-        | InsnOperandKind::SVE_IMM_ROT1
-        | InsnOperandKind::SVE_IMM_ROT2
-        | InsnOperandKind::SVE_IMM_ROT3 => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
         InsnOperandKind::CSSC_SIMM8 => write!(f, "#{}", bit_range(bits, 10, 8) as i8)?,
         #[cfg(feature = "full")]
         InsnOperandKind::CSSC_UIMM8 => write!(f, "#{}", bit_range(bits, 10, 8) as u8)?,
@@ -429,32 +298,21 @@ fn format_operand(
         InsnOperandKind::UIMM10 => write!(f, "#{}", bit_range(bits, 16, 6) << LOG2_TAG_GRANULE)?,
 
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_I1_HALF_ONE
-        | InsnOperandKind::SVE_I1_HALF_TWO
-        | InsnOperandKind::SVE_I1_ZERO_ONE => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_PATTERN => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_PATTERN_SCALED => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_PRFOP => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::IMM_MOV => write!(f, ":{kind:?}:")?,
-        #[cfg(feature = "full")]
         InsnOperandKind::FPIMM0 => write!(f, "#{:.1}", 0.0)?,
 
         #[cfg(feature = "full")]
         InsnOperandKind::AIMM => {
-            let shift = bit_set(bits, 22);
+            // The shift field holds two bits of which only LSL #0 and
+            // LSL #12 are defined.
+            let shift = bit_range(bits, 22, 2);
+            if shift >= 2 {
+                return write!(f, "<undefined>").map(|()| flow);
+            }
             let imm12 = bit_range(bits, 10, 12);
             write!(f, "#{imm12:#x}")?;
 
-            if shift {
-                return write!(f, ", lsl #12");
+            if shift == 1 {
+                return write!(f, ", lsl #12").map(|()| flow);
             }
         }
 
@@ -462,7 +320,7 @@ fn format_operand(
         InsnOperandKind::HALF => {
             let hw = bit_range(bits, 21, 2);
             if !bit_set(bits, 31) && bit_set(hw, 1) {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
 
             let imm16 = bit_range(bits, 5, 16);
@@ -485,11 +343,6 @@ fn format_operand(
             }
         }
         #[cfg(feature = "full")]
-        InsnOperandKind::SVE_INV_LIMM
-        | InsnOperandKind::SVE_LIMM
-        | InsnOperandKind::SVE_LIMM_MOV => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
         InsnOperandKind::SIMD_IMM => {
             let imm8 = (bit_range(bits, 16, 3) << 5) | bit_range(bits, 5, 5);
             let mut imm = 0u64;
@@ -506,29 +359,29 @@ fn format_operand(
             let imm8 = (bit_range(bits, 16, 3) << 5) | bit_range(bits, 5, 5);
             let cmode = bit_range(bits, 12, 4);
 
-            *stop = true;
+            flow = Flow::Stop;
             if cmode >> 1 == 0b110 {
                 let msl = if bit_set(cmode, 0) { 16 } else { 8 };
-                return write!(f, "#{imm8:#x}, MSL #{msl}");
+                return write!(f, "#{imm8:#x}, MSL #{msl}").map(|()| flow);
             }
             if cmode & 0b1001 == 0 || cmode & 0b1001 == 0b0001 {
                 let lsl = bit_range(cmode, 1, 2) * 8;
                 if lsl != 0 {
-                    return write!(f, "#{imm8:#x}, LSL #{lsl}");
+                    return write!(f, "#{imm8:#x}, LSL #{lsl}").map(|()| flow);
                 } else {
-                    return write!(f, "#{imm8:#x}");
+                    return write!(f, "#{imm8:#x}").map(|()| flow);
                 }
             }
             if cmode & 0b1101 == 0b1000 || cmode & 0b1101 == 0b1001 {
                 let lsl = if bit_set(cmode, 1) { 8 } else { 0 };
                 if lsl != 0 {
-                    return write!(f, "#{imm8:#x}, LSL #{lsl}");
+                    return write!(f, "#{imm8:#x}, LSL #{lsl}").map(|()| flow);
                 } else {
-                    return write!(f, "#{imm8:#x}");
+                    return write!(f, "#{imm8:#x}").map(|()| flow);
                 }
             }
             if cmode >> 1 == 0b111 {
-                return write!(f, "#{imm8:#x}");
+                return write!(f, "#{imm8:#x}").map(|()| flow);
             }
         }
 
@@ -548,7 +401,7 @@ fn format_operand(
             let size = match fp_type {
                 0b00 => 4,
                 0b01 => 8,
-                0b10 => return write!(f, "<undefined>"),
+                0b10 => return write!(f, "<undefined>").map(|()| flow),
                 0b11 => 2,
                 _ => unreachable!(),
             };
@@ -620,15 +473,18 @@ fn format_operand(
                 write!(f, "#{imm4:#x}")?
             }
         }
-        #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::UIMM7 => write!(f, ":{kind:?}:")?,
-
         #[cfg(feature = "full")]
         InsnOperandKind::COND | InsnOperandKind::COND1 => {
             let cond = bit_range(bits, 12, 4);
             write!(f, "{}", cond_name(cond))?
         }
 
+        #[cfg(feature = "full")]
+        InsnOperandKind::ADDR_PCREL9 => {
+            let offset = bit_range(bits, 5, 9);
+            let offset = sign_extend(offset, 8) << 2;
+            write!(f, "{:#x}", pc.wrapping_add(offset))?
+        }
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_PCREL14 => {
             let offset = bit_range(bits, 5, 14);
@@ -671,7 +527,7 @@ fn format_operand(
         #[cfg(feature = "full")]
         InsnOperandKind::SIMD_ADDR_POST => {
             format_simd_addr_post(f, bits, definition)?;
-            *stop = true;
+            flow = Flow::Stop;
         }
 
         #[cfg(any(feature = "full", feature = "load_store"))]
@@ -714,43 +570,14 @@ fn format_operand(
             }
             write!(f, "]")?;
 
-            *stop = true;
+            flow = Flow::Stop;
         }
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_ADDR_R
-        | InsnOperandKind::SVE_ADDR_RR
-        | InsnOperandKind::SVE_ADDR_RR_LSL1
-        | InsnOperandKind::SVE_ADDR_RR_LSL2
-        | InsnOperandKind::SVE_ADDR_RR_LSL3
-        | InsnOperandKind::SVE_ADDR_RR_LSL4
-        | InsnOperandKind::SVE_ADDR_RX
-        | InsnOperandKind::SVE_ADDR_RX_LSL1
-        | InsnOperandKind::SVE_ADDR_RX_LSL2
-        | InsnOperandKind::SVE_ADDR_RX_LSL3 => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_ADDR_ZX => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_ADDR_RZ
-        | InsnOperandKind::SVE_ADDR_RZ_LSL1
-        | InsnOperandKind::SVE_ADDR_RZ_LSL2
-        | InsnOperandKind::SVE_ADDR_RZ_LSL3
-        | InsnOperandKind::SVE_ADDR_RZ_XTW_14
-        | InsnOperandKind::SVE_ADDR_RZ_XTW_22
-        | InsnOperandKind::SVE_ADDR_RZ_XTW1_14
-        | InsnOperandKind::SVE_ADDR_RZ_XTW1_22
-        | InsnOperandKind::SVE_ADDR_RZ_XTW2_14
-        | InsnOperandKind::SVE_ADDR_RZ_XTW2_22
-        | InsnOperandKind::SVE_ADDR_RZ_XTW3_14
-        | InsnOperandKind::SVE_ADDR_RZ_XTW3_22 => write!(f, ":{kind:?}:")?,
 
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_SIMM7 => {
             let opc = bit_range(bits, 30, 2);
             if opc == 0b11 {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
 
             let fp = bit_set(bits, 26);
@@ -797,7 +624,7 @@ fn format_operand(
                 if imm != 0 {
                     write!(f, ", #{imm}")?;
                 }
-                return write!(f, "]");
+                return write!(f, "]").map(|()| flow);
             }
 
             let post_index = !bit_set(bits, 11);
@@ -806,7 +633,7 @@ fn format_operand(
             } else {
                 write!(f, "[{reg_name}], #{imm}")?;
             }
-            *stop = true;
+            flow = Flow::Stop;
         }
         #[cfg(any(feature = "full", feature = "load_store"))]
         InsnOperandKind::ADDR_UIMM12 => {
@@ -877,37 +704,6 @@ fn format_operand(
             }
         }
 
-        #[cfg(feature = "full")]
-        InsnOperandKind::RCPC3_ADDR_OFFSET
-        | InsnOperandKind::RCPC3_ADDR_OPT_POSTIND
-        | InsnOperandKind::RCPC3_ADDR_OPT_PREIND_WB
-        | InsnOperandKind::RCPC3_ADDR_POSTIND
-        | InsnOperandKind::RCPC3_ADDR_PREIND_WB
-        | InsnOperandKind::SME_ADDR_RI_U4xVL
-        | InsnOperandKind::SVE_ADDR_RI_S4x16
-        | InsnOperandKind::SVE_ADDR_RI_S4x32
-        | InsnOperandKind::SVE_ADDR_RI_S4xVL
-        | InsnOperandKind::SVE_ADDR_RI_S4x2xVL
-        | InsnOperandKind::SVE_ADDR_RI_S4x3xVL
-        | InsnOperandKind::SVE_ADDR_RI_S4x4xVL
-        | InsnOperandKind::SVE_ADDR_RI_S6xVL
-        | InsnOperandKind::SVE_ADDR_RI_S9xVL
-        | InsnOperandKind::SVE_ADDR_RI_U6
-        | InsnOperandKind::SVE_ADDR_RI_U6x2
-        | InsnOperandKind::SVE_ADDR_RI_U6x4
-        | InsnOperandKind::SVE_ADDR_RI_U6x8 => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_ADDR_ZI_U5
-        | InsnOperandKind::SVE_ADDR_ZI_U5x2
-        | InsnOperandKind::SVE_ADDR_ZI_U5x4
-        | InsnOperandKind::SVE_ADDR_ZI_U5x8 => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SVE_ADDR_ZZ_LSL
-        | InsnOperandKind::SVE_ADDR_ZZ_SXTW
-        | InsnOperandKind::SVE_ADDR_ZZ_UXTW => write!(f, ":{kind:?}:")?,
-
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::SYSREG | InsnOperandKind::SYSREG128 => {
             let op0 = bit_range(bits, 19, 2) as u8;
@@ -933,11 +729,11 @@ fn format_operand(
                     0b011 => "uao",
                     0b100 => "pan",
                     0b101 => "spsel",
-                    _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}"),
+                    _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}").map(|()| flow),
                 },
                 0b001 => match op2 {
                     0b000 if crm & 0b1110 == 0 => "allint",
-                    _ => return write!(f, "s0_{op1}_c4_c{crm}_{op2}"),
+                    _ => return write!(f, "s0_{op1}_c4_c{crm}_{op2}").map(|()| flow),
                 },
                 0b011 => match op2 {
                     0b011 if crm & 0b1110 == 0b0010 => "svcrsm",
@@ -948,20 +744,12 @@ fn format_operand(
                     0b100 => "tco",
                     0b110 => "daifset",
                     0b111 => "daifclr",
-                    _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}"),
+                    _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}").map(|()| flow),
                 },
-                _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}"),
+                _ => return write!(f, "s0_{op1}_c4_{crm}_{op2}").map(|()| flow),
             };
             write!(f, "{field}")?
         }
-
-        #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::SYSREG_AT
-        | InsnOperandKind::SYSREG_DC
-        | InsnOperandKind::SYSREG_IC
-        | InsnOperandKind::SYSREG_TLBI
-        | InsnOperandKind::SYSREG_TLBIP
-        | InsnOperandKind::SYSREG_SR => write!(f, ":{kind:?}:")?,
 
         #[cfg(any(feature = "full", feature = "system"))]
         InsnOperandKind::BARRIER => {
@@ -979,7 +767,7 @@ fn format_operand(
                 0b1101 => "ld",
                 0b1110 => "st",
                 0b1111 => "sy",
-                _ => return write!(f, "#{:#x}", barrier),
+                _ => return write!(f, "#{:#x}", barrier).map(|()| flow),
             };
             write!(f, "{barrier}")?
         }
@@ -991,7 +779,7 @@ fn format_operand(
                 0b0110 => "nshnxs",
                 0b1010 => "ishnxs",
                 0b1110 => "synxs",
-                _ => return write!(f, "#{:#x}", barrier),
+                _ => return write!(f, "#{:#x}", barrier).map(|()| flow),
             };
             write!(f, "{barrier}")?
         }
@@ -1041,31 +829,13 @@ fn format_operand(
             }
         }
 
-        #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::BARRIER_PSB => write!(f, ":{kind:?}:")?,
-
         InsnOperandKind::X16 => write!(f, "x16")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZT0 => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZT0_INDEX => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::SME_ZT0_LIST => write!(f, ":{kind:?}:")?,
-
-        #[cfg(any(feature = "full", feature = "system"))]
-        InsnOperandKind::BARRIER_GCSB => write!(f, ":{kind:?}:")?,
-
-        #[cfg(feature = "full")]
-        InsnOperandKind::BTI_TARGET => write!(f, ":{kind:?}:")?,
 
         #[cfg(feature = "full")]
         InsnOperandKind::MOPS_ADDR_Rd
         | InsnOperandKind::MOPS_ADDR_Rs
         | InsnOperandKind::MOPS_WB_Rn => {
-            *stop = true;
+            flow = Flow::Stop;
 
             let rd = bit_range(bits, 0, 5) as u8;
             let rn = bit_range(bits, 5, 5) as u8;
@@ -1073,10 +843,10 @@ fn format_operand(
             let op1 = bit_range(bits, 22, 2);
 
             if rd == rn || rd == rs || rs == rn {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
             if rd == 31 || rn == 31 || (rs == 31 && op1 != 0b11) {
-                return write!(f, "<undefined>");
+                return write!(f, "<undefined>").map(|()| flow);
             }
 
             let rd = get_int_reg_name(true, rd, true);
@@ -1090,11 +860,246 @@ fn format_operand(
             }
         }
 
+        // Operand kinds not yet given a dedicated formatter print their name.
+        #[cfg(feature = "full")]
+        InsnOperandKind::SVE_VZn
+        | InsnOperandKind::SVE_Pd
+        | InsnOperandKind::SVE_Pg3
+        | InsnOperandKind::SVE_Pg4_5
+        | InsnOperandKind::SVE_Pg4_10
+        | InsnOperandKind::SVE_Pg4_16
+        | InsnOperandKind::SVE_Pm
+        | InsnOperandKind::SVE_Pn
+        | InsnOperandKind::SVE_Pt
+        | InsnOperandKind::SME_Pm
+        | InsnOperandKind::SVE_PNd
+        | InsnOperandKind::SVE_PNg4_10
+        | InsnOperandKind::SVE_PNn
+        | InsnOperandKind::SVE_PNt
+        | InsnOperandKind::SME_PNd3
+        | InsnOperandKind::SME_PNg3
+        | InsnOperandKind::SME_PNn
+        | InsnOperandKind::SME_Pdx2
+        | InsnOperandKind::SME_PdxN
+        | InsnOperandKind::SVE_Za_5
+        | InsnOperandKind::SVE_Za_16
+        | InsnOperandKind::SVE_Zd
+        | InsnOperandKind::SVE_Zm_5
+        | InsnOperandKind::SVE_Zm_16
+        | InsnOperandKind::SVE_Zn
+        | InsnOperandKind::SVE_Zt
+        | InsnOperandKind::SME_Zm
+        | InsnOperandKind::SVE_ZnxN
+        | InsnOperandKind::SVE_ZtxN
+        | InsnOperandKind::SME_Zdnx2
+        | InsnOperandKind::SME_Zdnx4
+        | InsnOperandKind::SME_Zmx2
+        | InsnOperandKind::SME_Zmx4
+        | InsnOperandKind::SME_Znx2
+        | InsnOperandKind::SME_Znx4
+        | InsnOperandKind::SME_Ztx2_STRIDED
+        | InsnOperandKind::SME_Ztx4_STRIDED
+        | InsnOperandKind::SME_Zm_17
+        | InsnOperandKind::SME_Zm_17_3
+        | InsnOperandKind::SME_Zmx2_17_3
+        | InsnOperandKind::SME_Zmx2_INDEX_22
+        | InsnOperandKind::SME_Zn_6_3
+        | InsnOperandKind::SME_Zn7xN_UNTYPED
+        | InsnOperandKind::SME_Znx2_6_3
+        | InsnOperandKind::SME_Znx2_BIT_INDEX
+        | InsnOperandKind::SME_Zk_INDEX
+        | InsnOperandKind::SME_ZA_ARRAY4
+        | InsnOperandKind::SVE_Zm3_INDEX
+        | InsnOperandKind::SVE_Zm3_22_INDEX
+        | InsnOperandKind::SVE_Zm3_19_INDEX
+        | InsnOperandKind::SVE_Zm3_11_INDEX
+        | InsnOperandKind::SVE_Zm4_11_INDEX
+        | InsnOperandKind::SVE_Zm4_INDEX
+        | InsnOperandKind::SVE_Zn_INDEX
+        | InsnOperandKind::SME_Zm_INDEX1
+        | InsnOperandKind::SME_Zm_INDEX2
+        | InsnOperandKind::SME_Zm_INDEX3_1
+        | InsnOperandKind::SME_Zm_INDEX3_2
+        | InsnOperandKind::SME_Zm_INDEX3_10
+        | InsnOperandKind::SVE_Zn_5_INDEX
+        | InsnOperandKind::SME_Zm_INDEX4_1
+        | InsnOperandKind::SME_Zm_INDEX4_10
+        | InsnOperandKind::SME_Zn_INDEX1_16
+        | InsnOperandKind::SME_Zn_INDEX2_15
+        | InsnOperandKind::SME_Zn_INDEX2_16
+        | InsnOperandKind::SME_Zn_INDEX3_14
+        | InsnOperandKind::SME_Zn_INDEX3_15
+        | InsnOperandKind::SME_Zn_INDEX4_14
+        | InsnOperandKind::SME_Zn_INDEX2_19
+        | InsnOperandKind::SME_Zm_INDEX2_3
+        | InsnOperandKind::SME_Zm_INDEX3_3
+        | InsnOperandKind::SME_Zm_INDEX4_2
+        | InsnOperandKind::SME_Zm_INDEX4_3
+        | InsnOperandKind::SVE_Zm1_23_INDEX
+        | InsnOperandKind::SVE_Zm2_22_INDEX
+        | InsnOperandKind::SVE_Zm3_10_INDEX
+        | InsnOperandKind::SVE_Zm3_12_INDEX
+        | InsnOperandKind::SVE_Zn0_INDEX
+        | InsnOperandKind::SVE_Zn1_17_INDEX
+        | InsnOperandKind::SVE_Zn2_18_INDEX
+        | InsnOperandKind::SVE_Zn3_22_INDEX
+        | InsnOperandKind::SVE_Zd0_INDEX
+        | InsnOperandKind::SVE_Zd1_17_INDEX
+        | InsnOperandKind::SVE_Zd2_18_INDEX
+        | InsnOperandKind::SVE_Zd3_22_INDEX
+        | InsnOperandKind::SME_ZAda_1b
+        | InsnOperandKind::SME_ZAda_2b
+        | InsnOperandKind::SME_ZAda_3b
+        | InsnOperandKind::SME_ZA_HV_idx_src
+        | InsnOperandKind::SME_ZA_HV_idx_srcxN
+        | InsnOperandKind::SME_ZA_HV_idx_dest
+        | InsnOperandKind::SME_ZA_HV_idx_destxN
+        | InsnOperandKind::SME_ZA_HV_idx_ldstr
+        | InsnOperandKind::SME_list_of_64bit_tiles
+        | InsnOperandKind::SME_ZA_array_off1x4
+        | InsnOperandKind::SME_ZA_array_off2x2
+        | InsnOperandKind::SME_ZA_array_off2x4
+        | InsnOperandKind::SME_ZA_array_off3_0
+        | InsnOperandKind::SME_ZA_array_off3_5
+        | InsnOperandKind::SME_ZA_array_off3x2
+        | InsnOperandKind::SME_ZA_array_off4
+        | InsnOperandKind::SME_ZA_array_vrsb_1
+        | InsnOperandKind::SME_ZA_array_vrsh_1
+        | InsnOperandKind::SME_ZA_array_vrss_1
+        | InsnOperandKind::SME_ZA_array_vrsd_1
+        | InsnOperandKind::SME_ZA_array_vrsb_2
+        | InsnOperandKind::SME_ZA_array_vrsh_2
+        | InsnOperandKind::SME_ZA_array_vrss_2
+        | InsnOperandKind::SME_ZA_array_vrsd_2
+        | InsnOperandKind::SME_SM_ZA
+        | InsnOperandKind::SME_PnT_Wm_imm
+        | InsnOperandKind::SME_VLxN_10
+        | InsnOperandKind::SME_VLxN_13
+        | InsnOperandKind::WIDTH
+        | InsnOperandKind::SIMM5
+        | InsnOperandKind::SME_SHRIMM3
+        | InsnOperandKind::SME_SHRIMM4
+        | InsnOperandKind::SME_SHRIMM5
+        | InsnOperandKind::SVE_SHLIMM_PRED
+        | InsnOperandKind::SVE_SHLIMM_UNPRED
+        | InsnOperandKind::SVE_SHLIMM_UNPRED_22
+        | InsnOperandKind::SVE_SHRIMM_PRED
+        | InsnOperandKind::SVE_SHRIMM_UNPRED
+        | InsnOperandKind::SVE_SHRIMM_UNPRED_22
+        | InsnOperandKind::SVE_SIMM5
+        | InsnOperandKind::SVE_SIMM5B
+        | InsnOperandKind::SVE_SIMM6
+        | InsnOperandKind::SVE_SIMM8
+        | InsnOperandKind::SVE_UIMM3
+        | InsnOperandKind::SVE_UIMM4
+        | InsnOperandKind::SVE_UIMM7
+        | InsnOperandKind::SVE_UIMM8
+        | InsnOperandKind::SVE_UIMM8_53
+        | InsnOperandKind::SVE_IMM_ROT1
+        | InsnOperandKind::SVE_IMM_ROT2
+        | InsnOperandKind::SVE_IMM_ROT3
+        | InsnOperandKind::SVE_I1_HALF_ONE
+        | InsnOperandKind::SVE_I1_HALF_TWO
+        | InsnOperandKind::SVE_I1_ZERO_ONE
+        | InsnOperandKind::SVE_PATTERN
+        | InsnOperandKind::SVE_PATTERN_SCALED
+        | InsnOperandKind::SVE_PRFOP
+        | InsnOperandKind::IMM_MOV
+        | InsnOperandKind::SVE_INV_LIMM
+        | InsnOperandKind::SVE_LIMM
+        | InsnOperandKind::SVE_LIMM_MOV
+        | InsnOperandKind::SVE_ADDR_RR
+        | InsnOperandKind::SVE_ADDR_RR_LSL1
+        | InsnOperandKind::SVE_ADDR_RR_LSL2
+        | InsnOperandKind::SVE_ADDR_RR_LSL3
+        | InsnOperandKind::SVE_ADDR_RR_LSL4
+        | InsnOperandKind::SVE_ADDR_RX
+        | InsnOperandKind::SVE_ADDR_RX_LSL1
+        | InsnOperandKind::SVE_ADDR_RX_LSL2
+        | InsnOperandKind::SVE_ADDR_RX_LSL3
+        | InsnOperandKind::SVE_ADDR_RX_LSL4
+        | InsnOperandKind::SVE_ADDR_RM
+        | InsnOperandKind::SVE_ADDR_RM_LSL1
+        | InsnOperandKind::SVE_ADDR_RM_LSL2
+        | InsnOperandKind::SVE_ADDR_RM_LSL3
+        | InsnOperandKind::SVE_ADDR_ZX
+        | InsnOperandKind::SVE_ADDR_RZ
+        | InsnOperandKind::SVE_ADDR_RZ_LSL1
+        | InsnOperandKind::SVE_ADDR_RZ_LSL2
+        | InsnOperandKind::SVE_ADDR_RZ_LSL3
+        | InsnOperandKind::SVE_ADDR_RZ_XTW_14
+        | InsnOperandKind::SVE_ADDR_RZ_XTW_22
+        | InsnOperandKind::SVE_ADDR_RZ_XTW1_14
+        | InsnOperandKind::SVE_ADDR_RZ_XTW1_22
+        | InsnOperandKind::SVE_ADDR_RZ_XTW2_14
+        | InsnOperandKind::SVE_ADDR_RZ_XTW2_22
+        | InsnOperandKind::SVE_ADDR_RZ_XTW3_14
+        | InsnOperandKind::SVE_ADDR_RZ_XTW3_22
+        | InsnOperandKind::RCPC3_ADDR_OFFSET
+        | InsnOperandKind::RCPC3_ADDR_OPT_POSTIND
+        | InsnOperandKind::RCPC3_ADDR_OPT_PREIND_WB
+        | InsnOperandKind::RCPC3_ADDR_POSTIND
+        | InsnOperandKind::RCPC3_ADDR_PREIND_WB
+        | InsnOperandKind::SME_ADDR_RI_U4xVL
+        | InsnOperandKind::SVE_ADDR_RI_S4x16
+        | InsnOperandKind::SVE_ADDR_RI_S4x32
+        | InsnOperandKind::SVE_ADDR_RI_S4xVL
+        | InsnOperandKind::SVE_ADDR_RI_S4x2xVL
+        | InsnOperandKind::SVE_ADDR_RI_S4x3xVL
+        | InsnOperandKind::SVE_ADDR_RI_S4x4xVL
+        | InsnOperandKind::SVE_ADDR_RI_S6xVL
+        | InsnOperandKind::SVE_ADDR_RI_S9xVL
+        | InsnOperandKind::SVE_ADDR_RI_U6
+        | InsnOperandKind::SVE_ADDR_RI_U6x2
+        | InsnOperandKind::SVE_ADDR_RI_U6x4
+        | InsnOperandKind::SVE_ADDR_RI_U6x8
+        | InsnOperandKind::SVE_ADDR_ZI_U5
+        | InsnOperandKind::SVE_ADDR_ZI_U5x2
+        | InsnOperandKind::SVE_ADDR_ZI_U5x4
+        | InsnOperandKind::SVE_ADDR_ZI_U5x8
+        | InsnOperandKind::SVE_ADDR_ZZ_LSL
+        | InsnOperandKind::SVE_ADDR_ZZ_SXTW
+        | InsnOperandKind::SVE_ADDR_ZZ_UXTW
+        | InsnOperandKind::SME_ZT0
+        | InsnOperandKind::SME_ZT0_INDEX
+        | InsnOperandKind::SME_ZT0_LIST
+        | InsnOperandKind::SME_ZT0_INDEX_MUL_VL
+        | InsnOperandKind::Em8
+        | InsnOperandKind::Em_INDEX1_14
+        | InsnOperandKind::Em_INDEX2_13
+        | InsnOperandKind::Em_INDEX3_12
+        | InsnOperandKind::LVn_LUT
+        | InsnOperandKind::IMMP1_2
+        | InsnOperandKind::IMMS1_2
+        | InsnOperandKind::NOT_BALANCED_10
+        | InsnOperandKind::NOT_BALANCED_17
+        | InsnOperandKind::Rm_LSL
+        | InsnOperandKind::BTI_TARGET => write!(f, ":{kind:?}:")?,
+
+        #[cfg(any(feature = "full", feature = "system"))]
+        InsnOperandKind::UIMM7
+        | InsnOperandKind::SYSREG_AT
+        | InsnOperandKind::SYSREG_DC
+        | InsnOperandKind::SYSREG_IC
+        | InsnOperandKind::SYSREG_TLBI
+        | InsnOperandKind::SYSREG_TLBIP
+        | InsnOperandKind::SYSREG_PLBI
+        | InsnOperandKind::SYSREG_MLBI
+        | InsnOperandKind::GIC
+        | InsnOperandKind::GICR
+        | InsnOperandKind::GSB
+        | InsnOperandKind::BRBOP
+        | InsnOperandKind::Rt_IN_SYS_ALIASES
+        | InsnOperandKind::SHUH_PHINT
+        | InsnOperandKind::STSHH_POLICY
+        | InsnOperandKind::SYSREG_SR
+        | InsnOperandKind::BARRIER_PSB
+        | InsnOperandKind::BARRIER_GCSB => write!(f, ":{kind:?}:")?,
         #[cfg(not(feature = "full"))]
         _ => write!(f, "<unknown>")?,
     };
 
-    Ok(())
+    Ok(flow)
 }
 
 #[cfg(any(feature = "full", feature = "system"))]
@@ -1157,27 +1162,59 @@ pub fn format_insn_pc<O: InsnOpcode>(pc: u64, f: &mut impl Write, opcode: &O) ->
         }
     }
 
-    write!(f, "{}", definition.mnemonic)?;
-
     #[cfg(feature = "full")]
     if definition.flags.contains(InsnFlags::IS_COND) {
+        // The table mnemonic carries a condition placeholder after the final
+        // dot, e.g. "b.c"; replace it with the decoded condition.
+        let stem = definition
+            .mnemonic
+            .rsplit_once('.')
+            .map_or(definition.mnemonic, |(stem, _)| stem);
         let cond = bit_range(bits, 0, 4);
         let cond = cond_name(cond);
-        write!(f, "{} ", cond)?;
+        write!(f, "{stem}.{cond} ")?;
+    } else {
+        write!(f, "{}", definition.mnemonic)?;
     }
+    #[cfg(not(feature = "full"))]
+    write!(f, "{}", definition.mnemonic)?;
+
     write!(f, "\t\t")?;
 
     let op_count = definition.operands.len();
     for (i, operand) in definition.operands.iter().enumerate() {
-        let mut stop = false;
-        format_operand(i, pc, f, bits, operand, definition, &mut stop)?;
-        if !stop && i + 1 < op_count {
+        let flow = format_operand(i, pc, f, bits, operand, definition)?;
+        if matches!(flow, Flow::Continue) && i + 1 < op_count {
             write!(f, ", ")?;
         }
-        if stop {
+        if matches!(flow, Flow::Stop) {
             break;
         }
     }
 
     Ok(())
 }
+
+/// An opcode paired with a program counter so that `Display` renders PC-relative
+/// operands as absolute target addresses. Created by [`InsnDisplay::display_at`].
+pub struct DisplayAt<'a, O: InsnOpcode> {
+    pc: u64,
+    opcode: &'a O,
+}
+
+impl<O: InsnOpcode> core::fmt::Display for DisplayAt<'_, O> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        format_insn_pc(self.pc, f, self.opcode)
+    }
+}
+
+/// Formatting helpers for any decoded opcode.
+pub trait InsnDisplay: InsnOpcode + Sized {
+    /// Format the instruction with `pc` as the address of the instruction itself,
+    /// so PC-relative operands render as absolute targets rather than offsets.
+    fn display_at(&self, pc: u64) -> DisplayAt<'_, Self> {
+        DisplayAt { pc, opcode: self }
+    }
+}
+
+impl<O: InsnOpcode> InsnDisplay for O {}

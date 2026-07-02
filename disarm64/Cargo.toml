@@ -1,21 +1,16 @@
 [package]
 name = "disarm64"
-version = "0.1.26"
-edition = "2021"
-authors = ["kromych <kromych@users.noreply.github.com>"]
-description = """
-disarm64 provides a tool and a library for decoding ARM64 instructions (at least 250 MiB/sec
-of the decoding speed is delivered on a laptop that is used for development). Here you will
-also find a utility for generating disassembler/instruction decoder tables in Rust from
-a JSON file. Besides that, can visualize the instruction decoding as a tree.
-"""
-documentation = "https://github.com/kromych/disarm64"
-homepage = "https://github.com/kromych/disarm64"
-repository = "https://github.com/kromych/disarm64"
-keywords = ["aarch64", "arm64", "arm-v8", "disassembler", "reverse-engineering"]
-categories = ["command-line-utilities", "development-tools", "embedded"]
-license = "Unlicense OR MIT"
-readme = "../Readme.md"
+version = "0.2.0"
+edition.workspace = true
+authors.workspace = true
+description.workspace = true
+documentation.workspace = true
+homepage.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+license.workspace = true
+readme.workspace = true
 
 [features]
 full = []
@@ -25,6 +20,6 @@ system = []
 default = ["full"]
 
 [dependencies]
-disarm64_defn = { version = "0.1.12", default-features = false }
+disarm64_defn = { version = "0.2.0", default-features = false }
 
 bitfield-struct = "0.13"

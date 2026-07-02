@@ -189,7 +189,7 @@ pub(crate) fn format_simd_reg(
                         }
                         size * 2 + q
                     } else if len >= 4 {
-                        if size < 1 || size > 2 {
+                        if !(1..=2).contains(&size) {
                             return write!(f, "<undefined>");
                         }
                         (size - 1) * 2 + q
